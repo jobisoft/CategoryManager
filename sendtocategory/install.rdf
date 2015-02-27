@@ -23,7 +23,12 @@
 
     <!-- Front End MetaData -->
     <em:name>CategoryManager</em:name>
-    <em:description>This plugin extends the category feature introduced by the SOGo-Connector: It allows to send emails to all the members of a category and provides a few category managing functions. It has been developed, to overcome the limitations of the Thunderbird lists, which do not sync very well via CardDav, and have problems if a contact is part of more than one list. This has been tested with SOGo and ownCloud. The SOGo-Connector needs to be installed as well.</em:description>
+    <em:description>If you use one ore more external CardDav addressbooks (hooked into Thunderbird via the SOGo-Connector), Thunderbird has access to the category field of each CardDav contact.
+
+This Add-On provides some category management functions and allows sending an email to all members of a category. It has been developed, to overcome the limitations of the Thunderbird lists, which do not sync very well via CardDav, and have problems if a contact is part of more than one list. 
+
+This Add-On only works with CardDav addressbooks and needs the SOGo-Connector to be installed. If an ownCloud server or a Baikal server is used as CardDav server instead of a SOGo server, users have reported, that SOGo-Connector 10.0.6 needs to be used.
+</em:description>
     <em:creator>John Bieling</em:creator>
 
   </Description>      
