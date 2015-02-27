@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<?xml-stylesheet href="chrome://sendtocategory/skin/richlist.css" type="text/css"?>
+<?xul-overlay href="chrome://global/content/dialogOverlay.xul"?>
+
+<!DOCTYPE dialog
+[
+    <!ENTITY % dtd1 SYSTEM "chrome://sendtocategory/locale/catman.dtd" > %dtd1;
+]>
+
+<dialog id="CatManCategoryValidator"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    buttons="accept,cancel"
+    buttonlabelaccept="&sendtocategory.bulkedit.save.button;"
+    buttonlabelcancel="&sendtocategory.cancel.button;"
+    ondialogaccept="CatMan.saveList=document.getElementById('CatManValidatorList');CatMan.needToSaveBulkList=true;"
+    onload="loadValidateList()">
+
+    <script type="application/javascript" src="chrome://messenger/content/mailCore.js"/>
+    <script type="application/javascript" src="chrome://messenger/content/addressbook/addressbook.js"/>
+    <script type="application/javascript" src="chrome://messenger/content/addressbook/abCommon.js"/>
+
+    <script type="text/javascript" src="chrome://sendtocategory/content/category_tools.js"/>
+    <script type="text/javascript" src="chrome://sendtocategory/content/addressbook/bulkedit.js"/>
+    <script type="text/javascript">
+        var bulkEditChoose = "&sendtocategory.bulkedit.choose;";
+        var bulkEditNoName = "&sendtocategory.bulkedit.noname;";
+    </script>
+    
+    <vbox id="CatManDialogBox" flex="1">
+        <vbox flex="1">
+
+                <progressmeter
+                    id="CatManValidatorProgressBar"
+                    mode="determined"
+                    value="0"/>
+    
+                <richlistbox 
+                id="CatManValidatorList"
+                flex="1"
+                seltype="single">                   
+
+                    <listheader style="border: 0; padding: 0; -moz-appearance:none;">
+                        <treecol style="width:256px" label="&sendtocategory.bulkedit.header.email;" oncommand="stopme(event);" onclick="stopme(event);" />
+                        <treecol style="width:256px" label="&sendtocategory.bulkedit.header.contact;" oncommand="stopme(event);" onclick="stopme(event);" />
+                        <treecol flex="1" label="&sendtocategory.bulkedit.header.status;" oncommand="stopme(event);" onclick="stopme(event);" />    
+                    </listheader>
+  
+                    <richlistitem id ="CatManListTemplate_OK" hidden="true">
+                        <listcell class="label"><label crop="end" value=""/></listcell>
+                        <listcell class="label"><label crop="end" value=""/></listcell>
+                        <listcell class="img"><image src="chrome://sendtocategory/skin/ok.gif"/></listcell>
+                    </richlistitem>
+
+                    <richlistitem id ="CatManListTemplate_NOTOK" hidden="true">
+                        <listcell class="label"><label crop="end" value=""/></listcell>
+                        <listcell class="text"><textbox placeholder="&sendtocategory.bulkedit.firstname;" value=""/><textbox placeholder="&sendtocategory.bulkedit.lastname;" value=""/></listcell>
+                        <listcell class="img"><image src="chrome://sendtocategory/skin/notok.gif"/></listcell>
+                    </richlistitem>
+
+                    <richlistitem id ="CatManListTemplate_DOUBLE" hidden="true">
+                        <listcell class="label"><label crop="end" value=""/></listcell>
+                        <listcell class="menu"><menulist><menupopup></menupopup></menulist></listcell>
+                        <listcell class="img"><image src="chrome://sendtocategory/skin/double.gif"/></listcell>
+                    </richlistitem>
+
+                    <richlistitem id ="CatManListTemplate_DOUBLEOK" hidden="true">
+                        <listcell class="label"><label crop="end" value=""/></listcell>
+                        <listcell class="menu"><menulist><menupopup></menupopup></menulist></listcell>
+                        <listcell class="img"><image src="chrome://sendtocategory/skin/ok-double.gif"/></listcell>
+                    </richlistitem>
+
+            </richlistbox>
+            
+            <groupbox>
+                <caption label="&sendtocategory.bulkedit.legend.caption;"/>
+                    <grid>
+                        <columns>
+                            <column/>
+                            <column/>
+                        </columns>
+                        <rows>
+                            <row align="center">
+                                <image height="20" src="chrome://sendtocategory/skin/ok.gif"/>
+                                <description>&sendtocategory.bulkedit.legend.ok;</description>
+                            </row>
+                            <row align="center">
+                                <image height="20" src="chrome://sendtocategory/skin/ok-double.gif"/>
+                                <description>&sendtocategory.bulkedit.legend.okdouble;</description>
+                            </row>
+                            <row align="center">
+                                <image height="20" src="chrome://sendtocategory/skin/double.gif"/>
+                                <description>&sendtocategory.bulkedit.legend.double;</description>
+                            </row>
+                            <row align="center">
+                                <image height="20" src="chrome://sendtocategory/skin/notok.gif"/>
+                                <description>&sendtocategory.bulkedit.legend.notok;</description>
+                            </row>
+                        </rows>
+                      </grid>    
+            </groupbox>              
+                    
+        </vbox>
+    </vbox>
+    
+</dialog>
+  

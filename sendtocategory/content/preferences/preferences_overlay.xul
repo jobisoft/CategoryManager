@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE overlay [
+    <!ENTITY % SCPreferencesDTD SYSTEM "chrome://sendtocategory/locale/catman.dtd">
+    %SCPreferencesDTD;
+]>
+
+<?xml-stylesheet href="chrome://sendtocategory/skin/preferences.css"?>
+
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    <prefwindow id="MailPreferences">
+    
+        <script type="application/javascript" src="chrome://sendtocategory/content/preferences/preferences_overlay.js"/>
+  
+        <prefpane id="CatManPreferencesPane"
+          label="&sendtocategory.pref.label;"
+          onpaneload="document.getElementById('CatManToAddressField').value=getSettingValue('sendtocategory.toaddress');">
+
+            <tabbox id="CatManPreferencesTabbox" 
+            flex="1" 
+            onselect="">
+                <tabs>
+                    <tab id="CatManPreferencesTabCategories"
+                    label="&sendtocategory.pref.generaltab.label;"/>
+                </tabs>
+
+                <tabpanels flex="1">
+                    <tabpanel orient="vertical">
+                        <vbox id="CatManPreferencesBoxCategories">
+			<preferences>
+				<preference id="sendtocategory.toaddress"
+				  name="sendtocategory.toaddress"
+				  type="string"/>
+			</preferences>
+
+			<description style="padding:1ex 0 0 0">&sendtocategory.pref.generaltab.toaddr.desc1;</description>
+			<label  style="font-size:xx-small" value="* http://www.lda.bayern.de/lda/datenschutzaufsicht/p_archiv/2013/pm004.html"/>
+			<description  style="padding:1em 0">&sendtocategory.pref.generaltab.toaddr.desc2;</description>
+			<label value="&sendtocategory.pref.generaltab.toaddr.label;"/>
+			<textbox id="CatManToAddressField" 
+                                    value=""     
+                                    onchange="setSettingValue('sendtocategory.toaddress',this.value)"
+                                    style="width:100%"/>
+			<description>&sendtocategory.pref.generaltab.toaddr.desc3;</description>
+				    
+                        </vbox>
+                    </tabpanel>
+                </tabpanels>
+            </tabbox>
+        </prefpane>
+    </prefwindow>
+</overlay>

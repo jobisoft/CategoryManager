@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE overlay [
+<!ENTITY % abResultsPaneOverlayDTD SYSTEM "chrome://messenger/locale/addressbook/abResultsPaneOverlay.dtd" >
+%abResultsPaneOverlayDTD;
+<!ENTITY % abContactsPanelDTD SYSTEM "chrome://messenger/locale/addressbook/abContactsPanel.dtd" >
+%abContactsPanelDTD;
+<!ENTITY % abContactsPanelCM SYSTEM "chrome://sendtocategory/locale/catman.dtd">
+    %abContactsPanelCM;
+]>
+
+<overlay id="CatManContactPanelOverlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    
+    <script type="text/javascript" src="chrome://sendtocategory/content/category_tools.js"/>
+    <script type="text/javascript" src="chrome://sendtocategory/content/contactpanel/abContactsPanel_overlay.js"/>
+    <script type="text/javascript">
+        var prefixForPeopleSearch = "&sendtocategory.category.label;";
+        document.getElementById("addressbookList").addEventListener("select", function() { contactPanelCategoryMenuInit(); }, false);
+        var placeholderText = "&sendtocategory.categoryfilter.label;";
+    </script>
+   
+    <vbox id="results_box" flex="1">
+        <vbox id="categoryfilter-box" insertafter="panel-bar">
+            <separator class="thin"/>
+            <hbox id="categoryfilter-panel-bar" class="toolbar" align="center" insertafter="panel-bar">
+                <menulist id="CatManCategoryFilterList"
+                oncommand="contactPanelCategoryMenuChanged();" flex="1"
+                persist="value">
+                    <menupopup id="CatManCategoryFilterListPopup" writable="true"/>
+                </menulist>
+ 
+            </hbox>
+        </vbox>
+    </vbox>
+
+</overlay>

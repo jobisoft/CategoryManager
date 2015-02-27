@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+
+
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+
+<Description about="urn:mozilla:install-manifest">
+    <em:id>sendtocategory@jobisoft.de</em:id>
+    <em:version>1.57</em:version>
+    <em:type>2</em:type>
+    
+    <!-- Target Application this theme can install into, 
+        with minimum and maximum supported versions. --> 
+    <em:targetApplication>
+      <Description>
+        <!-- Thunderbird -->
+        <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id> 
+        <em:minVersion>3.1a1pre</em:minVersion>
+        <em:maxVersion>28.0</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
+
+    <!-- Front End MetaData -->
+    <em:name>CategoryManager</em:name>
+    <em:description>This plugin extends the category feature introduced by the SOGo-Connector: It allows to send emails to all the members of a category and provides a few category managing functions. It has been developed, to overcome the limitations of the Thunderbird lists, which do not sync very well via CardDav, and have problems if a contact is part of more than one list. This has been tested with SOGo and ownCloud. The SOGo-Connector needs to be installed as well.</em:description>
+    <em:creator>John Bieling</em:creator>
+
+  </Description>      
+
+</RDF>

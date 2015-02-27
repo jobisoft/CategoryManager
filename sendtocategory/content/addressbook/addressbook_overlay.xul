@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE overlay [
+<!ENTITY % abMainOverlayDTD SYSTEM "chrome://sendtocategory/locale/catman.dtd" >
+%abMainOverlayDTD;
+]>
+
+<!-- http://mxr.mozilla.org/comm-central/source/mail/components/addrbook/content/addressbook.xul -->
+<!-- https://developer.mozilla.org/en-US/docs/Mozilla/Thunderbird/Address_Book_Examples -->
+
+<overlay id="CatManAddressBookOverlay"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    
+    <script type="text/javascript" src="chrome://sendtocategory/content/category_tools.js"/>
+    <script type="text/javascript" src="chrome://sendtocategory/content/addressbook/addressbook_overlay.js"/>
+    <script type="text/javascript">
+        var addTitle = "&sendtocategory.add.title;";
+        var editTitle = "&sendtocategory.edit.title;";
+        var bulkTitle = "&sendtocategory.bulkedit.title;";
+
+        var errorRename = "&sendtocategory.error.rename;";
+        var errorAdd = "&sendtocategory.error.add;";
+        var infoAdd = "&sendtocategory.info.add;";
+        var confirmRename = "&sendtocategory.confirm.rename;";
+        var confirmDelete = "&sendtocategory.confirm.delete;";
+
+        var menuEdit = "&sendtocategory.editMenu.label;";
+        var menuRemove = "&sendtocategory.removeMenu.label;";
+        var menuSend = "&sendtocategory.sendMenu.label;";
+        var menuBulk = "&sendtocategory.bulkeditMenu.label;";
+
+        var prefixForPeopleSearch = "&sendtocategory.category.label;";
+    </script>
+
+    <popupset>
+        <menupopup id="CatManContextMenu">
+            <menuitem id="CatManContextMenuSend" disabled="true" label="&sendtocategory.send.title;" oncommand="writeToCategory();"/>
+            <menuseparator/>
+            <menuitem id="CatManContextMenuEdit" disabled="true" label="&sendtocategory.edit.title;" oncommand="onEditCategory()"/>
+            <menuitem id="CatManContextMenuRemove" disabled="true" label="&sendtocategory.remove.title;" oncommand="onDeleteCategory()"/>
+            <menuitem id="CatManContextMenuBulk" disabled="true" label="&sendtocategory.bulkedit.title;" oncommand="onBulkEdit()"/>
+            <menuseparator/>
+            <menuitem id="CatManContextMenuAdd" disabled="true" label="&sendtocategory.add.title;" oncommand="onAddCategory()"/>
+        </menupopup>
+    </popupset>
+
+
+    <vbox id="dirTreeBox">
+
+        <splitter id="CatManSplitter" collapse="after" persist="state"/> 
+        <vbox id="CatManBox" flex="2" >
+                    <label value="&sendtocategory.foundcategories.label;" style="padding:1ex 0" />
+                    <listbox 
+                    id="CatManCategoriesList"
+                    flex="1"
+                    seltype="single"
+                    onselect="onSelectCategoryList()"
+                    ondblclick="writeToCategory()"
+                    context="CatManContextMenu">
+                        <listhead>
+                            <listheader label="&sendtocategory.catbox.header.catname;" />
+                            <listheader label="&sendtocategory.catbox.header.catsize;" />
+                        </listhead>
+                        <listcols id="CatManCategoriesListColumns">
+                            <listcol flex="3"/>
+                        <listcol flex="1"/>	
+                        </listcols>
+                    </listbox>
+                    <hbox pack="end">		
+                        <button 
+                        id="CatManAddContactCategoryButton"
+                        disabled="true"
+                        label="&sendtocategory.addButton.label;"
+                        accesskey="&sendtocategory.addButton.accesskey;"
+                        oncommand="onAddCategory()"/>
+                    </hbox>
+                </vbox>
+                
+    </vbox>
+
+</overlay>

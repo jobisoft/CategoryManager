@@ -1,0 +1,7 @@
+radio[pane=CatManPreferencesPane] {
+    list-style-image: url("chrome://sendtocategory/skin/icon.png");
+}
+
+#MailPreferences[arch="mac"] radio[pane=CatManPreferencesPane] {
+    list-style-image: url("chrome://sendtocategory/skin/icon.png");
+}

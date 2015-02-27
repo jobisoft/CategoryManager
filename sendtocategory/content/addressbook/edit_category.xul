@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<?xul-overlay href="chrome://global/content/dialogOverlay.xul"?>
+
+<!-- DTD File with all strings specific to the file -->
+<!DOCTYPE dialog
+[
+    <!ENTITY % dtd1 SYSTEM "chrome://sendtocategory/locale/catman.dtd" > %dtd1;
+]>
+
+<!-- I copied this file from sogo-connector, because the sogo version needs the calender. I wanted to remove that dependency -->
+
+<dialog id="CatManCategoryEditor"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  buttons="accept,cancel"
+  onload="editCategoryLoad();"
+  ondialogaccept="return doOK();">
+  <script type="application/javascript"
+    src="chrome://sogo-connector/content/preferences/edit-category.js"/>
+  <vbox id="CatManDialogBox">
+    <hbox>
+      <label value="&sendtocategory.name.label;" control="categoryName"/>
+      <textbox id="categoryName"/>
+    </hbox>
+  </vbox>
+</dialog>
+  
