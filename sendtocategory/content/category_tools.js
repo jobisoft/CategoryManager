@@ -248,4 +248,5 @@ function scanCategories() {
             
         }                    
     }
+    CatMan.categoryList.sort();
 }
