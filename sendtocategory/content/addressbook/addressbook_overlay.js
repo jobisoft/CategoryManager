@@ -1,3 +1,5 @@
+//using mailservices to open message window
+Components.utils.import("resource:///modules/mailServices.js");
 
 let CatMan = new categoryObject();
 
@@ -156,11 +158,10 @@ function writeToCategory() {
 	//Add BCC
 	sURL = sURL + "&bcc=" + encodeURIComponent(CatMan.bcc[currentCategory].join(", "));
 	
-	//create the service, the URI and open the new message window
-	var msgComposeService = Components.classes["@mozilla.org/messengercompose;1"].getService(Components.interfaces.nsIMsgComposeService);  
+	//create the service, the URI and open the new message window via mailServices
 	var ioService =  Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);  
 	aURI = ioService.newURI(sURL, null, null);  
-	msgComposeService.OpenComposeWindowWithURI (null, aURI);        
+	MailServices.compose.OpenComposeWindowWithURI (null, aURI); 
 	
     } else {
 	    //no need to alert
