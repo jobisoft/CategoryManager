@@ -102,10 +102,10 @@ function validateEmailList(i) {
                     newtemplate.removeAttribute("selected");
             
                     //we have two input fields, add both to the checklist
-                    newtemplate.childNodes[1].childNodes[0].setAttribute("onchange","checkInput();this.setAttribute('value',this.value);");
+                    newtemplate.childNodes[1].childNodes[0].addEventListener("change", function(){ checkInput(); this.setAttribute('value',this.value); }, false);
                     newtemplate.childNodes[1].childNodes[0].setAttribute("id","CatManValidator_FirstName_"+i);
                     CatManValidatorFields.push("CatManValidator_FirstName_"+i);
-                    newtemplate.childNodes[1].childNodes[1].setAttribute("onchange","checkInput();this.setAttribute('value',this.value);");
+                    newtemplate.childNodes[1].childNodes[1].addEventListener("change",function(){ checkInput(); this.setAttribute('value',this.value); }, false);
                     newtemplate.childNodes[1].childNodes[1].setAttribute("id","CatManValidator_LastName_"+i);
                     CatManValidatorFields.push("CatManValidator_LastName_"+i);                                
                 break;
@@ -163,8 +163,8 @@ function validateEmailList(i) {
                         newtemplate.childNodes[1].childNodes[0].childNodes[0].appendChild(menuItem);                    
                     }
 
-                    newtemplate.childNodes[1].childNodes[0].setAttribute("onload","this.selectedIndex="+(memberIdx+1)+";this.parentNode.parentNode.setAttribute('UID',this.value);");
-                    newtemplate.childNodes[1].childNodes[0].setAttribute("oncommand","this.parentNode.parentNode.setAttribute('UID',this.value);checkInput();");
+                    newtemplate.childNodes[1].childNodes[0].addEventListener("load", function(){ this.selectedIndex=(memberIdx+1); this.parentNode.parentNode.setAttribute('UID',this.value); }, false);
+                    newtemplate.childNodes[1].childNodes[0].addEventListener("command", function(){ this.parentNode.parentNode.setAttribute('UID',this.value); checkInput(); }, false);
                     newtemplate.childNodes[1].childNodes[0].setAttribute("id","CatManValidator_Menu_"+i);
                     CatManValidatorFields.push("CatManValidator_Menu_"+i);
                 break;
