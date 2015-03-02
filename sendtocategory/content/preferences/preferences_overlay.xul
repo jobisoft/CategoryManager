@@ -14,7 +14,7 @@
   
         <prefpane id="CatManPreferencesPane"
           label="&sendtocategory.pref.label;"
-          onpaneload="document.getElementById('CatManToAddressField').value=getSettingValue('sendtocategory.toaddress');">
+          onpaneload="document.getElementById('CatManToAddressField').value=jbCatManPref.getSettingValue('sendtocategory.toaddress');">
 
             <tabbox id="CatManPreferencesTabbox" 
             flex="1" 
@@ -39,7 +39,7 @@
 			<label value="&sendtocategory.pref.generaltab.toaddr.label;"/>
 			<textbox id="CatManToAddressField" 
                                     value=""     
-                                    onchange="setSettingValue('sendtocategory.toaddress',this.value)"
+                                    onchange="jbCatManPref.setSettingValue('sendtocategory.toaddress',this.value)"
                                     style="width:100%"/>
 			<description>&sendtocategory.pref.generaltab.toaddr.desc3;</description>
 				    

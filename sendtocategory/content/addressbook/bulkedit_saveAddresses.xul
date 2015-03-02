@@ -13,7 +13,7 @@
     buttons="accept"
     buttonlabelaccept="&sendtocategory.bulkedit.close.button;"
     ondialogaccept=""
-    onload="saveList()">
+    onload="jbCatMan.saveList()">
 
     <script type="application/javascript" src="chrome://messenger/content/mailCore.js"/>
     <script type="application/javascript" src="chrome://messenger/content/addressbook/addressbook.js"/>
@@ -22,9 +22,9 @@
     <script type="text/javascript" src="chrome://sendtocategory/content/category_tools.js"/>
     <script type="text/javascript" src="chrome://sendtocategory/content/addressbook/bulkedit.js"/>
     <script type="text/javascript">
-        var CatManBulkTextBoxLabel = "&sendtocategory.bulkedit.save.title;";
-        var bulkEditChoose = "&sendtocategory.bulkedit.choose;";
-        var bulkEditNoName = "&sendtocategory.bulkedit.noname;";
+        jbCatMan.locale.bulkTextBoxLabel = "&sendtocategory.bulkedit.save.title;";
+        jbCatMan.locale.bulkEditChoose = "&sendtocategory.bulkedit.choose;";
+        jbCatMan.locale.bulkEditNoName = "&sendtocategory.bulkedit.noname;";
     </script>
     
     <vbox id="CatManDialogBox" flex="1">

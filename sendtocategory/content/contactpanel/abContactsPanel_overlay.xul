@@ -14,9 +14,9 @@
     <script type="text/javascript" src="chrome://sendtocategory/content/category_tools.js"/>
     <script type="text/javascript" src="chrome://sendtocategory/content/contactpanel/abContactsPanel_overlay.js"/>
     <script type="text/javascript">
-        var prefixForPeopleSearch = "&sendtocategory.category.label;";
-        document.getElementById("addressbookList").addEventListener("select", function() { contactPanelCategoryMenuInit(); }, false);
-        var placeholderText = "&sendtocategory.categoryfilter.label;";
+        jbCatMan.locale.prefixForPeopleSearch = "&sendtocategory.category.label;";
+        jbCatMan.locale.placeholderText = "&sendtocategory.categoryfilter.label;";
+        document.getElementById("addressbookList").addEventListener("select", function() { jbCatMan.contactPanelCategoryMenuInit(); }, false);
     </script>
    
     <vbox id="results_box" flex="1">
@@ -24,7 +24,7 @@
             <separator class="thin"/>
             <hbox id="categoryfilter-panel-bar" class="toolbar" align="center" insertafter="panel-bar">
                 <menulist id="CatManCategoryFilterList"
-                oncommand="contactPanelCategoryMenuChanged();" flex="1"
+                oncommand="jbCatMan.contactPanelCategoryMenuChanged();" flex="1"
                 persist="value">
                     <menupopup id="CatManCategoryFilterListPopup" writable="true"/>
                 </menulist>

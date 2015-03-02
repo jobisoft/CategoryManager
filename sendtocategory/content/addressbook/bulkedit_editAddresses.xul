@@ -12,13 +12,13 @@
     buttons="accept,cancel"
     buttonlabelaccept="&sendtocategory.bulkedit.validate.button;"
     buttonlabelcancel="&sendtocategory.cancel.button;"    
-    ondialogaccept="CatMan.bulkList=document.getElementById('CatManBulkTextBox').value;CatMan.needToValidateBulkList=true;"
-    onload="loadBulkList()">
+    ondialogaccept="jbCatMan.data.bulkList=document.getElementById('CatManBulkTextBox').value;jbCatMan.data.needToValidateBulkList=true;"
+    onload="jbCatMan.loadBulkList()">
 
     <script type="text/javascript" src="chrome://sendtocategory/content/category_tools.js"/>
     <script type="text/javascript" src="chrome://sendtocategory/content/addressbook/bulkedit.js"/>
     <script type="text/javascript">
-        var CatManBulkTextBoxLabel = "&sendtocategory.bulkedit.edit.title;";
+        jbCatMan.locale.bulkTextBoxLabel = "&sendtocategory.bulkedit.edit.title;";
     </script>
     
     <vbox id="CatManDialogBox">

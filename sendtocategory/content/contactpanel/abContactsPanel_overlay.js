@@ -1,46 +1,55 @@
+//###################################################
+//adding additional functions to the jbCatMan Object
+//###################################################
 
-let CatMan = new categoryObject();
+jbCatMan.contactPanelCategoryMenuInit = function () {
 
-function contactPanelCategoryMenuInit() {
-   
-        let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
-        scanCategories(abManager.getDirectory(document.getElementById('addressbookList').value));
+  if (!jbCatMan.sogoInstalled) {
+    document.getElementById("CatManCategoryFilterList").style.display = 'none';
+    if (jbCatMan.sogoAlert) alert("It looks like the SOGo-Connector Add-On is not installed, which is required for the CategoryManager to work! The following errors have been found:\n\n" + jbCatMan.sogoError);
+    jbCatMan.sogoAlert = false;
+    return false;
+  }
+  let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
+  let currentlySelectedAddressbook = document.getElementById('addressbookList').value;
+  
+  //contactPanelCategoryMenuInit is called onSelect, which is triggered once without a book selected
+  if (currentlySelectedAddressbook == "") return;
+  jbCatMan.scanCategories(abManager.getDirectory(currentlySelectedAddressbook));
 
-        let menulist = document.getElementById("CatManCategoryFilterList");
-        menulist.selectedItem = null;
-        var itemCount = menulist.itemCount;
-        for( var i = (itemCount-1); i >= 0; i-- ) menulist.removeItemAt(i);
-        
-        let menupopup = document.getElementById("CatManCategoryFilterListPopup");
-        let newItem = document.createElement("menuitem");
-        newItem.setAttribute("label", placeholderText);
-        newItem.setAttribute("value", "");
-        menupopup.appendChild( newItem );
-        
-        for (var i = 0; i < CatMan.categoryList.length; i++) {
-            let newItem = document.createElement("menuitem");
-            newItem.setAttribute("label", "- " + CatMan.categoryList[i]);
-            newItem.setAttribute("value", CatMan.categoryList[i]);
-            menupopup.appendChild( newItem );
-        }        
-        menulist.selectedItem = menulist.getItemAtIndex(0);
-        
-        if (CatMan.categoryList.length == 0) {
-            menulist.disabled = true;
-        } else {
-            menulist.disabled = false;
-        }
-        updatePeopleSearchInput("");
+  let menulist = document.getElementById("CatManCategoryFilterList");
+  menulist.selectedItem = null;
+  let itemCount = menulist.itemCount;
+  for(let i = (itemCount-1); i >= 0; i-- ) menulist.removeItemAt(i);
+  
+  let menupopup = document.getElementById("CatManCategoryFilterListPopup");
+  let newItem = document.createElement("menuitem");
+  newItem.setAttribute("label", jbCatMan.locale.placeholderText);
+  newItem.setAttribute("value", "");
+  menupopup.appendChild( newItem );
+  
+  for (let i = 0; i < jbCatMan.data.categoryList.length; i++) {
+    let newItem = document.createElement("menuitem");
+    newItem.setAttribute("label", "- " + jbCatMan.data.categoryList[i]);
+    newItem.setAttribute("value", jbCatMan.data.categoryList[i]);
+    menupopup.appendChild( newItem );
+  }        
+  menulist.selectedItem = menulist.getItemAtIndex(0);
+  
+  if (jbCatMan.data.categoryList.length == 0) {
+    menulist.disabled = true;
+  } else {
+    menulist.disabled = false;
+  }
+  jbCatMan.updatePeopleSearchInput("");
 }
 
 
-function contactPanelCategoryMenuChanged() {      
-	CatMan.selectedCategory = document.getElementById("CatManCategoryFilterList").value; 
-        
-        let menulist = document.getElementById("CatManCategoryFilterList");
-        menulist.selectedItem = menulist.getItemAtIndex(0);
-	
-	doCategorySearch(document.getElementById('addressbookList').value);
-}
+jbCatMan.contactPanelCategoryMenuChanged = function () {
+  jbCatMan.data.selectedCategory = document.getElementById("CatManCategoryFilterList").value; 
 
-    
+  let menulist = document.getElementById("CatManCategoryFilterList");
+  menulist.selectedItem = menulist.getItemAtIndex(0);
+
+  jbCatMan.doCategorySearch(document.getElementById('addressbookList').value);
+}

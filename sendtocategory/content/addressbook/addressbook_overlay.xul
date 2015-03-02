@@ -15,33 +15,33 @@
     <script type="text/javascript" src="chrome://sendtocategory/content/category_tools.js"/>
     <script type="text/javascript" src="chrome://sendtocategory/content/addressbook/addressbook_overlay.js"/>
     <script type="text/javascript">
-        var addTitle = "&sendtocategory.add.title;";
-        var editTitle = "&sendtocategory.edit.title;";
-        var bulkTitle = "&sendtocategory.bulkedit.title;";
+        jbCatMan.locale.addTitle = "&sendtocategory.add.title;";
+        jbCatMan.locale.editTitle = "&sendtocategory.edit.title;";
+        jbCatMan.locale.bulkTitle = "&sendtocategory.bulkedit.title;";
 
-        var errorRename = "&sendtocategory.error.rename;";
-        var errorAdd = "&sendtocategory.error.add;";
-        var infoAdd = "&sendtocategory.info.add;";
-        var confirmRename = "&sendtocategory.confirm.rename;";
-        var confirmDelete = "&sendtocategory.confirm.delete;";
+        jbCatMan.locale.errorRename = "&sendtocategory.error.rename;";
+        jbCatMan.locale.errorAdd = "&sendtocategory.error.add;";
+        jbCatMan.locale.infoAdd = "&sendtocategory.info.add;";
+        jbCatMan.locale.confirmRename = "&sendtocategory.confirm.rename;";
+        jbCatMan.locale.confirmDelete = "&sendtocategory.confirm.delete;";
 
-        var menuEdit = "&sendtocategory.editMenu.label;";
-        var menuRemove = "&sendtocategory.removeMenu.label;";
-        var menuSend = "&sendtocategory.sendMenu.label;";
-        var menuBulk = "&sendtocategory.bulkeditMenu.label;";
+        jbCatMan.locale.menuEdit = "&sendtocategory.editMenu.label;";
+        jbCatMan.locale.menuRemove = "&sendtocategory.removeMenu.label;";
+        jbCatMan.locale.menuSend = "&sendtocategory.sendMenu.label;";
+        jbCatMan.locale.menuBulk = "&sendtocategory.bulkeditMenu.label;";
 
-        var prefixForPeopleSearch = "&sendtocategory.category.label;";
+        jbCatMan.locale.prefixForPeopleSearch = "&sendtocategory.category.label;";
     </script>
 
     <popupset>
         <menupopup id="CatManContextMenu">
-            <menuitem id="CatManContextMenuSend" disabled="true" label="&sendtocategory.send.title;" oncommand="writeToCategory();"/>
+            <menuitem id="CatManContextMenuSend" disabled="true" label="&sendtocategory.send.title;" oncommand="jbCatMan.writeToCategory();"/>
             <menuseparator/>
-            <menuitem id="CatManContextMenuEdit" disabled="true" label="&sendtocategory.edit.title;" oncommand="onEditCategory()"/>
-            <menuitem id="CatManContextMenuRemove" disabled="true" label="&sendtocategory.remove.title;" oncommand="onDeleteCategory()"/>
-            <menuitem id="CatManContextMenuBulk" disabled="true" label="&sendtocategory.bulkedit.title;" oncommand="onBulkEdit()"/>
+            <menuitem id="CatManContextMenuEdit" disabled="true" label="&sendtocategory.edit.title;" oncommand="jbCatMan.onEditCategory()"/>
+            <menuitem id="CatManContextMenuRemove" disabled="true" label="&sendtocategory.remove.title;" oncommand="jbCatMan.onDeleteCategory()"/>
+            <menuitem id="CatManContextMenuBulk" disabled="true" label="&sendtocategory.bulkedit.title;" oncommand="jbCatMan.onBulkEdit()"/>
             <menuseparator/>
-            <menuitem id="CatManContextMenuAdd" disabled="true" label="&sendtocategory.add.title;" oncommand="onAddCategory()"/>
+            <menuitem id="CatManContextMenuAdd" disabled="true" label="&sendtocategory.add.title;" oncommand="jbCatMan.onAddCategory()"/>
         </menupopup>
     </popupset>
 
@@ -55,8 +55,8 @@
                     id="CatManCategoriesList"
                     flex="1"
                     seltype="single"
-                    onselect="onSelectCategoryList()"
-                    ondblclick="writeToCategory()"
+                    onselect="jbCatMan.onSelectCategoryList()"
+                    ondblclick="jbCatMan.writeToCategory()"
                     context="CatManContextMenu">
                         <listhead>
                             <listheader label="&sendtocategory.catbox.header.catname;" />
@@ -73,7 +73,7 @@
                         disabled="true"
                         label="&sendtocategory.addButton.label;"
                         accesskey="&sendtocategory.addButton.accesskey;"
-                        oncommand="onAddCategory()"/>
+                        oncommand="jbCatMan.onAddCategory()"/>
                     </hbox>
                 </vbox>
                 
