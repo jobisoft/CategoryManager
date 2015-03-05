@@ -21,14 +21,6 @@
 			</Description>
 		</em:targetApplication>
 
-		<em:requires>
-			<Description>
-				<!-- SOGo-Connector -->
-				<em:id>sogo-connector@inverse.ca</em:id>
-				<em:minVersion>10.*</em:minVersion>
-			</Description>
-		</em:requires>
-
 		<em:localized>
 			<Description>
 				<em:locale>de-DE</em:locale>
