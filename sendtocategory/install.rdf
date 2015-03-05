@@ -4,33 +4,48 @@
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
-<Description about="urn:mozilla:install-manifest">
-    <em:id>sendtocategory@jobisoft.de</em:id>
-    <em:version>1.58</em:version>
-    <em:type>2</em:type>
-    
-    <!-- Target Application this theme can install into, 
-        with minimum and maximum supported versions. --> 
-    <em:targetApplication>
-      <Description>
-        <!-- Thunderbird -->
-        <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id> 
-        <em:minVersion>3.1a1pre</em:minVersion>
-        <em:maxVersion>28.0</em:maxVersion>
-      </Description>
-    </em:targetApplication>
+	<Description about="urn:mozilla:install-manifest">
+		<em:name>CategoryManager</em:name>
+		<em:id>sendtocategory@jobisoft.de</em:id>
+		<em:version>1.58</em:version>
+		<em:type>2</em:type>
 
+		<!-- Target Application this theme can install into, 
+		with minimum and maximum supported versions. --> 
+		<em:targetApplication>
+			<Description>
+				<!-- Thunderbird -->
+				<em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id> 
+				<em:minVersion>3.1a1pre</em:minVersion>
+				<em:maxVersion>31.*</em:maxVersion>
+			</Description>
+		</em:targetApplication>
 
-    <!-- Front End MetaData -->
-    <em:name>CategoryManager</em:name>
-    <em:description>If you use one ore more external CardDav addressbooks (hooked into Thunderbird via the SOGo-Connector), Thunderbird has access to the category field of each CardDav contact.
+		<em:requires>
+			<Description>
+				<!-- SOGo-Connector -->
+				<em:id>sogo-connector@inverse.ca</em:id>
+				<em:minVersion>10.*</em:minVersion>
+			</Description>
+		</em:requires>
 
-This Add-On provides some category management functions and allows sending an email to all members of a category. It has been developed, to overcome the limitations of the Thunderbird lists, which do not sync very well via CardDav, and have problems if a contact is part of more than one list. 
+		<em:localized>
+			<Description>
+				<em:locale>de-DE</em:locale>
+				<em:description>Kategorie-Verwaltung für CardDav-Kontakte, erlaubt auch das Senden einer E-Mail an alle Kategoriemitglieder.</em:description>
+			</Description>
+		</em:localized>
 
-This Add-On only works with CardDav addressbooks and needs the SOGo-Connector to be installed. If an ownCloud server or a Baikal server is used as CardDav server instead of a SOGo server, users have reported, that SOGo-Connector 10.0.6 needs to be used.
-</em:description>
-    <em:creator>John Bieling</em:creator>
+		<em:localized>
+			<Description>
+				<em:locale>fr-FR</em:locale>
+				<em:description>Catégorie administration des contacts CardDAV, permet également l'envoi d'un e-mail à tous les membres d'une catégorie.</em:description>
+			</Description>
+		</em:localized>
 
-  </Description>      
+		<em:description>Category manager for CardDav contacts, also allows to send an email to all members of a category.</em:description>
+		<em:creator>John Bieling</em:creator>
+
+	</Description>      
 
 </RDF>
