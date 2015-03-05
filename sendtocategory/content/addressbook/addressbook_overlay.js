@@ -1,5 +1,5 @@
 //using mailservices to open message window
-Components.utils.import("resource:///modules/mailServices.js");
+Components.utils.import("resource://app/modules/mailServices.js");
 
 
 
