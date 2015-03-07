@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-
+<?xml version="1.0" encoding="UTF-8"?>
 
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
@@ -7,7 +6,7 @@
 	<Description about="urn:mozilla:install-manifest">
 		<em:name>CategoryManager</em:name>
 		<em:id>sendtocategory@jobisoft.de</em:id>
-		<em:version>1.58</em:version>
+		<em:version>1.58.2</em:version>
 		<em:type>2</em:type>
 
 		<!-- Target Application this theme can install into, 
@@ -31,7 +30,7 @@
 		<em:localized>
 			<Description>
 				<em:locale>fr-FR</em:locale>
-				<em:description>Catégorie administration des contacts CardDAV, permet également l'envoi d'un e-mail à tous les membres d'une catégorie.</em:description>
+				<em:description>Category Manager pour contacts CardDav, permet aussi d'envoyer un email à tous les membres d'une catégorie.</em:description>
 			</Description>
 		</em:localized>
 
