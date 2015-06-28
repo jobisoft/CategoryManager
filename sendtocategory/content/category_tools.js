@@ -241,7 +241,6 @@ jbCatMan.updateCategories = function (mode,oldName,newName) {
 jbCatMan.scanCategories = function () {
   //get address book manager
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);        
-  let addressBook = abManager.getDirectory(GetSelectedDirectory()); //GetSelectedDirectory() returns an URI, but we need the directory itself
 
   //concept decision: we remove empty categories on addressbook switch (select) 
   //-> the sogo category array is constantly cleared and build from scan results
@@ -251,42 +250,57 @@ jbCatMan.scanCategories = function () {
   jbCatMan.data.emails = new Array();
   jbCatMan.data.abSize = 0;
 
-  // do nothing, if this is the new root ab (introduced in TB38)
-  if (GetSelectedDirectory() == "moz-abdirectory://?") return;
-  let cards = addressBook.childCards;
+  
+  // scan all addressbooks, if this is the new root addressbook (introduced in TB38)
+  // otherwise just scan the selected one
+  let addressBooks = new Array();
+  if (GetSelectedDirectory() == "moz-abdirectory://?") {
+    let allAddressBooks = abManager.directories;
+    while (allAddressBooks.hasMoreElements()) {
+       addressBooks.push(allAddressBooks.getNext().URI);
+    }
+  } else {
+      addressBooks.push(GetSelectedDirectory()); //GetSelectedDirectory() returns the URI
+  }
 
-  while (cards.hasMoreElements()) {
-    jbCatMan.data.abSize++;
-    card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
-    let catArray = jbCatMan.getCategoriesfromCard(card);
-    
-    if (catArray.length > 0) {
-      //this person belongs to at least one category, extract UUID
-      let CardID = jbCatMan.getUIDFromCard(card);
+  
+  for (var l = 0; l < addressBooks.length; l++) {
+    let addressBook = abManager.getDirectory(addressBooks[l]); //addressBooks contains URIs, but we need the directory itself
+    let cards = addressBook.childCards;
 
-      //add card to all categories it belongs to
-      for (let i=0; i < catArray.length; i++) {                
-        //is this category known already?
-        //-> foundCategories is using Strings as Keys
-        if (catArray[i] in jbCatMan.data.foundCategories == false) {
-          jbCatMan.data.foundCategories[catArray[i]] = new Array();
-          jbCatMan.data.bcc[catArray[i]] = new Array();
-          jbCatMan.data.emails[catArray[i]] = new Array();
-          jbCatMan.data.categoryList.push(catArray[i]);
-        }
-        
-        //add card to category
-        jbCatMan.data.foundCategories[catArray[i]].push(CardID);
-        jbCatMan.data.emails[catArray[i]].push(card.primaryEmail);
-        let bccfield = "";
-        if (card.displayName != "") {
-          bccfield = "\"" + card.displayName + "\"" + " <" + card.primaryEmail + ">";
-        } else {
-          bccfield = card.primaryEmail;
-        }
-        jbCatMan.data.bcc[catArray[i]].push(bccfield);
-      }      
-    }                    
+    while (isGroupdavDirectory(addressBook.URI) && cards.hasMoreElements()) {
+      jbCatMan.data.abSize++;
+      card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
+      let catArray = jbCatMan.getCategoriesfromCard(card);
+      
+      if (catArray.length > 0) {
+        //this person belongs to at least one category, extract UUID
+        let CardID = jbCatMan.getUIDFromCard(card);
+
+        //add card to all categories it belongs to
+        for (let i=0; i < catArray.length; i++) {                
+          //is this category known already?
+          //-> foundCategories is using Strings as Keys
+          if (catArray[i] in jbCatMan.data.foundCategories == false) {
+            jbCatMan.data.foundCategories[catArray[i]] = new Array();
+            jbCatMan.data.bcc[catArray[i]] = new Array();
+            jbCatMan.data.emails[catArray[i]] = new Array();
+            jbCatMan.data.categoryList.push(catArray[i]);
+          }
+          
+          //add card to category
+          jbCatMan.data.foundCategories[catArray[i]].push(CardID);
+          jbCatMan.data.emails[catArray[i]].push(card.primaryEmail);
+          let bccfield = "";
+          if (card.displayName != "") {
+            bccfield = "\"" + card.displayName + "\"" + " <" + card.primaryEmail + ">";
+          } else {
+            bccfield = card.primaryEmail;
+          }
+          jbCatMan.data.bcc[catArray[i]].push(bccfield);
+        }      
+      }                    
+    }
   }
   jbCatMan.data.categoryList.sort();
 }
