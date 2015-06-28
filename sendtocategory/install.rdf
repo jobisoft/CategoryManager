@@ -6,7 +6,7 @@
 	<Description about="urn:mozilla:install-manifest">
 		<em:name>CategoryManager</em:name>
 		<em:id>sendtocategory@jobisoft.de</em:id>
-		<em:version>1.58.2</em:version>
+		<em:version>1.58.3</em:version>
 		<em:type>2</em:type>
 
 		<!-- Target Application this theme can install into, 
@@ -15,8 +15,8 @@
 			<Description>
 				<!-- Thunderbird -->
 				<em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id> 
-				<em:minVersion>3.1a1pre</em:minVersion>
-				<em:maxVersion>31.*</em:maxVersion>
+				<em:minVersion>38.0.1</em:minVersion>
+				<em:maxVersion>38.*</em:maxVersion>
 			</Description>
 		</em:targetApplication>
 

@@ -251,6 +251,8 @@ jbCatMan.scanCategories = function () {
   jbCatMan.data.emails = new Array();
   jbCatMan.data.abSize = 0;
 
+  // do nothing, if this is the new root ab (introduced in TB38)
+  if (GetSelectedDirectory() == "moz-abdirectory://?") return;
   let cards = addressBook.childCards;
 
   while (cards.hasMoreElements()) {
