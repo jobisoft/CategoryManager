@@ -46,11 +46,17 @@ jbCatMan.contactPanelCategoryMenuInit = function () {
 
 
 jbCatMan.contactPanelCategoryMenuChanged = function () {
-  jbCatMan.data.selectedCategory = document.getElementById("CatManCategoryFilterList").value; 
 
+  if (document.getElementById("CatManCategoryFilterList").value == "") return;
+	
+  //get selected category
+  jbCatMan.data.selectedCategory = document.getElementById("CatManCategoryFilterList").value; 
+	
+  //revert selection to placeholdertext (topmost entry)
   let menulist = document.getElementById("CatManCategoryFilterList");
   menulist.selectedItem = menulist.getItemAtIndex(0);
 
+  //apply filter
   jbCatMan.doCategorySearch(document.getElementById('addressbookList').value);
 
   //select all members of the selected category to save mouse clicks (if only
