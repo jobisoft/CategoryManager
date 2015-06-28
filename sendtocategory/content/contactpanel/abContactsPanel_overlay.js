@@ -52,4 +52,10 @@ jbCatMan.contactPanelCategoryMenuChanged = function () {
   menulist.selectedItem = menulist.getItemAtIndex(0);
 
   jbCatMan.doCategorySearch(document.getElementById('addressbookList').value);
+
+  //select all members of the selected category to save mouse clicks (if only
+  //one member is to be selected, the user still has to click once as before)
+  let abResultsTree = document.getElementById("abResultsTree");
+  abResultsTree.treeBoxObject.view.selection.selectAll();
+	
 }
