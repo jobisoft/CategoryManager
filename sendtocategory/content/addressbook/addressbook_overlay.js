@@ -81,7 +81,7 @@ jbCatMan.updateCategoryList = function () {
   //remove all catmenuitems from cat search menu
   let menupopup = document.getElementById("SCSearchCriteriaButtonMenu");
   for (let i = menupopup.childNodes.length ; i > 0; i--) {
-    if (menupopup.childNodes[i-1].value=="catmenuitem") {
+    if (menupopup.childNodes[i-1].getAttribute("value") == "catmenuitem") {
       menupopup.removeChild(menupopup.childNodes[i-1]);
     }
   }
