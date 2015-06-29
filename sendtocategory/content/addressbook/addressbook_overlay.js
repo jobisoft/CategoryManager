@@ -112,7 +112,7 @@ jbCatMan.updateButtons = function () {
   document.getElementById("CatManContextMenuRemove").disabled = (jbCatMan.data.selectedCategory == "" || !isGroupdavDirectory(GetSelectedDirectory()));
   document.getElementById("CatManContextMenuEdit").disabled = (jbCatMan.data.selectedCategory == "" || !isGroupdavDirectory(GetSelectedDirectory()));
   document.getElementById("CatManContextMenuSend").disabled = (jbCatMan.data.selectedCategory == "");
-  document.getElementById("CatManContextMenuBulk").disabled = (jbCatMan.data.selectedCategory == "");
+  document.getElementById("CatManContextMenuBulk").disabled = (jbCatMan.data.selectedCategory == "" || !isGroupdavDirectory(GetSelectedDirectory()));
 
   if (jbCatMan.sogoInstalled) {
     document.getElementById("CatManAddContactCategoryButton").disabled = (abManager.getDirectory(GetSelectedDirectory()).isRemote || !isGroupdavDirectory(GetSelectedDirectory()));    
