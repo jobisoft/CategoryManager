@@ -109,8 +109,8 @@ jbCatMan.updateCategoryList = function () {
 jbCatMan.updateButtons = function () {
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
   
-  document.getElementById("CatManContextMenuRemove").disabled = (jbCatMan.data.selectedCategory == "");
-  document.getElementById("CatManContextMenuEdit").disabled = (jbCatMan.data.selectedCategory == "");
+  document.getElementById("CatManContextMenuRemove").disabled = (jbCatMan.data.selectedCategory == "" || !isGroupdavDirectory(GetSelectedDirectory()));
+  document.getElementById("CatManContextMenuEdit").disabled = (jbCatMan.data.selectedCategory == "" || !isGroupdavDirectory(GetSelectedDirectory()));
   document.getElementById("CatManContextMenuSend").disabled = (jbCatMan.data.selectedCategory == "");
   document.getElementById("CatManContextMenuBulk").disabled = (jbCatMan.data.selectedCategory == "");
 
