@@ -9,12 +9,12 @@
 		<em:version>1.59</em:version>
 		<em:type>2</em:type>
 
-		<!-- Target Application this theme can install into, 
-		with minimum and maximum supported versions. --> 
+		<!-- Target Application this theme can install into,
+		with minimum and maximum supported versions. -->
 		<em:targetApplication>
 			<Description>
 				<!-- Thunderbird -->
-				<em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id> 
+				<em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
 				<em:minVersion>38.0</em:minVersion>
 				<em:maxVersion>38.*</em:maxVersion>
 			</Description>
@@ -34,9 +34,16 @@
 			</Description>
 		</em:localized>
 
+    <em:localized>
+			<Description>
+				<em:locale>es-AR</em:locale>
+				<em:description>Administrador de categorias para contactos CardDAV, que permite enviar un correo a todos los miembros de una categoria.</em:description>
+			</Description>
+		</em:localized>
+
 		<em:description>Category manager for CardDav contacts, also allows to send an email to all members of a category.</em:description>
 		<em:creator>John Bieling</em:creator>
 
-	</Description>      
+	</Description>
 
 </RDF>

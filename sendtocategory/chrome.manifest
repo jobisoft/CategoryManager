@@ -3,8 +3,8 @@ skin sendtocategory classic/1.0 skin/
 locale sendtocategory de-DE locale/de-DE/
 locale sendtocategory en-US locale/en-US/
 locale sendtocategory fr-FR locale/fr-FR/
+locale sendtocategory es-AR locale/es-AR/
 
 overlay chrome://messenger/content/addressbook/addressbook.xul chrome://sendtocategory/content/addressbook/addressbook_overlay.xul
 overlay chrome://messenger/content/addressbook/abContactsPanel.xul chrome://sendtocategory/content/contactpanel/abContactsPanel_overlay.xul
 overlay chrome://messenger/content/preferences/preferences.xul chrome://sendtocategory/content/preferences/preferences_overlay.xul
-
