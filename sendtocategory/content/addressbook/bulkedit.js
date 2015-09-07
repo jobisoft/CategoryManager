@@ -337,10 +337,18 @@ jbCatMan.saveList_RemoveCards = function (i) {
       //ERROR
       let row = document.createElement('listitem');
       let cell = document.createElement('listcell');
-      cell.setAttribute('label',  "Error: RemoveList contains unknown UID [" + UID+ "], something is wrong." );
+      cell.setAttribute('label',  "Error: RemoveList contains unknown UID [" + UID + "], something is wrong." );
       row.appendChild(cell);
       CatManSaverList.appendChild(row);                    
-    } else {
+    } else if (card.primaryEmail == "") {
+			//This card has no primary email and must not be touched.
+      name  = jbCatMan.getUserNamefromCard(card,UID);
+			let row = document.createElement('listitem');
+      let cell = document.createElement('listcell');
+      cell.setAttribute('label',  "keep contact [" + name  + "] in [" + jbCatMan.data.selectedCategory + "]" );
+      row.appendChild(cell);
+      CatManSaverList.appendChild(row);                    			
+		} else {
       name  = jbCatMan.getUserNamefromCard(card,UID);
       //Contact is no longer part of this category - REMOVE IT
       let cats = jbCatMan.getCategoriesfromCard(card);
@@ -355,7 +363,7 @@ jbCatMan.saveList_RemoveCards = function (i) {
         //Log
         let row = document.createElement('listitem');
         let cell = document.createElement('listcell');
-        cell.setAttribute('label',  "remove contact [" + name  + "] from ["+jbCatMan.data.selectedCategory+"]" );
+        cell.setAttribute('label',  "remove contact [" + name  + "] from [" + jbCatMan.data.selectedCategory + "]" );
         row.appendChild(cell);
         CatManSaverList.appendChild(row);                    
       }
