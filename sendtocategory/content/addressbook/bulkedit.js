@@ -341,14 +341,14 @@ jbCatMan.saveList_RemoveCards = function (i) {
       row.appendChild(cell);
       CatManSaverList.appendChild(row);                    
     } else if (card.primaryEmail == "") {
-			//This card has no primary email and must not be touched.
+      //This card has no primary email and must not be removed.
       name  = jbCatMan.getUserNamefromCard(card,UID);
-			let row = document.createElement('listitem');
+      let row = document.createElement('listitem');
       let cell = document.createElement('listcell');
       cell.setAttribute('label',  "keep contact [" + name  + "] in [" + jbCatMan.data.selectedCategory + "]" );
       row.appendChild(cell);
       CatManSaverList.appendChild(row);                    			
-		} else {
+    } else {
       name  = jbCatMan.getUserNamefromCard(card,UID);
       //Contact is no longer part of this category - REMOVE IT
       let cats = jbCatMan.getCategoriesfromCard(card);
