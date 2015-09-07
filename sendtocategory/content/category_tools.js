@@ -290,14 +290,18 @@ jbCatMan.scanCategories = function () {
           
           //add card to category
           jbCatMan.data.foundCategories[catArray[i]].push(CardID);
-          jbCatMan.data.emails[catArray[i]].push(card.primaryEmail);
-          let bccfield = "";
-          if (card.displayName != "") {
-            bccfield = "\"" + card.displayName + "\"" + " <" + card.primaryEmail + ">";
-          } else {
-            bccfield = card.primaryEmail;
+          
+          //add card to emails-list and bcc-list (if primaryEmail is defined)
+          if (card.primaryEmail != "") {
+            jbCatMan.data.emails[catArray[i]].push(card.primaryEmail);
+            let bccfield = "";
+            if (card.displayName != "") {
+              bccfield = "\"" + card.displayName + "\"" + " <" + card.primaryEmail + ">";
+            } else {
+              bccfield = card.primaryEmail;
+            }
+            jbCatMan.data.bcc[catArray[i]].push(bccfield);
           }
-          jbCatMan.data.bcc[catArray[i]].push(bccfield);
         }      
       }                    
     }
