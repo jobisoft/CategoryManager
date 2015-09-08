@@ -16,6 +16,15 @@ jbCatMan.loadBulkList = function () {
     value = value + jbCatMan.data.emails[jbCatMan.data.selectedCategory][i] + "\n";
   }     
   bulkbox.value=value;
+  
+  //give feedback to users about possible category members without primaryEmails, 
+  //which will not be altered
+  if (jbCatMan.data.membersWithoutPrimaryEmail[jbCatMan.data.selectedCategory].length == 0) {
+    document.getElementById("CatManInfoBox").style.display = "none";
+  } else {
+    document.getElementById("CatManDescriptionNoPrimaryEmail").innerHTML = jbCatMan.locale.descriptionNoPrimaryEmail.replace("##counts##",jbCatMan.data.membersWithoutPrimaryEmail[jbCatMan.data.selectedCategory].length);
+  }
+
 }
 
 

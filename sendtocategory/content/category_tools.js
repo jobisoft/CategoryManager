@@ -51,6 +51,7 @@ jbCatMan.init = function () {
   jbCatMan.data.foundCategories = new Array();
   jbCatMan.data.categoryList = new Array();
   jbCatMan.data.bcc = new Array();
+  jbCatMan.data.membersWithoutPrimaryEmail = new Array();
   jbCatMan.data.emails = new Array();
   jbCatMan.data.abSize = 0;
   
@@ -247,6 +248,7 @@ jbCatMan.scanCategories = function () {
   jbCatMan.data.foundCategories = new Array();
   jbCatMan.data.categoryList = new Array();
   jbCatMan.data.bcc = new Array();
+  jbCatMan.data.membersWithoutPrimaryEmail = new Array();
   jbCatMan.data.emails = new Array();
   jbCatMan.data.abSize = 0;
 
@@ -284,6 +286,7 @@ jbCatMan.scanCategories = function () {
           if (catArray[i] in jbCatMan.data.foundCategories == false) {
             jbCatMan.data.foundCategories[catArray[i]] = new Array();
             jbCatMan.data.bcc[catArray[i]] = new Array();
+            jbCatMan.data.membersWithoutPrimaryEmail[catArray[i]] = new Array();
             jbCatMan.data.emails[catArray[i]] = new Array();
             jbCatMan.data.categoryList.push(catArray[i]);
           }
@@ -301,6 +304,8 @@ jbCatMan.scanCategories = function () {
               bccfield = card.primaryEmail;
             }
             jbCatMan.data.bcc[catArray[i]].push(bccfield);
+          } else {
+            jbCatMan.data.membersWithoutPrimaryEmail[catArray[i]].push(card.primaryEmail);
           }
         }      
       }                    
