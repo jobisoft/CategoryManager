@@ -223,7 +223,8 @@ jbCatMan.onBulkEdit = function () {
   jbCatMan.data.saveList = "";
   jbCatMan.data.cardsToBeRemovedFromCategory = new Array();
   jbCatMan.data.selectedDirectory = GetSelectedDirectory();
-	
+  
+  //all 3 dialogs are called in sequence. Skipped, if canceled.
   window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_editAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,resizable=no", "", jbCatMan.locale.bulkTitle,jbCatMan.data);
   if (jbCatMan.data.needToValidateBulkList) {
     window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_validateAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,width=595,height=600,resizable=yes", "", jbCatMan.locale.bulkTitle,jbCatMan.data);
@@ -231,7 +232,7 @@ jbCatMan.onBulkEdit = function () {
   if (jbCatMan.data.needToSaveBulkList) {
     window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_saveAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,resizable=yes", "", jbCatMan.locale.bulkTitle,jbCatMan.data);
     jbCatMan.updateCategoryList();
-  }    
+  }   
 }
 
 
