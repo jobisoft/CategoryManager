@@ -31,7 +31,7 @@
     </vbox>
     
     <groupbox id="CatManInfoBox">
-        <caption label="&sendtocategory.bulkedit.legend.caption;"/>
+        <caption label="&sendtocategory.bulkedit.note;"/>
         <grid>
             <columns>
                 <column/>

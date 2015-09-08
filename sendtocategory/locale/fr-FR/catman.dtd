@@ -39,6 +39,7 @@
 
 <!ENTITY sendtocategory.pref.generaltab.toaddr.label "Adresse Facultative(visible par tout le monde, le nom affiché sera le nom de la liste)">
 
+<!ENTITY sendtocategory.bulkedit.note "Allusion">
 <!ENTITY sendtocategory.bulkedit.membersWithoutPrimaryEmail "Cette catégorie contient ##counts## contacts sans une adresse e-mail associée. Les informations de catégorie de ces contacts ne peut pas être édité avec cette boîte de dialogue. Ils ne sont pas représentés dans la liste ci-dessus.">
 
 <!ENTITY sendtocategory.bulkedit.title "Éditer directement la catégorie">
