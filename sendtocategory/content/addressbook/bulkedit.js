@@ -22,7 +22,7 @@ jbCatMan.loadBulkList = function () {
   if (jbCatMan.data.membersWithoutPrimaryEmail[jbCatMan.data.selectedCategory].length == 0) {
     document.getElementById("CatManInfoBox").style.display = "none";
   } else {
-    document.getElementById("CatManDescriptionNoPrimaryEmail").innerHTML = jbCatMan.locale.descriptionNoPrimaryEmail.replace("##counts##",jbCatMan.data.membersWithoutPrimaryEmail[jbCatMan.data.selectedCategory].length);
+    document.getElementById("CatManDescriptionNoPrimaryEmail").textContent = jbCatMan.locale.descriptionNoPrimaryEmail.replace("##counts##",jbCatMan.data.membersWithoutPrimaryEmail[jbCatMan.data.selectedCategory].length);
   }
 
 }
