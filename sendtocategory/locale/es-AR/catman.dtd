@@ -36,6 +36,9 @@
 <!ENTITY sendtocategory.pref.generaltab.toaddr.desc3 "Si este campo permanece vacío, el nombre de la lista (entre corchetes) será agregado al asunto, para identificar el correo como parte de una lista.">
 <!ENTITY sendtocategory.pref.generaltab.toaddr.label "Dirección 'para:' opcional (visible para todos, el nombre para mostrar será el nombre de la lista)">
 
+<!ENTITY sendtocategory.bulkedit.note "Nota">
+<!ENTITY sendtocategory.bulkedit.membersWithoutPrimaryEmail "Esta categoría contiene ##counts## contactos sin una dirección de correo electrónico asociada . La información de la categoría de estos contactos no se puede editar con este diálogo. Ellos no se muestran en la lista anterior.">
+
 <!ENTITY sendtocategory.bulkedit.title "Editar Categoría">
 <!ENTITY sendtocategory.bulkeditMenu.label "Editar Categoría ##name##">
 
