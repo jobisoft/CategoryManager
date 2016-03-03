@@ -32,7 +32,18 @@ jbCatMan.updateCategoryList = function () {
   categoriesList.clearSelection();
   for (let i=categoriesList.getRowCount(); i>0; i--) {
     categoriesList.removeItemAt(i-1);            
-  }                  
+  }             
+
+  // add listitem to view contacts of all categories
+  let newListItem = document.createElement("listitem");
+  newListItem.setAttribute("id", "");
+  let categoryName = document.createElement("listcell");
+  categoryName.setAttribute("label", jbCatMan.locale.viewAllCategories);
+  newListItem.appendChild(categoryName);  
+  let categorySize = document.createElement("listcell");
+  categorySize.setAttribute("label", "");
+  newListItem.appendChild(categorySize);            
+  categoriesList.appendChild(newListItem);
   
   //add all categories from the updated/merged array to the category listbox
   for (let i = 0; i < jbCatMan.data.categoryList.length; i++) {

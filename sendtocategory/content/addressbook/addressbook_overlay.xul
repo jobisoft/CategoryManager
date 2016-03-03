@@ -31,6 +31,7 @@
         jbCatMan.locale.menuBulk = "&sendtocategory.bulkeditMenu.label;";
 
         jbCatMan.locale.prefixForPeopleSearch = "&sendtocategory.category.label;";
+        jbCatMan.locale.viewAllCategories = "&sendtocategory.category.all;";
     </script>
 
     <popupset>
