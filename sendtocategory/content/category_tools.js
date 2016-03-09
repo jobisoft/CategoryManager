@@ -180,8 +180,13 @@ jbCatMan.doCategorySearch = function () {
     }        
   }
 
-  //SetAbView(GetSelectedDirectory() + "?" + "(or" + searchQuery + ")");
-  SetAbView(abURI + "?" + "(or" + searchQuery + ")");
+  // view all contatcs
+  if ( jbCatMan.data.selectedCategory == "" ) {
+    SetAbView(abURI);
+  } else {
+    //SetAbView(GetSelectedDirectory() + "?" + "(or" + searchQuery + ")");
+    SetAbView(abURI + "?" + "(or" + searchQuery + ")");
+  }
   if (document.getElementById("CardViewBox") != null && jbCatMan.data.selectedCategory in jbCatMan.data.foundCategories) {
     SelectFirstCard();  
   }
