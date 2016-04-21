@@ -77,9 +77,10 @@ jbCatMan.getCardsFromEmail = function (email) {
 
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);        
 
-  if (!gQueryURIFormat) {
-    gQueryURIFormat = Services.prefs.getComplexValue("mail.addr_book.quicksearchquery.format",Components.interfaces.nsIPrefLocalizedString).data;
-  }
+  // This is not used in the code (why is it here?) - but does not work with TB45
+  //if (!gQueryURIFormat) {
+  //  gQueryURIFormat = Services.prefs.getComplexValue("mail.addr_book.quicksearchquery.format",Components.interfaces.nsIPrefLocalizedString).data;
+  //}
 
   let EmailQuery = "(PrimaryEmail,bw,@V)(SecondEmail,bw,@V)";
   let searchQuery = EmailQuery.replace(/@V/g, encodeURIComponent(email));
@@ -116,9 +117,10 @@ jbCatMan.getCardFromUID = function (UID) {
 
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);        
 
-  if (!gQueryURIFormat) {
-    gQueryURIFormat = Services.prefs.getComplexValue("mail.addr_book.quicksearchquery.format",Components.interfaces.nsIPrefLocalizedString).data;
-  }
+  // This is not used in the code (why is it here?) - but does not work with TB45
+  //if (!gQueryURIFormat) {
+  //  gQueryURIFormat = Services.prefs.getComplexValue("mail.addr_book.quicksearchquery.format",Components.interfaces.nsIPrefLocalizedString).data;
+  //}
   
   let UUIDQuery = "(groupDavKey,bw,@V)";
   let searchQuery = UUIDQuery.replace(/@V/g, encodeURIComponent(UID));
@@ -162,9 +164,10 @@ jbCatMan.getUserNamefromCard = function (card,fallback) {
 jbCatMan.doCategorySearch = function () {
   let abURI = GetSelectedDirectory();
 
-  if (!gQueryURIFormat) {
-    gQueryURIFormat = Services.prefs.getComplexValue("mail.addr_book.quicksearchquery.format",Components.interfaces.nsIPrefLocalizedString).data;
-  }
+  // This is not used in the code (why is it here?) - but does not work with TB45
+  //if (!gQueryURIFormat) {
+  //  gQueryURIFormat = Services.prefs.getComplexValue("mail.addr_book.quicksearchquery.format",Components.interfaces.nsIPrefLocalizedString).data;
+  //}
 
   if (document.getElementById("CardViewBox") != null) {
     ClearCardViewPane();
