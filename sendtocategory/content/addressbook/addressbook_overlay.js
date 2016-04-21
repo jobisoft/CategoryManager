@@ -2,7 +2,7 @@
 Components.utils.import("resource://app/modules/mailServices.js");
 
 let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-loader.loadSubScript("chrome://sendtocategory/content/category_tools.js",this);
+loader.loadSubScript("chrome://sendtocategory/content/category_tools.js");
 
 //###################################################
 //adding additional functions to the jbCatMan Object
@@ -197,7 +197,7 @@ jbCatMan.onSelectAddressbook = function () {
   //if (typeof(SynchronizeGroupdavAddressbook) != "function") {
   if (!jbCatMan.sogoInstalled) {
     document.getElementById("CatManBox").style.display = 'none';
-    if (jbCatMan.sogoAlert) alert("It looks like the SOGo-Connector Add-On is not installed, which is required for the CategoryManager to work! The following errors have been found:\n\n" + jbCatMan.sogoError);
+    if (jbCatMan.sogoAlert) alert("It looks like the SOGo-Connector Add-On is not installed, which is required for the CategoryManager to work! The following errors have been found:\n\n" + jbCatMan.sogoError + "\n\n" + "If you DO have the SOGo-Connector installed, please report this issue to john.bieling@gmx.de.");
     jbCatMan.sogoAlert = false;
     return false;
   }

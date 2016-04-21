@@ -7,6 +7,7 @@ var jbCatMan = {};
 jbCatMan.jsInclude = function (files, target) {
   let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
   for (let i = 0; i < files.length; i++) {
+    dump("Trying to load: " + files[i] + "\n");
     try {
       loader.loadSubScript(files[i], target);
     }
@@ -30,20 +31,21 @@ jbCatMan.init = function () {
   jbCatMan.sogoAlert = true;
   jbCatMan.sogoError = "";       
  
+
+  if (typeof(SCContactCategories) != "object") {
+    jbCatMan.jsInclude(["chrome://sogo-connector/content/addressbook/categories.js"]);
+  }
+
   //SynchronizeGroupdavAddressbook is def in sync.addressbook.groupdav.js
   //isGroupdavDirectory is def in /sync.addressbook.groupdav.js which is included by sync.addressbook.groupdav.js
   if (typeof(SynchronizeGroupdavAddressbook) != "function") {
-    jbCatMan.jsInclude(["chrome://sogo-connector/content/general/sync.addressbook.groupdav.js"],this);
-  }
-
-  if (typeof(SCContactCategories) != "object") {
-    jbCatMan.jsInclude(["chrome://sogo-connector/content/addressbook/categories.js"],this);
+    jbCatMan.jsInclude(["chrome://sogo-connector/content/general/sync.addressbook.groupdav.js"]);
   }
 
   //check again
-  if (typeof(SynchronizeGroupdavAddressbook)  != "function") {jbCatMan.sogoError = jbCatMan.sogoError + "Required function 'SynchronizeGroupdavAddressbook' is not defined.\n\n";}	  
-  if (typeof(isGroupdavDirectory) != "function") {jbCatMan.sogoError = jbCatMan.sogoError + "Required function 'isGroupdavDirectory' is not defined.\n\n";}	  
-  if (typeof(SCContactCategories) != "object") {jbCatMan.sogoError = jbCatMan.sogoError + "Required object 'SCContactCategories' is not defined.\n\n";}	  
+  if (typeof(SynchronizeGroupdavAddressbook)  != "function") {jbCatMan.sogoError = jbCatMan.sogoError + "Required function 'SynchronizeGroupdavAddressbook' is not defined.\n\n";}
+  if (typeof(isGroupdavDirectory) != "function") {jbCatMan.sogoError = jbCatMan.sogoError + "Required function 'isGroupdavDirectory' is not defined.\n\n";}
+  if (typeof(SCContactCategories) != "object") {jbCatMan.sogoError = jbCatMan.sogoError + "Required object 'SCContactCategories' is not defined.\n\n";}
 
   if ( jbCatMan.sogoError != "" ) {
       jbCatMan.sogoInstalled = false;
