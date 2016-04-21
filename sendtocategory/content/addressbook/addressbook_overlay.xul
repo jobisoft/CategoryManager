@@ -12,7 +12,6 @@
          xmlns:html="http://www.w3.org/1999/xhtml"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
     
-    <script type="text/javascript" src="chrome://sendtocategory/content/category_tools.js"/>
     <script type="text/javascript" src="chrome://sendtocategory/content/addressbook/addressbook_overlay.js"/>
     <script type="text/javascript">
         jbCatMan.locale.addTitle = "&sendtocategory.add.title;";

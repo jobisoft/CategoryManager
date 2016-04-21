@@ -2,7 +2,7 @@
 var jbCatMan = {};
 
 
-  
+ 
 //copied from sgo-connector
 jbCatMan.jsInclude = function (files, target) {
   let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
@@ -11,7 +11,6 @@ jbCatMan.jsInclude = function (files, target) {
       loader.loadSubScript(files[i], target);
     }
     catch(e) {
-      jbCatMan.sogoInstalled = false;
       jbCatMan.sogoError = jbCatMan.sogoError + "CategoryManager [category_tools.js]: failed to include '" + files[i] + "' (" + e + ")\n\n";
     }
   }
@@ -30,22 +29,27 @@ jbCatMan.init = function () {
   jbCatMan.sogoInstalled = true;
   jbCatMan.sogoAlert = true;
   jbCatMan.sogoError = "";       
+ 
+  //SynchronizeGroupdavAddressbook is def in sync.addressbook.groupdav.js
+  //isGroupdavDirectory is def in /sync.addressbook.groupdav.js which is included by sync.addressbook.groupdav.js
   if (typeof(SynchronizeGroupdavAddressbook) != "function") {
-    //sogo sync function is not defined, try to include sogo-connector javascript files
-    jbCatMan.jsInclude([
-    "chrome://sogo-connector/content/addressbook/categories.js", 
-    "chrome://sogo-connector/content/general/vcards.utils.js",
-    "chrome://sogo-connector/content/general/sync.addressbook.groupdav.js"])
-
-    //check again
-    if (typeof(SynchronizeGroupdavAddressbook) != "function") {
-      jbCatMan.sogoInstalled = false;
-      jbCatMan.sogoError = jbCatMan.sogoError + "CategoryManager: required function 'SynchronizeGroupdavAddressbook' is not defined.\n\n";
-    }
+    jbCatMan.jsInclude(["chrome://sogo-connector/content/general/sync.addressbook.groupdav.js"],this);
   }
 
-  //to see dump messages, follow instructions here: https://wiki.mozilla.org/Thunderbird:Debugging_Gloda
-  if (!jbCatMan.sogoInstalled) dump("CategoryManager needs SOGo-Connector: " + jbCatMan.sogoError);
+  if (typeof(SCContactCategories) != "object") {
+    jbCatMan.jsInclude(["chrome://sogo-connector/content/addressbook/categories.js"],this);
+  }
+
+  //check again
+  if (typeof(SynchronizeGroupdavAddressbook)  != "function") {jbCatMan.sogoError = jbCatMan.sogoError + "Required function 'SynchronizeGroupdavAddressbook' is not defined.\n\n";}	  
+  if (typeof(isGroupdavDirectory) != "function") {jbCatMan.sogoError = jbCatMan.sogoError + "Required function 'isGroupdavDirectory' is not defined.\n\n";}	  
+  if (typeof(SCContactCategories) != "object") {jbCatMan.sogoError = jbCatMan.sogoError + "Required object 'SCContactCategories' is not defined.\n\n";}	  
+
+  if ( jbCatMan.sogoError != "" ) {
+      jbCatMan.sogoInstalled = false;
+      //to see dump messages, follow instructions here: https://wiki.mozilla.org/Thunderbird:Debugging_Gloda
+      dump("CategoryManager needs SOGo-Connector! The following dependencies are not met:\n" + jbCatMan.sogoError);
+  }
   
   //mainly managed by jbCatMan.scanCategories()
   jbCatMan.data.foundCategories = new Array();
