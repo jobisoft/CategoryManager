@@ -16,11 +16,6 @@
     ondialogaccept="jbCatMan.data.saveList=document.getElementById('CatManValidatorList');jbCatMan.data.needToSaveBulkList=true;"
     onload="jbCatMan.loadValidateList()">
 
-    <script type="application/javascript" src="chrome://messenger/content/mailCore.js"/>
-    <script type="application/javascript" src="chrome://messenger/content/addressbook/addressbook.js"/>
-    <script type="application/javascript" src="chrome://messenger/content/addressbook/abCommon.js"/>
-
-    <script type="text/javascript" src="chrome://sendtocategory/content/category_tools.js"/>
     <script type="text/javascript" src="chrome://sendtocategory/content/addressbook/bulkedit.js"/>
     <script type="text/javascript">
         jbCatMan.locale.bulkEditChoose = "&sendtocategory.bulkedit.choose;";

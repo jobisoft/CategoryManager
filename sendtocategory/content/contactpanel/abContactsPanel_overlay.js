@@ -1,3 +1,6 @@
+let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+loader.loadSubScript("chrome://sendtocategory/content/category_tools.js");
+
 //###################################################
 //adding additional functions to the jbCatMan Object
 //###################################################

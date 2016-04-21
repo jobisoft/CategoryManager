@@ -16,7 +16,6 @@
     ondialogaccept="jbCatMan.data.bulkList=document.getElementById('CatManBulkTextBox').value;jbCatMan.data.needToValidateBulkList=true;"
     onload="jbCatMan.loadBulkList()">
 
-    <script type="text/javascript" src="chrome://sendtocategory/content/category_tools.js"/>
     <script type="text/javascript" src="chrome://sendtocategory/content/addressbook/bulkedit.js"/>
     <script type="text/javascript">
         jbCatMan.locale.bulkTextBoxLabel = "&sendtocategory.bulkedit.edit.title;";

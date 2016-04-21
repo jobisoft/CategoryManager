@@ -1,3 +1,9 @@
+let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+loader.loadSubScript("chrome://messenger/content/mailCore.js");
+loader.loadSubScript("chrome://messenger/content/addressbook/addressbook.js");
+loader.loadSubScript("chrome://messenger/content/addressbook/abCommon.js");
+loader.loadSubScript("chrome://sendtocategory/content/category_tools.js");
+
 //###################################################
 //adding additional functions to the jbCatMan Object
 //###################################################
