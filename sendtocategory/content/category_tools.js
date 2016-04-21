@@ -267,7 +267,10 @@ jbCatMan.scanCategories = function () {
   if (GetSelectedDirectory() == "moz-abdirectory://?") {
     let allAddressBooks = abManager.directories;
     while (allAddressBooks.hasMoreElements()) {
-       addressBooks.push(allAddressBooks.getNext().URI);
+       abook = allAddressBooks.getNext().QueryInterface(Components.interfaces.nsIAbDirectory);
+       if (abook instanceof Components.interfaces.nsIAbDirectory) { // or nsIAbItem or nsIAbCollection
+        addressBooks.push(abook.URI);
+       }
     }
   } else {
       addressBooks.push(GetSelectedDirectory()); //GetSelectedDirectory() returns the URI
