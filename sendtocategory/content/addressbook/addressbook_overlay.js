@@ -16,36 +16,33 @@ jbCatMan.updateCategoryList = function () {
     if (jbCatMan.data.emptyCategories.indexOf(jbCatMan.data.categoryList[i]) != -1) {
       jbCatMan.data.emptyCategories.splice(jbCatMan.data.emptyCategories.indexOf(jbCatMan.data.categoryList[i]),1);
     }
-  }         
+  }
   
   //any other category in the empty category list needs to be added now to the category list
   for (let i = 0; i < jbCatMan.data.emptyCategories.length; i++) {
     if (jbCatMan.data.categoryList.indexOf(jbCatMan.data.emptyCategories[i]) < 0) {
       jbCatMan.data.categoryList.push(jbCatMan.data.emptyCategories[i]);
     }
-  }   
+  }
   
   //this will update the category drop down menu
-  SCContactCategories.setCategoriesAsArray(jbCatMan.data.categoryList);                  
+  SCContactCategories.setCategoriesAsArray(jbCatMan.data.categoryList);
   
   //clear category listbox
   let categoriesList = document.getElementById("CatManCategoriesList");
   categoriesList.clearSelection();
   for (let i=categoriesList.getRowCount(); i>0; i--) {
-    categoriesList.removeItemAt(i-1);            
-  }             
+    categoriesList.removeItemAt(i-1);
+  }
 
   // add listitem to view contacts of all categories  if there is at least one other category
   if (jbCatMan.data.categoryList.length>0) {
-//      let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
-//      abdir = abManager.getDirectory(GetSelectedDirectory());
-//      alert(abdir.childCards);
       let newListItem = document.createElement("listitem");
       newListItem.setAttribute("id", "");
       let categoryName = document.createElement("listcell");
       categoryName.setAttribute("label", jbCatMan.locale.viewAllCategories);
       categoryName.setAttribute("style", "font-style:italic;");
-      newListItem.appendChild(categoryName);  
+      newListItem.appendChild(categoryName);
       let categorySize = document.createElement("listcell");
       categorySize.setAttribute("label", "");
       newListItem.appendChild(categorySize);            
@@ -59,17 +56,17 @@ jbCatMan.updateCategoryList = function () {
 
     let categoryName = document.createElement("listcell");
     categoryName.setAttribute("label", jbCatMan.data.categoryList[i]);
-    newListItem.appendChild(categoryName);	
+    newListItem.appendChild(categoryName);
     let categorySize = document.createElement("listcell");
     if (jbCatMan.data.categoryList[i] in jbCatMan.data.foundCategories) {
       categorySize.setAttribute("label", jbCatMan.data.foundCategories[jbCatMan.data.categoryList[i]].length);
-    } 
+    }
     else {
       categorySize.setAttribute("label", 0);
     }
-    newListItem.appendChild(categorySize);            
+    newListItem.appendChild(categorySize);
     categoriesList.appendChild(newListItem);
-  }        
+  }
 
   //Does the displayed result still match the selected category? If not, update SearchResults - WE NEED A BETTER BUT FAST WAYS TO DO THIS
   if (jbCatMan.data.selectedCategory != "") {
@@ -118,7 +115,7 @@ jbCatMan.updateCategoryList = function () {
       newItem.catName =jbCatMan.data.categoryList[i];
       newItem.addEventListener("command",  function(e){ jbCatMan.data.selectedCategory=e.target.catName; jbCatMan.doCategorySearch(); }, false);
       menupopup.appendChild( newItem );
-    }        
+    }
   }
 }
 
@@ -182,7 +179,7 @@ jbCatMan.writeToCategory = function () {
     MailServices.compose.OpenComposeWindowWithURI (null, aURI); 
   } else {
     //no need to alert
-    //alert("Selected Category does not contain any contacts.");	    
+    //alert("Selected Category does not contain any contacts.");
   }
 }
 
@@ -200,7 +197,6 @@ jbCatMan.writeToCategory = function () {
 //############
 
 jbCatMan.onSelectAddressbook = function () {
-  //if (typeof(SynchronizeGroupdavAddressbook) != "function") {
   if (!jbCatMan.sogoInstalled) {
     document.getElementById("CatManBox").style.display = 'none';
     if (jbCatMan.sogoAlert) alert("It looks like the SOGo-Connector Add-On is not installed, which is required for the CategoryManager to work! The following errors have been found:\n\n" + jbCatMan.sogoError + "\n\n" + "If you DO have the SOGo-Connector installed, please report this issue to john.bieling@gmx.de.");
@@ -214,14 +210,14 @@ jbCatMan.onSelectAddressbook = function () {
 
 
 
-jbCatMan.onSelectCategoryList = function () {        
+jbCatMan.onSelectCategoryList = function () {
   let categoriesList = document.getElementById("CatManCategoriesList");
   if (categoriesList.selectedIndex != -1) {
     jbCatMan.data.selectedCategory = categoriesList.selectedItem.id
     categoriesList.clearSelection();
     jbCatMan.doCategorySearch();
   }    
-  jbCatMan.updateButtons();                
+  jbCatMan.updateButtons();
 }   
 
 
@@ -250,7 +246,7 @@ jbCatMan.onBulkEdit = function () {
   if (jbCatMan.data.needToSaveBulkList) {
     window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_saveAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,resizable=yes", "", jbCatMan.locale.bulkTitle,jbCatMan.data);
     jbCatMan.updateCategoryList();
-  }   
+  }
 }
 
 
@@ -269,7 +265,7 @@ jbCatMan.onAddCategory = function () {
     }
   };
   window.openDialog("chrome://sendtocategory/content/addressbook/edit_category.xul", "addCategory", "modal,centerscreen,chrome,resizable=no", "", jbCatMan.locale.addTitle, saveObject);
-}    
+}
 
 
 
@@ -292,7 +288,7 @@ jbCatMan.onEditCategory = function () {
             alert(jbCatMan.locale.errorRename.replace("##oldname##",jbCatMan.data.selectedCategory).replace("##newname##",newName));
           }
         }
-      };                
+      };
     } 
     else {
       saveObject = {
@@ -335,7 +331,7 @@ jbCatMan.onDeleteCategory = function () {
         jbCatMan.data.emptyCategories.splice(idx,1);
         jbCatMan.updateCategoryList();
       }
-    }	    
+    }
   }
 }
 

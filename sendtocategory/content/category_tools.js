@@ -23,7 +23,7 @@ jbCatMan.init = function () {
   //locale object to store names from locale file
   jbCatMan.locale = {};
     
-    //data object with all relevant variables, so they can be passed all at once
+  //data object with all relevant variables, so they can be passed all at once
   jbCatMan.data = {};
     
   //check if SOGo-Connector is installed
@@ -121,7 +121,7 @@ jbCatMan.getUIDFromCard = function (card) {
 jbCatMan.getCardFromUID = function (UID) {
   let abURI = jbCatMan.data.selectedDirectory;
 
-  let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);        
+  let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
 
   // This is not used in the code (why is it here?) - but does not work with TB45
   //if (!gQueryURIFormat) {
@@ -145,7 +145,7 @@ jbCatMan.getCategoriesfromCard = function (card) {
   let catArray = [];
   try {
     //this line is derived from chrome://sogo-connector/content/addressbook/cardview-overlay.js
-    catArray = card.getPropertyAsAString("Categories").split("\u001A");                    
+    catArray = card.getPropertyAsAString("Categories").split("\u001A");
   } catch (ex) {}  
     
   return catArray;
@@ -157,11 +157,11 @@ jbCatMan.getUserNamefromCard = function (card,fallback) {
     let userName = "";
     try {
         userName = card.getPropertyAsAString("DisplayName"); 
-    } catch (ex) {}                
+    } catch (ex) {}
     if (userName == "") try {
         userName = card.getPropertyAsAString("FirstName") + " " + card.getPropertyAsAString("LastName");
-    } catch (ex) {}                
-    if (userName == "") userName = fallback;                       
+    } catch (ex) {}
+    if (userName == "") userName = fallback;
     return userName;
 }
 
@@ -206,7 +206,7 @@ jbCatMan.doCategorySearch = function () {
 
 jbCatMan.updateCategories = function (mode,oldName,newName) {
   //get address book manager
-  let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);        
+  let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
   let addressBook = abManager.getDirectory(GetSelectedDirectory()); //GetSelectedDirectory() returns an URI, but we need the directory itself
 
   let cards = addressBook.childCards;
@@ -230,7 +230,7 @@ jbCatMan.updateCategories = function (mode,oldName,newName) {
           continue;
         }
         //It is easier to build a new array, instead of deleting an entry out of an array, which is being looped
-        rebuildCatArray.push(catArray[i]);                 
+        rebuildCatArray.push(catArray[i]);
       }
       
       //was there a manipulation of the card due to rename or delete request? If so, write that into the card
@@ -239,8 +239,8 @@ jbCatMan.updateCategories = function (mode,oldName,newName) {
         card.setProperty("groupDavVersion", "-1");
         addressBook.modifyCard(card);
         requireSync=true;
-      }                    
-    }                    
+      }
+    }
   }
   
   //trigger a sync request, if cards had been changed
@@ -248,7 +248,7 @@ jbCatMan.updateCategories = function (mode,oldName,newName) {
     if (isGroupdavDirectory(addressBook.URI)) {
       SynchronizeGroupdavAddressbook(addressBook.URI);
     }
-  }        
+  }
 }
 
 
@@ -297,7 +297,7 @@ jbCatMan.scanCategories = function () {
         let CardID = jbCatMan.getUIDFromCard(card);
 
         //add card to all categories it belongs to
-        for (let i=0; i < catArray.length; i++) {                
+        for (let i=0; i < catArray.length; i++) {
           //is this category known already?
           //-> foundCategories is using Strings as Keys
           if (catArray[i] in jbCatMan.data.foundCategories == false) {
@@ -324,8 +324,8 @@ jbCatMan.scanCategories = function () {
           } else {
             jbCatMan.data.membersWithoutPrimaryEmail[catArray[i]].push(card.primaryEmail);
           }
-        }      
-      }                    
+        }
+      }
     }
   }
   jbCatMan.data.categoryList.sort();
