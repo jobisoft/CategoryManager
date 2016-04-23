@@ -2,6 +2,7 @@
 
 <!ENTITY sendtocategory.foundcategories.label "Categorías Encontradas:">
 <!ENTITY sendtocategory.category.label "Categorías">
+<!ENTITY sendtocategory.category.all "Total">
 <!ENTITY sendtocategory.name.label "Nombre">
 
 <!ENTITY sendtocategory.categoryfilter.label "Categorías ...">
