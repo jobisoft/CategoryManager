@@ -287,9 +287,13 @@ jbCatMan.scanCategories = function () {
     let addressBook = abManager.getDirectory(addressBooks[l]); //addressBooks contains URIs, but we need the directory itself
     let cards = addressBook.childCards;
 
-    while (isGroupdavDirectory(addressBook.URI) && cards.hasMoreElements()) {
-      jbCatMan.data.abSize++;
+    thisIsGroupdavDirectory = isGroupdavDirectory(addressBook.URI);
+    while (cards.hasMoreElements()) {
       card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
+      jbCatMan.data.abSize++;
+      if (!thisIsGroupdavDirectory) {
+            continue;
+      }
       let catArray = jbCatMan.getCategoriesfromCard(card);
       
       if (catArray.length > 0) {

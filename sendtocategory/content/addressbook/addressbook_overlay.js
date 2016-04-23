@@ -44,8 +44,9 @@ jbCatMan.updateCategoryList = function () {
       categoryName.setAttribute("style", "font-style:italic;");
       newListItem.appendChild(categoryName);
       let categorySize = document.createElement("listcell");
-      categorySize.setAttribute("label", "");
-      newListItem.appendChild(categorySize);            
+      categorySize.setAttribute("label", jbCatMan.data.abSize);
+      categorySize.setAttribute("style", "font-style:italic;");
+      newListItem.appendChild(categorySize);
       categoriesList.appendChild(newListItem);
   }
   
