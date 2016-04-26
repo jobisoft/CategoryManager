@@ -277,6 +277,7 @@ jbCatMan.onEditCategory = function () {
     if (jbCatMan.data.selectedCategory in jbCatMan.data.foundCategories) {
       saveObject = {
         setCategoryName: function CM_setCategoryName(newName) {
+          newName=newName.trim();
           //It is not allowed to rename a category to a name which exists already
           if (jbCatMan.data.categoryList.indexOf(newName) < 0) {
             if (confirm(jbCatMan.locale.confirmRename.replace("##oldname##",jbCatMan.data.selectedCategory).replace("##newname##",newName).replace("##number##",jbCatMan.data.foundCategories[jbCatMan.data.selectedCategory].length))) {
@@ -294,6 +295,7 @@ jbCatMan.onEditCategory = function () {
     else {
       saveObject = {
         setCategoryName: function CM_setCategoryName(newName) {
+          newName=newName.trim();
           //It is not allowed to rename a category to a name which exists already
           if (jbCatMan.data.categoryList.indexOf(newName) < 0) {
             //this category only exists in the temp
