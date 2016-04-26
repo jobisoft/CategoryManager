@@ -255,6 +255,7 @@ jbCatMan.onBulkEdit = function () {
 jbCatMan.onAddCategory = function () {
   let saveObject = {
     setCategoryName: function CM_setCategoryName(newName) {
+      newName=newName.trim();
       if (jbCatMan.data.categoryList.indexOf(newName) < 0) {
         jbCatMan.data.emptyCategories.push(newName);
         alert(jbCatMan.locale.infoAdd.replace("##newname##",newName));
