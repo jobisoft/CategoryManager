@@ -197,6 +197,20 @@ jbCatMan.writeToCategory = function () {
 // onActions
 //############
 
+jbCatMan.onToggleDisplay = function (show) {
+  if (show) {
+	document.getElementById('CatManBox').collapsed = false;
+	document.getElementById('CatManSplitter').hidden = false;
+	document.getElementById('CatManShowBox').hidden = true;	
+  } else {
+	document.getElementById('CatManBox').collapsed = true;
+	document.getElementById('CatManSplitter').hidden = true;
+	document.getElementById('CatManShowBox').hidden = false;	
+  }
+}        
+
+
+
 jbCatMan.onSelectAddressbook = function () {
   if (!jbCatMan.sogoInstalled) {
     document.getElementById("CatManBox").style.display = 'none';

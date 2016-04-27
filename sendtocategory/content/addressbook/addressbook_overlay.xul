@@ -74,9 +74,22 @@
                         label="&sendtocategory.addButton.label;"
                         accesskey="&sendtocategory.addButton.accesskey;"
                         oncommand="jbCatMan.onAddCategory()"/>
+                        <button style="width: 2em; min-width: 2em;"
+                        id="CatManHideCategoryPaneButton"
+                        disabled="false"
+                        label="&sendtocategory.hideCategoryPaneButton.label;"
+                        oncommand="jbCatMan.onToggleDisplay(false)"/>
                     </hbox>
-                </vbox>
-                
+        </vbox>
+        <vbox id="CatManShowBox" hidden="true" pack="end" >
+                    <hbox pack="end" style="border-top: 1px solid black;">		
+                        <button style="width: 2em; min-width: 2em;"
+                        id="CatManShowCategoryPaneButton"
+                        disabled="false"
+                        label="&sendtocategory.showCategoryPaneButton.label;"
+                        oncommand="jbCatMan.onToggleDisplay(true)"/>
+                    </hbox>                
+        </vbox>
     </vbox>
 
 </overlay>

@@ -7,6 +7,9 @@
 
 <!ENTITY sendtocategory.categoryfilter.label "Kategoriefilter ...">
 
+<!ENTITY sendtocategory.hideCategoryPaneButton.label "&#9660;">
+<!ENTITY sendtocategory.showCategoryPaneButton.label "&#9650;">
+
 <!ENTITY sendtocategory.add.title "Neue Kategorie erstellen">
 <!ENTITY sendtocategory.addButton.label "Neue Kategorie erstellen">
 <!ENTITY sendtocategory.addButton.accesskey "N">

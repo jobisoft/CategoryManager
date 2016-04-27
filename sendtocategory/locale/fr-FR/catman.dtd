@@ -7,6 +7,10 @@
 
 <!ENTITY sendtocategory.categoryfilter.label "Catégories ...">
 
+<!ENTITY sendtocategory.hideCategoryPaneButton.label "&#9660;">
+<!ENTITY sendtocategory.showCategoryPaneButton.label "&#9650;">
+
+
 <!ENTITY sendtocategory.add.title "ajouter une catégorie">
 <!ENTITY sendtocategory.addButton.label "ajouter une catégorie">
 <!ENTITY sendtocategory.addButton.accesskey "A">
