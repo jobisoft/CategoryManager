@@ -30,6 +30,10 @@ This option is helpful, if you want to make changes to the Category Manager. Fir
 
 which contains only one line, containing the path to the "sendtocategory" folder of the source, i.e. 
 
-`C:\Users\John\Documents\GitHub\CategoryManager\sendtocategory\`
+`C:\Users\<Username>\Documents\GitHub\CategoryManager\sendtocategory\`.
+
+Place this file into the extensions folder of your Thunderbird profile, which is usually found here:
+
+`C:\Users\<Username>\AppData\Roaming\Thunderbird\Profiles\<profilename>\extensions`.
 
 Restart Thunderbird, it will prompt a security warning about the installation. If you change the source, Thunderbird needs to be restarted, to catch the changes.
