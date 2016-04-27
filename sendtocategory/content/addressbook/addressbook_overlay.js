@@ -356,9 +356,66 @@ jbCatMan.onDeleteCategory = function () {
 
 
 
+//############################
+// event listeners
+//############################
 
+jbCatMan.AbListener = {
 
+  onItemAdded: function AbListener_onItemAdded(
+                                                                  aParentDir,
+                                                                  aItem) {
+    jbCatMan.updateCategoryList();
+  },
 
+  onItemPropertyChanged: function AbListener_onItemPropertyChanged(
+                                                                  aItem,
+                                                                  aProperty,
+                                                                  aOldValue,
+                                                                  aNewValue) {
+    jbCatMan.updateCategoryList();
+  },
+
+  onItemRemoved: function AbListener_onItemRemoved(
+                                                                  aParentDir,
+                                                                  aItem) {
+    jbCatMan.updateCategoryList();
+  },
+
+  add: function AbListener_add() {
+    if (Components.classes["@mozilla.org/abmanager;1"]) {
+      // Thunderbird 3+
+      Components.classes["@mozilla.org/abmanager;1"]
+                .getService(Components.interfaces.nsIAbManager)
+                .addAddressBookListener(jbCatMan.AbListener, Components.interfaces.nsIAbListener.all);
+    } else {
+      // Thunderbird 2
+      Components.classes["@mozilla.org/addressbook/services/session;1"]
+                .getService(Components.interfaces.nsIAddrBookSession)
+                .addAddressBookListener(jbCatMan.AbListener, Components.interfaces.nsIAbListener.all);
+    }
+  },
+
+  remove: function AbListener_remove() {
+    if (Components.classes["@mozilla.org/abmanager;1"]) {
+      // Thunderbird 3
+      Components.classes["@mozilla.org/abmanager;1"]
+                .getService(Components.interfaces.nsIAbManager)
+                .removeAddressBookListener(jbCatMan.AbListener);
+    } else {
+      // Thunderbird 2
+      Components.classes["@mozilla.org/addressbook/services/session;1"]
+                .getService(Components.interfaces.nsIAddrBookSession)
+                .removeAddressBookListener(jbCatMan.AbListener);
+    }
+  }
+};
+
+ jbCatMan.AbListener.add(); 
+ window.addEventListener("unload", function unloadListener(e) {
+      window.removeEventListener("unload", unloadListener, false);
+      jbCatMan.AbListener.remove();
+    }, false);
 
 
 
@@ -380,16 +437,4 @@ DirPaneSelectionChange = function() {
   rval = jbCatMan.DirPaneSelectionChange_ORIG();
   jbCatMan.onSelectAddressbook();
   return rval;
-}
-
-
-
-jbCatMan.SynchronizeGroupdavAddressbook_ORIG = null;
-if (jbCatMan.sogoInstalled) {
-  jbCatMan.SynchronizeGroupdavAddressbook_ORIG = SynchronizeGroupdavAddressbook;
-  SynchronizeGroupdavAddressbook = function(uri) {
-    rval = jbCatMan.SynchronizeGroupdavAddressbook_ORIG(uri);
-    jbCatMan.updateCategoryList();
-    return rval;
-  }
 }
