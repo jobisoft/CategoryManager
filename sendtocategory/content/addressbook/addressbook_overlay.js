@@ -103,10 +103,10 @@ jbCatMan.updateCategoryList = function () {
   }
 
   //update search menu dropdown
-  if (jbCatMan.data.categoryList.length>0) {            
+  if (jbCatMan.data.categoryList.length>0) {
     let newItem = document.createElement("menuseparator");
     newItem.setAttribute("value", "catmenuitem");
-    menupopup.appendChild( newItem );        
+    menupopup.appendChild( newItem );
 
     //update search menu dropdown
     for (let i = 0; i < jbCatMan.data.categoryList.length; i++) {
@@ -148,7 +148,7 @@ jbCatMan.updateButtons = function () {
     document.getElementById("CatManContextMenuEdit").label = jbCatMan.locale.menuEdit.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
     document.getElementById("CatManContextMenuSend").label = jbCatMan.locale.menuSend.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
     document.getElementById("CatManContextMenuBulk").label = jbCatMan.locale.menuBulk.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
-  }    
+  }
 }
 
 
@@ -199,15 +199,15 @@ jbCatMan.writeToCategory = function () {
 
 jbCatMan.onToggleDisplay = function (show) {
   if (show) {
-	document.getElementById('CatManBox').collapsed = false;
-	document.getElementById('CatManSplitter').hidden = false;
-	document.getElementById('CatManShowBox').hidden = true;	
+    document.getElementById('CatManBox').collapsed = false;
+    document.getElementById('CatManSplitter').hidden = false;
+    document.getElementById('CatManShowBox').hidden = true;
   } else {
-	document.getElementById('CatManBox').collapsed = true;
-	document.getElementById('CatManSplitter').hidden = true;
-	document.getElementById('CatManShowBox').hidden = false;	
+    document.getElementById('CatManBox').collapsed = true;
+    document.getElementById('CatManSplitter').hidden = true;
+    document.getElementById('CatManShowBox').hidden = false;
   }
-}        
+}
 
 
 
@@ -221,7 +221,7 @@ jbCatMan.onSelectAddressbook = function () {
   jbCatMan.data.emptyCategories = new Array();
   jbCatMan.data.selectedCategory = "";
   jbCatMan.updateCategoryList();
-}        
+}
 
 
 
@@ -231,9 +231,9 @@ jbCatMan.onSelectCategoryList = function () {
     jbCatMan.data.selectedCategory = categoriesList.selectedItem.id
     categoriesList.clearSelection();
     jbCatMan.doCategorySearch();
-  }    
+  }
   jbCatMan.updateButtons();
-}   
+}
 
 
 
@@ -306,7 +306,7 @@ jbCatMan.onEditCategory = function () {
           }
         }
       };
-    } 
+    }
     else {
       saveObject = {
         setCategoryName: function CM_setCategoryName(newName) {
@@ -325,10 +325,9 @@ jbCatMan.onEditCategory = function () {
         }
       };
     }
-        
     window.openDialog("chrome://sendtocategory/content/addressbook/edit_category.xul", "editCategory", "modal,centerscreen,chrome,resizable=no", jbCatMan.data.selectedCategory, jbCatMan.locale.editTitle, saveObject);	    		    
   }
-}    
+}
 
 
 
@@ -341,7 +340,7 @@ jbCatMan.onDeleteCategory = function () {
         jbCatMan.updateCategories("remove",jbCatMan.data.selectedCategory);
         jbCatMan.data.selectedCategory = "";
       }
-    } 
+    }
     else {
       //is it in the empty category list?
       let idx = jbCatMan.data.emptyCategories.indexOf(jbCatMan.data.selectedCategory);
@@ -398,7 +397,7 @@ jbCatMan.AbListener = {
 
   remove: function AbListener_remove() {
     if (Components.classes["@mozilla.org/abmanager;1"]) {
-      // Thunderbird 3
+      // Thunderbird 3+
       Components.classes["@mozilla.org/abmanager;1"]
                 .getService(Components.interfaces.nsIAbManager)
                 .removeAddressBookListener(jbCatMan.AbListener);
@@ -411,7 +410,7 @@ jbCatMan.AbListener = {
   }
 };
 
- jbCatMan.AbListener.add(); 
+ jbCatMan.AbListener.add();
  window.addEventListener("unload", function unloadListener(e) {
       window.removeEventListener("unload", unloadListener, false);
       jbCatMan.AbListener.remove();
