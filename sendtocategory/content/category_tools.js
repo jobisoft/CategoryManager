@@ -29,7 +29,7 @@ jbCatMan.init = function () {
   //check if SOGo-Connector is installed
   jbCatMan.sogoInstalled = true;
   jbCatMan.sogoAlert = true;
-  jbCatMan.sogoError = "";       
+  jbCatMan.sogoError = "";
  
 
   if (typeof(SCContactCategories) != "object") {
@@ -105,14 +105,13 @@ jbCatMan.getCardsFromEmail = function (email) {
 
 jbCatMan.getUIDFromCard = function (card) {
   let CardID = "";
-  // if (!isGroupdavDirectory(uri)) from sync.addressbook.groupdav.js
   try {
     CardID = card.getPropertyAsAString("groupDavKey"); //CardUID
-  } catch (ex) {}     
+  } catch (ex) {}
   if (CardID == "") {
-    alert("We have a card without ID (groupDavKey): " + jbCatMan.getUserNamefromCard(card,"NoName"));
+    jbCatMan.scanErrors.push(jbCatMan.getUserNamefromCard(card,"NoName"));
   }
-  
+
   return CardID;
 }
 
@@ -282,7 +281,7 @@ jbCatMan.scanCategories = function () {
       addressBooks.push(GetSelectedDirectory()); //GetSelectedDirectory() returns the URI
   }
 
-  
+  jbCatMan.scanErrors = new Array();
   for (var l = 0; l < addressBooks.length; l++) {
     let addressBook = abManager.getDirectory(addressBooks[l]); //addressBooks contains URIs, but we need the directory itself
     let cards = addressBook.childCards;
@@ -333,6 +332,18 @@ jbCatMan.scanCategories = function () {
     }
   }
   jbCatMan.data.categoryList.sort();
+  if (jbCatMan.scanErrors.length > 0) {
+    msg = "There are " + jbCatMan.scanErrors.length + " contact cards without a propper ID (groupDavKey), which usually means, that new contacts have been created while the connection to the cardDAV server is lost (wrong user, password and/or server) or something else is broken.\n";
+    for (let i=0; i < jbCatMan.scanErrors.length; i++) {
+      if (i>5) {
+        msg = msg + "\n...";
+        break;
+      } else {
+        msg = msg + "\n" + jbCatMan.scanErrors[i];
+      }
+    }
+    alert(msg);
+  }
 }
 
 
