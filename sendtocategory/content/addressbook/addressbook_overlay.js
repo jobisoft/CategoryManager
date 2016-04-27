@@ -410,26 +410,21 @@ jbCatMan.AbListener = {
   }
 };
 
- jbCatMan.AbListener.add();
+// Add listener for card changes
+jbCatMan.AbListener.add();
  window.addEventListener("unload", function unloadListener(e) {
       window.removeEventListener("unload", unloadListener, false);
       jbCatMan.AbListener.remove();
     }, false);
+
+// Add listener for action in search input field
+document.getElementById("peopleSearchInput").addEventListener('command', jbCatMan.onPeopleSearchClick, true);
 
 
 
 //############################
 // override global functions
 //############################
-
-jbCatMan.onEnterInSearchBar_ORIG = onEnterInSearchBar;
-onEnterInSearchBar = function() {
-  rval = jbCatMan.onEnterInSearchBar_ORIG();
-  jbCatMan.onPeopleSearchClick();
-  return rval;
-}
-
-
 
 jbCatMan.DirPaneSelectionChange_ORIG = DirPaneSelectionChange;
 DirPaneSelectionChange = function() {
