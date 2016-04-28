@@ -155,14 +155,9 @@ jbCatMan.updateButtons = function () {
 
 jbCatMan.writeToCategory = function () {
   let currentCategory = jbCatMan.data.selectedCategory;
-  let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("accessibility.");
-  let branch = prefs.getChildList("", {});
-  let setting = branch["sendtocategory.toaddress"];
+  let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
+  let setting = prefs.getCharPref("toaddress"); 
 
-  if ("" + setting == "undefined") {
-    setting = "";
-  }
-    
   if (currentCategory!="" && (currentCategory in jbCatMan.data.foundCategories)) {
     let sURL="mailto:";
     //Add envelope addr if specified - or add [ListName] to Subject
