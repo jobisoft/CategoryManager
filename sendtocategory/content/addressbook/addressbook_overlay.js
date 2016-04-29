@@ -428,17 +428,14 @@ jbCatMan.AbListener.add();
 // Add listener for action in search input field
 document.getElementById("peopleSearchInput").addEventListener('command', jbCatMan.onPeopleSearchClick, true);
 
+// Add listener for action in addressbook pane
+document.getElementById("dirTree").addEventListener('select', jbCatMan.onSelectAddressbook, true);
 
 
 //############################
 // override global functions
 //############################
 
-jbCatMan.DirPaneSelectionChange_ORIG = DirPaneSelectionChange;
-DirPaneSelectionChange = function() {
-  rval = jbCatMan.DirPaneSelectionChange_ORIG();
-  jbCatMan.onSelectAddressbook();
-  return rval;
 /********************************************************************************
  SelectFirstAddressBook() is defined in abCommon.js and is called only during 
  addressbook init in addressbook.js. So modifiying this function is the most 
