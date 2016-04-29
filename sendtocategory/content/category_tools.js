@@ -268,10 +268,15 @@ jbCatMan.scanCategories = function () {
   
   // scan all addressbooks, if this is the new root addressbook (introduced in TB38)
   // otherwise just scan the selected one
+  let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
   let addressBooks = new Array();
+
   if (GetSelectedDirectory() == "moz-abdirectory://?") {
     let allAddressBooks = abManager.directories;
     while (allAddressBooks.hasMoreElements()) {
+       if (prefs.getBoolPref("disable_global_book")) {
+         break;
+       }
        abook = allAddressBooks.getNext().QueryInterface(Components.interfaces.nsIAbDirectory);
        if (abook instanceof Components.interfaces.nsIAbDirectory) { // or nsIAbItem or nsIAbCollection
         addressBooks.push(abook.URI);

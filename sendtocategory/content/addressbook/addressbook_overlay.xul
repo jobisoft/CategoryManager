@@ -82,7 +82,7 @@
                     </hbox>
         </vbox>
         <vbox id="CatManShowBox" hidden="true" pack="end" >
-                    <hbox pack="end" style="border-top: 1px solid black;">		
+                    <hbox pack="end" style="border-top: 1px solid grey; padding-top:2px;">		
                         <button style="width: 2em; min-width: 2em;"
                         id="CatManShowCategoryPaneButton"
                         disabled="false"

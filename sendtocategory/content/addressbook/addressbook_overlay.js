@@ -213,9 +213,22 @@ jbCatMan.onSelectAddressbook = function () {
     jbCatMan.sogoAlert = false;
     return false;
   }
+
+  let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
+  // disable and clear CardViewPane, if global abook is selected and user enabled this option
+  if (gDirTree.view.selection.currentIndex == 0 && prefs.getBoolPref("disable_global_book")) {
+    document.getElementById("abResultsTree").disabled = true;
+    document.getElementById("peopleSearchInput").disabled = true;
+    SetAbView();
+  } else {
+    document.getElementById("abResultsTree").disabled = false;
+    document.getElementById("peopleSearchInput").disabled = false;
+  }
+
   jbCatMan.data.emptyCategories = new Array();
   jbCatMan.data.selectedCategory = "";
   jbCatMan.updateCategoryList();
+  prefs.setCharPref("last_book",GetSelectedDirectory());
 }
 
 
@@ -426,4 +439,32 @@ DirPaneSelectionChange = function() {
   rval = jbCatMan.DirPaneSelectionChange_ORIG();
   jbCatMan.onSelectAddressbook();
   return rval;
+/********************************************************************************
+ SelectFirstAddressBook() is defined in abCommon.js and is called only during 
+ addressbook init in addressbook.js. So modifiying this function is the most 
+ simple way, to load the last used addressbook, instead of the first one.
+********************************************************************************/
+jbCatMan.SelectFirstAddressBook_ORIG = SelectFirstAddressBook;
+SelectFirstAddressBook = function() {
+  let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
+
+  // Use standard SelectFirstAddressBook function, if the user does not want to load the last used book
+  if (!prefs.getBoolPref("remember_last_book")) {
+    jbCatMan.SelectFirstAddressBook_ORIG();
+  } else {  
+    //find index of lastBook - if not found we will end up with the first one
+    lastBook = prefs.getCharPref("last_book");
+    let lastBookIndex = gDirTree.view.rowCount-1;
+    while (gDirectoryTreeView.getDirectoryAtIndex(lastBookIndex).URI != lastBook && lastBookIndex > 0) {
+      lastBookIndex--;
+    }
+
+    if (gDirTree.view.selection.currentIndex != lastBookIndex) {
+      gDirTree.view.selection.select(lastBookIndex);
+      if (gPreviousDirTreeIndex != lastBookIndex) {
+        ChangeDirectoryByURI(GetSelectedDirectory());
+      }
+      gAbResultsTree.focus();  
+    }
+  }
 }
