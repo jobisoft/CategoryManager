@@ -75,14 +75,25 @@
                         accesskey="&sendtocategory.addButton.accesskey;"
                         oncommand="jbCatMan.onAddCategory()"/>
                         <button style="width: 2em; min-width: 2em;"
+                        id="CatManHelpButton"
+                        disabled="false"
+                        label="&sendtocategory.helpButton.label;"
+                        oncommand="jbCatMan.onHelpButton()"/>
+                        <button style="width: 2em; min-width: 2em;"
                         id="CatManHideCategoryPaneButton"
                         disabled="false"
                         label="&sendtocategory.hideCategoryPaneButton.label;"
                         oncommand="jbCatMan.onToggleDisplay(false)"/>
+
                     </hbox>
         </vbox>
         <vbox id="CatManShowBox" hidden="true" pack="end" >
                     <hbox pack="end" style="border-top: 1px solid grey; padding-top:2px;">		
+                        <button style="width: 2em; min-width: 2em;"
+                        id="CatManHelpButton"
+                        disabled="false"
+                        label="&sendtocategory.helpButton.label;"
+                        oncommand="jbCatMan.onHelpButton()"/>
                         <button style="width: 2em; min-width: 2em;"
                         id="CatManShowCategoryPaneButton"
                         disabled="false"
