@@ -156,7 +156,7 @@ jbCatMan.updateButtons = function () {
 jbCatMan.writeToCategory = function () {
   let currentCategory = jbCatMan.data.selectedCategory;
   let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
-  let setting = prefs.getCharPref("toaddress"); 
+  let setting = prefs.getCharPref("to_address"); 
 
   if (currentCategory!="" && (currentCategory in jbCatMan.data.foundCategories)) {
     let sURL="mailto:";
