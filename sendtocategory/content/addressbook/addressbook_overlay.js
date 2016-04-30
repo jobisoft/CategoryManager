@@ -124,26 +124,32 @@ jbCatMan.updateCategoryList = function () {
 
 jbCatMan.updateButtons = function () {
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
-  
-  document.getElementById("CatManContextMenuRemove").disabled = (jbCatMan.data.selectedCategory == "" || !isGroupdavDirectory(GetSelectedDirectory()));
-  document.getElementById("CatManContextMenuEdit").disabled = (jbCatMan.data.selectedCategory == "" || !isGroupdavDirectory(GetSelectedDirectory()));
-  document.getElementById("CatManContextMenuSend").disabled = (jbCatMan.data.selectedCategory == "");
-  document.getElementById("CatManContextMenuBulk").disabled = (jbCatMan.data.selectedCategory == "" || !isGroupdavDirectory(GetSelectedDirectory()));
+  let isCardDAV = isGroupdavDirectory(GetSelectedDirectory());
 
-  if (jbCatMan.sogoInstalled) {
-    document.getElementById("CatManAddContactCategoryButton").disabled = (abManager.getDirectory(GetSelectedDirectory()).isRemote || !isGroupdavDirectory(GetSelectedDirectory()));    
-    document.getElementById("CatManContextMenuAdd").disabled = (abManager.getDirectory(GetSelectedDirectory()).isRemote || !isGroupdavDirectory(GetSelectedDirectory()));    
-  } else {
-    document.getElementById("CatManAddContactCategoryButton").disabled = true;
-    document.getElementById("CatManContextMenuAdd").disabled = true;
-  }
-  
+  document.getElementById("CatManContextMenuRemove").disabled = (jbCatMan.data.selectedCategory == "" || !isCardDAV);
+  document.getElementById("CatManContextMenuEdit").disabled = (jbCatMan.data.selectedCategory == "" || !isCardDAV);
+  document.getElementById("CatManContextMenuBulk").disabled = (jbCatMan.data.selectedCategory == "" || !isCardDAV);
+
+  //Send should be possible even if not a groupdav, so we can still send from global addressbook (if not deactivated)
+  document.getElementById("CatManContextMenuSend").disabled = (jbCatMan.data.selectedCategory == ""); 
+
+  //Import and export for all groupDavs, regardless of category (if no category selected, export entire abook or import without category tagging)
+  document.getElementById("CatManContextMenuImport").disabled = !isCardDAV;
+  document.getElementById("CatManContextMenuExport").disabled = !isCardDAV;
+
+  document.getElementById("CatManAddContactCategoryButton").disabled = (abManager.getDirectory(GetSelectedDirectory()).isRemote || !isCardDAV);
+  document.getElementById("CatManContextMenuAdd").disabled = (abManager.getDirectory(GetSelectedDirectory()).isRemote || !isCardDAV);
+
   if (jbCatMan.data.selectedCategory == "") {
+    document.getElementById("CatManContextMenuImport").label = jbCatMan.locale.menuAllImport;
+    document.getElementById("CatManContextMenuExport").label = jbCatMan.locale.menuAllExport;
     document.getElementById("CatManContextMenuRemove").label = jbCatMan.locale.menuRemove.replace("##name##","");
     document.getElementById("CatManContextMenuEdit").label = jbCatMan.locale.menuEdit.replace("##name##","");
     document.getElementById("CatManContextMenuSend").label = jbCatMan.locale.menuSend.replace("##name##","");
     document.getElementById("CatManContextMenuBulk").label = jbCatMan.locale.menuBulk.replace("##name##","");
   } else {
+    document.getElementById("CatManContextMenuImport").label = jbCatMan.locale.menuImport.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
+    document.getElementById("CatManContextMenuExport").label = jbCatMan.locale.menuExport.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
     document.getElementById("CatManContextMenuRemove").label = jbCatMan.locale.menuRemove.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
     document.getElementById("CatManContextMenuEdit").label = jbCatMan.locale.menuEdit.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
     document.getElementById("CatManContextMenuSend").label = jbCatMan.locale.menuSend.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
@@ -191,6 +197,18 @@ jbCatMan.writeToCategory = function () {
 //############
 // onActions
 //############
+
+jbCatMan.onImport = function () {
+  alert("todo");
+}
+
+
+
+jbCatMan.onExport = function () {
+  alert("todo");
+}
+
+
 
 jbCatMan.onHelpButton = function () {
   let ioservice = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);

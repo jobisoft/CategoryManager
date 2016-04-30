@@ -29,6 +29,11 @@
         jbCatMan.locale.menuSend = "&sendtocategory.sendMenu.label;";
         jbCatMan.locale.menuBulk = "&sendtocategory.bulkeditMenu.label;";
 
+        jbCatMan.locale.menuImport = "&sendtocategory.importMenu.label;";
+        jbCatMan.locale.menuExport = "&sendtocategory.exportMenu.label;";
+        jbCatMan.locale.menuAllImport = "&sendtocategory.importAllMenu.label;";
+        jbCatMan.locale.menuAllExport = "&sendtocategory.exportAllMenu.label;";
+
         jbCatMan.locale.prefixForPeopleSearch = "&sendtocategory.category.label;";
         jbCatMan.locale.viewAllCategories = "&sendtocategory.category.all;";
     </script>
@@ -40,6 +45,9 @@
             <menuitem id="CatManContextMenuEdit" disabled="true" label="&sendtocategory.edit.title;" oncommand="jbCatMan.onEditCategory()"/>
             <menuitem id="CatManContextMenuRemove" disabled="true" label="&sendtocategory.remove.title;" oncommand="jbCatMan.onDeleteCategory()"/>
             <menuitem id="CatManContextMenuBulk" disabled="true" label="&sendtocategory.bulkedit.title;" oncommand="jbCatMan.onBulkEdit()"/>
+            <menuseparator/>
+            <menuitem id="CatManContextMenuExport" disabled="true" label="&sendtocategory.export.title;" oncommand="jbCatMan.onExport()"/>
+            <menuitem id="CatManContextMenuImport" disabled="true" label="&sendtocategory.import.title;" oncommand="jbCatMan.onImport()"/>
             <menuseparator/>
             <menuitem id="CatManContextMenuAdd" disabled="true" label="&sendtocategory.add.title;" oncommand="jbCatMan.onAddCategory()"/>
         </menupopup>
