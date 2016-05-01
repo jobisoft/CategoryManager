@@ -212,7 +212,7 @@ jbCatMan.onExport = function () {
 
 jbCatMan.onHelpButton = function () {
   let ioservice = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
-  let uriToOpen = ioservice.newURI("https://github.com/jobisoft/CategoryManager/wiki", null, null);
+  let uriToOpen = ioservice.newURI("https://github.com/jobisoft/CategoryManager/wiki/CategoryManager-1.62-Release-Notes", null, null);
   let extps = Components.classes["@mozilla.org/uriloader/external-protocol-service;1"].getService(Components.interfaces.nsIExternalProtocolService);
   extps.loadURI(uriToOpen, null);
 }
