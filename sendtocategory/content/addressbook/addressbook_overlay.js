@@ -134,22 +134,22 @@ jbCatMan.updateButtons = function () {
   document.getElementById("CatManContextMenuSend").disabled = (jbCatMan.data.selectedCategory == ""); 
 
   //Import and export for all groupDavs, regardless of category (if no category selected, export entire abook or import without category tagging)
-  document.getElementById("CatManContextMenuImport").disabled = !isCardDAV;
-  document.getElementById("CatManContextMenuExport").disabled = !isCardDAV;
+  //document.getElementById("CatManContextMenuImport").disabled = !isCardDAV;
+  //document.getElementById("CatManContextMenuExport").disabled = !isCardDAV;
 
-  document.getElementById("CatManAddContactCategoryButton").disabled = (abManager.getDirectory(GetSelectedDirectory()).isRemote || !isCardDAV);
-  document.getElementById("CatManContextMenuAdd").disabled = (abManager.getDirectory(GetSelectedDirectory()).isRemote || !isCardDAV);
+  document.getElementById("CatManAddContactCategoryButton").disabled = !isCardDAV;
+  document.getElementById("CatManContextMenuAdd").disabled = !isCardDAV;
 
   if (jbCatMan.data.selectedCategory == "") {
-    document.getElementById("CatManContextMenuImport").label = jbCatMan.locale.menuAllImport;
-    document.getElementById("CatManContextMenuExport").label = jbCatMan.locale.menuAllExport;
+    //document.getElementById("CatManContextMenuImport").label = jbCatMan.locale.menuAllImport;
+    //document.getElementById("CatManContextMenuExport").label = jbCatMan.locale.menuAllExport;
     document.getElementById("CatManContextMenuRemove").label = jbCatMan.locale.menuRemove.replace("##name##","");
     document.getElementById("CatManContextMenuEdit").label = jbCatMan.locale.menuEdit.replace("##name##","");
     document.getElementById("CatManContextMenuSend").label = jbCatMan.locale.menuSend.replace("##name##","");
     document.getElementById("CatManContextMenuBulk").label = jbCatMan.locale.menuBulk.replace("##name##","");
   } else {
-    document.getElementById("CatManContextMenuImport").label = jbCatMan.locale.menuImport.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
-    document.getElementById("CatManContextMenuExport").label = jbCatMan.locale.menuExport.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
+    //document.getElementById("CatManContextMenuImport").label = jbCatMan.locale.menuImport.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
+    //document.getElementById("CatManContextMenuExport").label = jbCatMan.locale.menuExport.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
     document.getElementById("CatManContextMenuRemove").label = jbCatMan.locale.menuRemove.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
     document.getElementById("CatManContextMenuEdit").label = jbCatMan.locale.menuEdit.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
     document.getElementById("CatManContextMenuSend").label = jbCatMan.locale.menuSend.replace("##name##","["+jbCatMan.data.selectedCategory+"]");

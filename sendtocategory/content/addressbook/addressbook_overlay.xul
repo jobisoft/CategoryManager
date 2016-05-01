@@ -45,9 +45,11 @@
             <menuitem id="CatManContextMenuEdit" disabled="true" label="&sendtocategory.edit.title;" oncommand="jbCatMan.onEditCategory()"/>
             <menuitem id="CatManContextMenuRemove" disabled="true" label="&sendtocategory.remove.title;" oncommand="jbCatMan.onDeleteCategory()"/>
             <menuitem id="CatManContextMenuBulk" disabled="true" label="&sendtocategory.bulkedit.title;" oncommand="jbCatMan.onBulkEdit()"/>
-            <menuseparator/>
-            <menuitem id="CatManContextMenuExport" disabled="true" label="&sendtocategory.export.title;" oncommand="jbCatMan.onExport()"/>
-            <menuitem id="CatManContextMenuImport" disabled="true" label="&sendtocategory.import.title;" oncommand="jbCatMan.onImport()"/>
+            <!-- postponed to next release 
+          <menuseparator/>
+          <menuitem id="CatManContextMenuExport" disabled="true" label="&sendtocategory.export.title;" oncommand="jbCatMan.onExport()"/>
+          <menuitem id="CatManContextMenuImport" disabled="true" label="&sendtocategory.import.title;" oncommand="jbCatMan.onImport()"/>
+          -->
             <menuseparator/>
             <menuitem id="CatManContextMenuAdd" disabled="true" label="&sendtocategory.add.title;" oncommand="jbCatMan.onAddCategory()"/>
         </menupopup>
