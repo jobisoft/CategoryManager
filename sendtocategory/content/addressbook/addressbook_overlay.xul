@@ -11,7 +11,7 @@
 <overlay id="CatManAddressBookOverlay"
          xmlns:html="http://www.w3.org/1999/xhtml"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-    
+
     <script type="text/javascript" src="chrome://sendtocategory/content/addressbook/addressbook_overlay.js"/>
     <script type="text/javascript">
         jbCatMan.locale.addTitle = "&sendtocategory.add.title;";
@@ -54,8 +54,7 @@
             <menuitem id="CatManContextMenuAdd" disabled="true" label="&sendtocategory.add.title;" oncommand="jbCatMan.onAddCategory()"/>
         </menupopup>
     </popupset>
-
-
+    
     <vbox id="dirTreeBox">
 
         <splitter id="CatManSplitter" collapse="after" persist="state"/> 
@@ -74,10 +73,10 @@
                         </listhead>
                         <listcols id="CatManCategoriesListColumns">
                             <listcol flex="3"/>
-                        <listcol flex="1"/>	
+                        <listcol flex="1"/>
                         </listcols>
                     </listbox>
-                    <hbox pack="end">		
+                    <hbox pack="end">
                         <button 
                         id="CatManAddContactCategoryButton"
                         disabled="true"
@@ -109,8 +108,15 @@
                         disabled="false"
                         label="&sendtocategory.showCategoryPaneButton.label;"
                         oncommand="jbCatMan.onToggleDisplay(true)"/>
-                    </hbox>                
+                    </hbox>
         </vbox>
     </vbox>
+
+  <popup id="abResultsTreeContext">
+    <menu id="CatManCategoriesContextMenu" label="&sendtocategory.categoriescontext.label;" insertafter="abResultsTreeContext-properties">
+      <menupopup id="CatManCategoriesContextMenu-popup">
+      </menupopup>
+    </menu>
+  </popup>
 
 </overlay>
