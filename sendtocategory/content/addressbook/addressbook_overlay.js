@@ -140,21 +140,21 @@ jbCatMan.updateCategoryList = function () {
 
 jbCatMan.updateButtons = function () {
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
-  let isCardDAV = isGroupdavDirectory(GetSelectedDirectory());
+  let isRemote = abManager.getDirectory(GetSelectedDirectory()).isRemote;
 
-  document.getElementById("CatManContextMenuRemove").disabled = (jbCatMan.data.selectedCategory == "" || !isCardDAV);
-  document.getElementById("CatManContextMenuEdit").disabled = (jbCatMan.data.selectedCategory == "" || !isCardDAV);
-  document.getElementById("CatManContextMenuBulk").disabled = (jbCatMan.data.selectedCategory == "" || !isCardDAV);
+  document.getElementById("CatManContextMenuRemove").disabled = (jbCatMan.data.selectedCategory == "" || isRemote);
+  document.getElementById("CatManContextMenuEdit").disabled = (jbCatMan.data.selectedCategory == "" || isRemote);
+  document.getElementById("CatManContextMenuBulk").disabled = (jbCatMan.data.selectedCategory == "" || isRemote);
 
   //Send should be possible even if not a groupdav, so we can still send from global addressbook (if not deactivated)
   document.getElementById("CatManContextMenuSend").disabled = (jbCatMan.data.selectedCategory == ""); 
 
   //Import and export for all groupDavs, regardless of category (if no category selected, export entire abook or import without category tagging)
-  //document.getElementById("CatManContextMenuImport").disabled = !isCardDAV;
-  //document.getElementById("CatManContextMenuExport").disabled = !isCardDAV;
+  //document.getElementById("CatManContextMenuImport").disabled = isRemote;
+  //document.getElementById("CatManContextMenuExport").disabled = isRemote;
 
-  document.getElementById("CatManAddContactCategoryButton").disabled = !isCardDAV;
-  document.getElementById("CatManContextMenuAdd").disabled = !isCardDAV;
+  document.getElementById("CatManAddContactCategoryButton").disabled = isRemote;
+  document.getElementById("CatManContextMenuAdd").disabled = isRemote;
 
   if (jbCatMan.data.selectedCategory == "") {
     //document.getElementById("CatManContextMenuImport").label = jbCatMan.locale.menuAllImport;
