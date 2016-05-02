@@ -325,7 +325,7 @@ jbCatMan.scanCategories = function () {
   }
   jbCatMan.data.categoryList.sort();
   if (jbCatMan.scanErrors.length > 0) {
-    msg = "There are " + jbCatMan.scanErrors.length + " contact cards without a propper ID (DbRowID), which usually means, that new contacts have been created while the connection to the cardDAV server is lost (wrong user, password and/or server) or something else is broken.\n";
+    msg = "There are " + jbCatMan.scanErrors.length + " contact cards without a propper ID (DbRowID). That should not happen.\n";
     for (let i=0; i < jbCatMan.scanErrors.length; i++) {
       if (i>5) {
         msg = msg + "\n...";
