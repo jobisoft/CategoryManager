@@ -8,15 +8,12 @@
     <!ENTITY % dtd1 SYSTEM "chrome://sendtocategory/locale/catman.dtd" > %dtd1;
 ]>
 
-<!-- I copied this file from sogo-connector, because the sogo version needs the lightning Add-On. I wanted to remove that dependency -->
-
 <dialog id="CatManCategoryEditor"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   buttons="accept,cancel"
   onload="editCategoryLoad();"
   ondialogaccept="return doOK();">
-  <script type="application/javascript"
-    src="chrome://sogo-connector/content/preferences/edit-category.js"/>
+  <script type="application/javascript" src="chrome://sendtocategory/content/addressbook/edit_category.js"/>
   <vbox id="CatManDialogBox">
     <hbox>
       <label value="&sendtocategory.name.label;" control="categoryName"/>

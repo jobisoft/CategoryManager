@@ -6,7 +6,7 @@
 	<Description about="urn:mozilla:install-manifest">
 		<em:name>CategoryManager</em:name>
 		<em:id>sendtocategory@jobisoft.de</em:id>
-		<em:version>1.62</em:version>
+		<em:version>1.63</em:version>
 		<em:type>2</em:type>
 
 		<!-- Target Application this theme can install into,
