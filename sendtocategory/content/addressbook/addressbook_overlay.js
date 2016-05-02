@@ -4,8 +4,27 @@ Components.utils.import("resource://app/modules/mailServices.js");
 let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
 loader.loadSubScript("chrome://sendtocategory/content/category_tools.js");
 
+
+/* stuff
+
+props = card.properties;
+while (props.hasMoreElements()) {
+    prop = props.getNext().QueryInterface(Components.interfaces.nsIProperty); 
+    dump("Prop ["+ prop.name+"] = ["+prop.value+"]\n");
+}
+
+
+If a sogo book (without sogo connector) is added cards, there is no groupdavid,
+if sogo connector is switched back on - we need to add missing UUID?
+- UUID is used and must therefore be present/checked for
+
+use isRemote to not work on LDAP
+*/
+
+
+
 //###################################################
-//adding additional functions to the jbCatMan Object
+// adding additional functions to the jbCatMan Object
 //###################################################
 
 jbCatMan.updateCategoryList = function () {
@@ -24,9 +43,6 @@ jbCatMan.updateCategoryList = function () {
       jbCatMan.data.categoryList.push(jbCatMan.data.emptyCategories[i]);
     }
   }
-  
-  //this will update the category drop down menu
-  SCContactCategories.setCategoriesAsArray(jbCatMan.data.categoryList);
   
   //clear category listbox
   let categoriesList = document.getElementById("CatManCategoriesList");
@@ -189,23 +205,18 @@ jbCatMan.writeToCategory = function () {
 
 
 
-
-
-
-
-
-//############
+//###################################################
 // onActions
-//############
+//###################################################
 
 jbCatMan.onImport = function () {
-  alert("todo");
+  dump("todo");
 }
 
 
 
 jbCatMan.onExport = function () {
-  alert("todo");
+  dump("todo");
 }
 
 
@@ -234,15 +245,15 @@ jbCatMan.onToggleDisplay = function (show) {
 
 
 jbCatMan.onSelectAddressbook = function () {
-  if (!jbCatMan.sogoInstalled) {
+/*  if (!jbCatMan.sogoInstalled) {
     document.getElementById("CatManBox").style.display = 'none';
     if (jbCatMan.sogoAlert) alert("It looks like the SOGo-Connector Add-On is not installed, which is required for the CategoryManager to work! The following errors have been found:\n\n" + jbCatMan.sogoError + "\n\n" + "If you DO have the SOGo-Connector installed, please report this issue to john.bieling@gmx.de.");
     jbCatMan.sogoAlert = false;
     return false;
-  }
+  }*/
 
   let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
-  // disable and clear CardViewPane, if global abook is selected and user enabled this option
+  // disable and clear ResultTreePane, if global abook is selected and user enabled this option
   if (gDirTree.view.selection.currentIndex == 0 && prefs.getBoolPref("disable_global_book")) {
     document.getElementById("abResultsTree").disabled = true;
     document.getElementById("peopleSearchInput").disabled = true;
@@ -387,12 +398,77 @@ jbCatMan.onDeleteCategory = function () {
   }
 }
 
+// disable context menu if not a single card has been selected, or fill context menu with found categories - IMPROVE MULTICARD SELECTION
+jbCatMan.onResultsTreeContextMenuPopup = function (event) {
+  if (this == event.target) {
+    // otherwise the reset will be executed when any submenu pops up too... 
+    let cards = GetSelectedAbCards();
+    let rootEntry = document.getElementById("CatManCategoriesContextMenu");
+    rootEntry.disabled = (cards.length != 1);
+    if (!rootEntry.disabled) {
+
+        let popup = document.getElementById("CatManCategoriesContextMenu-popup");
+        while (popup.lastChild) {
+            popup.removeChild(popup.lastChild);
+        }
+
+        let allCatsArray = jbCatMan.data.categoryList;
+        let thisCatsArray = jbCatMan.getCategoriesfromCard(cards[0]);
+
+        for (let i = 0; i < allCatsArray.length; i++) {
+            let newItem = document.createElement("menuitem");
+            newItem.setAttribute("label", allCatsArray[i]);
+            newItem.setAttribute("type", "checkbox");
+            //newItem.setAttribute("autocheck", "false");
+            if (thisCatsArray.indexOf(allCatsArray[i]) != -1) {
+              newItem.setAttribute("checked", "true");
+            } else {
+              newItem.setAttribute("checked", "false");
+            }
+            newItem.addEventListener("click", jbCatMan.onCategoriesContextMenuItemCommand, false);
+            popup.appendChild(newItem);
+        }
+
+    }
+  }
+}
+
+// a category has been disabled/enabled via context menu -> store in property
+jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
+  let cards = GetSelectedAbCards();
+  let category = this.label;
+  let enabled = (event.target.getAttribute("checked") == "false");
+
+  for (let i = 0; i < cards.length; i++) {
+    let changed = false;
+    let card = cards[i];
+    let catsArray = jbCatMan.getCategoriesfromCard(card);
+    let catIdx = catsArray.indexOf(category);
+  
+    if (enabled && catIdx == -1) {
+      catsArray.push(category);
+      changed = true;
+    } else if (!enabled && catIdx != -1) {
+      catsArray.splice(catIdx, 1);
+      changed = true;
+    }
+
+    if (changed) {
+      jbCatMan.setCategoriesforCard(card, catsArray);
+      dump("ok");
+      let abUri = GetSelectedDirectory(); //WORKS FOR ROOT AB?
+      let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
+      let ab = abManager.getDirectory(abUri);
+      ab.modifyCard(card);
+      //trigger sync
+    }
+  }
+}
 
 
-
-//############################
+//###################################################
 // event listeners
-//############################
+//###################################################
 
 jbCatMan.AbListener = {
 
@@ -445,23 +521,13 @@ jbCatMan.AbListener = {
   }
 };
 
-// Add listener for card changes
-jbCatMan.AbListener.add();
- window.addEventListener("unload", function unloadListener(e) {
-      window.removeEventListener("unload", unloadListener, false);
-      jbCatMan.AbListener.remove();
-    }, false);
-
-// Add listener for action in search input field
-document.getElementById("peopleSearchInput").addEventListener('command', jbCatMan.onPeopleSearchClick, true);
-
-// Add listener for action in addressbook pane
-document.getElementById("dirTree").addEventListener('select', jbCatMan.onSelectAddressbook, true);
 
 
-//############################
+
+
+//###################################################
 // override global functions
-//############################
+//###################################################
 
 /********************************************************************************
  SelectFirstAddressBook() is defined in abCommon.js and is called only during 
@@ -491,4 +557,36 @@ SelectFirstAddressBook = function() {
       gAbResultsTree.focus();  
     }
   }
+
 }
+
+
+
+
+
+//###################################################
+// init
+//###################################################
+
+jbCatMan.initAddressbook = function() {
+
+  // Add listener for card changes
+  jbCatMan.AbListener.add();
+   window.addEventListener("unload", function unloadListener(e) {
+        window.removeEventListener("unload", unloadListener, false);
+        jbCatMan.AbListener.remove();
+      }, false);
+
+  // Add listener for action in search input field
+  document.getElementById("peopleSearchInput").addEventListener('command', jbCatMan.onPeopleSearchClick, true);
+
+  // Add listener for action in addressbook pane
+  document.getElementById("dirTree").addEventListener('select', jbCatMan.onSelectAddressbook, true);
+
+  //Add listener for category context menu
+  document.getElementById("abResultsTreeContext").addEventListener("popupshowing", jbCatMan.onResultsTreeContextMenuPopup, false);
+
+}
+
+// run init function after window has been loaded
+window.addEventListener("load", function() { jbCatMan.initAddressbook(); }, false);

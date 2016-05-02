@@ -32,10 +32,6 @@ jbCatMan.init = function () {
   jbCatMan.sogoError = "";
  
 
-  if (typeof(SCContactCategories) != "object") {
-    jbCatMan.jsInclude(["chrome://sogo-connector/content/addressbook/categories.js"]);
-  }
-
   //SynchronizeGroupdavAddressbook is def in sync.addressbook.groupdav.js
   //isGroupdavDirectory is def in /sync.addressbook.groupdav.js which is included by sync.addressbook.groupdav.js
   if (typeof(SynchronizeGroupdavAddressbook) != "function") {
@@ -45,7 +41,6 @@ jbCatMan.init = function () {
   //check again
   if (typeof(SynchronizeGroupdavAddressbook)  != "function") {jbCatMan.sogoError = jbCatMan.sogoError + "Required function 'SynchronizeGroupdavAddressbook' is not defined.\n\n";}
   if (typeof(isGroupdavDirectory) != "function") {jbCatMan.sogoError = jbCatMan.sogoError + "Required function 'isGroupdavDirectory' is not defined.\n\n";}
-  if (typeof(SCContactCategories) != "object") {jbCatMan.sogoError = jbCatMan.sogoError + "Required object 'SCContactCategories' is not defined.\n\n";}
 
   if ( jbCatMan.sogoError != "" ) {
       jbCatMan.sogoInstalled = false;
@@ -68,6 +63,8 @@ jbCatMan.init = function () {
 
 
 
+
+
 jbCatMan.updatePeopleSearchInput = function (name) {
   if (name == "") {
     document.getElementById("peopleSearchInput").value = "";
@@ -82,11 +79,6 @@ jbCatMan.getCardsFromEmail = function (email) {
   let abURI = jbCatMan.data.selectedDirectory;
 
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);        
-
-  // This is not used in the code (why is it here?) - but does not work with TB45
-  //if (!gQueryURIFormat) {
-  //  gQueryURIFormat = Services.prefs.getComplexValue("mail.addr_book.quicksearchquery.format",Components.interfaces.nsIPrefLocalizedString).data;
-  //}
 
   let EmailQuery = "(PrimaryEmail,bw,@V)(SecondEmail,bw,@V)";
   let searchQuery = EmailQuery.replace(/@V/g, encodeURIComponent(email));
@@ -106,12 +98,11 @@ jbCatMan.getCardsFromEmail = function (email) {
 jbCatMan.getUIDFromCard = function (card) {
   let CardID = "";
   try {
-    CardID = card.getPropertyAsAString("groupDavKey"); //CardUID
+    CardID = card.getPropertyAsAString("DbRowID"); //CardUID - we might need to check directory type, because RowID is not present in LDAP: nsIAbMDBCard::DbRowID and nsIAbLDAPCard::DN
   } catch (ex) {}
   if (CardID == "") {
     jbCatMan.scanErrors.push(jbCatMan.getUserNamefromCard(card,"NoName"));
   }
-
   return CardID;
 }
 
@@ -122,12 +113,7 @@ jbCatMan.getCardFromUID = function (UID) {
 
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
 
-  // This is not used in the code (why is it here?) - but does not work with TB45
-  //if (!gQueryURIFormat) {
-  //  gQueryURIFormat = Services.prefs.getComplexValue("mail.addr_book.quicksearchquery.format",Components.interfaces.nsIPrefLocalizedString).data;
-  //}
-  
-  let UUIDQuery = "(groupDavKey,bw,@V)";
+  let UUIDQuery = "(DbRowID,=,@V)";
   let searchQuery = UUIDQuery.replace(/@V/g, encodeURIComponent(UID));
 
   let result = abManager.getDirectory(abURI + "?" + "(or" + searchQuery + ")").childCards;
@@ -151,6 +137,16 @@ jbCatMan.getCategoriesfromCard = function (card) {
 }
 
 
+jbCatMan.setCategoriesforCard = function (card, catsArray) {
+  try {
+     card.setPropertyAsAString("Categories", catsArray.join("\u001A"));
+  } catch (ex) {
+    dump("Could not set Categories.\n");
+    return false;
+  }
+  return true;
+}
+
 
 jbCatMan.getUserNamefromCard = function (card,fallback) {
     let userName = "";
@@ -169,16 +165,11 @@ jbCatMan.getUserNamefromCard = function (card,fallback) {
 jbCatMan.doCategorySearch = function () {
   let abURI = GetSelectedDirectory();
 
-  // This is not used in the code (why is it here?) - but does not work with TB45
-  //if (!gQueryURIFormat) {
-  //  gQueryURIFormat = Services.prefs.getComplexValue("mail.addr_book.quicksearchquery.format",Components.interfaces.nsIPrefLocalizedString).data;
-  //}
-
   if (document.getElementById("CardViewBox") != null) {
     ClearCardViewPane();
   }
-  
-  let UUIDQuery = "(groupDavKey,bw,@V)";
+  //http://mxr.mozilla.org/comm-central/source/mailnews/addrbook/src/nsAbQueryStringToExpression.cpp#278
+  let UUIDQuery = "(DbRowID,=,@V)"; //groupDavKey
   let searchQuery = "";
   
   if (jbCatMan.data.selectedCategory in jbCatMan.data.foundCategories) {
@@ -244,9 +235,9 @@ jbCatMan.updateCategories = function (mode,oldName,newName) {
   
   //trigger a sync request, if cards had been changed
   if (requireSync) {
-    if (isGroupdavDirectory(addressBook.URI)) {
-      SynchronizeGroupdavAddressbook(addressBook.URI);
-    }
+//    if (isGroupdavDirectory(addressBook.URI)) {
+//      SynchronizeGroupdavAddressbook(addressBook.URI);
+//    }
   }
 }
 
@@ -338,7 +329,7 @@ jbCatMan.scanCategories = function () {
   }
   jbCatMan.data.categoryList.sort();
   if (jbCatMan.scanErrors.length > 0) {
-    msg = "There are " + jbCatMan.scanErrors.length + " contact cards without a propper ID (groupDavKey), which usually means, that new contacts have been created while the connection to the cardDAV server is lost (wrong user, password and/or server) or something else is broken.\n";
+    msg = "There are " + jbCatMan.scanErrors.length + " contact cards without a propper ID (DbRowID), which usually means, that new contacts have been created while the connection to the cardDAV server is lost (wrong user, password and/or server) or something else is broken.\n";
     for (let i=0; i < jbCatMan.scanErrors.length; i++) {
       if (i>5) {
         msg = msg + "\n...";
@@ -350,6 +341,7 @@ jbCatMan.scanCategories = function () {
     alert(msg);
   }
 }
+
 
 
 
