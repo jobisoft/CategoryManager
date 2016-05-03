@@ -12,7 +12,7 @@ jbCatMan.jsInclude = function (files, target) {
       loader.loadSubScript(files[i], target);
     }
     catch(e) {
-      jbCatMan.sogoError = jbCatMan.sogoError + "CategoryManager [category_tools.js]: failed to include '" + files[i] + "' (" + e + ")\n\n";
+      jbCatMan.sogoError = jbCatMan.sogoError + "category_tools.js failed to include '" + files[i] + "' (" + e + ")\n";
     }
   }
 }
@@ -210,7 +210,7 @@ jbCatMan.doCategorySearch = function () {
 
 
 jbCatMan.updateCategories = function (mode,oldName,newName) {
-  jbCatMan.dump("Begin with updateCategories()",1);
+  jbCatMan.dump("Begin with updateCategories("+mode+","+oldName+","+newName+")",1);
   //get address book manager
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
   let addressBook = abManager.getDirectory(GetSelectedDirectory()); //GetSelectedDirectory() returns an URI, but we need the directory itself

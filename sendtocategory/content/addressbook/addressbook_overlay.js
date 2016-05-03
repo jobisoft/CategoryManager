@@ -19,6 +19,9 @@ if sogo connector is switched back on - we need to add missing UUID?
 - UUID is used and must therefore be present/checked for
 
 use isRemote to not work on LDAP
+
+- add trigger dumps to listeners (bottom)
+- maybe remove listern onPropertychanged while doing batch jobs and enable them again when done? and call by oneself?
 */
 
 
@@ -216,27 +219,34 @@ jbCatMan.writeToCategory = function () {
 //###################################################
 
 jbCatMan.onImport = function () {
+  jbCatMan.dump("Begin with onImport()",1);
   jbCatMan.dump("todo");
+  jbCatMan.dump("Done with onImport()",-1);
 }
 
 
 
 jbCatMan.onExport = function () {
+  jbCatMan.dump("Begin with onExport()",1);
   jbCatMan.dump("todo");
+  jbCatMan.dump("Done with onExport()",-1);
 }
 
 
 
 jbCatMan.onHelpButton = function () {
+  jbCatMan.dump("Begin with onHelpButton()",1);
   let ioservice = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
   let uriToOpen = ioservice.newURI("https://github.com/jobisoft/CategoryManager/wiki/CategoryManager-1.62-Release-Notes", null, null);
   let extps = Components.classes["@mozilla.org/uriloader/external-protocol-service;1"].getService(Components.interfaces.nsIExternalProtocolService);
   extps.loadURI(uriToOpen, null);
+  jbCatMan.dump("Done with onHelpButton()",-1);
 }
 
 
 
 jbCatMan.onToggleDisplay = function (show) {
+  jbCatMan.dump("Begin with onToggleDisplay("+show+")",1);
   if (show) {
     document.getElementById('CatManBox').collapsed = false;
     document.getElementById('CatManSplitter').hidden = false;
@@ -246,13 +256,13 @@ jbCatMan.onToggleDisplay = function (show) {
     document.getElementById('CatManSplitter').hidden = true;
     document.getElementById('CatManShowBox').hidden = false;
   }
+  jbCatMan.dump("End with onToggleDisplay()",-1);
 }
 
 
 
 jbCatMan.onSelectAddressbook = function () {
   jbCatMan.dump("Begin with onSelectAddressbook()",1);
-  jbCatMan.dump("test");
 /*  we only need sogo to sync
     if (!jbCatMan.sogoInstalled) {
     document.getElementById("CatManBox").style.display = 'none';
@@ -295,13 +305,16 @@ jbCatMan.onSelectCategoryList = function () {
 
 
 jbCatMan.onPeopleSearchClick = function () {
+  jbCatMan.dump("Begin with onPeopleSearchClick()",1);
   jbCatMan.data.selectedCategory = "";
   jbCatMan.updateButtons();
+  jbCatMan.dump("Done with onPeopleSearchClick()",-1);
 }
 
 
 
 jbCatMan.onBulkEdit = function () {
+  jbCatMan.dump("Begin with onBulkEdit()",1);
   //initializing bulkedit-members
   jbCatMan.data.needToValidateBulkList = false;
   jbCatMan.data.needToSaveBulkList = false;
@@ -319,11 +332,13 @@ jbCatMan.onBulkEdit = function () {
     window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_saveAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,resizable=yes", "", jbCatMan.locale.bulkTitle,jbCatMan.data);
     jbCatMan.updateCategoryList();
   }
+  jbCatMan.dump("Done with onBulkEdit()",-1);
 }
 
 
 
 jbCatMan.onAddCategory = function () {
+  jbCatMan.dump("Begin with onAddCategory()",1);
   let saveObject = {
     setCategoryName: function CM_setCategoryName(newName) {
       newName=newName.trim();
@@ -338,11 +353,13 @@ jbCatMan.onAddCategory = function () {
     }
   };
   window.openDialog("chrome://sendtocategory/content/addressbook/edit_category.xul", "addCategory", "modal,centerscreen,chrome,resizable=no", "", jbCatMan.locale.addTitle, saveObject);
+  jbCatMan.dump("Done with onAddCategory()",-1);
 }
 
 
 
 jbCatMan.onEditCategory = function () {
+  jbCatMan.dump("Begin with onEditCategory()",1);
   if (jbCatMan.data.selectedCategory != "") {
     let saveObject = null;
     //Is it an empty category? If so, we can simply use the sogo rename function, otherwise we have to go through all contacts and rename that category.
@@ -384,11 +401,13 @@ jbCatMan.onEditCategory = function () {
     }
     window.openDialog("chrome://sendtocategory/content/addressbook/edit_category.xul", "editCategory", "modal,centerscreen,chrome,resizable=no", jbCatMan.data.selectedCategory, jbCatMan.locale.editTitle, saveObject);	    		    
   }
+  jbCatMan.dump("Done with onEditCategory()",-1);
 }
 
 
 
 jbCatMan.onDeleteCategory = function () {
+  jbCatMan.dump("Begin with onDeleteCategory()",1);
   if (jbCatMan.data.selectedCategory != "") {
     //is it an empty category? If so, we have to check, if it is on the empty category list and remove it
     //if its not an empty category go through all contacts and remove that category.
@@ -407,6 +426,7 @@ jbCatMan.onDeleteCategory = function () {
       }
     }
   }
+  jbCatMan.dump("Done with onDeleteCategory()",-1);
 }
 
 // disable context menu if not a single card has been selected, or fill context menu with found categories - IMPROVE MULTICARD SELECTION
@@ -489,7 +509,9 @@ jbCatMan.AbListener = {
   onItemAdded: function AbListener_onItemAdded(
                                                                   aParentDir,
                                                                   aItem) {
+    jbCatMan.dump("Begin trigger by onItemAdded()",1);
     jbCatMan.updateCategoryList();
+    jbCatMan.dump("Done trigger by onItemAdded()",-1);
   },
 
   onItemPropertyChanged: function AbListener_onItemPropertyChanged(
@@ -497,13 +519,17 @@ jbCatMan.AbListener = {
                                                                   aProperty,
                                                                   aOldValue,
                                                                   aNewValue) {
+    jbCatMan.dump("Begin trigger by onItemPropertyChanged()",1);
     jbCatMan.updateCategoryList();
+    jbCatMan.dump("Done trigger by onItemPropertyChanged()",-1);
   },
 
   onItemRemoved: function AbListener_onItemRemoved(
                                                                   aParentDir,
                                                                   aItem) {
+    jbCatMan.dump("Begin trigger by onItemRemoved()",1);
     jbCatMan.updateCategoryList();
+    jbCatMan.dump("Done trigger by onItemRemoved()",-1);
   },
 
   add: function AbListener_add() {
