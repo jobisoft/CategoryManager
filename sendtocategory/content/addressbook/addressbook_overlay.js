@@ -210,13 +210,13 @@ jbCatMan.writeToCategory = function () {
 //###################################################
 
 jbCatMan.onImport = function () {
-  dump("todo");
+  this.dump("todo");
 }
 
 
 
 jbCatMan.onExport = function () {
-  dump("todo");
+  this.dump("todo");
 }
 
 

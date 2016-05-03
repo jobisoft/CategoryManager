@@ -7,7 +7,7 @@ var jbCatMan = {};
 jbCatMan.jsInclude = function (files, target) {
   let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
   for (let i = 0; i < files.length; i++) {
-    dump("Trying to load: " + files[i] + "\n");
+    this.dump("Trying to load: " + files[i] + "\n");
     try {
       loader.loadSubScript(files[i], target);
     }
@@ -18,8 +18,18 @@ jbCatMan.jsInclude = function (files, target) {
 }
 
 
+jbCatMan.dump = function (str) {
+  if (this.printDumps) {
+    dump("[CategoryManager] " + str + "\n");
+  }
+}
+
+
 
 jbCatMan.init = function () { 
+  //enable or disable debug dump messages
+  jbCatMan.printDumps = true;
+  
   //locale object to store names from locale file
   jbCatMan.locale = {};
     
@@ -45,7 +55,8 @@ jbCatMan.init = function () {
   if ( jbCatMan.sogoError != "" ) {
       jbCatMan.sogoInstalled = false;
       //to see dump messages, follow instructions here: https://wiki.mozilla.org/Thunderbird:Debugging_Gloda
-      dump("CategoryManager needs SOGo-Connector! The following dependencies are not met:\n" + jbCatMan.sogoError);
+      this.dump("SOGo-Connector missing! The following dependencies are not met:");
+      this.dump(jbCatMan.sogoError);
   }
   
   //mainly managed by jbCatMan.scanCategories()
