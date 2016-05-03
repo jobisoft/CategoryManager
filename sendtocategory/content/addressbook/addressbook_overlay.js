@@ -28,6 +28,7 @@ use isRemote to not work on LDAP
 //###################################################
 
 jbCatMan.updateCategoryList = function () {
+  jbCatMan.dump("Begin with updateCategoryList()",1);
   jbCatMan.scanCategories();
   
   //it could be, that a category from emptyCategories is no longer empty (it was scanned) -> remove it from empty
@@ -110,7 +111,9 @@ jbCatMan.updateCategoryList = function () {
   
   jbCatMan.updateButtons();
   
-  //remove all catmenuitems from cat search menu
+/**  Its nice, but uses sogo - I never used it - has to go !!! **
+
+  //  remove all catmenuitems from cat search menu
   let menupopup = document.getElementById("SCSearchCriteriaButtonMenu");
   for (let i = menupopup.childNodes.length ; i > 0; i--) {
     if (menupopup.childNodes[i-1].getAttribute("value") == "catmenuitem") {
@@ -133,12 +136,14 @@ jbCatMan.updateCategoryList = function () {
       newItem.addEventListener("command",  function(e){ jbCatMan.data.selectedCategory=e.target.catName; jbCatMan.doCategorySearch(); }, false);
       menupopup.appendChild( newItem );
     }
-  }
+  } **/
+  jbCatMan.dump("Done with updateCategoryList()",-1);
 }
 
 
 
 jbCatMan.updateButtons = function () {
+  jbCatMan.dump("Begin with updateButtons()",1);
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
   let isRemote = abManager.getDirectory(GetSelectedDirectory()).isRemote;
 
@@ -171,11 +176,14 @@ jbCatMan.updateButtons = function () {
     document.getElementById("CatManContextMenuSend").label = jbCatMan.locale.menuSend.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
     document.getElementById("CatManContextMenuBulk").label = jbCatMan.locale.menuBulk.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
   }
+
+  jbCatMan.dump("Done with updateButtons()",-1);
 }
 
 
 
 jbCatMan.writeToCategory = function () {
+  jbCatMan.dump("Begin with writeToCategory()",1);
   let currentCategory = jbCatMan.data.selectedCategory;
   let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
   let setting = prefs.getCharPref("to_address"); 
@@ -195,10 +203,8 @@ jbCatMan.writeToCategory = function () {
     let ioService =  Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);  
     aURI = ioService.newURI(sURL, null, null);  
     MailServices.compose.OpenComposeWindowWithURI (null, aURI); 
-  } else {
-    //no need to alert
-    //alert("Selected Category does not contain any contacts.");
   }
+  jbCatMan.dump("Done with writeToCategory()",-1);
 }
 
 
@@ -245,10 +251,12 @@ jbCatMan.onToggleDisplay = function (show) {
 
 
 jbCatMan.onSelectAddressbook = function () {
-/*  if (!jbCatMan.sogoInstalled) {
+  jbCatMan.dump("Begin with onSelectAddressbook()",1);
+  jbCatMan.dump("test");
+/*  we only need sogo to sync
+    if (!jbCatMan.sogoInstalled) {
     document.getElementById("CatManBox").style.display = 'none';
-    if (jbCatMan.sogoAlert) alert("It looks like the SOGo-Connector Add-On is not installed, which is required for the CategoryManager to work! The following errors have been found:\n\n" + jbCatMan.sogoError + "\n\n" + "If you DO have the SOGo-Connector installed, please report this issue to john.bieling@gmx.de.");
-    jbCatMan.sogoAlert = false;
+    alert("It looks like the SOGo-Connector Add-On is not installed, which is required for the CategoryManager to work! The following errors have been found:\n\n" + jbCatMan.sogoError + "\n\n" + "If you DO have the SOGo-Connector installed, please report this issue to john.bieling@gmx.de.");
     return false;
   }*/
 
@@ -267,11 +275,13 @@ jbCatMan.onSelectAddressbook = function () {
   jbCatMan.data.selectedCategory = "";
   jbCatMan.updateCategoryList();
   prefs.setCharPref("last_book",GetSelectedDirectory());
+  jbCatMan.dump("Done with onSelectAddressbook()",-1);
 }
 
 
 
 jbCatMan.onSelectCategoryList = function () {
+  jbCatMan.dump("Begin with onSelectCategoryList()",1);
   let categoriesList = document.getElementById("CatManCategoriesList");
   if (categoriesList.selectedIndex != -1) {
     jbCatMan.data.selectedCategory = categoriesList.selectedItem.id
@@ -279,6 +289,7 @@ jbCatMan.onSelectCategoryList = function () {
     jbCatMan.doCategorySearch();
   }
   jbCatMan.updateButtons();
+  jbCatMan.dump("Done with onSelectCategoryList()",-1);
 }
 
 
@@ -400,6 +411,7 @@ jbCatMan.onDeleteCategory = function () {
 
 // disable context menu if not a single card has been selected, or fill context menu with found categories - IMPROVE MULTICARD SELECTION
 jbCatMan.onResultsTreeContextMenuPopup = function (event) {
+  jbCatMan.dump("Begin with onResultsTreeContextMenuPopup()",1);
   if (this == event.target) {
     // otherwise the reset will be executed when any submenu pops up too... 
     let cards = GetSelectedAbCards();
@@ -431,10 +443,12 @@ jbCatMan.onResultsTreeContextMenuPopup = function (event) {
 
     }
   }
+  jbCatMan.dump("Done with onResultsTreeContextMenuPopup()",-1);
 }
 
 // a category has been disabled/enabled via context menu -> store in property
 jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
+  jbCatMan.dump("Begin with onCategoriesContextMenuItemCommand()",1);
   let cards = GetSelectedAbCards();
   let category = this.label;
   let enabled = (event.target.getAttribute("checked") == "false");
@@ -455,13 +469,14 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
 
     if (changed) {
       jbCatMan.setCategoriesforCard(card, catsArray);
-      let abUri = GetSelectedDirectory(); //WORKS FOR ROOT AB?
+      let abUri = GetSelectedDirectory(); //WORKS FOR ROOT AB? NO! TODO: Get true AB of card!
       let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
       let ab = abManager.getDirectory(abUri);
       ab.modifyCard(card);
       //trigger sync
     }
   }
+  jbCatMan.dump("Done with onCategoriesContextMenuItemCommand()",-1);
 }
 
 
@@ -535,6 +550,7 @@ jbCatMan.AbListener = {
 ********************************************************************************/
 jbCatMan.SelectFirstAddressBook_ORIG = SelectFirstAddressBook;
 SelectFirstAddressBook = function() {
+  jbCatMan.dump("Begin with SelectFirstAddressBook()",1);
   let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
 
   // Use standard SelectFirstAddressBook function, if the user does not want to load the last used book
@@ -556,7 +572,7 @@ SelectFirstAddressBook = function() {
       gAbResultsTree.focus();  
     }
   }
-
+  jbCatMan.dump("Done with SelectFirstAddressBook()",-1);
 }
 
 

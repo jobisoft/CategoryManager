@@ -37,7 +37,7 @@
 
                         </vbox>
                     </tabpanel>
-		    
+
                     <tabpanel orient="vertical">
                         <vbox id="CatManPreferencesBoxAddressbook">
 
@@ -47,7 +47,7 @@
                             <checkbox preference='sendtocategory.remember_last_book' label="&sendtocategory.pref.addressbooktab.rememberlastbook.label;" />
 
                         </vbox>
-                    </tabpanel>		    
+                    </tabpanel>
                 </tabpanels>
             </tabbox>
         </prefpane>
