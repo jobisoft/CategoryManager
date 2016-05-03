@@ -210,13 +210,13 @@ jbCatMan.writeToCategory = function () {
 //###################################################
 
 jbCatMan.onImport = function () {
-  this.dump("todo");
+  jbCatMan.dump("todo");
 }
 
 
 
 jbCatMan.onExport = function () {
-  this.dump("todo");
+  jbCatMan.dump("todo");
 }
 
 
@@ -455,7 +455,6 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
 
     if (changed) {
       jbCatMan.setCategoriesforCard(card, catsArray);
-      dump("ok");
       let abUri = GetSelectedDirectory(); //WORKS FOR ROOT AB?
       let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
       let ab = abManager.getDirectory(abUri);

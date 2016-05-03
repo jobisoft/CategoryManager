@@ -7,7 +7,7 @@ var jbCatMan = {};
 jbCatMan.jsInclude = function (files, target) {
   let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
   for (let i = 0; i < files.length; i++) {
-    this.dump("Trying to load: " + files[i] + "\n");
+    jbCatMan.dump("Trying to load: " + files[i] + "\n");
     try {
       loader.loadSubScript(files[i], target);
     }
@@ -19,7 +19,7 @@ jbCatMan.jsInclude = function (files, target) {
 
 
 jbCatMan.dump = function (str) {
-  if (this.printDumps) {
+  if (jbCatMan.printDumps) {
     dump("[CategoryManager] " + str + "\n");
   }
 }
@@ -55,8 +55,8 @@ jbCatMan.init = function () {
   if ( jbCatMan.sogoError != "" ) {
       jbCatMan.sogoInstalled = false;
       //to see dump messages, follow instructions here: https://wiki.mozilla.org/Thunderbird:Debugging_Gloda
-      this.dump("SOGo-Connector missing! The following dependencies are not met:");
-      this.dump(jbCatMan.sogoError);
+      jbCatMan.dump("SOGo-Connector missing! The following dependencies are not met:");
+      jbCatMan.dump(jbCatMan.sogoError);
   }
   
   //mainly managed by jbCatMan.scanCategories()
@@ -152,7 +152,7 @@ jbCatMan.setCategoriesforCard = function (card, catsArray) {
   try {
      card.setPropertyAsAString("Categories", catsArray.join("\u001A"));
   } catch (ex) {
-    dump("Could not set Categories.\n");
+    jbCatMan.dump("Could not set Categories.\n");
     return false;
   }
   return true;
