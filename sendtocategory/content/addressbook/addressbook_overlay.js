@@ -20,7 +20,6 @@ if sogo connector is switched back on - we need to add missing UUID?
 
 use isRemote to not work on LDAP
 
-- maybe remove listern onPropertychanged while doing batch jobs and enable them again when done? and call by oneself?
 - store last addressbook in messenger as well
 */
 
@@ -263,12 +262,6 @@ jbCatMan.onToggleDisplay = function (show) {
 
 jbCatMan.onSelectAddressbook = function () {
   jbCatMan.dump("Begin with onSelectAddressbook()",1);
-/*  we only need sogo to sync
-    if (!jbCatMan.sogoInstalled) {
-    document.getElementById("CatManBox").style.display = 'none';
-    alert("It looks like the SOGo-Connector Add-On is not installed, which is required for the CategoryManager to work! The following errors have been found:\n\n" + jbCatMan.sogoError + "\n\n" + "If you DO have the SOGo-Connector installed, please report this issue to john.bieling@gmx.de.");
-    return false;
-  }*/
 
   let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
   // disable and clear ResultTreePane, if global abook is selected and user enabled this option
@@ -286,11 +279,6 @@ jbCatMan.onSelectAddressbook = function () {
   jbCatMan.updateCategoryList();
   prefs.setCharPref("last_book",GetSelectedDirectory());
   jbCatMan.dump("Done with onSelectAddressbook()",-1);
-}
-jbCatMan.onSelectAddressbookEvent = function () {
-  jbCatMan.dump("Begin trigger by event onSelectAddressbook()",1);
-  jbCatMan.onSelectAddressbook();
-  jbCatMan.dump("Done trigger by event onSelectAddressbook()",-1);
 }
 
 
@@ -314,11 +302,6 @@ jbCatMan.onPeopleSearchClick = function () {
   jbCatMan.data.selectedCategory = "";
   jbCatMan.updateButtons();
   jbCatMan.dump("Done with onPeopleSearchClick()",-1);
-}
-jbCatMan.onPeopleSearchClickEvent = function () {
-  jbCatMan.dump("Begin trigger by event onPeopleSearchClick()",1);
-  jbCatMan.onPeopleSearchClick();
-  jbCatMan.dump("Done trigger by event onPeopleSearchClick()",-1);
 }
 
 
@@ -372,7 +355,7 @@ jbCatMan.onEditCategory = function () {
   jbCatMan.dump("Begin with onEditCategory()",1);
   if (jbCatMan.data.selectedCategory != "") {
     let saveObject = null;
-    //Is it an empty category? If so, we can simply use the sogo rename function, otherwise we have to go through all contacts and rename that category.
+    //Is it an empty category? If so, we can simply use the rename function, otherwise we have to go through all contacts and rename that category.
     if (jbCatMan.data.selectedCategory in jbCatMan.data.foundCategories) {
       saveObject = {
         setCategoryName: function CM_setCategoryName(newName) {
@@ -473,11 +456,6 @@ jbCatMan.onResultsTreeContextMenuPopup = function () {
   }
   jbCatMan.dump("Done with onResultsTreeContextMenuPopup()",-1);
 }
-jbCatMan.onResultsTreeContextMenuPopupEvent = function () {
-  jbCatMan.dump("Begin trigger by event onResultsTreeContextMenuPopup()",1);
-  jbCatMan.onResultsTreeContextMenuPopup();
-  jbCatMan.dump("Done trigger by event onResultsTreeContextMenuPopup()",-1);
-}
 
 
 
@@ -513,6 +491,9 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
   }
   jbCatMan.dump("Done with onCategoriesContextMenuItemCommand()",-1);
 }
+
+
+
 
 
 //###################################################
@@ -626,13 +607,13 @@ jbCatMan.initAddressbook = function() {
       }, false);
 
   // Add listener for action in search input field
-  document.getElementById("peopleSearchInput").addEventListener('command', jbCatMan.onPeopleSearchClickEvent, true);
+  document.getElementById("peopleSearchInput").addEventListener('command', function () { jbCatMan.dump("Begin trigger by event onPeopleSearchClick()",1); jbCatMan.onPeopleSearchClick(); jbCatMan.dump("Done trigger by event onPeopleSearchClick()",-1); } , true);
 
   // Add listener for action in addressbook pane
-  document.getElementById("dirTree").addEventListener('select', jbCatMan.onSelectAddressbookEvent, true);
+  document.getElementById("dirTree").addEventListener('select', function () { jbCatMan.dump("Begin trigger by event onSelectAddressbook()",1); jbCatMan.onSelectAddressbook(); jbCatMan.dump("Done trigger by event onSelectAddressbook()",-1); }, true);
 
   //Add listener for category context menu
-  document.getElementById("CatManCategoriesContextMenu-popup").addEventListener("popupshowing", jbCatMan.onResultsTreeContextMenuPopupEvent, false);
+  document.getElementById("CatManCategoriesContextMenu-popup").addEventListener("popupshowing", function () { jbCatMan.dump("Begin trigger by event onResultsTreeContextMenuPopup()",1); jbCatMan.onResultsTreeContextMenuPopup(); jbCatMan.dump("Done trigger by event onResultsTreeContextMenuPopup()",-1); } , false);
 
   jbCatMan.dump("Done with initAddressbook()",-1);
 }
