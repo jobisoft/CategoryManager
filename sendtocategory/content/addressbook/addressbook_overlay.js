@@ -20,8 +20,8 @@ if sogo connector is switched back on - we need to add missing UUID?
 
 use isRemote to not work on LDAP
 
-- add trigger dumps to listeners (bottom)
 - maybe remove listern onPropertychanged while doing batch jobs and enable them again when done? and call by oneself?
+- store last addressbook in messenger as well
 */
 
 
@@ -287,6 +287,11 @@ jbCatMan.onSelectAddressbook = function () {
   prefs.setCharPref("last_book",GetSelectedDirectory());
   jbCatMan.dump("Done with onSelectAddressbook()",-1);
 }
+jbCatMan.onSelectAddressbookEvent = function () {
+  jbCatMan.dump("Begin trigger by event onSelectAddressbook()",1);
+  jbCatMan.onSelectAddressbook();
+  jbCatMan.dump("Done trigger by event onSelectAddressbook()",-1);
+}
 
 
 
@@ -309,6 +314,11 @@ jbCatMan.onPeopleSearchClick = function () {
   jbCatMan.data.selectedCategory = "";
   jbCatMan.updateButtons();
   jbCatMan.dump("Done with onPeopleSearchClick()",-1);
+}
+jbCatMan.onPeopleSearchClickEvent = function () {
+  jbCatMan.dump("Begin trigger by event onPeopleSearchClick()",1);
+  jbCatMan.onPeopleSearchClick();
+  jbCatMan.dump("Done trigger by event onPeopleSearchClick()",-1);
 }
 
 
@@ -429,42 +439,47 @@ jbCatMan.onDeleteCategory = function () {
   jbCatMan.dump("Done with onDeleteCategory()",-1);
 }
 
+
+
 // disable context menu if not a single card has been selected, or fill context menu with found categories - IMPROVE MULTICARD SELECTION
-jbCatMan.onResultsTreeContextMenuPopup = function (event) {
+jbCatMan.onResultsTreeContextMenuPopup = function () {
   jbCatMan.dump("Begin with onResultsTreeContextMenuPopup()",1);
-  if (this == event.target) {
-    // otherwise the reset will be executed when any submenu pops up too... 
-    let cards = GetSelectedAbCards();
-    let rootEntry = document.getElementById("CatManCategoriesContextMenu");
-    rootEntry.disabled = (cards.length != 1);
-    if (!rootEntry.disabled) {
+  let cards = GetSelectedAbCards();
+  let rootEntry = document.getElementById("CatManCategoriesContextMenu");
+  rootEntry.disabled = (cards.length != 1);
+  if (!rootEntry.disabled) {
 
-        let popup = document.getElementById("CatManCategoriesContextMenu-popup");
-        while (popup.lastChild) {
-            popup.removeChild(popup.lastChild);
-        }
+      let popup = document.getElementById("CatManCategoriesContextMenu-popup");
+      while (popup.lastChild) {
+          popup.removeChild(popup.lastChild);
+      }
 
-        let allCatsArray = jbCatMan.data.categoryList;
-        let thisCatsArray = jbCatMan.getCategoriesfromCard(cards[0]);
+      let allCatsArray = jbCatMan.data.categoryList;
+      let thisCatsArray = jbCatMan.getCategoriesfromCard(cards[0]);
 
-        for (let i = 0; i < allCatsArray.length; i++) {
-            let newItem = document.createElement("menuitem");
-            newItem.setAttribute("label", allCatsArray[i]);
-            newItem.setAttribute("type", "checkbox");
-            //newItem.setAttribute("autocheck", "false");
-            if (thisCatsArray.indexOf(allCatsArray[i]) != -1) {
-              newItem.setAttribute("checked", "true");
-            } else {
-              newItem.setAttribute("checked", "false");
-            }
-            newItem.addEventListener("click", jbCatMan.onCategoriesContextMenuItemCommand, false);
-            popup.appendChild(newItem);
-        }
-
-    }
+      for (let i = 0; i < allCatsArray.length; i++) {
+          let newItem = document.createElement("menuitem");
+          newItem.setAttribute("label", allCatsArray[i]);
+          newItem.setAttribute("type", "checkbox");
+          //newItem.setAttribute("autocheck", "false");
+          if (thisCatsArray.indexOf(allCatsArray[i]) != -1) {
+            newItem.setAttribute("checked", "true");
+          } else {
+            newItem.setAttribute("checked", "false");
+          }
+          newItem.addEventListener("click", jbCatMan.onCategoriesContextMenuItemCommand, false);
+          popup.appendChild(newItem);
+      }
   }
   jbCatMan.dump("Done with onResultsTreeContextMenuPopup()",-1);
 }
+jbCatMan.onResultsTreeContextMenuPopupEvent = function () {
+  jbCatMan.dump("Begin trigger by event onResultsTreeContextMenuPopup()",1);
+  jbCatMan.onResultsTreeContextMenuPopup();
+  jbCatMan.dump("Done trigger by event onResultsTreeContextMenuPopup()",-1);
+}
+
+
 
 // a category has been disabled/enabled via context menu -> store in property
 jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
@@ -506,27 +521,19 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
 
 jbCatMan.AbListener = {
 
-  onItemAdded: function AbListener_onItemAdded(
-                                                                  aParentDir,
-                                                                  aItem) {
+  onItemAdded: function AbListener_onItemAdded(aParentDir, aItem) {
     jbCatMan.dump("Begin trigger by onItemAdded()",1);
     jbCatMan.updateCategoryList();
     jbCatMan.dump("Done trigger by onItemAdded()",-1);
   },
 
-  onItemPropertyChanged: function AbListener_onItemPropertyChanged(
-                                                                  aItem,
-                                                                  aProperty,
-                                                                  aOldValue,
-                                                                  aNewValue) {
+  onItemPropertyChanged: function AbListener_onItemPropertyChanged(aItem, aProperty, aOldValue, aNewValue) {
     jbCatMan.dump("Begin trigger by onItemPropertyChanged()",1);
     jbCatMan.updateCategoryList();
     jbCatMan.dump("Done trigger by onItemPropertyChanged()",-1);
   },
 
-  onItemRemoved: function AbListener_onItemRemoved(
-                                                                  aParentDir,
-                                                                  aItem) {
+  onItemRemoved: function AbListener_onItemRemoved(aParentDir, aItem) {
     jbCatMan.dump("Begin trigger by onItemRemoved()",1);
     jbCatMan.updateCategoryList();
     jbCatMan.dump("Done trigger by onItemRemoved()",-1);
@@ -610,7 +617,7 @@ SelectFirstAddressBook = function() {
 //###################################################
 
 jbCatMan.initAddressbook = function() {
-
+  jbCatMan.dump("Begin with initAddressbook()",1);
   // Add listener for card changes
   jbCatMan.AbListener.add();
    window.addEventListener("unload", function unloadListener(e) {
@@ -619,14 +626,15 @@ jbCatMan.initAddressbook = function() {
       }, false);
 
   // Add listener for action in search input field
-  document.getElementById("peopleSearchInput").addEventListener('command', jbCatMan.onPeopleSearchClick, true);
+  document.getElementById("peopleSearchInput").addEventListener('command', jbCatMan.onPeopleSearchClickEvent, true);
 
   // Add listener for action in addressbook pane
-  document.getElementById("dirTree").addEventListener('select', jbCatMan.onSelectAddressbook, true);
+  document.getElementById("dirTree").addEventListener('select', jbCatMan.onSelectAddressbookEvent, true);
 
   //Add listener for category context menu
-  document.getElementById("abResultsTreeContext").addEventListener("popupshowing", jbCatMan.onResultsTreeContextMenuPopup, false);
+  document.getElementById("CatManCategoriesContextMenu-popup").addEventListener("popupshowing", jbCatMan.onResultsTreeContextMenuPopupEvent, false);
 
+  jbCatMan.dump("Done with initAddressbook()",-1);
 }
 
 // run init function after window has been loaded

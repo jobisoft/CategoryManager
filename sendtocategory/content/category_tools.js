@@ -24,18 +24,38 @@ jbCatMan.dump = function (str,lvl) {
     //to see dump messages, follow instructions here: https://wiki.mozilla.org/Thunderbird:Debugging_Gloda
     let d = new Date();
     let n = d.getTime();
-    if (lvl<0) jbCatMan.printDumpsIndent = jbCatMan.printDumpsIndent.slice(0, -2);
+    if (lvl<0) {
+      debugs =  jbCatMan.printDebugCounts[jbCatMan.printDumpsIndent];
+      if (debugs > 0) dump("[CategoryManager @ " + n + "] " + jbCatMan.printDumpsIndent + "Supressed debug messages: " +debugs + "\n");
+      jbCatMan.printDebugCounts[jbCatMan.printDumpsIndent] = 0;
+      jbCatMan.printDumpsIndent = jbCatMan.printDumpsIndent.slice(0, -2);
+    }
     dump("[CategoryManager @ " + n + "] " + jbCatMan.printDumpsIndent + str + "\n");
-    if (lvl>0) jbCatMan.printDumpsIndent = jbCatMan.printDumpsIndent + "  ";
+    if (lvl>0) {
+      jbCatMan.printDumpsIndent = jbCatMan.printDumpsIndent + "  ";
+      jbCatMan.printDebugCounts[jbCatMan.printDumpsIndent] = 0;
+    }
   }
 }
-
+jbCatMan.debug = function (str,lvl) {
+  if (jbCatMan.printDebugDumps) {
+    jbCatMan.dump(str,lvl);
+  } else {
+    jbCatMan.printDebugCounts[jbCatMan.printDumpsIndent] =  jbCatMan.printDebugCounts[jbCatMan.printDumpsIndent] + 1;
+  }
+}
 
 
 jbCatMan.init = function () { 
   //enable or disable debug dump messages
   jbCatMan.printDumps = true;
-  jbCatMan.printDumpsIndent = "";
+  jbCatMan.printDebugDumps = false;
+  jbCatMan.printDumpsIndent = " ";
+  
+  jbCatMan.printDebugCounts = Array();
+  jbCatMan.printDebugCounts[jbCatMan.printDumpsIndent] = 0;
+  
+  jbCatMan.dump("Begin with init()",1);
   
   //locale object to store names from locale file
   jbCatMan.locale = {};
@@ -75,6 +95,7 @@ jbCatMan.init = function () {
   //managed by addressbook_overlay.js
   jbCatMan.data.selectedCategory = "";
   jbCatMan.data.emptyCategories = new Array();
+  jbCatMan.dump("Done with init()",-1);
 }
 
 
@@ -82,16 +103,19 @@ jbCatMan.init = function () {
 
 
 jbCatMan.updatePeopleSearchInput = function (name) {
+  jbCatMan.dump("Begin with updatePeopleSearchInput()",1);
   if (name == "") {
     document.getElementById("peopleSearchInput").value = "";
   } else {
     document.getElementById("peopleSearchInput").value = jbCatMan.locale.prefixForPeopleSearch + ": " + name
   }
-}  
+  jbCatMan.dump("Done with updatePeopleSearchInput()",-1);
+}
 
 
 
 jbCatMan.getCardsFromEmail = function (email) {
+  jbCatMan.dump("Begin with getCardsFromEmail("+email+")",1);
   let abURI = jbCatMan.data.selectedDirectory;
 
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);        
@@ -105,13 +129,15 @@ jbCatMan.getCardsFromEmail = function (email) {
   } else if (email.indexOf("googlemail.com")>0) {
     searchQuery = searchQuery + EmailQuery.replace(/@V/g, encodeURIComponent(email.replace("googlemail.com","gmail.com")));
   }
-
+  
+  jbCatMan.dump("Done with getCardsFromEmail()",-1);
   return abManager.getDirectory(abURI + "?" + "(or" + searchQuery + ")").childCards;
 }
 
 
 
 jbCatMan.getUIDFromCard = function (card) {
+  jbCatMan.dump("Begin with getUIDFromCard()",1);
   let CardID = "";
   try {
     CardID = card.getPropertyAsAString("DbRowID"); //DbRowID is not avail on LDAP directories, but since we cannot modify LDAP directories, catman is not working at all on LDAP (isRemote)
@@ -119,12 +145,14 @@ jbCatMan.getUIDFromCard = function (card) {
   if (CardID == "") {
     jbCatMan.scanErrors.push(jbCatMan.getUserNamefromCard(card,"NoName"));
   }
+  jbCatMan.dump("Done with getUIDFromCard()",-1);
   return CardID;
 }
 
 
 
 jbCatMan.getCardFromUID = function (UID) {
+  jbCatMan.dump("Begin with getCardFromUID("+UID+")",1);
   let abURI = jbCatMan.data.selectedDirectory;
 
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
@@ -134,8 +162,10 @@ jbCatMan.getCardFromUID = function (UID) {
 
   let result = abManager.getDirectory(abURI + "?" + "(or" + searchQuery + ")").childCards;
   if (result.hasMoreElements()) {
+    jbCatMan.dump("Done with getCardFromUID()",-1);
     return result.getNext().QueryInterface(Components.interfaces.nsIAbCard);
   } else {
+    jbCatMan.dump("Done with getCardFromUID()",-1);
     return null;
   }
 }
@@ -143,42 +173,50 @@ jbCatMan.getCardFromUID = function (UID) {
 
 
 jbCatMan.getCategoriesfromCard = function (card) {
+  jbCatMan.debug("Begin with getCategoriesfromCard()",1);
   let catArray = [];
   try {
     //this line is derived from chrome://sogo-connector/content/addressbook/cardview-overlay.js
     catArray = card.getPropertyAsAString("Categories").split("\u001A");
   } catch (ex) {}  
-    
+  jbCatMan.debug("Done with getCategoriesfromCard()",-1);
   return catArray;
 }
 
 
 jbCatMan.setCategoriesforCard = function (card, catsArray) {
+  jbCatMan.dump("Begin with setCategoriesforCard()",1);
+  retval = true;
   try {
      card.setPropertyAsAString("Categories", catsArray.join("\u001A"));
   } catch (ex) {
     jbCatMan.dump("Could not set Categories.\n");
-    return false;
+    retval = false;
   }
-  return true;
+  jbCatMan.dump("Done with setCategoriesforCard()",-1);
+  return retval;
 }
 
 
 jbCatMan.getUserNamefromCard = function (card,fallback) {
-    let userName = "";
-    try {
-        userName = card.getPropertyAsAString("DisplayName"); 
-    } catch (ex) {}
-    if (userName == "") try {
-        userName = card.getPropertyAsAString("FirstName") + " " + card.getPropertyAsAString("LastName");
-    } catch (ex) {}
-    if (userName == "") userName = fallback;
-    return userName;
+  jbCatMan.dump("Begin with getUserNamefromCard()",1);
+  let userName = "";
+  try {
+      userName = card.getPropertyAsAString("DisplayName"); 
+  } catch (ex) {}
+  if (userName == "") try {
+      userName = card.getPropertyAsAString("FirstName") + " " + card.getPropertyAsAString("LastName");
+  } catch (ex) {}
+  if (userName == "") userName = fallback;
+
+  jbCatMan.dump("Done with getUserNamefromCard()",-1);
+  return userName;
 }
 
 
 
 jbCatMan.doCategorySearch = function () {
+  jbCatMan.dump("Begin with doCategorySearch()",1);
   let abURI = GetSelectedDirectory();
 
   if (document.getElementById("CardViewBox") != null) {
@@ -192,7 +230,7 @@ jbCatMan.doCategorySearch = function () {
     //build searchQuery from UUID List of selected category
     for (let i=0; i<jbCatMan.data.foundCategories[jbCatMan.data.selectedCategory].length; i++) {
       searchQuery = searchQuery + UUIDQuery.replace(/@V/g, encodeURIComponent(jbCatMan.data.foundCategories[jbCatMan.data.selectedCategory][i]));
-    }        
+    }
   }
 
   // view all contatcs
@@ -205,8 +243,9 @@ jbCatMan.doCategorySearch = function () {
     SelectFirstCard();  
   }
   jbCatMan.updatePeopleSearchInput(jbCatMan.data.selectedCategory);
+  jbCatMan.dump("Done with doCategorySearch()",-1);  
 }
-    
+
 
 
 jbCatMan.updateCategories = function (mode,oldName,newName) {
