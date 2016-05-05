@@ -255,8 +255,11 @@ jbCatMan.updateCategories = function (mode,oldName,newName) {
   let addressBook = abManager.getDirectory(GetSelectedDirectory()); //GetSelectedDirectory() returns an URI, but we need the directory itself
 
   let cards = addressBook.childCards;
-  let requireSync = false;
-  
+  let changed = false;
+
+  //Remove ABListener on card modifications, so we can do batch jobs without scanning after each card
+  jbCatMan.AbListener.remove();
+
   while (cards.hasMoreElements()) {
     card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
     let catArray = jbCatMan.getCategoriesfromCard(card);
@@ -283,14 +286,17 @@ jbCatMan.updateCategories = function (mode,oldName,newName) {
         jbCatMan.setCategoriesforCard(card, rebuildCatArray)
         card.setProperty("groupDavVersion", "-1"); //TODO
         addressBook.modifyCard(card);
-        requireSync=true;
+        changed = true;
       }
     }
   }
+
+  //Re-add ABListener on card modifications, manually run updateCategoryList, if something changed
+  jbCatMan.AbListener.add();
   
-  //trigger a sync request, if cards had been changed
-  if (requireSync) { //TODO - use a hook instead??
-    if (jbCatMan.sogoSync) {
+  if (changed) {
+    jbCatMan.updateCategoryList();
+    if (jbCatMan.sogoSync) {  //TODO
       if (isGroupdavDirectory(addressBook.URI)) {
         //SynchronizeGroupdavAddressbook(addressBook.URI);
         jbCatMan.dump("I would sync now using sogo-connector.");
