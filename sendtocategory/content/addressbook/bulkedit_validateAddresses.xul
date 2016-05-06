@@ -30,7 +30,7 @@
                     mode="determined"
                     value="0"/>
     
-                <richlistbox 
+                <richlistbox
                 id="CatManValidatorList"
                 flex="1"
                 seltype="single">                   

@@ -144,7 +144,7 @@ jbCatMan.getUIDFromCard = function (card) {
     CardID = card.getPropertyAsAString("DbRowID"); //DbRowID is not avail on LDAP directories, but since we cannot modify LDAP directories, catman is not working at all on LDAP (isRemote)
   } catch (ex) {}
   if (CardID == "") {
-    jbCatMan.scanErrors.push(jbCatMan.getUserNamefromCard(card,"NoName"));
+    jbCatMan.scanErrors.push(jbCatMan.getUserNamefromCard(card,"Unknown Name"));
   }
   jbCatMan.dump("Done with getUIDFromCard()",-1);
   return CardID;
@@ -187,7 +187,7 @@ jbCatMan.getCategoriesfromCard = function (card) {
 
 jbCatMan.setCategoriesforCard = function (card, catsArray) { //replacement for SOGo's arrayToMultiValue 
   jbCatMan.dump("Begin with setCategoriesforCard()",1);
-  retval = true;
+  let retval = true;
   try {
      card.setPropertyAsAString("Categories", catsArray.join("\u001A"));
   } catch (ex) {
@@ -262,7 +262,7 @@ jbCatMan.updateCategories = function (mode,oldName,newName) {
   jbCatMan.AbListener.remove();
 
   while (cards.hasMoreElements()) {
-    card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
+    let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
     let catArray = jbCatMan.getCategoriesfromCard(card);
     let rebuildCatArray = [];
         

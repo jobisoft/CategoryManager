@@ -6,7 +6,7 @@
 	<Description about="urn:mozilla:install-manifest">
 		<em:name>CategoryManager</em:name>
 		<em:id>sendtocategory@jobisoft.de</em:id>
-		<em:version>1.63</em:version>
+		<em:version>2.01</em:version>
 		<em:type>2</em:type>
 
 		<!-- Target Application this theme can install into,
@@ -23,25 +23,25 @@
 		<em:localized>
 			<Description>
 				<em:locale>de-DE</em:locale>
-				<em:description>Kategorie-Verwaltung für CardDav-Kontakte, erlaubt auch das Senden einer E-Mail an alle Kategoriemitglieder.</em:description>
+				<em:description>Kategorie-Verwaltung für Thunderbird-Kontakte, erlaubt auch das Senden einer E-Mail an alle Kategoriemitglieder.</em:description>
 			</Description>
 		</em:localized>
 
 		<em:localized>
 			<Description>
 				<em:locale>fr-FR</em:locale>
-				<em:description>Category Manager pour contacts CardDav, permet aussi d'envoyer un email à tous les membres d'une catégorie.</em:description>
+				<em:description>Category Manager pour contacts, permet aussi d'envoyer un email à tous les membres d'une catégorie.</em:description>
 			</Description>
 		</em:localized>
 
     <em:localized>
 			<Description>
 				<em:locale>es-AR</em:locale>
-				<em:description>Administrador de categorias para contactos CardDAV, que permite enviar un correo a todos los miembros de una categoria.</em:description>
+				<em:description>Administrador de categorias para contactos, que permite enviar un correo a todos los miembros de una categoria.</em:description>
 			</Description>
 		</em:localized>
 
-		<em:description>Category manager for CardDav contacts, also allows to send an email to all members of a category.</em:description>
+		<em:description>Category manager for contacts, also allows to send an email to all members of a category.</em:description>
 		<em:creator>John Bieling</em:creator>
 
 	</Description>

@@ -23,10 +23,10 @@ use isRemote to not work on LDAP
 TODO
 - store/restore last addressbook used in messenger as well
 - Get true AB of card if global addressbook to perform card.modify
-- do we realy have to include groupDavVersion? can't we delegate that to sogo, if installed?
-- do we realy have to init sogosync? can't we delegate that to sogo, if installed?
-- remove sogo from bulk edit
+- do we really have to include groupDavVersion? can't we delegate that to sogo, if installed?
+- do we really have to init sogosync? can't we delegate that to sogo, if installed?
 - work on lists
+- Kategoriemenu des sogo connectors unterdrücken?
 */
 
 
@@ -209,7 +209,7 @@ jbCatMan.writeToCategory = function () {
 
     //create the service, the URI and open the new message window via mailServices
     let ioService =  Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);  
-    aURI = ioService.newURI(sURL, null, null);  
+    let aURI = ioService.newURI(sURL, null, null);  
     MailServices.compose.OpenComposeWindowWithURI (null, aURI); 
   }
   jbCatMan.dump("Done with writeToCategory()",-1);

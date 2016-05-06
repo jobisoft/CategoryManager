@@ -1,5 +1,5 @@
 // if this was/is a sogo book, it will have an url stored in preferences
-jbCatMan.getSogoUrl = function(abURI) {
+jbCatMan.getSogoUrl = function (abURI) {
 
     let url = "";
   
