@@ -279,8 +279,8 @@ jbCatMan.saveList_AddCards = function (i) {
               //Selected card is not part of this category, ADD IT
               let cats = jbCatMan.getCategoriesfromCard(card);
               cats.push(jbCatMan.data.selectedCategory);
-              card.setProperty("Categories", arrayToMultiValue(cats));
-              card.setProperty("groupDavVersion", "-1");
+              jbCatMan.setCategoriesforCard(card, cats);
+              card.setProperty("groupDavVersion", "-1"); //TODO
               addressBook.modifyCard(card);                          
               //Log
               let row = document.createElement('listitem');
@@ -309,12 +309,12 @@ jbCatMan.saveList_AddCards = function (i) {
         card.setProperty("LastName", jbCatMan.data.saveList.childNodes[i].childNodes[1].childNodes[1].getAttribute("value"));
         card.setProperty("DisplayName", jbCatMan.data.saveList.childNodes[i].childNodes[1].childNodes[0].getAttribute("value") + " " + jbCatMan.data.saveList.childNodes[i].childNodes[1].childNodes[1].getAttribute("value")); 
         uuid = new UUID();
-        card.setProperty("groupDavKey",uuid); 
+        card.setProperty("groupDavKey",uuid); //TODO
 
         card.primaryEmail = jbCatMan.data.saveList.childNodes[i].childNodes[0].childNodes[0].getAttribute("value");
         let cats = new Array();
         cats.push(jbCatMan.data.selectedCategory);
-        card.setProperty("Categories", arrayToMultiValue(cats));
+        jbCatMan.setCategoriesforCard(card, cats);
         let newCard = addressBook.addCard(card);                
         //Log
         let row = document.createElement('listitem');

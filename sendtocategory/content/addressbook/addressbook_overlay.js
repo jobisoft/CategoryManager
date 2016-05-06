@@ -20,7 +20,13 @@ if sogo connector is switched back on - we need to add missing UUID?
 
 use isRemote to not work on LDAP
 
-- store last addressbook in messenger as well
+TODO
+- store/restore last addressbook used in messenger as well
+- Get true AB of card if global addressbook to perform card.modify
+- do we realy have to include groupDavVersion? can't we delegate that to sogo, if installed?
+- do we realy have to init sogosync? can't we delegate that to sogo, if installed?
+- remove sogo from bulk edit
+- work on lists
 */
 
 
@@ -482,9 +488,11 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
 
     if (changed) {
       jbCatMan.setCategoriesforCard(card, catsArray);
-      let abUri = GetSelectedDirectory(); //WORKS FOR ROOT AB? NO! TODO: Get true AB of card!
       let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
+      let abUri = GetSelectedDirectory(); //WORKS FOR ROOT AB? NO! TODO: Get true AB of card!
+      //let abID = card.directoryId;
       let ab = abManager.getDirectory(abUri);
+      //let ab = abManager.getDirectoryFromId(abID);
       ab.modifyCard(card);
       //trigger sync
     }
