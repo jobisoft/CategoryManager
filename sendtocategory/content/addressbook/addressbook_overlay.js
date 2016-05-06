@@ -27,6 +27,8 @@ TODO
 - do we really have to init sogosync? can't we delegate that to sogo, if installed?
 - work on lists
 - Kategoriemenu des sogo connectors unterdrücken?
+- bigbug, catmenu stays disabled
+- jbCatMan.AbListener => Only run updateCategoryList if category changed??? If a sogo contact was changed and synced, it is comming back with a new groupdavid -> triggers listener (bad for category renames...) or reenable listener on "click" something?
 */
 
 
@@ -493,8 +495,17 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
       //let abID = card.directoryId;
       let ab = abManager.getDirectory(abUri);
       //let ab = abManager.getDirectoryFromId(abID);
+
+      if (jbCatMan.sogoSync && isGroupdavDirectory(ab.URI)) { //TODO - what about sogo books with deactivated sogo?
+        card.setProperty("groupDavVersion", "-1"); 
+      }
       ab.modifyCard(card);
-      //trigger sync
+      if (jbCatMan.sogoSync && isGroupdavDirectory(ab.URI)) { //TODO - what about sogo books with deactivated sogo?
+        SynchronizeGroupdavAddressbook(ab.URI);
+        jbCatMan.dump("Sync using sogo-connector.");
+      } else {
+        jbCatMan.dump("Changes, but sogo not installed and/or not a sogo book - no sync.");
+      }
     }
   }
   jbCatMan.dump("Done with onCategoriesContextMenuItemCommand()",-1);

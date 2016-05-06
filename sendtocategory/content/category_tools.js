@@ -224,7 +224,7 @@ jbCatMan.doCategorySearch = function () {
     ClearCardViewPane();
   }
   //http://mxr.mozilla.org/comm-central/source/mailnews/addrbook/src/nsAbQueryStringToExpression.cpp#278
-  let UUIDQuery = "(DbRowID,=,@V)"; //groupDavKey
+  let UUIDQuery = "(DbRowID,=,@V)"; //was: groupDavKey
   let searchQuery = "";
   
   if (jbCatMan.data.selectedCategory in jbCatMan.data.foundCategories) {
@@ -285,7 +285,9 @@ jbCatMan.updateCategories = function (mode,oldName,newName) {
       //was there a manipulation of the card due to rename or delete request? If so, write that into the card
       if (writeCategoriesToCard) {
         jbCatMan.setCategoriesforCard(card, rebuildCatArray)
-        card.setProperty("groupDavVersion", "-1"); //TODO
+        if (jbCatMan.sogoSync && isGroupdavDirectory(addressBook.URI)) { //TODO - what about sogo books with deactivated sogo?
+          card.setProperty("groupDavVersion", "-1"); 
+        }
         addressBook.modifyCard(card);
         changed = true;
       }
@@ -297,15 +299,11 @@ jbCatMan.updateCategories = function (mode,oldName,newName) {
   
   if (changed) {
     jbCatMan.updateCategoryList();
-    if (jbCatMan.sogoSync) {  //TODO
-      if (isGroupdavDirectory(addressBook.URI)) {
-        //SynchronizeGroupdavAddressbook(addressBook.URI);
-        jbCatMan.dump("I would sync now using sogo-connector.");
-      } else {
-        jbCatMan.dump("There have been changes, sogo is installed, but this is not a sogo book - no sync.");
-      }
+    if (jbCatMan.sogoSync && isGroupdavDirectory(addressBook.URI)) { //TODO - what about sogo books with deactivated sogo?
+      SynchronizeGroupdavAddressbook(addressBook.URI);
+      jbCatMan.dump("Sync using sogo-connector.");
     } else {
-        jbCatMan.dump("There have been changes, sogo is not installed. - no sync.");
+      jbCatMan.dump("Changes, but sogo not installed and/or not a sogo book - no sync.");
     }
   }
   jbCatMan.dump("Done with updateCategories()",-1);
