@@ -22,6 +22,7 @@ jbCatMan.jsInclude = function (files, target) {
 jbCatMan.dump = function (str,lvl) {
   if (jbCatMan.printDumps) {
     //to see dump messages, follow instructions here: https://wiki.mozilla.org/Thunderbird:Debugging_Gloda
+    //also enable "javascript.options.showInConsole" and "javascript.options.strict"
     let d = new Date();
     let n = d.getTime();
     if (lvl<0) {
@@ -184,7 +185,7 @@ jbCatMan.getCategoriesfromCard = function (card) {
 }
 
 
-jbCatMan.setCategoriesforCard = function (card, catsArray) {
+jbCatMan.setCategoriesforCard = function (card, catsArray) { //replacement for SOGo's arrayToMultiValue 
   jbCatMan.dump("Begin with setCategoriesforCard()",1);
   retval = true;
   try {
