@@ -25,7 +25,7 @@ jbCatMan.dump = function (str,lvl) {
     let d = new Date();
     let n = d.getTime();
     if (lvl<0) {
-      debugs =  jbCatMan.printDebugCounts[jbCatMan.printDumpsIndent];
+      let debugs =  jbCatMan.printDebugCounts[jbCatMan.printDumpsIndent];
       if (debugs > 0) dump("[CategoryManager @ " + n + "] " + jbCatMan.printDumpsIndent + "Supressed debug messages: " +debugs + "\n");
       jbCatMan.printDebugCounts[jbCatMan.printDumpsIndent] = 0;
       jbCatMan.printDumpsIndent = jbCatMan.printDumpsIndent.slice(0, -2);
@@ -354,7 +354,7 @@ jbCatMan.scanCategories = function () {
     let cards = addressBook.childCards;
 
     while (cards.hasMoreElements()) {
-      card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
+      let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
       jbCatMan.data.abSize++;
       let catArray = jbCatMan.getCategoriesfromCard(card);
       
