@@ -572,7 +572,7 @@ SelectFirstAddressBook = function() {
     jbCatMan.SelectFirstAddressBook_ORIG();
   } else {  
     //find index of lastBook - if not found we will end up with the first one
-    lastBook = prefs.getCharPref("last_book");
+    let lastBook = prefs.getCharPref("last_book");
     let lastBookIndex = gDirTree.view.rowCount-1;
     while (gDirectoryTreeView.getDirectoryAtIndex(lastBookIndex).URI != lastBook && lastBookIndex > 0) {
       lastBookIndex--;
