@@ -92,7 +92,10 @@ jbCatMan.init = function () {
   jbCatMan.data.membersWithoutPrimaryEmail = new Array();
   jbCatMan.data.emails = new Array();
   jbCatMan.data.abSize = 0;
+  //for each card we store the categories property, so we can ident changes of that property to trigger updates 
   jbCatMan.data.categoriesOfCard = new Array();
+  //create a map between directoryIds und abURI, so we can get the abURI for each card even if its directory is not known when using the global address book
+  jbCatMan.data.abURI = new Array();
   
   //managed by addressbook_overlay.js
   jbCatMan.data.selectedCategory = "";
@@ -344,6 +347,8 @@ jbCatMan.scanCategories = function () {
   jbCatMan.data.membersWithoutPrimaryEmail = new Array();
   jbCatMan.data.emails = new Array();
   jbCatMan.data.abSize = 0;
+  jbCatMan.data.categoriesOfCard = new Array();
+  jbCatMan.data.abURI = new Array();
 
   
   // scan all addressbooks, if this is the new root addressbook (introduced in TB38)
@@ -374,6 +379,9 @@ jbCatMan.scanCategories = function () {
     while (cards.hasMoreElements()) {
       let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
       jbCatMan.data.abSize++;
+      if (card.directoryId in jbCatMan.data.abURI == false) {
+        jbCatMan.data.abURI[card.directoryId] = addressBook.URI;
+      }
       let catString = jbCatMan.getCategoriesfromCardAsString(card);
       let catArray =jbCatMan.getArrayfromCategoriesString(catString);
       

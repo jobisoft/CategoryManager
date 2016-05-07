@@ -20,14 +20,17 @@ if sogo connector is switched back on - we need to add missing UUID?
 
 use isRemote to not work on LDAP
 
+
 TODO
 - store/restore last addressbook used in messenger as well
-- Get true AB of card if global addressbook to perform card.modify
 - do we really have to include groupDavVersion? can't we delegate that to sogo, if installed?
 - do we really have to init sogosync? can't we delegate that to sogo, if installed?
 - work on lists
+
 - Kategoriemenu des sogo connectors unterdrücken?
 - bigbug, catmenu stays disabled
+- check if listener is disabled on all bulk edits (context, add/rename/remove, bulk)
+- context menu multiselection
 */
 
 
@@ -472,41 +475,52 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
   let cards = GetSelectedAbCards();
   let category = this.label;
   let enabled = (event.target.getAttribute("checked") == "false");
-
+  //since it is possible to select cards of different addressbooks, we have to keep track of modified books and sync them at the end
+  let changedBooks = new Array();
+  
+  jbCatMan.AbListener.remove();
   for (let i = 0; i < cards.length; i++) {
-    let changed = false;
+    let writeCategoriesToCard = false;
     let card = cards[i];
     let catsArray = jbCatMan.getArrayfromCategoriesString(jbCatMan.getCategoriesfromCardAsString(card));
     let catIdx = catsArray.indexOf(category);
   
     if (enabled && catIdx == -1) {
       catsArray.push(category);
-      changed = true;
+      writeCategoriesToCard = true;
     } else if (!enabled && catIdx != -1) {
       catsArray.splice(catIdx, 1);
-      changed = true;
+      writeCategoriesToCard = true;
     }
 
-    if (changed) {
+    if (writeCategoriesToCard) {
       jbCatMan.setCategoriesforCard(card, catsArray);
       let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
-      let abUri = GetSelectedDirectory(); //WORKS FOR ROOT AB? NO! TODO: Get true AB of card!
-      //let abID = card.directoryId;
+      //cannot simply use GetSelectedDirectory(), because the global book cannot modify cards, we need to get the true owner of the card
+      let abUri = jbCatMan.data.abURI[card.directoryId];
       let ab = abManager.getDirectory(abUri);
-      //let ab = abManager.getDirectoryFromId(abID);
+      changedBooks.push(abUri);
 
       if (jbCatMan.sogoSync && isGroupdavDirectory(ab.URI)) { //TODO - what about sogo books with deactivated sogo?
         card.setProperty("groupDavVersion", "-1"); 
       }
       ab.modifyCard(card);
-      if (jbCatMan.sogoSync && isGroupdavDirectory(ab.URI)) { //TODO - what about sogo books with deactivated sogo?
-        SynchronizeGroupdavAddressbook(ab.URI);
-        jbCatMan.dump("Sync using sogo-connector.");
+    }
+  }
+  jbCatMan.AbListener.add();
+
+  if (changedBooks.length > 0) {
+    jbCatMan.updateCategoryList();
+    for (let i = 0; i < changedBooks.length; i++) {
+      if (jbCatMan.sogoSync && isGroupdavDirectory(changedBooks[i])) { //TODO - what about sogo books with deactivated sogo?
+        SynchronizeGroupdavAddressbook(changedBooks[i]);
+        jbCatMan.dump("Sync <"+changedBooks[i]+">using sogo-connector.");
       } else {
         jbCatMan.dump("Changes, but sogo not installed and/or not a sogo book - no sync.");
       }
     }
   }
+
   jbCatMan.dump("Done with onCategoriesContextMenuItemCommand()",-1);
 }
 

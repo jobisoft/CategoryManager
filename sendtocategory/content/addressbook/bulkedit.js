@@ -18,17 +18,19 @@ jbCatMan.loadBulkList = function () {
 
   let bulkbox = document.getElementById("CatManBulkTextBox");
   let value = "";
-  for (let i=0; i<jbCatMan.data.emails[jbCatMan.data.selectedCategory].length; i++) {
-    value = value + jbCatMan.data.emails[jbCatMan.data.selectedCategory][i] + "\n";
-  }     
+  if (jbCatMan.data.selectedCategory in jbCatMan.data.emails) {
+    for (let i=0; i<jbCatMan.data.emails[jbCatMan.data.selectedCategory].length; i++) {
+      value = value + jbCatMan.data.emails[jbCatMan.data.selectedCategory][i] + "\n";
+    }
+  }
   bulkbox.value=value;
   
   //give feedback to users about possible category members without primaryEmails, 
   //which will not be altered
-  if (jbCatMan.data.membersWithoutPrimaryEmail[jbCatMan.data.selectedCategory].length == 0) {
-    document.getElementById("CatManInfoBox").style.display = "none";
-  } else {
+  if (jbCatMan.data.selectedCategory in jbCatMan.data.membersWithoutPrimaryEmail && jbCatMan.data.membersWithoutPrimaryEmail[jbCatMan.data.selectedCategory].length != 0) {
     document.getElementById("CatManDescriptionNoPrimaryEmail").textContent = jbCatMan.locale.descriptionNoPrimaryEmail.replace("##counts##",jbCatMan.data.membersWithoutPrimaryEmail[jbCatMan.data.selectedCategory].length);
+  } else {
+    document.getElementById("CatManInfoBox").style.display = "none";
   }
 
 }
@@ -150,7 +152,7 @@ jbCatMan.validateEmailList = function (i) {
         default: //DOUBLE
           //is one of the doubles already in this category?? We grab the first one!
           for (let j=0;j<cards.length && memberIdx == -1 ;j++) {
-            let cats = jbCatMan.getCategoriesfromCard(cards[j]);
+            let cats = jbCatMan.getArrayfromCategoriesString(jbCatMan.getCategoriesfromCardAsString(cards[j]));
             if (cats.indexOf(jbCatMan.data.selectedCategory) != -1) {
               memberIdx = j;
             }
@@ -277,7 +279,7 @@ jbCatMan.saveList_AddCards = function (i) {
             jbCatMan.data.processedUIDs.push(UID);
             if(idx < 0) {
               //Selected card is not part of this category, ADD IT
-              let cats = jbCatMan.getCategoriesfromCard(card);
+              let cats = jbCatMan.getArrayfromCategoriesString(jbCatMan.getCategoriesfromCardAsString(card));
               cats.push(jbCatMan.data.selectedCategory);
               jbCatMan.setCategoriesforCard(card, cats);
               if (jbCatMan.sogoSync && isGroupdavDirectory(addressBook.URI)) {
@@ -370,7 +372,7 @@ jbCatMan.saveList_RemoveCards = function (i) {
     } else {
       name  = jbCatMan.getUserNamefromCard(card, jbCatMan.locale.bulkEditNoName + " (UID: "+UID+")");
       //Contact is no longer part of this category - REMOVE IT
-      let cats = jbCatMan.getCategoriesfromCard(card);
+      let cats = jbCatMan.getArrayfromCategoriesString(jbCatMan.getCategoriesfromCardAsString(card));
       let idx = cats.indexOf(jbCatMan.data.selectedCategory);
       if (idx<0) {
         //It looks like, this contact is not part of this category
