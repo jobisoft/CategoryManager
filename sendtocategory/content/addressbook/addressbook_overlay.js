@@ -23,8 +23,6 @@ use isRemote to not work on LDAP
 
 TODO
 - store/restore last addressbook used in messenger as well
-- do we really have to include groupDavVersion? can't we delegate that to sogo, if installed?
-- do we really have to init sogosync? can't we delegate that to sogo, if installed?
 - work on lists
 
 - Kategoriemenu des sogo connectors unterdrücken?
@@ -162,10 +160,9 @@ jbCatMan.updateButtons = function () {
   document.getElementById("CatManContextMenuEdit").disabled = (jbCatMan.data.selectedCategory == "" || isRemote);
   document.getElementById("CatManContextMenuBulk").disabled = (jbCatMan.data.selectedCategory == "" || isRemote);
 
-  //Send should be possible even if not a groupdav, so we can still send from global addressbook (if not deactivated)
-  document.getElementById("CatManContextMenuSend").disabled = (jbCatMan.data.selectedCategory == ""); 
+  document.getElementById("CatManContextMenuSend").disabled = (jbCatMan.data.selectedCategory == "" || isRemote); 
 
-  //Import and export for all groupDavs, regardless of category (if no category selected, export entire abook or import without category tagging)
+  //Import and export for all address books, regardless of category (if no category selected, export entire abook or import without category tagging)
   //document.getElementById("CatManContextMenuImport").disabled = isRemote;
   //document.getElementById("CatManContextMenuExport").disabled = isRemote;
 
@@ -332,7 +329,6 @@ jbCatMan.onBulkEdit = function () {
   }
   if (jbCatMan.data.needToSaveBulkList) {
     window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_saveAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,resizable=yes", "", jbCatMan.locale.bulkTitle,jbCatMan.data);
-    jbCatMan.updateCategoryList();
   }
   jbCatMan.dump("Done with onBulkEdit()",-1);
 }
@@ -452,7 +448,7 @@ jbCatMan.onResultsTreeContextMenuPopup = function () {
       let countOut = 0;
       
       for (let i = 0; i < cards.length; i++) {
-        let thisCatsArray = jbCatMan.getArrayfromCategoriesString(jbCatMan.getCategoriesfromCardAsString(cards[i]));
+        let thisCatsArray = jbCatMan.getCategoriesfromCard(cards[i]);
         if (thisCatsArray.indexOf(allCatsArray[k]) != -1) {
           //this card is in this category
           countIn++;
@@ -496,11 +492,10 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
   //since it is possible to select cards of different addressbooks, we have to keep track of modified books and sync them at the end
   let changedBooks = new Array();
   
-  jbCatMan.AbListener.remove();
   for (let i = 0; i < cards.length; i++) {
     let writeCategoriesToCard = false;
     let card = cards[i];
-    let catsArray = jbCatMan.getArrayfromCategoriesString(jbCatMan.getCategoriesfromCardAsString(card));
+    let catsArray = jbCatMan.getCategoriesfromCard(card);
     let catIdx = catsArray.indexOf(category);
   
     if (enabled && catIdx == -1) {
@@ -513,30 +508,13 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
 
     if (writeCategoriesToCard) {
       jbCatMan.setCategoriesforCard(card, catsArray);
-      let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
-      //cannot simply use GetSelectedDirectory(), because the global book cannot modify cards, we need to get the true owner of the card
-      let abUri = jbCatMan.data.abURI[card.directoryId];
-      let ab = abManager.getDirectory(abUri);
-      changedBooks.push(abUri);
-
-      if (jbCatMan.sogoSync && isGroupdavDirectory(ab.URI)) { //TODO - what about sogo books with deactivated sogo?
-        card.setProperty("groupDavVersion", "-1"); 
-      }
-      ab.modifyCard(card);
+      let abUri = jbCatMan.modifyCard(card);
+      if (changedBooks.indexOf(abUri) == -1) changedBooks.push(abUri);
     }
   }
-  jbCatMan.AbListener.add();
 
   if (changedBooks.length > 0) {
-    jbCatMan.updateCategoryList();
-    for (let i = 0; i < changedBooks.length; i++) {
-      if (jbCatMan.sogoSync && isGroupdavDirectory(changedBooks[i])) { //TODO - what about sogo books with deactivated sogo?
-        SynchronizeGroupdavAddressbook(changedBooks[i]);
-        jbCatMan.dump("Sync <"+changedBooks[i]+"> using sogo-connector.");
-      } else {
-        jbCatMan.dump("Changes, but sogo not installed and/or not a sogo book - no sync.");
-      }
-    }
+    for (let i = 0; i < changedBooks.length; i++) jbCatMan.sync(changedBooks[i]);
   }
 
   jbCatMan.dump("Done with onCategoriesContextMenuItemCommand()",-1);
@@ -552,38 +530,24 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
 
 jbCatMan.AbListener = {
 
+  /* AbListener should detect bulk changes and only call updateCategoryList() after
+     the last event. This is achieved by using clearTimeout and setTimeout on each 
+     event, so if a new event comes in while the timeout for the last one is not yet
+     done, it gets posponed. */
+  
   onItemAdded: function AbListener_onItemAdded(aParentDir, aItem) {
-    jbCatMan.dump("Begin trigger by onItemAdded()",1);
-    jbCatMan.updateCategoryList();
-    jbCatMan.dump("Done trigger by onItemAdded()",-1);
+    window.clearTimeout(jbCatMan.eventTimeout);
+    jbCatMan.eventTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemAdded()",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemAdded()",-1);}, 1000);
   },
 
   onItemPropertyChanged: function AbListener_onItemPropertyChanged(aItem, aProperty, aOldValue, aNewValue) {
-    jbCatMan.dump("Begin trigger by onItemPropertyChanged()",1);
-    let card = null;
-    try {
-      card = aItem.QueryInterface(Components.interfaces.nsIAbCard);
-    } catch (ex) {}
-    
-    if (card != null) {
-      //check if the changed card has a modified categories property
-      let catString = jbCatMan.getCategoriesfromCardAsString(card);
-      let cardTBID = jbCatMan.getTBUIDFromCard(card);
-      if (catString != jbCatMan.data.categoriesOfCard[cardTBID]) {
-        jbCatMan.dump("Categories property changed, calling updateCategoriesList()");
-        jbCatMan.updateCategoryList();
-      } else {
-        jbCatMan.dump("Categories property did not change, no need to updateCategoriesList()");
-      }
-    }
-    
-    jbCatMan.dump("Done trigger by onItemPropertyChanged()",-1);
+    window.clearTimeout(jbCatMan.eventTimeout);
+    jbCatMan.eventTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemPropertyChanged()",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemPropertyChanged()",-1);}, 1000);
   },
 
   onItemRemoved: function AbListener_onItemRemoved(aParentDir, aItem) {
-    jbCatMan.dump("Begin trigger by onItemRemoved()",1);
-    jbCatMan.updateCategoryList();
-    jbCatMan.dump("Done trigger by onItemRemoved()",-1);
+    window.clearTimeout(jbCatMan.eventTimeout);
+    jbCatMan.eventTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemRemoved()",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemRemoved()",-1);}, 1000);
   },
 
   add: function AbListener_add() {

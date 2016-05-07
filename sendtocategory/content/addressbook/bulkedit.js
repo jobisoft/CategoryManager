@@ -152,7 +152,7 @@ jbCatMan.validateEmailList = function (i) {
         default: //DOUBLE
           //is one of the doubles already in this category?? We grab the first one!
           for (let j=0;j<cards.length && memberIdx == -1 ;j++) {
-            let cats = jbCatMan.getArrayfromCategoriesString(jbCatMan.getCategoriesfromCardAsString(cards[j]));
+            let cats = jbCatMan.getCategoriesfromCard(cards[j]);
             if (cats.indexOf(jbCatMan.data.selectedCategory) != -1) {
               memberIdx = j;
             }
@@ -279,13 +279,10 @@ jbCatMan.saveList_AddCards = function (i) {
             jbCatMan.data.processedUIDs.push(UID);
             if(idx < 0) {
               //Selected card is not part of this category, ADD IT
-              let cats = jbCatMan.getArrayfromCategoriesString(jbCatMan.getCategoriesfromCardAsString(card));
+              let cats = jbCatMan.getCategoriesfromCard(card);
               cats.push(jbCatMan.data.selectedCategory);
               jbCatMan.setCategoriesforCard(card, cats);
-              if (jbCatMan.sogoSync && isGroupdavDirectory(addressBook.URI)) {
-                card.setProperty("groupDavVersion", "-1"); //TODO -  - what about sogo books with deactivated sogo?
-              }
-              addressBook.modifyCard(card);
+              jbCatMan.modifyCard(card);
               //Log
               let row = document.createElement('listitem');
               let cell = document.createElement('listcell');
@@ -308,20 +305,16 @@ jbCatMan.saveList_AddCards = function (i) {
       } else { 
 
         //NOTOK - add new contact to addressbook, also add him to category jbCatMan.selectedCategory
-        let card = Components.classes["@mozilla.org/addressbook/cardproperty;1"].createInstance(Components.interfaces.nsIAbCard);
+        let card = jbCatMan.newCard(addressBook.URI);
         card.setProperty("FirstName", jbCatMan.data.saveList.childNodes[i].childNodes[1].childNodes[0].getAttribute("value")); 
         card.setProperty("LastName", jbCatMan.data.saveList.childNodes[i].childNodes[1].childNodes[1].getAttribute("value"));
         card.setProperty("DisplayName", jbCatMan.data.saveList.childNodes[i].childNodes[1].childNodes[0].getAttribute("value") + " " + jbCatMan.data.saveList.childNodes[i].childNodes[1].childNodes[1].getAttribute("value")); 
-        if (jbCatMan.sogoSync && isGroupdavDirectory(addressBook.URI)) {  //TODO - what about sogo books with deactivated sogo?
-          let uuid = new UUID();
-          card.setProperty("groupDavKey",uuid);
-        }
 
         card.primaryEmail = jbCatMan.data.saveList.childNodes[i].childNodes[0].childNodes[0].getAttribute("value");
         let cats = new Array();
         cats.push(jbCatMan.data.selectedCategory);
         jbCatMan.setCategoriesforCard(card, cats);
-        let newCard = addressBook.addCard(card);
+        addressBook.addCard(card);
         //Log
         let row = document.createElement('listitem');
         let cell = document.createElement('listcell');
@@ -372,17 +365,14 @@ jbCatMan.saveList_RemoveCards = function (i) {
     } else {
       name  = jbCatMan.getUserNamefromCard(card, jbCatMan.locale.bulkEditNoName + " (UID: "+UID+")");
       //Contact is no longer part of this category - REMOVE IT
-      let cats = jbCatMan.getArrayfromCategoriesString(jbCatMan.getCategoriesfromCardAsString(card));
+      let cats = jbCatMan.getCategoriesfromCard(card);
       let idx = cats.indexOf(jbCatMan.data.selectedCategory);
       if (idx<0) {
         //It looks like, this contact is not part of this category
       } else {
         cats.splice(idx, 1);
         jbCatMan.setCategoriesforCard(card, cats);
-        if (jbCatMan.sogoSync && isGroupdavDirectory(addressBook.URI)) { //TODO - what about sogo books with deactivated sogo?
-          card.setProperty("groupDavVersion", "-1"); 
-        }
-        addressBook.modifyCard(card);
+        jbCatMan.modifyCard(card);
         //Log
         let row = document.createElement('listitem');
         let cell = document.createElement('listcell');
@@ -396,12 +386,7 @@ jbCatMan.saveList_RemoveCards = function (i) {
   } else {
 
     //we are done
-    if (jbCatMan.sogoSync && isGroupdavDirectory(addressBook.URI)) {
-        jbCatMan.dump("Sync using sogo-connector.");
-        SynchronizeGroupdavAddressbook(addressBook.URI);
-    } else {
-        jbCatMan.dump("Changes, but sogo not installed and/or not a sogo book - no sync.");
-    }
+    jbCatMan.sync(addressBook.URI);
     document.getElementById("CatManSaverProgressBar").style.display = 'none';
       
   }
