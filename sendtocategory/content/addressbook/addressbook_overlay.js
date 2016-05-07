@@ -28,9 +28,8 @@ TODO
 - work on lists
 
 - Kategoriemenu des sogo connectors unterdrücken?
-- bigbug, catmenu stays disabled
 - check if listener is disabled on all bulk edits (context, add/rename/remove, bulk)
-- context menu multiselection
+- rescan on ab delete
 */
 
 
@@ -246,7 +245,7 @@ jbCatMan.onExport = function () {
 jbCatMan.onHelpButton = function () {
   jbCatMan.dump("Begin with onHelpButton()",1);
   let ioservice = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
-  let uriToOpen = ioservice.newURI("https://github.com/jobisoft/CategoryManager/wiki/CategoryManager-1.62-Release-Notes", null, null);
+  let uriToOpen = ioservice.newURI("https://github.com/jobisoft/CategoryManager/wiki/CategoryManager-2.01-Release-Notes", null, null);
   let extps = Components.classes["@mozilla.org/uriloader/external-protocol-service;1"].getService(Components.interfaces.nsIExternalProtocolService);
   extps.loadURI(uriToOpen, null);
   jbCatMan.dump("Done with onHelpButton()",-1);
@@ -434,35 +433,54 @@ jbCatMan.onDeleteCategory = function () {
 
 
 
-// disable context menu if not a single card has been selected, or fill context menu with found categories - IMPROVE MULTICARD SELECTION
+// disable context menu if no card has been selected, or fill context menu with found categories
 jbCatMan.onResultsTreeContextMenuPopup = function () {
   jbCatMan.dump("Begin with onResultsTreeContextMenuPopup()",1);
   let cards = GetSelectedAbCards();
   let rootEntry = document.getElementById("CatManCategoriesContextMenu");
-  rootEntry.disabled = (cards.length != 1);
+  rootEntry.disabled = (cards.length == 0);
   if (!rootEntry.disabled) {
 
-      let popup = document.getElementById("CatManCategoriesContextMenu-popup");
-      while (popup.lastChild) {
-          popup.removeChild(popup.lastChild);
-      }
+    let popup = document.getElementById("CatManCategoriesContextMenu-popup");
+    while (popup.lastChild) {
+        popup.removeChild(popup.lastChild);
+    }
 
-      let allCatsArray = jbCatMan.data.categoryList;
-      let thisCatsArray = jbCatMan.getArrayfromCategoriesString(jbCatMan.getCategoriesfromCardAsString(cards[0]));
-
-      for (let i = 0; i < allCatsArray.length; i++) {
-          let newItem = document.createElement("menuitem");
-          newItem.setAttribute("label", allCatsArray[i]);
-          newItem.setAttribute("type", "checkbox");
-          //newItem.setAttribute("autocheck", "false");
-          if (thisCatsArray.indexOf(allCatsArray[i]) != -1) {
-            newItem.setAttribute("checked", "true");
-          } else {
-            newItem.setAttribute("checked", "false");
-          }
-          newItem.addEventListener("click", jbCatMan.onCategoriesContextMenuItemCommand, false);
-          popup.appendChild(newItem);
+    let allCatsArray = jbCatMan.data.categoryList;
+    for (let k = 0; k < allCatsArray.length; k++) {
+      let countIn = 0;
+      let countOut = 0;
+      
+      for (let i = 0; i < cards.length; i++) {
+        let thisCatsArray = jbCatMan.getArrayfromCategoriesString(jbCatMan.getCategoriesfromCardAsString(cards[i]));
+        if (thisCatsArray.indexOf(allCatsArray[k]) != -1) {
+          //this card is in this category
+          countIn++;
+        } else {
+          //this card is not in this category
+          countOut++;
+        }
       }
+      
+      let newItem = document.createElement("menuitem");
+      newItem.setAttribute("type", "checkbox");
+      //newItem.setAttribute("autocheck", "false");
+
+      if (countIn != 0 && countOut == 0) {
+        newItem.setAttribute("label", allCatsArray[k]);
+        newItem.setAttribute("checked", "true");
+      } else if (countIn != 0 && countOut != 0) {
+        //mixed state: if set to false here, a click on it will put all cards into that group
+        newItem.setAttribute("label", allCatsArray[k] + " (*)");
+        newItem.setAttribute("checked", "false");
+      } else {
+      newItem.setAttribute("label", allCatsArray[k]);
+      newItem.setAttribute("checked", "false");
+      }
+      
+      newItem.addEventListener("click", jbCatMan.onCategoriesContextMenuItemCommand, false);
+      popup.appendChild(newItem);
+    }
   }
   jbCatMan.dump("Done with onResultsTreeContextMenuPopup()",-1);
 }
@@ -514,7 +532,7 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
     for (let i = 0; i < changedBooks.length; i++) {
       if (jbCatMan.sogoSync && isGroupdavDirectory(changedBooks[i])) { //TODO - what about sogo books with deactivated sogo?
         SynchronizeGroupdavAddressbook(changedBooks[i]);
-        jbCatMan.dump("Sync <"+changedBooks[i]+">using sogo-connector.");
+        jbCatMan.dump("Sync <"+changedBooks[i]+"> using sogo-connector.");
       } else {
         jbCatMan.dump("Changes, but sogo not installed and/or not a sogo book - no sync.");
       }

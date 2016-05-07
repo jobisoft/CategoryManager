@@ -207,7 +207,8 @@ jbCatMan.getCategoriesfromCardAsString = function (card) {
 
 
 
-jbCatMan.setCategoriesforCard = function (card, catsArray) { //replacement for SOGo's arrayToMultiValue 
+//replacement for SOGo's arrayToMultiValue 
+jbCatMan.setCategoriesforCard = function (card, catsArray) {
   jbCatMan.dump("Begin with setCategoriesforCard()",1);
   let retval = true;
   try {
@@ -362,7 +363,7 @@ jbCatMan.scanCategories = function () {
        if (prefs.getBoolPref("disable_global_book")) {
          break;
        }
-       abook = allAddressBooks.getNext().QueryInterface(Components.interfaces.nsIAbDirectory);
+       let abook = allAddressBooks.getNext().QueryInterface(Components.interfaces.nsIAbDirectory);
        if (abook instanceof Components.interfaces.nsIAbDirectory) { // or nsIAbItem or nsIAbCollection
         addressBooks.push(abook.URI);
        }
