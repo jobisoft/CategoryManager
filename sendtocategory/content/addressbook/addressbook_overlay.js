@@ -24,9 +24,6 @@ use isRemote to not work on LDAP
 TODO
 - store/restore last addressbook used in messenger as well
 - work on lists
-
-- Kategoriemenu des sogo connectors unterdrücken?
-- check if listener is disabled on all bulk edits (context, add/rename/remove, bulk)
 - rescan on ab delete
 */
 
@@ -432,6 +429,7 @@ jbCatMan.onDeleteCategory = function () {
 // disable context menu if no card has been selected, or fill context menu with found categories
 jbCatMan.onResultsTreeContextMenuPopup = function () {
   jbCatMan.dump("Begin with onResultsTreeContextMenuPopup()",1);
+
   let cards = GetSelectedAbCards();
   let rootEntry = document.getElementById("CatManCategoriesContextMenu");
   rootEntry.disabled = (cards.length == 0);
@@ -644,6 +642,11 @@ jbCatMan.initAddressbook = function() {
 
   //Add listener for category context menu
   document.getElementById("CatManCategoriesContextMenu-popup").addEventListener("popupshowing", function () { jbCatMan.dump("Begin trigger by event onResultsTreeContextMenuPopup()",1); jbCatMan.onResultsTreeContextMenuPopup(); jbCatMan.dump("Done trigger by event onResultsTreeContextMenuPopup()",-1); } , false);
+
+  //Hide SOGo ContextMenu
+  let sogoContextMenu = document.getElementById("sc-categories-contextmenu");
+  jbCatMan.dump(sogoContextMenu);
+  sogoContextMenu.style.display = 'none';
 
   jbCatMan.dump("Done with initAddressbook()",-1);
 }

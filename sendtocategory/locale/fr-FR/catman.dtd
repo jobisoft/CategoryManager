@@ -6,6 +6,7 @@
 <!ENTITY sendtocategory.name.label "nom">
 
 <!ENTITY sendtocategory.categoryfilter.label "Catégories ...">
+<!ENTITY sendtocategory.categoriescontext.label "Catégories">
 
 <!ENTITY sendtocategory.helpButton.label "?">
 <!ENTITY sendtocategory.hideCategoryPaneButton.label "&#9660;">
