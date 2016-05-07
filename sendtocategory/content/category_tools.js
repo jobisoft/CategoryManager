@@ -92,6 +92,7 @@ jbCatMan.init = function () {
   jbCatMan.data.membersWithoutPrimaryEmail = new Array();
   jbCatMan.data.emails = new Array();
   jbCatMan.data.abSize = 0;
+  jbCatMan.data.categoriesOfCard = new Array();
   
   //managed by addressbook_overlay.js
   jbCatMan.data.selectedCategory = "";
@@ -137,6 +138,14 @@ jbCatMan.getCardsFromEmail = function (email) {
 
 
 
+// each card has a localId and knows the directoryId of the book it is stored in - this Id cannot be used to get (search) this card
+jbCatMan.getTBUIDFromCard = function (card) {
+    return card.localId+"@"+card.directoryId;
+}
+
+
+
+// each local card has a unique property, which can be used to get (search) this card (not working with LDAP) - it is not unique across different abooks
 jbCatMan.getUIDFromCard = function (card) {
   jbCatMan.dump("Begin with getUIDFromCard()",1);
   let CardID = "";
@@ -173,16 +182,26 @@ jbCatMan.getCardFromUID = function (UID) {
 
 
 
-jbCatMan.getCategoriesfromCard = function (card) {
-  jbCatMan.debug("Begin with getCategoriesfromCard()",1);
-  let catArray = [];
-  try {
-    //this line is derived from chrome://sogo-connector/content/addressbook/cardview-overlay.js
-    catArray = card.getPropertyAsAString("Categories").split("\u001A");
-  } catch (ex) {}  
-  jbCatMan.debug("Done with getCategoriesfromCard()",-1);
-  return catArray;
+jbCatMan.getArrayfromCategoriesString = function (cardString) {
+  let catsArray = [];
+  if (cardString != "") {
+    catsArray = cardString.split("\u001A");
+  }
+  return catsArray;
 }
+
+
+
+jbCatMan.getCategoriesfromCardAsString = function (card) {
+  jbCatMan.debug("Begin with getCategoriesfromCardAsString()",1);
+  let cats = "";
+  try {
+    cats = card.getPropertyAsAString("Categories");
+  } catch (ex) {}  
+  jbCatMan.debug("Done with getCategoriesfromCardAsString()",-1);
+  return cats;
+}
+
 
 
 jbCatMan.setCategoriesforCard = function (card, catsArray) { //replacement for SOGo's arrayToMultiValue 
@@ -263,7 +282,7 @@ jbCatMan.updateCategories = function (mode,oldName,newName) {
 
   while (cards.hasMoreElements()) {
     let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
-    let catArray = jbCatMan.getCategoriesfromCard(card);
+    let catArray = jbCatMan.getArrayfromCategoriesString(jbCatMan.getCategoriesfromCardAsString(card));
     let rebuildCatArray = [];
         
     if (catArray.length > 0) {  
@@ -355,12 +374,15 @@ jbCatMan.scanCategories = function () {
     while (cards.hasMoreElements()) {
       let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
       jbCatMan.data.abSize++;
-      let catArray = jbCatMan.getCategoriesfromCard(card);
+      let catString = jbCatMan.getCategoriesfromCardAsString(card);
+      let catArray =jbCatMan.getArrayfromCategoriesString(catString);
       
       if (catArray.length > 0) {
         //this person belongs to at least one category, extract UUID
         let CardID = jbCatMan.getUIDFromCard(card);
-
+        //add categories of this card for later reference
+        jbCatMan.data.categoriesOfCard[jbCatMan.getTBUIDFromCard(card)] = catString;
+        
         //add card to all categories it belongs to
         for (let i=0; i < catArray.length; i++) {
           //is this category known already?

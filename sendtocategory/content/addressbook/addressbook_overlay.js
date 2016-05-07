@@ -28,7 +28,6 @@ TODO
 - work on lists
 - Kategoriemenu des sogo connectors unterdrücken?
 - bigbug, catmenu stays disabled
-- jbCatMan.AbListener => Only run updateCategoryList if category changed??? If a sogo contact was changed and synced, it is comming back with a new groupdavid -> triggers listener (bad for category renames...) or reenable listener on "click" something?
 */
 
 
@@ -446,7 +445,7 @@ jbCatMan.onResultsTreeContextMenuPopup = function () {
       }
 
       let allCatsArray = jbCatMan.data.categoryList;
-      let thisCatsArray = jbCatMan.getCategoriesfromCard(cards[0]);
+      let thisCatsArray = jbCatMan.getArrayfromCategoriesString(jbCatMan.getCategoriesfromCardAsString(cards[0]));
 
       for (let i = 0; i < allCatsArray.length; i++) {
           let newItem = document.createElement("menuitem");
@@ -477,7 +476,7 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
   for (let i = 0; i < cards.length; i++) {
     let changed = false;
     let card = cards[i];
-    let catsArray = jbCatMan.getCategoriesfromCard(card);
+    let catsArray = jbCatMan.getArrayfromCategoriesString(jbCatMan.getCategoriesfromCardAsString(card));
     let catIdx = catsArray.indexOf(category);
   
     if (enabled && catIdx == -1) {
@@ -529,7 +528,23 @@ jbCatMan.AbListener = {
 
   onItemPropertyChanged: function AbListener_onItemPropertyChanged(aItem, aProperty, aOldValue, aNewValue) {
     jbCatMan.dump("Begin trigger by onItemPropertyChanged()",1);
-    jbCatMan.updateCategoryList();
+    let card = null;
+    try {
+      card = aItem.QueryInterface(Components.interfaces.nsIAbCard);
+    } catch (ex) {}
+    
+    if (card != null) {
+      //check if the changed card has a modified categories property
+      let catString = jbCatMan.getCategoriesfromCardAsString(card);
+      let cardTBID = jbCatMan.getTBUIDFromCard(card);
+      if (catString != jbCatMan.data.categoriesOfCard[cardTBID]) {
+        jbCatMan.dump("Categories property changed, calling updateCategoriesList()");
+        jbCatMan.updateCategoryList();
+      } else {
+        jbCatMan.dump("Categories property did not change, no need to updateCategoriesList()");
+      }
+    }
+    
     jbCatMan.dump("Done trigger by onItemPropertyChanged()",-1);
   },
 
