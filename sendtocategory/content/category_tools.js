@@ -415,7 +415,11 @@ jbCatMan.scanCategories = function () {
 
   jbCatMan.scanErrors = new Array();
   for (var l = 0; l < addressBooks.length; l++) {
-    let addressBook = abManager.getDirectory(addressBooks[l]); //addressBooks contains URIs, but we need the directory itself
+    let addressBook = null;
+    if (addressBooks[l]) addressBook = abManager.getDirectory(addressBooks[l]); //addressBooks contains URIs, but we need the directory itself
+    else continue;
+
+    jbCatMan.dump("Scanning: "+addressBook);
     let cards = addressBook.childCards;
 
     while (cards.hasMoreElements()) {

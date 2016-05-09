@@ -24,7 +24,7 @@ use isRemote to not work on LDAP
 TODO
 - store/restore last addressbook used in messenger as well
 - work on lists
-- rescan on ab delete
+- search/display of category members in global abook can be wrong, because the bdrowid is not unique across addressbooks.
 */
 
 
@@ -151,8 +151,10 @@ jbCatMan.updateCategoryList = function () {
 jbCatMan.updateButtons = function () {
   jbCatMan.dump("Begin with updateButtons()",1);
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
-  let isRemote = abManager.getDirectory(GetSelectedDirectory()).isRemote;
-
+  let isRemote = true;
+  let selectedBook = GetSelectedDirectory();
+  if (selectedBook) isRemote = abManager.getDirectory(selectedBook).isRemote;
+  
   document.getElementById("CatManContextMenuRemove").disabled = (jbCatMan.data.selectedCategory == "" || isRemote);
   document.getElementById("CatManContextMenuEdit").disabled = (jbCatMan.data.selectedCategory == "" || isRemote);
   document.getElementById("CatManContextMenuBulk").disabled = (jbCatMan.data.selectedCategory == "" || isRemote);
@@ -264,23 +266,29 @@ jbCatMan.onToggleDisplay = function (show) {
 
 
 jbCatMan.onSelectAddressbook = function () {
-  jbCatMan.dump("Begin with onSelectAddressbook()",1);
+  let selectedBook = GetSelectedDirectory();
+  jbCatMan.dump("Begin with onSelectAddressbook("+gDirTree.view.selection.currentIndex+","+selectedBook+")",1);
+  if (selectedBook) {
+    let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
+    // disable and clear ResultTreePane, if global abook is selected and user enabled this option
+    if (gDirTree.view.selection.currentIndex == 0 && prefs.getBoolPref("disable_global_book")) {
+      document.getElementById("abResultsTree").disabled = true;
+      document.getElementById("peopleSearchInput").disabled = true;
+      SetAbView();
+    } else {
+      document.getElementById("abResultsTree").disabled = false;
+      document.getElementById("peopleSearchInput").disabled = false;
+    }
 
-  let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
-  // disable and clear ResultTreePane, if global abook is selected and user enabled this option
-  if (gDirTree.view.selection.currentIndex == 0 && prefs.getBoolPref("disable_global_book")) {
-    document.getElementById("abResultsTree").disabled = true;
-    document.getElementById("peopleSearchInput").disabled = true;
-    SetAbView();
+    jbCatMan.data.emptyCategories = new Array();
+    jbCatMan.data.selectedCategory = "";
+    jbCatMan.updateCategoryList();
+    prefs.setCharPref("last_book",selectedBook);
   } else {
-    document.getElementById("abResultsTree").disabled = false;
-    document.getElementById("peopleSearchInput").disabled = false;
+    //if for some reason no address book is selected, select the first one
+    gDirTree.view.selection.select(0);
+    ChangeDirectoryByURI(GetSelectedDirectory());
   }
-
-  jbCatMan.data.emptyCategories = new Array();
-  jbCatMan.data.selectedCategory = "";
-  jbCatMan.updateCategoryList();
-  prefs.setCharPref("last_book",GetSelectedDirectory());
   jbCatMan.dump("Done with onSelectAddressbook()",-1);
 }
 
@@ -531,21 +539,27 @@ jbCatMan.AbListener = {
   /* AbListener should detect bulk changes and only call updateCategoryList() after
      the last event. This is achieved by using clearTimeout and setTimeout on each 
      event, so if a new event comes in while the timeout for the last one is not yet
-     done, it gets posponed. */
+     done, it gets postponed. */
   
   onItemAdded: function AbListener_onItemAdded(aParentDir, aItem) {
-    window.clearTimeout(jbCatMan.eventTimeout);
-    jbCatMan.eventTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemAdded()",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemAdded()",-1);}, 1000);
+    if (aItem instanceof Components.interfaces.nsIAbCard) {
+      window.clearTimeout(jbCatMan.eventTimeout);
+      jbCatMan.eventTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemAdded()",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemAdded()",-1);}, 1000);
+    }
   },
 
   onItemPropertyChanged: function AbListener_onItemPropertyChanged(aItem, aProperty, aOldValue, aNewValue) {
-    window.clearTimeout(jbCatMan.eventTimeout);
-    jbCatMan.eventTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemPropertyChanged()",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemPropertyChanged()",-1);}, 1000);
+    if (aItem instanceof Components.interfaces.nsIAbCard) {
+      window.clearTimeout(jbCatMan.eventTimeout);
+      jbCatMan.eventTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemPropertyChanged()",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemPropertyChanged()",-1);}, 1000);
+    }
   },
 
   onItemRemoved: function AbListener_onItemRemoved(aParentDir, aItem) {
-    window.clearTimeout(jbCatMan.eventTimeout);
-    jbCatMan.eventTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemRemoved()",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemRemoved()",-1);}, 1000);
+    if (aItem instanceof Components.interfaces.nsIAbCard) {
+      window.clearTimeout(jbCatMan.eventTimeout);
+      jbCatMan.eventTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemRemoved()",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemRemoved()",-1);}, 1000);
+    }
   },
 
   add: function AbListener_add() {
@@ -645,8 +659,7 @@ jbCatMan.initAddressbook = function() {
 
   //Hide SOGo ContextMenu
   let sogoContextMenu = document.getElementById("sc-categories-contextmenu");
-  jbCatMan.dump(sogoContextMenu);
-  sogoContextMenu.style.display = 'none';
+  if (sogoContextMenu) sogoContextMenu.style.display = 'none';
 
   jbCatMan.dump("Done with initAddressbook()",-1);
 }
