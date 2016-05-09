@@ -112,9 +112,9 @@ jbCatMan.init = function () {
 // sync related functions
 //#######################
 
-/* These functions wrap operations needed to be able to sync cards with SOGo. 
-   If a sync independent from SOGo is going to implemented, just these functions
-   have to be modified */
+/* These functions wrap operations needed to be able to sync cards using the 
+   SOGo-connector. If a sync independent from SOGo is going to implemented, 
+   just these functions have to be modified */
 
 
 
@@ -242,7 +242,7 @@ jbCatMan.getCardsFromEmail = function (email) {
 
 
 
-// each card has a localId and knows the directoryId of the book it is stored in - this Id cannot be used to get (search) this card
+// each card has a localId and knows the directoryId of the book it is stored in - this Id cannot be used to get (search) this card, but it is unique across books
 jbCatMan.getTBUIDFromCard = function (card) {
     return card.localId+"@"+card.directoryId;
 }

@@ -152,12 +152,14 @@ jbCatMan.updateButtons = function () {
   jbCatMan.dump("Begin with updateButtons()",1);
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
   let isRemote = true;
+  let isGlobal = false;
   let selectedBook = GetSelectedDirectory();
   if (selectedBook) isRemote = abManager.getDirectory(selectedBook).isRemote;
-  
-  document.getElementById("CatManContextMenuRemove").disabled = (jbCatMan.data.selectedCategory == "" || isRemote);
-  document.getElementById("CatManContextMenuEdit").disabled = (jbCatMan.data.selectedCategory == "" || isRemote);
-  document.getElementById("CatManContextMenuBulk").disabled = (jbCatMan.data.selectedCategory == "" || isRemote);
+  if (selectedBook == "moz-abdirectory://?") isGlobal = true;
+
+  document.getElementById("CatManContextMenuRemove").disabled = (jbCatMan.data.selectedCategory == "" || isRemote || isGlobal);
+  document.getElementById("CatManContextMenuEdit").disabled = (jbCatMan.data.selectedCategory == "" || isRemote || isGlobal);
+  document.getElementById("CatManContextMenuBulk").disabled = (jbCatMan.data.selectedCategory == "" || isRemote || isGlobal);
 
   document.getElementById("CatManContextMenuSend").disabled = (jbCatMan.data.selectedCategory == "" || isRemote); 
 
@@ -165,8 +167,8 @@ jbCatMan.updateButtons = function () {
   //document.getElementById("CatManContextMenuImport").disabled = isRemote;
   //document.getElementById("CatManContextMenuExport").disabled = isRemote;
 
-  document.getElementById("CatManAddContactCategoryButton").disabled = isRemote;
-  document.getElementById("CatManContextMenuAdd").disabled = isRemote;
+  document.getElementById("CatManAddContactCategoryButton").disabled = isRemote || isGlobal;
+  document.getElementById("CatManContextMenuAdd").disabled = isRemote || isGlobal;
 
   if (jbCatMan.data.selectedCategory == "") {
     //document.getElementById("CatManContextMenuImport").label = jbCatMan.locale.menuAllImport;
