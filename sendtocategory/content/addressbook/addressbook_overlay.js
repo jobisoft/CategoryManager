@@ -24,7 +24,7 @@ use isRemote to not work on LDAP
 TODO
 - store/restore last addressbook used in messenger as well
 - work on lists
-- search/display of category members in global abook can be wrong, because the bdrowid is not unique across addressbooks.
+- search/display of category members in global abook is(!) wrong, because the DbRowID is not unique across addressbooks.
 */
 
 
@@ -633,6 +633,21 @@ SelectFirstAddressBook = function() {
 
 
 
+/********************************************************************************
+ This is copied from SOGo to include the categories field in the card view pane.
+ If the SOGo-connector is installed, DisplayCardViewPane() is not touched and the
+ SOGo version is used (//sogo-connector/content/addressbook/cardview-overlay.js)
+********************************************************************************/
+jbCatMan.DisplayCardViewPane_ORIG = DisplayCardViewPane;
+if (!jbCatMan.sogoSync) DisplayCardViewPane = function(card) {
+        jbCatMan.DisplayCardViewPane_ORIG.apply(window, arguments);
+        let CatManCategoriesLabel = document.getElementById("CatManCategoriesLabel");
+        let cats = jbCatMan.getCategoriesfromCard(card).join(", ");
+        cvSetNodeWithLabel(CatManCategoriesLabel, CatManCategoriesLabel.getAttribute("CatManCategoriesLabelText"), cats);
+}
+
+
+
 
 
 //###################################################
@@ -660,6 +675,7 @@ jbCatMan.initAddressbook = function() {
   //Hide SOGo ContextMenu
   let sogoContextMenu = document.getElementById("sc-categories-contextmenu");
   if (sogoContextMenu) sogoContextMenu.style.display = 'none';
+
 
   jbCatMan.dump("Done with initAddressbook()",-1);
 }

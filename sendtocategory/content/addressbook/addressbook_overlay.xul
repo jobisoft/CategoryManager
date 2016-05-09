@@ -119,4 +119,8 @@
     </menu>
   </popup>
 
+  <vbox id="cvbContact">
+    <description CatManCategoriesLabelText="&sendtocategory.categoriescontext.label;" id="CatManCategoriesLabel" class="CardViewText" insertafter="cvScreennameBox"/>
+  </vbox>
+  
 </overlay>
