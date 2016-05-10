@@ -551,36 +551,23 @@ jbCatMan.AbListener = {
   the last event. This is achieved by using clearTimeout and setTimeout on each
   event, so if a new event comes in while the timeout for the last one is not yet
   done, it gets postponed.
-
-  LDAP directories are not scanned for categories, so we do not need to call
-  updateCategoryList(), if there were any changes to LDAP directories.
   */
   onItemAdded: function AbListener_onItemAdded(aParentDir, aItem) {
-
-    let isLocal = false;
-    if (aParentDir instanceof Components.interfaces.nsIAbDirectory && aParentDir.QueryInterface(Components.interfaces.nsIAbDirectory).isRemote == false) isLocal = true;
- 
-    if (aItem instanceof Components.interfaces.nsIAbCard && isLocal) {
+    if (aItem instanceof Components.interfaces.nsIAbCard) {
       window.clearTimeout(jbCatMan.eventTimeout);
       jbCatMan.eventTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemAdded()",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemAdded()",-1);}, 1000);
     }
   },
 
   onItemPropertyChanged: function AbListener_onItemPropertyChanged(aItem, aProperty, aOldValue, aNewValue) {
-    let isLocal = false;
-    if (aParentDir instanceof Components.interfaces.nsIAbDirectory && aParentDir.QueryInterface(Components.interfaces.nsIAbDirectory).isRemote == false) isLocal = true;
-
-    if (aItem instanceof Components.interfaces.nsIAbCard && isLocal) {
+    if (aItem instanceof Components.interfaces.nsIAbCard) {
       window.clearTimeout(jbCatMan.eventTimeout);
       jbCatMan.eventTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemPropertyChanged()",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemPropertyChanged()",-1);}, 1000);
     }
   },
 
   onItemRemoved: function AbListener_onItemRemoved(aParentDir, aItem) {
-    let isLocal = false;
-    if (aParentDir instanceof Components.interfaces.nsIAbDirectory && aParentDir.QueryInterface(Components.interfaces.nsIAbDirectory).isRemote == false) isLocal = true;
-
-    if (aItem instanceof Components.interfaces.nsIAbCard && isLocal) {
+    if (aItem instanceof Components.interfaces.nsIAbCard) {
       window.clearTimeout(jbCatMan.eventTimeout);
       jbCatMan.eventTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemRemoved()",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemRemoved()",-1);}, 1000);
     }
