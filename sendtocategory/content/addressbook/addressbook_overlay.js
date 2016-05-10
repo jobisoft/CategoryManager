@@ -7,24 +7,30 @@ loader.loadSubScript("chrome://sendtocategory/content/category_tools.js");
 
 /* stuff
 
+// Get all properties of a card
 props = card.properties;
 while (props.hasMoreElements()) {
     prop = props.getNext().QueryInterface(Components.interfaces.nsIProperty); 
     dump("Prop ["+ prop.name+"] = ["+prop.value+"]\n");
 }
 
-
 If a sogo book (without sogo connector) is added cards, there is no groupdavid,
 if sogo connector is switched back on - we need to add missing UUID?
 - UUID is used and must therefore be present/checked for
 
-use isRemote to not work on LDAP
+public LDAP Test account
+Hostname:ldap.adams.edu
+Base DN: ou=people,dc=adams,dc=edu
+Port number: 389
+Bind DN: LEAVE BLANK
+Use secure connection (SSL):UNCHECK
 
 
 TODO
 - store/restore last addressbook used in messenger as well
 - work on lists
 - search/display of category members in global abook is(!) wrong, because the DbRowID is not unique across addressbooks.
+- disable CatMan on LDAP at all possible locations (isRemote)
 */
 
 
@@ -107,12 +113,15 @@ jbCatMan.updateCategoryList = function () {
       jbCatMan.updatePeopleSearchInput("");
     }
   } else {
+    /* There should not be any action here, the user typed something in the
+       search field so it is a true search result and we should not mess with it 
+    
     if (document.getElementById('abResultsTree').view.rowCount != jbCatMan.data.abSize) {
       ClearCardViewPane();
       SetAbView(GetSelectedDirectory());
       if (jbCatMan.data.abSize>0) SelectFirstCard();  
       jbCatMan.updatePeopleSearchInput("");
-    }
+    } */
   }
   
   jbCatMan.updateButtons();
@@ -537,28 +546,41 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
 //###################################################
 
 jbCatMan.AbListener = {
+  /*
+  AbListener should detect bulk changes and only call updateCategoryList() after
+  the last event. This is achieved by using clearTimeout and setTimeout on each
+  event, so if a new event comes in while the timeout for the last one is not yet
+  done, it gets postponed.
 
-  /* AbListener should detect bulk changes and only call updateCategoryList() after
-     the last event. This is achieved by using clearTimeout and setTimeout on each 
-     event, so if a new event comes in while the timeout for the last one is not yet
-     done, it gets postponed. */
-  
+  LDAP directories are not scanned for categories, so we do not need to call
+  updateCategoryList(), if there were any changes to LDAP directories.
+  */
   onItemAdded: function AbListener_onItemAdded(aParentDir, aItem) {
-    if (aItem instanceof Components.interfaces.nsIAbCard) {
+
+    let isLocal = false;
+    if (aParentDir instanceof Components.interfaces.nsIAbDirectory && aParentDir.QueryInterface(Components.interfaces.nsIAbDirectory).isRemote == false) isLocal = true;
+ 
+    if (aItem instanceof Components.interfaces.nsIAbCard && isLocal) {
       window.clearTimeout(jbCatMan.eventTimeout);
       jbCatMan.eventTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemAdded()",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemAdded()",-1);}, 1000);
     }
   },
 
   onItemPropertyChanged: function AbListener_onItemPropertyChanged(aItem, aProperty, aOldValue, aNewValue) {
-    if (aItem instanceof Components.interfaces.nsIAbCard) {
+    let isLocal = false;
+    if (aParentDir instanceof Components.interfaces.nsIAbDirectory && aParentDir.QueryInterface(Components.interfaces.nsIAbDirectory).isRemote == false) isLocal = true;
+
+    if (aItem instanceof Components.interfaces.nsIAbCard && isLocal) {
       window.clearTimeout(jbCatMan.eventTimeout);
       jbCatMan.eventTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemPropertyChanged()",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemPropertyChanged()",-1);}, 1000);
     }
   },
 
   onItemRemoved: function AbListener_onItemRemoved(aParentDir, aItem) {
-    if (aItem instanceof Components.interfaces.nsIAbCard) {
+    let isLocal = false;
+    if (aParentDir instanceof Components.interfaces.nsIAbDirectory && aParentDir.QueryInterface(Components.interfaces.nsIAbDirectory).isRemote == false) isLocal = true;
+
+    if (aItem instanceof Components.interfaces.nsIAbCard && isLocal) {
       window.clearTimeout(jbCatMan.eventTimeout);
       jbCatMan.eventTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemRemoved()",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemRemoved()",-1);}, 1000);
     }
@@ -644,7 +666,7 @@ jbCatMan.DisplayCardViewPane_ORIG = DisplayCardViewPane;
 if (!jbCatMan.sogoSync) DisplayCardViewPane = function(card) {
         jbCatMan.DisplayCardViewPane_ORIG.apply(window, arguments);
         let CatManCategoriesLabel = document.getElementById("CatManCategoriesLabel");
-        let cats = jbCatMan.getCategoriesfromCard(card).join(", ");
+        let cats = jbCatMan.getCategoriesfromCard(card).sort().join(", ");
         cvSetNodeWithLabel(CatManCategoriesLabel, CatManCategoriesLabel.getAttribute("CatManCategoriesLabelText"), cats);
 }
 

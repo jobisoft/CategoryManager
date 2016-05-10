@@ -419,6 +419,11 @@ jbCatMan.scanCategories = function () {
     if (addressBooks[l]) addressBook = abManager.getDirectory(addressBooks[l]); //addressBooks contains URIs, but we need the directory itself
     else continue;
 
+    /* Skip LDAP directories: They are never loaded completely, but just those contacts matching a search result.
+       If only those are scanned, the user never knows, if a listed category contains all category members or not.
+       The function "send email to category" is rendered useless. */
+    if (addressBook.isRemote) continue;
+
     jbCatMan.dump("Scanning <"+addressBook.URI+">");
     let cards = addressBook.childCards;
 
