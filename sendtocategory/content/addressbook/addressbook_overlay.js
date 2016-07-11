@@ -26,11 +26,16 @@ CONCEPT CHANGES
  - do not mess with Sogo UUID, (SOGo is providing UUID from server, if not present)
  - groupDavVersion still needs to be set to -1, to indicate changes?
 
-
-TODO
-- store/restore last addressbook used in messenger as well
-- work on lists
+TODO 2.01
 - disable CatMan on LDAP at all possible locations (isRemote)
+- add Category Pane in EditDialog
+- fix search for empty Primary Email in onCategorySearch()
+- update Description
+
+TODO 2.xx
+- import / export
+- work on lists
+- store/restore last addressbook used in messenger as well
 */
 
 
