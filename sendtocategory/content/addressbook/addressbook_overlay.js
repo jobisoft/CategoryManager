@@ -14,10 +14,6 @@ while (props.hasMoreElements()) {
     dump("Prop ["+ prop.name+"] = ["+prop.value+"]\n");
 }
 
-If a sogo book (without sogo connector) is added cards, there is no groupdavid,
-if sogo connector is switched back on - we need to add missing UUID?
-- UUID is used and must therefore be present/checked for
-
 public LDAP Test account
 Hostname:ldap.adams.edu
 Base DN: ou=people,dc=adams,dc=edu
@@ -26,10 +22,14 @@ Bind DN: LEAVE BLANK
 Use secure connection (SSL):UNCHECK
 
 
+CONCEPT CHANGES
+ - do not mess with Sogo UUID, (SOGo is providing UUID from server, if not present)
+ - groupDavVersion still needs to be set to -1, to indicate changes?
+
+
 TODO
 - store/restore last addressbook used in messenger as well
 - work on lists
-- search/display of category members in global abook is(!) wrong, because the DbRowID is not unique across addressbooks.
 - disable CatMan on LDAP at all possible locations (isRemote)
 */
 
@@ -650,7 +650,7 @@ SelectFirstAddressBook = function() {
  SOGo version is used (//sogo-connector/content/addressbook/cardview-overlay.js)
 ********************************************************************************/
 jbCatMan.DisplayCardViewPane_ORIG = DisplayCardViewPane;
-if (!jbCatMan.sogoSync) DisplayCardViewPane = function(card) {
+if (!jbCatMan.sogoInstalled) DisplayCardViewPane = function(card) {
         jbCatMan.DisplayCardViewPane_ORIG.apply(window, arguments);
         let CatManCategoriesLabel = document.getElementById("CatManCategoriesLabel");
         let cats = jbCatMan.getCategoriesfromCard(card).sort().join(", ");

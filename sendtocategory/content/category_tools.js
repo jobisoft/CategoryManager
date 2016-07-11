@@ -50,7 +50,7 @@ jbCatMan.debug = function (str,lvl) {
 
 jbCatMan.init = function () { 
   //enable or disable debug dump messages
-  jbCatMan.printDumps = true;
+  jbCatMan.printDumps = false;
   jbCatMan.printDebugDumps = false;
   jbCatMan.printDumpsIndent = " ";
   
@@ -68,9 +68,8 @@ jbCatMan.init = function () {
   jbCatMan.data = {};
 
 
-  //Check if sogo-connector is installed, and enable sogoSync
-  jbCatMan.sogoSync = false;
-  jbCatMan.sogoError = "";
+  //Check if sogo-connector is installed
+  jbCatMan.sogoInstalled = false;
 
   //SynchronizeGroupdavAddressbook is def in sync.addressbook.groupdav.js
   //isGroupdavDirectory is def in /sync.addressbook.groupdav.js which is included by sync.addressbook.groupdav.js
@@ -79,13 +78,12 @@ jbCatMan.init = function () {
   }
 
   //Verify
-  if (typeof(SynchronizeGroupdavAddressbook)  != "function") {jbCatMan.sogoError = jbCatMan.sogoError + "Required function 'SynchronizeGroupdavAddressbook' is not defined.\n";}
-  if (typeof(isGroupdavDirectory) != "function") {jbCatMan.sogoError = jbCatMan.sogoError + "Required function 'isGroupdavDirectory' is not defined.\n";}
-
-  if ( jbCatMan.sogoError != "" ) {
-    jbCatMan.dump("SogoSync is disabled, the following dependencies are not met:\n******************\n" + jbCatMan.sogoError + "******************");
+  if (typeof(SynchronizeGroupdavAddressbook)  != "function") {
+    jbCatMan.dump("SOGo function 'SynchronizeGroupdavAddressbook' is not defined.");
+  } else if (typeof(isGroupdavDirectory) != "function") {
+    jbCatMan.dump("SOGo function 'isGroupdavDirectory' is not defined.");
   } else {
-    jbCatMan.sogoSync = true;
+    jbCatMan.sogoInstalled = true;
   }
   
   //mainly managed by jbCatMan.scanCategories()
@@ -129,7 +127,7 @@ jbCatMan.modifyCard = function (card) {
   let abUri = jbCatMan.data.abURI[card.directoryId];
   let ab = abManager.getDirectory(abUri);
 
-  if (jbCatMan.sogoSync && isGroupdavDirectory(ab.URI)) { //TODO - what about sogo books with deactivated sogo?
+  if (jbCatMan.sogoInstalled && isGroupdavDirectory(ab.URI)) { //TODO - what about sogo books with deactivated sogo?
     card.setProperty("groupDavVersion", "-1"); 
   }
   ab.modifyCard(card);
@@ -141,9 +139,10 @@ jbCatMan.modifyCard = function (card) {
 /* Create a new card with a unique ID */
 jbCatMan.newCard = function (abUri) {
   let card = Components.classes["@mozilla.org/addressbook/cardproperty;1"].createInstance(Components.interfaces.nsIAbCard);
-  if (jbCatMan.sogoSync && isGroupdavDirectory(abUri)) {  //TODO - what about sogo books with deactivated sogo?
-    let uuid = new UUID();
-    card.setProperty("groupDavKey",uuid);
+  if (jbCatMan.sogoInstalled && isGroupdavDirectory(abUri)) {  //TODO - what about sogo books with deactivated sogo?
+    //Do not mess with UUID, let the server do it
+    //let uuid = new UUID();
+    //card.setProperty("groupDavKey",uuid);
     card.setProperty("groupDavVersion", "-1"); 
   }
   return card;
@@ -153,7 +152,7 @@ jbCatMan.newCard = function (abUri) {
 
 /* Init sync */
 jbCatMan.sync = function (abUri) {
-  if (jbCatMan.sogoSync && isGroupdavDirectory(abUri)) { //TODO - what about sogo books with deactivated sogo?
+  if (jbCatMan.sogoInstalled && isGroupdavDirectory(abUri)) { //TODO - what about sogo books with deactivated sogo?
     SynchronizeGroupdavAddressbook(abUri);
     jbCatMan.dump("Sync <"+abUri+"> using sogo-connector.");
   } else {
@@ -188,26 +187,34 @@ jbCatMan.doCategorySearch = function () {
   if (document.getElementById("CardViewBox") != null) {
     ClearCardViewPane();
   }
-  //http://mxr.mozilla.org/comm-central/source/mailnews/addrbook/src/nsAbQueryStringToExpression.cpp#278
-  let UUIDQuery = "(DbRowID,=,@V)"; //was: groupDavKey
-  let searchQuery = "";
-  
-  if (jbCatMan.data.selectedCategory in jbCatMan.data.foundCategories) {
-    //build searchQuery from UUID List of selected category
-    for (let i=0; i<jbCatMan.data.foundCategories[jbCatMan.data.selectedCategory].length; i++) {
-      searchQuery = searchQuery + UUIDQuery.replace(/@V/g, encodeURIComponent(jbCatMan.data.foundCategories[jbCatMan.data.selectedCategory][i]));
-    }
-  }
 
-  // view all contatcs
+  // update results pane based on selected category
   if ( jbCatMan.data.selectedCategory == "" ) {
     SetAbView(abURI);
+    SelectFirstCard();
   } else {
+    //http://mxr.mozilla.org/comm-central/source/mailnews/addrbook/src/nsAbQueryStringToExpression.cpp#278
+    let searchQuery = "";
+    
+    if (jbCatMan.data.selectedCategory in jbCatMan.data.foundCategories) {
+      //build searchQuery from UUID List of selected category
+      for (let i=0; i<jbCatMan.data.foundCategories[jbCatMan.data.selectedCategory].length; i++) {
+        //CardIDs stored in foundCategories actually contains multiple fields, to be unique across multiple AB 
+        let UIDS = jbCatMan.data.foundCategories[jbCatMan.data.selectedCategory][i].split("\u001A");
+        searchQuery = searchQuery + "(and(DbRowID,=,"+encodeURIComponent(UIDS[0])+")";
+        if (UIDS[1]) searchQuery = searchQuery + "(DisplayName,=,"+encodeURIComponent(UIDS[1])+")";
+        if (UIDS[2]) searchQuery = searchQuery + "(PrimaryEmail,=,"+encodeURIComponent(UIDS[2])+")";
+        if (UIDS[3]) searchQuery = searchQuery + "(SecondEmail,=,"+encodeURIComponent(UIDS[3])+")"
+        searchQuery = searchQuery + ")";
+      }
+    }
+    dump(searchQuery+"\n");
     SetAbView(abURI + "?" + "(or" + searchQuery + ")");
+    if (document.getElementById("CardViewBox") != null && jbCatMan.data.selectedCategory in jbCatMan.data.foundCategories) {
+      SelectFirstCard();  
+    }
   }
-  if (document.getElementById("CardViewBox") != null && jbCatMan.data.selectedCategory in jbCatMan.data.foundCategories) {
-    SelectFirstCard();  
-  }
+  
   jbCatMan.updatePeopleSearchInput(jbCatMan.data.selectedCategory);
   jbCatMan.dump("Done with doCategorySearch()",-1);  
 }
@@ -242,25 +249,34 @@ jbCatMan.getCardsFromEmail = function (email) {
 
 
 
-// each card has a localId and knows the directoryId of the book it is stored in - this Id cannot be used to get (search) this card, but it is unique across books
+// each card has a localId and knows the directoryId of the book it is stored in - this Id cannot be used to get (search) this card, but it is unique across books - not used
 jbCatMan.getTBUIDFromCard = function (card) {
     return card.localId+"@"+card.directoryId;
 }
 
 
 
+
+
 // each local card has a unique property, which can be used to get (search) this card (not working with LDAP) - it is not unique across different abooks
 jbCatMan.getUIDFromCard = function (card) {
   jbCatMan.dump("Begin with getUIDFromCard()",1);
-  let CardID = "";
+  
+  //the DbRowID is not unique across different ABs, so we need to use more properties, to get a unique value
+  let DbRowID = "";
+  let displayName = "";
+  let primaryEmail = "";
+  let secondEmail = "";
+  
   try {
-    CardID = card.getPropertyAsAString("DbRowID"); //DbRowID is not avail on LDAP directories, but since we cannot modify LDAP directories, catman is not working at all on LDAP (isRemote)
+    DbRowID = card.getPropertyAsAString("DbRowID"); //DbRowID is not avail on LDAP directories, but since we cannot modify LDAP directories, catman is not working at all on LDAP (isRemote)
+    displayName = card.getProperty("DisplayName", "");
+    primaryEmail = card.getProperty("PrimaryEmail", "");
+    secondEmail = card.getProperty("SecondEmail", "");
   } catch (ex) {}
-  if (CardID == "") {
-    jbCatMan.scanErrors.push(jbCatMan.getUserNamefromCard(card,"Unknown Name"));
-  }
+
   jbCatMan.dump("Done with getUIDFromCard()",-1);
-  return CardID;
+  return DbRowID + "\u001A" + displayName + "\u001A" + primaryEmail + "\u001A" + secondEmail;
 }
 
 
@@ -271,8 +287,12 @@ jbCatMan.getCardFromUID = function (UID) {
 
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
 
+  //getCardFromUID is only used in bulkEdit, which is not allowed for global AB, so DbRowID is unique enough
+  let UIDS = UID.split("\u001A");
+  let DbRowID = UIDS[0];
+  
   let UUIDQuery = "(DbRowID,=,@V)";
-  let searchQuery = UUIDQuery.replace(/@V/g, encodeURIComponent(UID));
+  let searchQuery = UUIDQuery.replace(/@V/g, encodeURIComponent(DbRowID));
 
   let result = abManager.getDirectory(abURI + "?" + "(or" + searchQuery + ")").childCards;
   if (result.hasMoreElements()) {
@@ -413,7 +433,6 @@ jbCatMan.scanCategories = function () {
       addressBooks.push(GetSelectedDirectory()); //GetSelectedDirectory() returns the URI
   }
 
-  jbCatMan.scanErrors = new Array();
   for (var l = 0; l < addressBooks.length; l++) {
     let addressBook = null;
     if (addressBooks[l]) addressBook = abManager.getDirectory(addressBooks[l]); //addressBooks contains URIs, but we need the directory itself
@@ -430,11 +449,13 @@ jbCatMan.scanCategories = function () {
     while (cards.hasMoreElements()) {
       let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
       jbCatMan.data.abSize++;
+
+      //Keep track of mapping between directoryID and abURI, to get the owning AB for each card
       if (card.directoryId in jbCatMan.data.abURI == false) {
         jbCatMan.data.abURI[card.directoryId] = addressBook.URI;
       }
+
       let catArray = jbCatMan.getCategoriesfromCard(card);
-      
       if (catArray.length > 0) {
         //this person belongs to at least one category, extract UUID
         let CardID = jbCatMan.getUIDFromCard(card);
@@ -472,18 +493,6 @@ jbCatMan.scanCategories = function () {
     }
   }
   jbCatMan.data.categoryList.sort();
-  if (jbCatMan.scanErrors.length > 0) {
-    msg = "There are " + jbCatMan.scanErrors.length + " contact cards without a propper ID (DbRowID). That should not happen.\n";
-    for (let i=0; i < jbCatMan.scanErrors.length; i++) {
-      if (i>5) {
-        msg = msg + "\n...";
-        break;
-      } else {
-        msg = msg + "\n" + jbCatMan.scanErrors[i];
-      }
-    }
-    alert(msg);
-  }
   jbCatMan.dump("Done with scanCategories()",-1);
 }
 
