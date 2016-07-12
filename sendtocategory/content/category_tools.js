@@ -193,23 +193,22 @@ jbCatMan.doCategorySearch = function () {
     SetAbView(abURI);
     SelectFirstCard();
   } else {
-    //http://mxr.mozilla.org/comm-central/source/mailnews/addrbook/src/nsAbQueryStringToExpression.cpp#278
-    let searchQuery = "";
-    
+
+    let searchKeys = new Array();
     if (jbCatMan.data.selectedCategory in jbCatMan.data.foundCategories) {
       //build searchQuery from UUID List of selected category
       for (let i=0; i<jbCatMan.data.foundCategories[jbCatMan.data.selectedCategory].length; i++) {
-        //CardIDs stored in foundCategories actually contains multiple fields, to be unique across multiple AB 
+        //CardIDs stored in foundCategories actually contains DbRowID and the category string -> category string is enough for (global) category serach
         let UIDS = jbCatMan.data.foundCategories[jbCatMan.data.selectedCategory][i].split("\u001A");
-        searchQuery = searchQuery + "(and(DbRowID,=,"+encodeURIComponent(UIDS[0])+")";
-        if (UIDS[1]) searchQuery = searchQuery + "(DisplayName,=,"+encodeURIComponent(UIDS[1])+")";
-        if (UIDS[2]) searchQuery = searchQuery + "(PrimaryEmail,=,"+encodeURIComponent(UIDS[2])+")";
-        if (UIDS[3]) searchQuery = searchQuery + "(SecondEmail,=,"+encodeURIComponent(UIDS[3])+")"
-        searchQuery = searchQuery + ")";
+        let searchKey = "(Categories,=,"+encodeURIComponent(UIDS.slice(1).join("\u001A"))+")";
+        if (searchKeys.indexOf(searchKey) == -1) {
+          searchKeys.push(searchKey);
+        }
       }
     }
-    dump(searchQuery+"\n");
-    SetAbView(abURI + "?" + "(or" + searchQuery + ")");
+
+    //Filter by categories - http://mxr.mozilla.org/comm-central/source/mailnews/addrbook/src/nsAbQueryStringToExpression.cpp#278
+    SetAbView(abURI + "?" + "(or" + searchKeys.join("") + ")");
     if (document.getElementById("CardViewBox") != null && jbCatMan.data.selectedCategory in jbCatMan.data.foundCategories) {
       SelectFirstCard();  
     }
@@ -258,25 +257,21 @@ jbCatMan.getTBUIDFromCard = function (card) {
 
 
 
-// each local card has a unique property, which can be used to get (search) this card (not working with LDAP) - it is not unique across different abooks
+// each local card has a unique property DbRowID, which can be used to get (search) this card (not working with LDAP) - however, it is not unique across different abooks
 jbCatMan.getUIDFromCard = function (card) {
   jbCatMan.dump("Begin with getUIDFromCard()",1);
   
-  //the DbRowID is not unique across different ABs, so we need to use more properties, to get a unique value
+  //the DbRowID is not unique across different ABs, so it is not sufficient for global categoriy searches -> add category property
   let DbRowID = "";
-  let displayName = "";
-  let primaryEmail = "";
-  let secondEmail = "";
+  let categories = "";
   
   try {
     DbRowID = card.getPropertyAsAString("DbRowID"); //DbRowID is not avail on LDAP directories, but since we cannot modify LDAP directories, catman is not working at all on LDAP (isRemote)
-    displayName = card.getProperty("DisplayName", "");
-    primaryEmail = card.getProperty("PrimaryEmail", "");
-    secondEmail = card.getProperty("SecondEmail", "");
+    categories = card.getPropertyAsAString("Categories")
   } catch (ex) {}
 
   jbCatMan.dump("Done with getUIDFromCard()",-1);
-  return DbRowID + "\u001A" + displayName + "\u001A" + primaryEmail + "\u001A" + secondEmail;
+  return DbRowID + "\u001A" + categories;
 }
 
 
