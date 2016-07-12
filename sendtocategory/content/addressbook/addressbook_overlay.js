@@ -27,7 +27,6 @@ CONCEPT CHANGES
  - groupDavVersion still needs to be set to -1, to indicate changes?
 
 TODO 2.01
-- disable CatMan on LDAP at all possible locations (isRemote)
 - add Category Pane in EditDialog
 
 TODO 2.xx
