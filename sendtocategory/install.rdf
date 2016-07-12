@@ -23,25 +23,25 @@
 		<em:localized>
 			<Description>
 				<em:locale>de-DE</em:locale>
-				<em:description>Kategorie-Verwaltung für Thunderbird-Kontakte, erlaubt auch das Senden einer E-Mail an alle Kategoriemitglieder.</em:description>
+				<em:description>Kategorie-Verwaltung für Thunderbird-Kontakte, erlaubt auch das Senden einer E-Mail an alle Kategoriemitglieder (Kategoriebasierte Kontaktgruppen).</em:description>
 			</Description>
 		</em:localized>
 
 		<em:localized>
 			<Description>
 				<em:locale>fr-FR</em:locale>
-				<em:description>Category Manager pour contacts, permet aussi d'envoyer un email à tous les membres d'une catégorie.</em:description>
+				<em:description>Category Manager pour contacts, permet aussi d'envoyer un email à tous les membres d'une catégorie (category based contact groups).</em:description>
 			</Description>
 		</em:localized>
 
-    <em:localized>
+		<em:localized>
 			<Description>
 				<em:locale>es-AR</em:locale>
-				<em:description>Administrador de categorias para contactos, que permite enviar un correo a todos los miembros de una categoria.</em:description>
+				<em:description>Administrador de categorias para contactos, que permite enviar un correo a todos los miembros de una categoria. (category based contact groups)</em:description>
 			</Description>
 		</em:localized>
 
-		<em:description>Category manager for contacts, also allows to send an email to all members of a category.</em:description>
+		<em:description>Category manager for contacts, also allows to send an email to all members of a category. (category based contact groups)</em:description>
 		<em:creator>John Bieling</em:creator>
 
 	</Description>
