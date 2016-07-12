@@ -128,7 +128,9 @@ jbCatMan.modifyCard = function (card) {
   let ab = abManager.getDirectory(abUri);
 
   if (jbCatMan.sogoInstalled && isGroupdavDirectory(ab.URI)) { //TODO - what about sogo books with deactivated sogo?
+    let oldDavVersion = card.getProperty("groupDavVersion", "-1");
     card.setProperty("groupDavVersion", "-1"); 
+    card.setProperty("groupDavVersionPrev", oldDavVersion);    
   }
   ab.modifyCard(card);
   return ab.URI;
@@ -144,6 +146,7 @@ jbCatMan.newCard = function (abUri) {
     //let uuid = new UUID();
     //card.setProperty("groupDavKey",uuid);
     card.setProperty("groupDavVersion", "-1"); 
+    card.setProperty("groupDavVersionPrev", "-1");
   }
   return card;
 }
