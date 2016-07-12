@@ -394,7 +394,7 @@ jbCatMan.updateCategories = function (mode,oldName,newName) {
 
 
 
-jbCatMan.scanCategories = function () {
+jbCatMan.scanCategories = function (abURI) {
   jbCatMan.dump("Begin with scanCategories()",1);
 
   //get address book manager
@@ -416,7 +416,7 @@ jbCatMan.scanCategories = function () {
   let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
   let addressBooks = new Array();
 
-  if (GetSelectedDirectory() == "moz-abdirectory://?") {
+  if (abURI == "moz-abdirectory://?") {
     let allAddressBooks = abManager.directories;
     while (allAddressBooks.hasMoreElements()) {
        if (prefs.getBoolPref("disable_global_book")) {
@@ -428,7 +428,7 @@ jbCatMan.scanCategories = function () {
        }
     }
   } else {
-      addressBooks.push(GetSelectedDirectory()); //GetSelectedDirectory() returns the URI
+      addressBooks.push(abURI); //GetSelectedDirectory() returns the URI
   }
 
   for (var l = 0; l < addressBooks.length; l++) {

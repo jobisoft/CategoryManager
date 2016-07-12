@@ -44,7 +44,7 @@ TODO 2.xx
 
 jbCatMan.updateCategoryList = function () {
   jbCatMan.dump("Begin with updateCategoryList()",1);
-  jbCatMan.scanCategories();
+  jbCatMan.scanCategories(GetSelectedDirectory());
   
   //it could be, that a category from emptyCategories is no longer empty (it was scanned) -> remove it from empty
   for (let i = 0; i < jbCatMan.data.categoryList.length; i++) {

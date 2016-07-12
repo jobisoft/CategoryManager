@@ -7,12 +7,11 @@ loader.loadSubScript("chrome://sendtocategory/content/category_tools.js");
 
 jbCatMan.contactPanelCategoryMenuInit = function () {
   jbCatMan.dump("Begin with contactPanelCategoryMenuInit()",1);
-  let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
-  let currentlySelectedAddressbook = document.getElementById('addressbookList').value;
-  
+
   //contactPanelCategoryMenuInit is called onSelect, which is triggered once without a book selected
+  let currentlySelectedAddressbook = document.getElementById('addressbookList').value;
   if (currentlySelectedAddressbook != "") {
-    jbCatMan.scanCategories(abManager.getDirectory(currentlySelectedAddressbook));
+    jbCatMan.scanCategories(GetSelectedDirectory());
 
     let menulist = document.getElementById("CatManCategoryFilterList");
     menulist.selectedItem = null;
