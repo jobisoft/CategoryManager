@@ -491,6 +491,33 @@ jbCatMan.scanCategories = function (abURI) {
     }
   }
   jbCatMan.data.categoryList.sort();
+  
+
+  //reset SOGo Categories (stored in prefs) with CatMan Categories
+  if (jbCatMan.sogoInstalled)
+  {
+    let catsArray = jbCatMan.data.categoryList;
+    let initted = false;
+    let cats = "";
+    
+    for (let i = 0; i < catsArray.length; i++) {
+      if (catsArray[i] && catsArray[i].length > 0) {
+          let escaped = catsArray[i].replace(",", "\\,").replace(/(^[ ]+|[ ]+$)/, "", "g");
+          if (escaped.length > 0) {
+              if (initted) {
+                  cats += "," + escaped;
+              }
+              else {
+                  cats += escaped;
+                  initted = true;
+              }
+          }
+      }
+    }
+    let prefService = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+    prefService.setCharPref("sogo-connector.contacts.categories", unescape(encodeURIComponent(cats)));
+  }
+  
   jbCatMan.dump("Done with scanCategories()",-1);
 }
 
