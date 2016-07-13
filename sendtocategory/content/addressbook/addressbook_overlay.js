@@ -26,8 +26,6 @@ CONCEPT CHANGES
  - do not mess with Sogo UUID, (SOGo is providing UUID from server, if not present)
  - groupDavVersion still needs to be set to -1, to indicate changes?
 
-TODO 2.01
-- add Category Pane in EditDialog
 
 TODO 2.xx
 - import / export

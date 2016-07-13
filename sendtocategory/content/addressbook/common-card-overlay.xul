@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+
+<!-- 
+ This file is more or less taken directly from the SOGo-Connector, to add a Category Tab if the 
+ SOGo-Connector is not installed. But we do not mess with the OK button, but simply set the new 
+ categories on the DialogAccept-event and the ItemPropertyChanged-event will update the 
+ categories list and eventually will trigger a sync (if we ever implement that)
+-->
+
+<!DOCTYPE overlay [
+<!ENTITY % abMainOverlayDTD SYSTEM "chrome://sendtocategory/locale/catman.dtd" >
+%abMainOverlayDTD;
+]>
+
+<overlay id="CatManCommonCardOverlay"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <script type="application/x-javascript"
+    src="chrome://sendtocategory/content/addressbook/common-card-overlay.js"/>
+
+  <tabs id="abTabs">
+    <tab style="display:none;" insertbefore="homeTabButton" id="abCatManCategoriesTabButton" label="&sendtocategory.categoriescontext.label;"/>
+  </tabs>
+  <tabpanels id="abTabPanels">
+    <vbox id="abCatManCategoriesTab" flex="0" style="max-height: 200px; overflow-y: auto;" insertbefore="abHomeTab">
+      <vbox id="abCatManCategories">
+      </vbox>
+      <textbox id="abCatManEmptyCategory" readonly="true"/>
+    </vbox>
+  </tabpanels>
+</overlay>
