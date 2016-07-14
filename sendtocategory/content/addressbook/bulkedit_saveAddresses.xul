@@ -13,7 +13,7 @@
     buttons="accept"
     buttonlabelaccept="&sendtocategory.bulkedit.close.button;"
     ondialogaccept=""
-    onload="jbCatMan.saveList()">
+    onload="jbCatManBulkEdit.saveList()">
 
     <script type="text/javascript" src="chrome://sendtocategory/content/addressbook/bulkedit.js"/>
     <script type="text/javascript">
@@ -45,4 +45,3 @@
     </vbox>
     
 </dialog>
-  

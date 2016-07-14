@@ -338,20 +338,20 @@ jbCatMan.onPeopleSearchClick = function () {
 jbCatMan.onBulkEdit = function () {
   jbCatMan.dump("Begin with onBulkEdit()",1);
   //initializing bulkedit-members
-  jbCatMan.data.needToValidateBulkList = false;
-  jbCatMan.data.needToSaveBulkList = false;
-  jbCatMan.data.bulkList = "";
-  jbCatMan.data.saveList = "";
-  jbCatMan.data.cardsToBeRemovedFromCategory = new Array();
-  jbCatMan.data.selectedDirectory = GetSelectedDirectory();
+  jbCatMan.bulk.needToValidateBulkList = false;
+  jbCatMan.bulk.needToSaveBulkList = false;
+  jbCatMan.bulk.bulkList = "";
+  jbCatMan.bulk.saveList = "";
+  jbCatMan.bulk.cardsToBeRemovedFromCategory = new Array();
+  jbCatMan.bulk.selectedDirectory = GetSelectedDirectory();
   
   //all 3 dialogs are called in sequence. Skipped, if canceled.
-  window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_editAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,resizable=no", "", jbCatMan.locale.bulkTitle,jbCatMan.data);
-  if (jbCatMan.data.needToValidateBulkList) {
-    window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_validateAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,width=595,height=600,resizable=yes", "", jbCatMan.locale.bulkTitle,jbCatMan.data);
+  window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_editAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,resizable=no", "", jbCatMan.locale.bulkTitle);
+  if (jbCatMan.bulk.needToValidateBulkList) {
+    window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_validateAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,width=595,height=600,resizable=yes", "", jbCatMan.locale.bulkTitle);
   }
-  if (jbCatMan.data.needToSaveBulkList) {
-    window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_saveAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,resizable=yes", "", jbCatMan.locale.bulkTitle,jbCatMan.data);
+  if (jbCatMan.bulk.needToSaveBulkList) {
+    window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_saveAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,resizable=yes", "", jbCatMan.locale.bulkTitle);
   }
   jbCatMan.dump("Done with onBulkEdit()",-1);
 }

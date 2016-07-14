@@ -64,9 +64,6 @@ jbCatMan.init = function () {
 
   //locale object to store names from locale file
   jbCatMan.locale = {};
-    
-  //data object with all relevant variables, so they can be passed all at once
-  jbCatMan.data = {};
 
   //SOGoSync related stuff
   jbCatMan.sogoInstalled = false;
@@ -87,6 +84,12 @@ jbCatMan.init = function () {
     jbCatMan.sogoInstalled = true;
   }
 
+  //data object for bulkedit dialog
+  jbCatMan.bulk = {};
+  
+  //data object for category data
+  jbCatMan.data = {};
+  
   //mainly managed by jbCatMan.scanCategories()
   jbCatMan.data.foundCategories = new Array();
   jbCatMan.data.categoryList = new Array();
@@ -94,7 +97,6 @@ jbCatMan.init = function () {
   jbCatMan.data.membersWithoutPrimaryEmail = new Array();
   jbCatMan.data.emails = new Array();
   jbCatMan.data.abSize = 0;
-
   //create a map between directoryIds und abURI, so we can get the abURI for each card even if its directory is not known when using the global address book
   jbCatMan.data.abURI = new Array();
 
@@ -179,8 +181,9 @@ jbCatMan.AbListenerToInitSOGoSync = {
 /* Save a given card using the internal mapping between the 
    directoryId (attribute of card) and directoryURI, so all cards
    can be modified, even if the directoryURI is not known. Also 
-   sets the groupDavVersion property to -1, so SOGo catches the
-   change and syncs the card. It returns the used abUri. */
+   sets the groupDavVersion property to -1, so if SOGo installed,
+   it can catch the change and sync the card.
+   It returns the abUri of the card. */
 jbCatMan.modifyCard = function (card) {
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
   //cannot simply use GetSelectedDirectory(), because the global book cannot modify cards, we need to get the true owner of the card
@@ -204,17 +207,17 @@ jbCatMan.modifyCard = function (card) {
 
 
 
-/* Create a new card with a unique ID */
-jbCatMan.newCard = function (abUri) {
+/* Create a new card and adds it to the addressBook. If there
+   are special task for SOGo during create, this is where it
+   should be done. */
+jbCatMan.newCard = function (addressBook) {
   let card = Components.classes["@mozilla.org/addressbook/cardproperty;1"].createInstance(Components.interfaces.nsIAbCard);
-  if (jbCatMan.sogoInstalled && isGroupdavDirectory(abUri)) {  //TODO - what about sogo books with deactivated sogo?
+  if (jbCatMan.sogoInstalled && isGroupdavDirectory(addressBook.URI)) {  //TODO - what about sogo books with deactivated sogo?
     //Do not mess with UUID, let the server do it
     //let uuid = new UUID();
     //card.setProperty("groupDavKey",uuid);
-    card.setProperty("groupDavVersion", "-1"); 
-    card.setProperty("groupDavVersionPrev", "-1");
   }
-  return card;
+  return addressBook.addCard(card);
 }
 
 
@@ -301,35 +304,6 @@ jbCatMan.doCategorySearch = function () {
 // cards related functions
 //########################
 
-jbCatMan.getCardsFromEmail = function (email) {
-  jbCatMan.dump("Begin with getCardsFromEmail("+email+")",1);
-  let abURI = jbCatMan.data.selectedDirectory;
-
-  let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);        
-
-  let EmailQuery = "(PrimaryEmail,bw,@V)(SecondEmail,bw,@V)";
-  let searchQuery = EmailQuery.replace(/@V/g, encodeURIComponent(email));
-
-  //special treatment for googlemail.com
-  if (email.indexOf("gmail.com")>0) {
-    searchQuery = searchQuery + EmailQuery.replace(/@V/g, encodeURIComponent(email.replace("gmail.com","googlemail.com")));
-  } else if (email.indexOf("googlemail.com")>0) {
-    searchQuery = searchQuery + EmailQuery.replace(/@V/g, encodeURIComponent(email.replace("googlemail.com","gmail.com")));
-  }
-  
-  jbCatMan.dump("Done with getCardsFromEmail()",-1);
-  return abManager.getDirectory(abURI + "?" + "(or" + searchQuery + ")").childCards;
-}
-
-
-
-// each card has a localId and knows the directoryId of the book it is stored in - this Id cannot be used to get (search) this card, but it is unique across books - not used
-jbCatMan.getTBUIDFromCard = function (card) {
-    return card.localId+"@"+card.directoryId;
-}
-
-
-
 
 
 // each local card has a unique property DbRowID, which can be used to get (search) this card (not working with LDAP) - however, it is not unique across different abooks
@@ -347,31 +321,6 @@ jbCatMan.getUIDFromCard = function (card) {
 
   jbCatMan.dump("Done with getUIDFromCard()",-1);
   return DbRowID + "\u001A" + categories;
-}
-
-
-
-jbCatMan.getCardFromUID = function (UID) {
-  jbCatMan.dump("Begin with getCardFromUID("+UID+")",1);
-  let abURI = jbCatMan.data.selectedDirectory;
-
-  let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
-
-  //getCardFromUID is only used in bulkEdit, which is not allowed for global AB, so DbRowID is unique enough
-  let UIDS = UID.split("\u001A");
-  let DbRowID = UIDS[0];
-  
-  let UUIDQuery = "(DbRowID,=,@V)";
-  let searchQuery = UUIDQuery.replace(/@V/g, encodeURIComponent(DbRowID));
-
-  let result = abManager.getDirectory(abURI + "?" + "(or" + searchQuery + ")").childCards;
-  if (result.hasMoreElements()) {
-    jbCatMan.dump("Done with getCardFromUID()",-1);
-    return result.getNext().QueryInterface(Components.interfaces.nsIAbCard);
-  } else {
-    jbCatMan.dump("Done with getCardFromUID()",-1);
-    return null;
-  }
 }
 
 

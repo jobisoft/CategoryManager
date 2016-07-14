@@ -13,8 +13,8 @@
     buttons="accept,cancel"
     buttonlabelaccept="&sendtocategory.bulkedit.save.button;"
     buttonlabelcancel="&sendtocategory.cancel.button;"
-    ondialogaccept="jbCatMan.data.saveList=document.getElementById('CatManValidatorList');jbCatMan.data.needToSaveBulkList=true;"
-    onload="jbCatMan.loadValidateList()">
+    ondialogaccept="window.opener.jbCatMan.bulk.saveList=document.getElementById('CatManValidatorList'); window.opener.jbCatMan.bulk.needToSaveBulkList=true;"
+    onload="jbCatManBulkEdit.loadValidateList()">
 
     <script type="text/javascript" src="chrome://sendtocategory/content/addressbook/bulkedit.js"/>
     <script type="text/javascript">
@@ -36,9 +36,9 @@
                 seltype="single">                   
 
                     <listheader style="border: 0; padding: 0; -moz-appearance:none;">
-                        <treecol style="width:256px" label="&sendtocategory.bulkedit.header.email;" oncommand="jbCatMan.stopme(event);" onclick="jbCatMan.stopme(event);" />
-                        <treecol style="width:256px" label="&sendtocategory.bulkedit.header.contact;" oncommand="jbCatMan.stopme(event);" onclick="jbCatMan.stopme(event);" />
-                        <treecol flex="1" label="&sendtocategory.bulkedit.header.status;" oncommand="jbCatMan.stopme(event);" onclick="jbCatMan.stopme(event);" />    
+                        <treecol style="width:256px" label="&sendtocategory.bulkedit.header.email;" oncommand="jbCatManBulkEdit.stopme(event);" onclick="jbCatManBulkEdit.stopme(event);" />
+                        <treecol style="width:256px" label="&sendtocategory.bulkedit.header.contact;" oncommand="jbCatManBulkEdit.stopme(event);" onclick="jbCatManBulkEdit.stopme(event);" />
+                        <treecol flex="1" label="&sendtocategory.bulkedit.header.status;" oncommand="jbCatManBulkEdit.stopme(event);" onclick="jbCatManBulkEdit.stopme(event);" />    
                     </listheader>
   
                     <richlistitem id ="CatManListTemplate_OK" hidden="true">
@@ -99,4 +99,3 @@
     </vbox>
     
 </dialog>
-  

@@ -12,9 +12,9 @@
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     buttons="accept,cancel"
     buttonlabelaccept="&sendtocategory.bulkedit.validate.button;"
-    buttonlabelcancel="&sendtocategory.cancel.button;"    
-    ondialogaccept="jbCatMan.data.bulkList=document.getElementById('CatManBulkTextBox').value;jbCatMan.data.needToValidateBulkList=true;"
-    onload="jbCatMan.loadBulkList()">
+    buttonlabelcancel="&sendtocategory.cancel.button;"
+    ondialogaccept="window.opener.jbCatMan.bulk.bulkList=document.getElementById('CatManBulkTextBox').value; window.opener.jbCatMan.bulk.needToValidateBulkList=true;"
+    onload="jbCatManBulkEdit.loadBulkList()">
 
     <script type="text/javascript" src="chrome://sendtocategory/content/addressbook/bulkedit.js"/>
     <script type="text/javascript">
@@ -43,8 +43,7 @@
                     <description id="CatManDescriptionNoPrimaryEmail"></description>
                 </row>
             </rows>
-        </grid>    
-    </groupbox>              
+        </grid>
+    </groupbox>
     
 </dialog>
-  
