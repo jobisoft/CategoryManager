@@ -2,8 +2,14 @@ let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getServ
 loader.loadSubScript("chrome://sendtocategory/content/category_tools.js");
 
 //###################################################
-//adding additional functions to the jbCatMan Object
+//adding additional functions to the local jbCatMan Object
 //###################################################
+
+/* 
+  We might want some event listeners as in addressbook_overlay.js to 
+  catch category modifications (via EditDialog) and update Categories 
+  and members.
+*/
 
 jbCatMan.contactPanelCategoryMenuInit = function () {
   jbCatMan.dump("Begin with contactPanelCategoryMenuInit()",1);

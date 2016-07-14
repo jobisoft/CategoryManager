@@ -32,8 +32,7 @@ TODO 2.01
  - should categories defined in book1 be available in dropdown/popup in book2 ???
  - test auto sync trigger with bulk - use opener there as well?
  - bring back SCSearchCriteriaButtonMenu
- - is it possible to get abURI from directoryID directly?
- 
+ - is it possible to get abURI from directoryID directly? 
 
 TODO 2.xx
 - import / export
@@ -44,7 +43,7 @@ TODO 2.xx
 
 
 //###################################################
-// adding additional functions to the jbCatMan Object
+// adding additional functions to the local jbCatMan Object
 //###################################################
 
 jbCatMan.updateCategoryList = function () {
