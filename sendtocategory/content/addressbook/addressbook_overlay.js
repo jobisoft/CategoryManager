@@ -506,8 +506,6 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
   let cards = GetSelectedAbCards();
   let category = this.label;
   let enabled = (event.target.getAttribute("checked") == "false");
-  //since it is possible to select cards of different addressbooks, we have to keep track of modified books and sync them at the end
-  let changedBooks = new Array();
   
   for (let i = 0; i < cards.length; i++) {
     let writeCategoriesToCard = false;
@@ -526,12 +524,7 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
     if (writeCategoriesToCard) {
       jbCatMan.setCategoriesforCard(card, catsArray);
       let abUri = jbCatMan.modifyCard(card);
-      if (changedBooks.indexOf(abUri) == -1) changedBooks.push(abUri);
     }
-  }
-
-  if (changedBooks.length > 0) {
-    for (let i = 0; i < changedBooks.length; i++) jbCatMan.sync(changedBooks[i]);
   }
 
   jbCatMan.dump("Done with onCategoriesContextMenuItemCommand()",-1);

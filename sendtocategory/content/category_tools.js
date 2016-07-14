@@ -61,12 +61,13 @@ jbCatMan.init = function () {
   
   jbCatMan.eventUpdateTimeout = null;
   jbCatMan.eventSyncTimeout = null;
-  
+
   //locale object to store names from locale file
   jbCatMan.locale = {};
     
   //data object with all relevant variables, so they can be passed all at once
   jbCatMan.data = {};
+  jbCatMan.sogoSyncRequest = {};
 
 
   //Check if sogo-connector is installed
@@ -126,21 +127,21 @@ jbCatMan.AbListenerToInitSync = {
   onItemAdded: function AbListenerToInitSync_onItemAdded(aParentDir, aItem) {
     if (aItem instanceof Components.interfaces.nsIAbCard) {
       window.clearTimeout(jbCatMan.eventSyncTimeout);
-      jbCatMan.eventSyncTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemAdded(sync)",1); jbCatMan.sync(jbCatMan.data.abURI[aItem.directoryId]); jbCatMan.dump("Done trigger by onItemAdded(sync)",-1);}, 3000);
+      jbCatMan.eventSyncTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemAdded(sync)",1); jbCatMan.sync(); jbCatMan.dump("Done trigger by onItemAdded(sync)",-1);}, 2000);
     }
   },
 
   onItemPropertyChanged: function AbListenerToInitSync_onItemPropertyChanged(aItem, aProperty, aOldValue, aNewValue) {
     if (aItem instanceof Components.interfaces.nsIAbCard) {
       window.clearTimeout(jbCatMan.eventSyncTimeout);
-      jbCatMan.eventSyncTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemPropertyChanged(sync)",1); jbCatMan.sync(jbCatMan.data.abURI[aItem.directoryId]); jbCatMan.dump("Done trigger by onItemPropertyChanged(sync)",-1);}, 3000);
+      jbCatMan.eventSyncTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemPropertyChanged(sync)",1); jbCatMan.sync(); jbCatMan.dump("Done trigger by onItemPropertyChanged(sync)",-1);}, 2000);
     }
   },
 
   onItemRemoved: function AbListenerToInitSync_onItemRemoved(aParentDir, aItem) {
     if (aItem instanceof Components.interfaces.nsIAbCard) {
       window.clearTimeout(jbCatMan.eventSyncTimeout);
-      jbCatMan.eventSyncTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemRemoved(sync)",1); jbCatMan.sync(jbCatMan.data.abURI[aItem.directoryId]); jbCatMan.dump("Done trigger by onItemRemoved(sync)",-1);}, 3000);
+      jbCatMan.eventSyncTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemRemoved(sync)",1); jbCatMan.sync(); jbCatMan.dump("Done trigger by onItemRemoved(sync)",-1);}, 2000);
     }
   },
 
@@ -186,13 +187,19 @@ jbCatMan.modifyCard = function (card) {
   let abUri = jbCatMan.data.abURI[card.directoryId];
   let ab = abManager.getDirectory(abUri);
 
-  if (jbCatMan.sogoInstalled && isGroupdavDirectory(ab.URI)) { //TODO - what about sogo books with deactivated sogo?
+  if (jbCatMan.sogoInstalled && isGroupdavDirectory(abUri)) { //TODO - what about sogo books with deactivated sogo?
     let oldDavVersion = card.getProperty("groupDavVersion", "-1");
     card.setProperty("groupDavVersion", "-1"); 
-    card.setProperty("groupDavVersionPrev", oldDavVersion);    
+    card.setProperty("groupDavVersionPrev", oldDavVersion);
   }
   ab.modifyCard(card);
-  return ab.URI;
+
+  //Keep track of books which need to by synced
+  if (jbCatMan.sogoInstalled && isGroupdavDirectory(abUri)) {
+    jbCatMan.sogoSyncRequest[abUri] = true;
+  }
+
+  return abUri;
 }
 
 
@@ -212,13 +219,19 @@ jbCatMan.newCard = function (abUri) {
 
 
 
-/* Init sync */
-jbCatMan.sync = function (abUri) {
-  if (jbCatMan.sogoInstalled && isGroupdavDirectory(abUri)) { //TODO - what about sogo books with deactivated sogo?
-    SynchronizeGroupdavAddressbook(abUri);
-    jbCatMan.dump("Sync <"+abUri+"> using sogo-connector.");
-  } else {
-    jbCatMan.dump("Sync request for <"+abUri+">, but sogo is not installed and/or it is not a sogo book - no sync.");
+/* Init SOGo sync */
+jbCatMan.sync = function () {
+  if (jbCatMan.sogoInstalled || true) {
+    //check all entries in jbCatMan.sogoSyncRequest
+    for (var abUri in jbCatMan.sogoSyncRequest) {
+      if (jbCatMan.sogoSyncRequest[abUri] == true && isGroupdavDirectory(abUri)) { //TODO - what about sogo books with deactivated sogo?
+        jbCatMan.dump("Sync <"+abUri+"> using sogo-connector.");
+        jbCatMan.sogoSyncRequest[abUri] = false;
+        SynchronizeGroupdavAddressbook(abUri);
+      } else {
+        jbCatMan.dump("Skipping sync of <"+abUri+">.");
+      }
+    }
   }
 }
 
