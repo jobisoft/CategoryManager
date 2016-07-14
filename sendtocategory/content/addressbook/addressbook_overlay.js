@@ -545,59 +545,59 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
 // event listeners
 //###################################################
 
-jbCatMan.AbListener = {
+jbCatMan.AbListenerToUpdateCategoryList = {
   /*
   AbListener should detect bulk changes and only call updateCategoryList() after
   the last event. This is achieved by using clearTimeout and setTimeout on each
   event, so if a new event comes in while the timeout for the last one is not yet
   done, it gets postponed.
   */
-  onItemAdded: function AbListener_onItemAdded(aParentDir, aItem) {
+  onItemAdded: function AbListenerToUpdateCategoryList_onItemAdded(aParentDir, aItem) {
     if (aItem instanceof Components.interfaces.nsIAbCard) {
       window.clearTimeout(jbCatMan.eventTimeout);
       jbCatMan.eventTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemAdded()",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemAdded()",-1);}, 1000);
     }
   },
 
-  onItemPropertyChanged: function AbListener_onItemPropertyChanged(aItem, aProperty, aOldValue, aNewValue) {
+  onItemPropertyChanged: function AbListenerToUpdateCategoryList_onItemPropertyChanged(aItem, aProperty, aOldValue, aNewValue) {
     if (aItem instanceof Components.interfaces.nsIAbCard) {
       window.clearTimeout(jbCatMan.eventTimeout);
       jbCatMan.eventTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemPropertyChanged()",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemPropertyChanged()",-1);}, 1000);
     }
   },
 
-  onItemRemoved: function AbListener_onItemRemoved(aParentDir, aItem) {
+  onItemRemoved: function AbListenerToUpdateCategoryList_onItemRemoved(aParentDir, aItem) {
     if (aItem instanceof Components.interfaces.nsIAbCard) {
       window.clearTimeout(jbCatMan.eventTimeout);
       jbCatMan.eventTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemRemoved()",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemRemoved()",-1);}, 1000);
     }
   },
 
-  add: function AbListener_add() {
+  add: function AbListenerToUpdateCategoryList_add() {
     if (Components.classes["@mozilla.org/abmanager;1"]) {
       // Thunderbird 3+
       Components.classes["@mozilla.org/abmanager;1"]
                 .getService(Components.interfaces.nsIAbManager)
-                .addAddressBookListener(jbCatMan.AbListener, Components.interfaces.nsIAbListener.all);
+                .addAddressBookListener(jbCatMan.AbListenerToUpdateCategoryList, Components.interfaces.nsIAbListener.all);
     } else {
       // Thunderbird 2
       Components.classes["@mozilla.org/addressbook/services/session;1"]
                 .getService(Components.interfaces.nsIAddrBookSession)
-                .addAddressBookListener(jbCatMan.AbListener, Components.interfaces.nsIAbListener.all);
+                .addAddressBookListener(jbCatMan.AbListenerToUpdateCategoryList, Components.interfaces.nsIAbListener.all);
     }
   },
 
-  remove: function AbListener_remove() {
+  remove: function AbListenerToUpdateCategoryList_remove() {
     if (Components.classes["@mozilla.org/abmanager;1"]) {
       // Thunderbird 3+
       Components.classes["@mozilla.org/abmanager;1"]
                 .getService(Components.interfaces.nsIAbManager)
-                .removeAddressBookListener(jbCatMan.AbListener);
+                .removeAddressBookListener(jbCatMan.AbListenerToUpdateCategoryList);
     } else {
       // Thunderbird 2
       Components.classes["@mozilla.org/addressbook/services/session;1"]
                 .getService(Components.interfaces.nsIAddrBookSession)
-                .removeAddressBookListener(jbCatMan.AbListener);
+                .removeAddressBookListener(jbCatMan.AbListenerToUpdateCategoryList);
     }
   }
 };
@@ -667,11 +667,11 @@ if (!jbCatMan.sogoInstalled) DisplayCardViewPane = function(card) {
 
 jbCatMan.initAddressbook = function() {
   jbCatMan.dump("Begin with initAddressbook()",1);
-  // Add listener for card changes
-  jbCatMan.AbListener.add();
+  // Add listener for card changes to update CategoryList
+  jbCatMan.AbListenerToUpdateCategoryList.add();
    window.addEventListener("unload", function unloadListener(e) {
         window.removeEventListener("unload", unloadListener, false);
-        jbCatMan.AbListener.remove();
+        jbCatMan.AbListenerToUpdateCategoryList.remove();
       }, false);
 
   // Add listener for action in search input field
