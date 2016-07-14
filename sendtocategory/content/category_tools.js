@@ -50,7 +50,7 @@ jbCatMan.debug = function (str,lvl) {
 
 jbCatMan.init = function () { 
   //enable or disable debug dump messages
-  jbCatMan.printDumps = false;
+  jbCatMan.printDumps = true;
   jbCatMan.printDebugDumps = false;
   jbCatMan.printDumpsIndent = " ";
   
@@ -59,7 +59,8 @@ jbCatMan.init = function () {
   
   jbCatMan.dump("Begin with init()",1);
   
-  jbCatMan.eventTimeout = null;
+  jbCatMan.eventUpdateTimeout = null;
+  jbCatMan.eventSyncTimeout = null;
   
   //locale object to store names from locale file
   jbCatMan.locale = {};
@@ -99,6 +100,14 @@ jbCatMan.init = function () {
   //managed by addressbook_overlay.js
   jbCatMan.data.selectedCategory = "";
   jbCatMan.data.emptyCategories = new Array();
+
+  // Add listener for card changes to init sync
+  jbCatMan.AbListenerToInitSync.add();
+   window.addEventListener("unload", function unloadListener(e) {
+        window.removeEventListener("unload", unloadListener, false);
+        jbCatMan.AbListenerToInitSync.remove();
+      }, false);
+
   jbCatMan.dump("Done with init()",-1);
 }
 
@@ -110,9 +119,59 @@ jbCatMan.init = function () {
 // sync related functions
 //#######################
 
-/* These functions wrap operations needed to be able to sync cards using the 
-   SOGo-connector. If a sync independent from SOGo is going to implemented, 
-   just these functions have to be modified */
+/* A SOGo sync is initiated by card modifications using listeners */
+
+jbCatMan.AbListenerToInitSync = {
+
+  onItemAdded: function AbListenerToInitSync_onItemAdded(aParentDir, aItem) {
+    if (aItem instanceof Components.interfaces.nsIAbCard) {
+      window.clearTimeout(jbCatMan.eventSyncTimeout);
+      jbCatMan.eventSyncTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemAdded(sync)",1); jbCatMan.sync(jbCatMan.data.abURI[aItem.directoryId]); jbCatMan.dump("Done trigger by onItemAdded(sync)",-1);}, 3000);
+    }
+  },
+
+  onItemPropertyChanged: function AbListenerToInitSync_onItemPropertyChanged(aItem, aProperty, aOldValue, aNewValue) {
+    if (aItem instanceof Components.interfaces.nsIAbCard) {
+      window.clearTimeout(jbCatMan.eventSyncTimeout);
+      jbCatMan.eventSyncTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemPropertyChanged(sync)",1); jbCatMan.sync(jbCatMan.data.abURI[aItem.directoryId]); jbCatMan.dump("Done trigger by onItemPropertyChanged(sync)",-1);}, 3000);
+    }
+  },
+
+  onItemRemoved: function AbListenerToInitSync_onItemRemoved(aParentDir, aItem) {
+    if (aItem instanceof Components.interfaces.nsIAbCard) {
+      window.clearTimeout(jbCatMan.eventSyncTimeout);
+      jbCatMan.eventSyncTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemRemoved(sync)",1); jbCatMan.sync(jbCatMan.data.abURI[aItem.directoryId]); jbCatMan.dump("Done trigger by onItemRemoved(sync)",-1);}, 3000);
+    }
+  },
+
+  add: function AbListenerToInitSync_add() {
+    if (Components.classes["@mozilla.org/abmanager;1"]) {
+      // Thunderbird 3+
+      Components.classes["@mozilla.org/abmanager;1"]
+                .getService(Components.interfaces.nsIAbManager)
+                .addAddressBookListener(jbCatMan.AbListenerToInitSync, Components.interfaces.nsIAbListener.all);
+    } else {
+      // Thunderbird 2
+      Components.classes["@mozilla.org/addressbook/services/session;1"]
+                .getService(Components.interfaces.nsIAddrBookSession)
+                .addAddressBookListener(jbCatMan.AbListenerToInitSync, Components.interfaces.nsIAbListener.all);
+    }
+  },
+
+  remove: function AbListenerToInitSync_remove() {
+    if (Components.classes["@mozilla.org/abmanager;1"]) {
+      // Thunderbird 3+
+      Components.classes["@mozilla.org/abmanager;1"]
+                .getService(Components.interfaces.nsIAbManager)
+                .removeAddressBookListener(jbCatMan.AbListenerToInitSync);
+    } else {
+      // Thunderbird 2
+      Components.classes["@mozilla.org/addressbook/services/session;1"]
+                .getService(Components.interfaces.nsIAddrBookSession)
+                .removeAddressBookListener(jbCatMan.AbListenerToInitSync);
+    }
+  }
+};
 
 
 
@@ -356,7 +415,6 @@ jbCatMan.updateCategories = function (mode,oldName,newName) {
   let addressBook = abManager.getDirectory(GetSelectedDirectory()); //GetSelectedDirectory() returns an URI, but we need the directory itself
 
   let cards = addressBook.childCards;
-  let changed = false;
 
   while (cards.hasMoreElements()) {
     let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
@@ -383,12 +441,10 @@ jbCatMan.updateCategories = function (mode,oldName,newName) {
       if (writeCategoriesToCard) {
         jbCatMan.setCategoriesforCard(card, rebuildCatArray)
         jbCatMan.modifyCard(card);
-        changed = true;
       }
     }
   }
 
-  if (changed) jbCatMan.sync(addressBook.URI);
   jbCatMan.dump("Done with updateCategories()",-1);
 }
 

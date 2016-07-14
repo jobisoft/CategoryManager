@@ -554,22 +554,22 @@ jbCatMan.AbListenerToUpdateCategoryList = {
   */
   onItemAdded: function AbListenerToUpdateCategoryList_onItemAdded(aParentDir, aItem) {
     if (aItem instanceof Components.interfaces.nsIAbCard) {
-      window.clearTimeout(jbCatMan.eventTimeout);
-      jbCatMan.eventTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemAdded()",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemAdded()",-1);}, 1000);
+      window.clearTimeout(jbCatMan.eventUpdateTimeout);
+      jbCatMan.eventUpdateTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemAdded(UpdateList)",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemAdded(UpdateList)",-1);}, 1000);
     }
   },
 
   onItemPropertyChanged: function AbListenerToUpdateCategoryList_onItemPropertyChanged(aItem, aProperty, aOldValue, aNewValue) {
     if (aItem instanceof Components.interfaces.nsIAbCard) {
-      window.clearTimeout(jbCatMan.eventTimeout);
-      jbCatMan.eventTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemPropertyChanged()",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemPropertyChanged()",-1);}, 1000);
+      window.clearTimeout(jbCatMan.eventUpdateTimeout);
+      jbCatMan.eventUpdateTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemPropertyChanged(UpdateList)",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemPropertyChanged(UpdateList)",-1);}, 1000);
     }
   },
 
   onItemRemoved: function AbListenerToUpdateCategoryList_onItemRemoved(aParentDir, aItem) {
     if (aItem instanceof Components.interfaces.nsIAbCard) {
-      window.clearTimeout(jbCatMan.eventTimeout);
-      jbCatMan.eventTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemRemoved()",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemRemoved()",-1);}, 1000);
+      window.clearTimeout(jbCatMan.eventUpdateTimeout);
+      jbCatMan.eventUpdateTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemRemoved(UpdateList)",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemRemoved(UpdateList)",-1);}, 1000);
     }
   },
 

@@ -386,8 +386,7 @@ jbCatMan.saveList_RemoveCards = function (i) {
   } else {
 
     //we are done
-    jbCatMan.sync(addressBook.URI);
     document.getElementById("CatManSaverProgressBar").style.display = 'none';
-      
+
   }
 }
