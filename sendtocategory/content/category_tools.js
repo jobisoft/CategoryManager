@@ -50,7 +50,7 @@ jbCatMan.debug = function (str,lvl) {
 
 jbCatMan.init = function () { 
   //enable or disable debug dump messages
-  jbCatMan.printDumps = true;
+  jbCatMan.printDumps = false;
   jbCatMan.printDebugDumps = false;
   jbCatMan.printDumpsIndent = " ";
   

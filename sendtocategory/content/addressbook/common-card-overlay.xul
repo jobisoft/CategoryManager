@@ -4,7 +4,7 @@
  This file is more or less taken directly from the SOGo-Connector, to add a Category Tab if the 
  SOGo-Connector is not installed. But we do not mess with the OK button, but simply set the new 
  categories on the DialogAccept-event and the ItemPropertyChanged-event will update the 
- categories list and eventually will trigger a sync (if we ever implement that)
+ categories list and trigger a SOGoSync.
 -->
 
 <!DOCTYPE overlay [
