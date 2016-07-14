@@ -18,7 +18,7 @@
     src="chrome://sendtocategory/content/addressbook/common-card-overlay.js"/>
 
   <tabs id="abTabs">
-    <tab style="display:none;" insertbefore="homeTabButton" id="abCatManCategoriesTabButton" label="&sendtocategory.categoriescontext.label;"/>
+    <tab insertbefore="homeTabButton" id="abCatManCategoriesTabButton" label="CatMan &sendtocategory.categoriescontext.label;"/>
   </tabs>
   <tabpanels id="abTabPanels">
     <vbox id="abCatManCategoriesTab" flex="0" style="max-height: 200px; overflow-y: auto;" insertbefore="abHomeTab">

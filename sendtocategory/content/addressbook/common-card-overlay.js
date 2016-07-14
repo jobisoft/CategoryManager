@@ -1,24 +1,31 @@
 let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
 loader.loadSubScript("chrome://sendtocategory/content/category_tools.js");
 
-
 jbCatMan.EditDialogInit = function () {
+  jbCatMan.dump("Begin with EditDialogInit()",1);
 
-  //Enable CatManCategory Tab
-  let abCatManCategoriesTabButton = document.getElementById("abCatManCategoriesTabButton");
-  abCatManCategoriesTabButton.style.display = 'block'; 
-  
+  //Hide SOGo Category Tab and deactivate all SOGo update/sync functions - if installed
+  if (jbCatMan.sogoInstalled) {
+    let categoriesTabButton = document.getElementById("categoriesTabButton");
+    if (categoriesTabButton) categoriesTabButton.style.display = 'none';
+
+    //remove SOGo hook on OK Button
+    if (OldEditCardOKButton && EditCardOKButton) {
+      EditCardOKButton = OldEditCardOKButton
+    } else {
+      alert("Debug: Could not remove sogo listerner! This is bad!\n");
+    }
+  }
+
   jbCatMan.scanCategories(gEditCard.abURI);
-  jbCatMan.EditDialogAllCatsArray = jbCatMan.data.categoryList;
+  dump(gEditCard.abURI + "\n");
+  dump(jbCatMan.data.abURI[gEditCard.card.directoryId] + "\n");
 
+  jbCatMan.EditDialogAllCatsArray = jbCatMan.data.categoryList;
   jbCatMan.EditDialogCatsArray = [];
   try {
     jbCatMan.EditDialogCatsArray = gEditCard.card.getPropertyAsAString("Categories").split("\u001A");
   } catch (ex) {}  
-
-  //dump(gEditCard.abURI + "\n");
-  //dump(jbCatMan.data.abURI[gEditCard.card.directoryId] + "\n");
-
 
   // add the combo boxes for each category
   for (let i = 0; i < jbCatMan.EditDialogCatsArray.length; i++) {
@@ -28,6 +35,8 @@ jbCatMan.EditDialogInit = function () {
   // add focus event on empty field
   let emptyField = document.getElementById("abCatManEmptyCategory");
   emptyField.addEventListener("focus", jbCatMan.EditDialogOnEmptyFieldFocus, false);  
+
+  jbCatMan.dump("Done with EditDialogInit()",-1);
 }
 
 
@@ -65,9 +74,10 @@ jbCatMan.EditDialogOnCategoryChange = function () {
 
 
 
+//triggered by OK Button
+jbCatMan.EditDialogSave = function () {
+  jbCatMan.dump("Begin with EditDialogSave()",1);
 
-jbCatMan.EditDialogSaveCategories = function () {
-  jbCatMan.dump("Begin with EditDialogSaveCategories()",1);
   let vbox = document.getElementById("abCatManCategories");
   let menuLists = vbox.getElementsByTagName("menulist");
   let catsArray = [];
@@ -80,8 +90,8 @@ jbCatMan.EditDialogSaveCategories = function () {
   jbCatMan.dump("Setting categories to: " + catsArray.join(","));
 
   jbCatMan.setCategoriesforCard(gEditCard.card, catsArray);
-  jbCatMan.dump("Done with EditDialogSaveCategories()",-1);
-  
+  jbCatMan.modifyCard(gEditCard.card);
+  jbCatMan.dump("Done with EditDialogSave()",-1);
 }
 
 jbCatMan.EditDialogAppendCategory = function (catValue) {  
@@ -114,8 +124,12 @@ jbCatMan.EditDialogResetCategoriesMenu = function (menu) {
 
 
 
-// run init function after edit window has been loaded and save categories on OK - if SOGo-connector is not installed
-if (jbCatMan.sogoInstalled == false) {
-  window.addEventListener("load", function() { jbCatMan.EditDialogInit(); }, false);
-  window.addEventListener("dialogaccept", function() { jbCatMan.EditDialogSaveCategories(); }, false);
-}
+
+
+
+
+//Init on load
+window.addEventListener("load", function() { jbCatMan.EditDialogInit(); }, false);
+
+//Add eventlistener for OK Button to save changes
+window.addEventListener("dialogaccept", function() { jbCatMan.EditDialogSave(); }, false);
