@@ -1,7 +1,6 @@
 let jbCatMan = window.opener.jbCatMan;
 let jbCatManEditDialog = {}
 
-	
 jbCatManEditDialog.Init = function () {
   jbCatMan.dump("Begin with EditDialogInit()",1);
 
@@ -14,7 +13,7 @@ jbCatManEditDialog.Init = function () {
     if (OldEditCardOKButton && EditCardOKButton) {
       EditCardOKButton = OldEditCardOKButton
     } else {
-      alert("Debug: Could not remove sogo listerner! This is bad!\n");
+      alert("Debug: Could not remove SOGo listerner! This is bad!\n");
     }
   }
 

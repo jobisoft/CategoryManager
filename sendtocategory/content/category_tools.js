@@ -60,18 +60,17 @@ jbCatMan.init = function () {
   jbCatMan.dump("Begin with init()",1);
   
   jbCatMan.eventUpdateTimeout = null;
-  jbCatMan.eventSyncTimeout = null;
+  jbCatMan.eventSOGoSyncTimeout = null;
 
   //locale object to store names from locale file
   jbCatMan.locale = {};
     
   //data object with all relevant variables, so they can be passed all at once
   jbCatMan.data = {};
-  jbCatMan.sogoSyncRequest = {};
 
-
-  //Check if sogo-connector is installed
+  //SOGoSync related stuff
   jbCatMan.sogoInstalled = false;
+  jbCatMan.sogoSyncRequest = {};
 
   //SynchronizeGroupdavAddressbook is def in sync.addressbook.groupdav.js
   //isGroupdavDirectory is def in /sync.addressbook.groupdav.js which is included by sync.addressbook.groupdav.js
@@ -87,7 +86,7 @@ jbCatMan.init = function () {
   } else {
     jbCatMan.sogoInstalled = true;
   }
-  
+
   //mainly managed by jbCatMan.scanCategories()
   jbCatMan.data.foundCategories = new Array();
   jbCatMan.data.categoryList = new Array();
@@ -95,18 +94,19 @@ jbCatMan.init = function () {
   jbCatMan.data.membersWithoutPrimaryEmail = new Array();
   jbCatMan.data.emails = new Array();
   jbCatMan.data.abSize = 0;
+
   //create a map between directoryIds und abURI, so we can get the abURI for each card even if its directory is not known when using the global address book
   jbCatMan.data.abURI = new Array();
-  
+
   //managed by addressbook_overlay.js
   jbCatMan.data.selectedCategory = "";
   jbCatMan.data.emptyCategories = new Array();
 
   // Add listener for card changes to init sync
-  jbCatMan.AbListenerToInitSync.add();
+  jbCatMan.AbListenerToInitSOGoSync.add();
    window.addEventListener("unload", function unloadListener(e) {
         window.removeEventListener("unload", unloadListener, false);
-        jbCatMan.AbListenerToInitSync.remove();
+        jbCatMan.AbListenerToInitSOGoSync.remove();
       }, false);
 
   jbCatMan.dump("Done with init()",-1);
@@ -117,59 +117,59 @@ jbCatMan.init = function () {
 
 
 //#######################
-// sync related functions
+// SOGoSync related functions
 //#######################
 
-/* A SOGo sync is initiated by card modifications using listeners */
+/* A SOGo sync is initiated by card modifications and the following itemPropertyChanged event */
 
-jbCatMan.AbListenerToInitSync = {
+jbCatMan.AbListenerToInitSOGoSync = {
 
-  onItemAdded: function AbListenerToInitSync_onItemAdded(aParentDir, aItem) {
+  onItemAdded: function AbListenerToInitSOGoSync_onItemAdded(aParentDir, aItem) {
     if (aItem instanceof Components.interfaces.nsIAbCard) {
-      window.clearTimeout(jbCatMan.eventSyncTimeout);
-      jbCatMan.eventSyncTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemAdded(sync)",1); jbCatMan.sync(); jbCatMan.dump("Done trigger by onItemAdded(sync)",-1);}, 2000);
+      window.clearTimeout(jbCatMan.eventSOGoSyncTimeout);
+      jbCatMan.eventSOGoSyncTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemAdded(SOGoSync)",1); jbCatMan.initSOGoSync(); jbCatMan.dump("Done trigger by onItemAdded(SOGoSync)",-1);}, 2000);
     }
   },
 
-  onItemPropertyChanged: function AbListenerToInitSync_onItemPropertyChanged(aItem, aProperty, aOldValue, aNewValue) {
+  onItemPropertyChanged: function AbListenerToInitSOGoSync_onItemPropertyChanged(aItem, aProperty, aOldValue, aNewValue) {
     if (aItem instanceof Components.interfaces.nsIAbCard) {
-      window.clearTimeout(jbCatMan.eventSyncTimeout);
-      jbCatMan.eventSyncTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemPropertyChanged(sync)",1); jbCatMan.sync(); jbCatMan.dump("Done trigger by onItemPropertyChanged(sync)",-1);}, 2000);
+      window.clearTimeout(jbCatMan.eventSOGoSyncTimeout);
+      jbCatMan.eventSOGoSyncTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemPropertyChanged(SOGoSync)",1); jbCatMan.initSOGoSync(); jbCatMan.dump("Done trigger by onItemPropertyChanged(SOGoSync)",-1);}, 2000);
     }
   },
 
-  onItemRemoved: function AbListenerToInitSync_onItemRemoved(aParentDir, aItem) {
+  onItemRemoved: function AbListenerToInitSOGoSync_onItemRemoved(aParentDir, aItem) {
     if (aItem instanceof Components.interfaces.nsIAbCard) {
-      window.clearTimeout(jbCatMan.eventSyncTimeout);
-      jbCatMan.eventSyncTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemRemoved(sync)",1); jbCatMan.sync(); jbCatMan.dump("Done trigger by onItemRemoved(sync)",-1);}, 2000);
+      window.clearTimeout(jbCatMan.eventSOGoSyncTimeout);
+      jbCatMan.eventSOGoSyncTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemRemoved(SOGoSync)",1); jbCatMan.initSOGoSync(); jbCatMan.dump("Done trigger by onItemRemoved(SOGoSync)",-1);}, 2000);
     }
   },
 
-  add: function AbListenerToInitSync_add() {
+  add: function AbListenerToInitSOGoSync_add() {
     if (Components.classes["@mozilla.org/abmanager;1"]) {
       // Thunderbird 3+
       Components.classes["@mozilla.org/abmanager;1"]
                 .getService(Components.interfaces.nsIAbManager)
-                .addAddressBookListener(jbCatMan.AbListenerToInitSync, Components.interfaces.nsIAbListener.all);
+                .addAddressBookListener(jbCatMan.AbListenerToInitSOGoSync, Components.interfaces.nsIAbListener.all);
     } else {
       // Thunderbird 2
       Components.classes["@mozilla.org/addressbook/services/session;1"]
                 .getService(Components.interfaces.nsIAddrBookSession)
-                .addAddressBookListener(jbCatMan.AbListenerToInitSync, Components.interfaces.nsIAbListener.all);
+                .addAddressBookListener(jbCatMan.AbListenerToInitSOGoSync, Components.interfaces.nsIAbListener.all);
     }
   },
 
-  remove: function AbListenerToInitSync_remove() {
+  remove: function AbListenerToInitSOGoSync_remove() {
     if (Components.classes["@mozilla.org/abmanager;1"]) {
       // Thunderbird 3+
       Components.classes["@mozilla.org/abmanager;1"]
                 .getService(Components.interfaces.nsIAbManager)
-                .removeAddressBookListener(jbCatMan.AbListenerToInitSync);
+                .removeAddressBookListener(jbCatMan.AbListenerToInitSOGoSync);
     } else {
       // Thunderbird 2
       Components.classes["@mozilla.org/addressbook/services/session;1"]
                 .getService(Components.interfaces.nsIAddrBookSession)
-                .removeAddressBookListener(jbCatMan.AbListenerToInitSync);
+                .removeAddressBookListener(jbCatMan.AbListenerToInitSOGoSync);
     }
   }
 };
@@ -195,7 +195,7 @@ jbCatMan.modifyCard = function (card) {
   ab.modifyCard(card);
 
   //Keep track of books which need to by synced
-  if (jbCatMan.sogoInstalled && isGroupdavDirectory(abUri)) {
+  if (jbCatMan.sogoInstalled && isGroupdavDirectory(abUri)) { //TODO - what about sogo books with deactivated sogo?
     jbCatMan.sogoSyncRequest[abUri] = true;
   }
 
@@ -219,9 +219,9 @@ jbCatMan.newCard = function (abUri) {
 
 
 
-/* Init SOGo sync */
-jbCatMan.sync = function () {
-  if (jbCatMan.sogoInstalled || true) {
+/* Init requested SOGo syncs */
+jbCatMan.initSOGoSync = function () {
+  if (jbCatMan.sogoInstalled) {
     //check all entries in jbCatMan.sogoSyncRequest
     for (var abUri in jbCatMan.sogoSyncRequest) {
       if (jbCatMan.sogoSyncRequest[abUri] == true && isGroupdavDirectory(abUri)) { //TODO - what about sogo books with deactivated sogo?

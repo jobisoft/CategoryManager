@@ -23,7 +23,7 @@ Use secure connection (SSL):UNCHECK
 
 
 CONCEPT CHANGES
- - do not mess with Sogo UUID, (SOGo is providing UUID from server, if not present)
+ - do not mess with SOGo UUID, (SOGo is providing UUID from server, if not present)
  - groupDavVersion still needs to be set to -1, to indicate changes?
 
 
@@ -32,6 +32,7 @@ TODO 2.01
  - should categories defined in book1 be available in dropdown/popup in book2 ???
  - test auto sync trigger with bulk - use opener there as well?
  - bring back SCSearchCriteriaButtonMenu
+ - is it possible to get abURI from directoryID directly?
  
 
 TODO 2.xx
@@ -683,7 +684,7 @@ jbCatMan.initAddressbook = function() {
   //Add listener for category context menu
   document.getElementById("CatManCategoriesContextMenu-popup").addEventListener("popupshowing", function () { jbCatMan.dump("Begin trigger by event onResultsTreeContextMenuPopup()",1); jbCatMan.onResultsTreeContextMenuPopup(); jbCatMan.dump("Done trigger by event onResultsTreeContextMenuPopup()",-1); } , false);
 
-  //Hide SOGo ContextMenu
+  //Hide SOGo Categories ContextMenu
   let sogoContextMenu = document.getElementById("sc-categories-contextmenu");
   if (sogoContextMenu) sogoContextMenu.style.display = 'none';
 
