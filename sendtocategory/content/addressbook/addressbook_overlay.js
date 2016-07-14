@@ -27,6 +27,13 @@ CONCEPT CHANGES
  - groupDavVersion still needs to be set to -1, to indicate changes?
 
 
+TODO 2.01
+ - rename and delete global category should be possible
+ - should categories defined in book1 be available in dropdown/popup in book2 ???
+ - test auto sync trigger with bulk - use opener there as well?
+ - bring back SCSearchCriteriaButtonMenu
+ 
+
 TODO 2.xx
 - import / export
 - work on lists
