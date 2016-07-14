@@ -1,7 +1,8 @@
-let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-loader.loadSubScript("chrome://sendtocategory/content/category_tools.js");
+let jbCatMan = window.opener.jbCatMan;
+let jbCatManEditDialog = {}
 
-jbCatMan.EditDialogInit = function () {
+	
+jbCatManEditDialog.Init = function () {
   jbCatMan.dump("Begin with EditDialogInit()",1);
 
   //Hide SOGo Category Tab and deactivate all SOGo update/sync functions - if installed
@@ -17,24 +18,20 @@ jbCatMan.EditDialogInit = function () {
     }
   }
 
-  jbCatMan.scanCategories(gEditCard.abURI);
-  dump(gEditCard.abURI + "\n");
-  dump(jbCatMan.data.abURI[gEditCard.card.directoryId] + "\n");
-
-  jbCatMan.EditDialogAllCatsArray = jbCatMan.data.categoryList;
-  jbCatMan.EditDialogCatsArray = [];
+  jbCatManEditDialog.AllCatsArray = jbCatMan.data.categoryList;
+  jbCatManEditDialog.CatsArray = [];
   try {
-    jbCatMan.EditDialogCatsArray = gEditCard.card.getPropertyAsAString("Categories").split("\u001A");
+    jbCatManEditDialog.CatsArray = gEditCard.card.getPropertyAsAString("Categories").split("\u001A");
   } catch (ex) {}  
 
   // add the combo boxes for each category
-  for (let i = 0; i < jbCatMan.EditDialogCatsArray.length; i++) {
-    jbCatMan.EditDialogAppendCategory(jbCatMan.EditDialogCatsArray[i]);
+  for (let i = 0; i < jbCatManEditDialog.CatsArray.length; i++) {
+    jbCatManEditDialog.AppendCategory(jbCatManEditDialog.CatsArray[i]);
   }
 
   // add focus event on empty field
   let emptyField = document.getElementById("abCatManEmptyCategory");
-  emptyField.addEventListener("focus", jbCatMan.EditDialogOnEmptyFieldFocus, false);  
+  emptyField.addEventListener("focus", jbCatManEditDialog.OnEmptyFieldFocus, false);  
 
   jbCatMan.dump("Done with EditDialogInit()",-1);
 }
@@ -43,29 +40,29 @@ jbCatMan.EditDialogInit = function () {
 
 
 
-jbCatMan.EditDialogOnEmptyFieldFocus = function (event) {
-  let newCategory = jbCatMan.EditDialogAppendCategory("");
+jbCatManEditDialog.OnEmptyFieldFocus = function (event) {
+  let newCategory = jbCatManEditDialog.AppendCategory("");
   newCategory.focus();
   event.preventDefault = true;
 }
 
-jbCatMan.EditDialogOnCategoryBlur = function () {
+jbCatManEditDialog.OnCategoryBlur = function () {
   let value = this.inputField.value.replace(/(^[ ]+|[ ]+$)/, "", "g");
   if (value.length == 0) {
     this.parentNode.removeChild(this);
   }
 }
 
-jbCatMan.EditDialogOnCategoryChange = function () {
+jbCatManEditDialog.OnCategoryChange = function () {
     if (this.selectedIndex == -1) { // text field was changed
         let value = this.inputField.value;
         if (value.length > 0) {
-            if (jbCatMan.EditDialogAllCatsArray.indexOf(value) < 0) {
-                jbCatMan.EditDialogAllCatsArray.push(value);
+            if (jbCatManEditDialog.AllCatsArray.indexOf(value) < 0) {
+                jbCatManEditDialog.AllCatsArray.push(value);
                 let box = document.getElementById("abCatManCategories");
                 let lists = box.getElementsByTagName("menulist");
                 for (let i = 0; i < lists.length; i++) {
-                    jbCatMan.EditDialogResetCategoriesMenu(lists[i]);
+                    jbCatManEditDialog.ResetCategoriesMenu(lists[i]);
                 }
             }
         }
@@ -75,7 +72,7 @@ jbCatMan.EditDialogOnCategoryChange = function () {
 
 
 //triggered by OK Button
-jbCatMan.EditDialogSave = function () {
+jbCatManEditDialog.Save = function () {
   jbCatMan.dump("Begin with EditDialogSave()",1);
 
   let vbox = document.getElementById("abCatManCategories");
@@ -94,29 +91,29 @@ jbCatMan.EditDialogSave = function () {
   jbCatMan.dump("Done with EditDialogSave()",-1);
 }
 
-jbCatMan.EditDialogAppendCategory = function (catValue) {  
+jbCatManEditDialog.AppendCategory = function (catValue) {  
     let vbox = document.getElementById("abCatManCategories");
     let menuList = document.createElement("menulist");
     menuList.setAttribute("editable", true);
-    menuList.addEventListener("blur", jbCatMan.EditDialogOnCategoryBlur, false);
-    menuList.addEventListener("change", jbCatMan.EditDialogOnCategoryChange, false);
-    menuList.addEventListener("command", jbCatMan.EditDialogOnCategoryChange, false);
-    jbCatMan.EditDialogResetCategoriesMenu(menuList);
+    menuList.addEventListener("blur", jbCatManEditDialog.OnCategoryBlur, false);
+    menuList.addEventListener("change", jbCatManEditDialog.OnCategoryChange, false);
+    menuList.addEventListener("command", jbCatManEditDialog.OnCategoryChange, false);
+    jbCatManEditDialog.ResetCategoriesMenu(menuList);
     menuList.value = catValue;
     vbox.appendChild(menuList);
     return menuList;
 }
 
-jbCatMan.EditDialogResetCategoriesMenu = function (menu) {
+jbCatManEditDialog.ResetCategoriesMenu = function (menu) {
     let popups = menu.getElementsByTagName("menupopup");
     for (let i = 0; i < popups.length; i++) {
         menu.removeChild(popups[i]);
     }
 
     let menuPopup = document.createElement("menupopup");
-    for (let k = 0; k < jbCatMan.EditDialogAllCatsArray.length; k++) {
+    for (let k = 0; k < jbCatManEditDialog.AllCatsArray.length; k++) {
         let item = document.createElement("menuitem");
-        item.setAttribute("label", jbCatMan.EditDialogAllCatsArray[k]);
+        item.setAttribute("label", jbCatManEditDialog.AllCatsArray[k]);
         menuPopup.appendChild(item);
     }
     menu.appendChild(menuPopup);
@@ -129,7 +126,7 @@ jbCatMan.EditDialogResetCategoriesMenu = function (menu) {
 
 
 //Init on load
-window.addEventListener("load", function() { jbCatMan.EditDialogInit(); }, false);
+window.addEventListener("load", function() { jbCatManEditDialog.Init(); }, false);
 
 //Add eventlistener for OK Button to save changes
-window.addEventListener("dialogaccept", function() { jbCatMan.EditDialogSave(); }, false);
+window.addEventListener("dialogaccept", function() { jbCatManEditDialog.Save(); }, false);
