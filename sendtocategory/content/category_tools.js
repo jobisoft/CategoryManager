@@ -118,12 +118,14 @@ jbCatMan.init = function () {
 
 
 
-//#######################
+//##############################################
 // SOGoSync related functions
-//#######################
+//##############################################
 
-/* A SOGo sync is initiated by card modifications and the following itemPropertyChanged event */
-
+/* 
+  A SOGo sync is initiated by jbCatMan.modifyCard which sets a SOGoSyncRequest. The 
+  following itemPropertyChanged event will trigger a SOGoSync, if there is a valid request.
+*/
 jbCatMan.AbListenerToInitSOGoSync = {
 
   onItemPropertyChanged: function AbListenerToInitSOGoSync_onItemPropertyChanged(aItem, aProperty, aOldValue, aNewValue) {
@@ -164,12 +166,11 @@ jbCatMan.AbListenerToInitSOGoSync = {
 
 
 
-/* Save a given card using the internal mapping between the 
-   directoryId (attribute of card) and directoryURI, so all cards
-   can be modified, even if the directoryURI is not known. Also 
-   sets the groupDavVersion property to -1, so if SOGo installed,
-   it can catch the change and sync the card.
-   It returns the abUri of the card. */
+/* 
+  Save a given card using the internal mapping between the directoryId (attribute of card) 
+  and directoryURI, so all cards can be modified, even if the directoryURI is not known. 
+  Also does all SOGoSync related stuff.
+*/
 jbCatMan.modifyCard = function (card) {
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
   //cannot simply use GetSelectedDirectory(), because the global book cannot modify cards, we need to get the true owner of the card
@@ -193,9 +194,11 @@ jbCatMan.modifyCard = function (card) {
 
 
 
-/* Create a new card and adds it to the addressBook. If there
-   are special task for SOGo during create, this is where it
-   should be done. */
+/*
+  Create a new card and add it to the addressBook. If there are special task for SOGo
+  during create, this is where it should be done. Creating a new card will not trigger
+  a SOGoSync, this is done by jbCatMan.modifyCard after creating it.
+*/
 jbCatMan.newCard = function (addressBook) {
   let card = Components.classes["@mozilla.org/addressbook/cardproperty;1"].createInstance(Components.interfaces.nsIAbCard);
   if (jbCatMan.sogoInstalled && isGroupdavDirectory(addressBook.URI)) {  //TODO - what about sogo books with deactivated sogo?
@@ -228,9 +231,9 @@ jbCatMan.initSOGoSync = function () {
 
 
 
-//#####################
+//##############################################
 // UI related functions
-//#####################
+//##############################################
 
 jbCatMan.updatePeopleSearchInput = function (name) {
   jbCatMan.dump("Begin with updatePeopleSearchInput()",1);
@@ -286,22 +289,20 @@ jbCatMan.doCategorySearch = function () {
 
 
 
-//########################
+//##############################################
 // cards related functions
-//########################
-
-
+//##############################################
 
 // each local card has a unique property DbRowID, which can be used to get (search) this card (not working with LDAP) - however, it is not unique across different abooks
 jbCatMan.getUIDFromCard = function (card) {
   jbCatMan.dump("Begin with getUIDFromCard()",1);
   
-  //the DbRowID is not unique across different ABs, so it is not sufficient for global categoriy searches -> add category property
+  //since DbRowID is not unique across different ABs, it is not sufficient for global categoriy searches -> add category property
   let DbRowID = "";
   let categories = "";
   
   try {
-    DbRowID = card.getPropertyAsAString("DbRowID"); //DbRowID is not avail on LDAP directories, but since we cannot modify LDAP directories, catman is not working at all on LDAP (isRemote)
+    DbRowID = card.getPropertyAsAString("DbRowID"); //DbRowID is not avail on LDAP directories, but since we cannot modify LDAP directories, CatMan is not working at all on LDAP (isRemote)
     categories = card.getPropertyAsAString("Categories")
   } catch (ex) {}
 

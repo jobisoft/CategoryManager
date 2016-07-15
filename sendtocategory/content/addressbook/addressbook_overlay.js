@@ -30,9 +30,7 @@ CONCEPT CHANGES
 TODO 2.01
  - rename and delete global category should be possible
  - should categories defined in book1 be available in dropdown/popup in book2 ???
- - test auto sync trigger with bulk - use opener there as well?
  - bring back SCSearchCriteriaButtonMenu
- - is it possible to get abURI from directoryID directly? 
 
 TODO 2.xx
 - import / export
@@ -120,15 +118,11 @@ jbCatMan.updateCategoryList = function () {
       jbCatMan.updatePeopleSearchInput("");
     }
   } else {
-    /* There should not be any action here, the user typed something in the
-       search field so it is a true search result and we should not mess with it 
-    
-    if (document.getElementById('abResultsTree').view.rowCount != jbCatMan.data.abSize) {
-      ClearCardViewPane();
-      SetAbView(GetSelectedDirectory());
-      if (jbCatMan.data.abSize>0) SelectFirstCard();  
-      jbCatMan.updatePeopleSearchInput("");
-    } */
+    /* 
+        There should not be any action here, since there is no category selected.
+        The result pane could be anything (for example a search result) and we
+        should not modify it.
+      */
   }
   
   jbCatMan.updateButtons();
@@ -545,13 +539,13 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
 // event listeners
 //###################################################
 
-jbCatMan.AbListenerToUpdateCategoryList = {
-  /*
+ /*
   AbListener should detect bulk changes and only call updateCategoryList() after
   the last event. This is achieved by using clearTimeout and setTimeout on each
   event, so if a new event comes in while the timeout for the last one is not yet
   done, it gets postponed.
-  */
+*/
+ jbCatMan.AbListenerToUpdateCategoryList = {
   onItemAdded: function AbListenerToUpdateCategoryList_onItemAdded(aParentDir, aItem) {
     if (aItem instanceof Components.interfaces.nsIAbCard) {
       window.clearTimeout(jbCatMan.eventUpdateTimeout);
