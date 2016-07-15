@@ -482,13 +482,16 @@ jbCatMan.onResultsTreeContextMenuPopup = function () {
 
       if (countIn != 0 && countOut == 0) {
         newItem.setAttribute("label", allCatsArray[k]);
+        newItem.setAttribute("value", allCatsArray[k]);
         newItem.setAttribute("checked", "true");
       } else if (countIn != 0 && countOut != 0) {
         //mixed state: if set to false here, a click on it will put all cards into that group
         newItem.setAttribute("label", allCatsArray[k] + " (*)");
+        newItem.setAttribute("value", allCatsArray[k]);
         newItem.setAttribute("checked", "false");
       } else {
       newItem.setAttribute("label", allCatsArray[k]);
+      newItem.setAttribute("value", allCatsArray[k]);
       newItem.setAttribute("checked", "false");
       }
       
@@ -505,7 +508,7 @@ jbCatMan.onResultsTreeContextMenuPopup = function () {
 jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
   jbCatMan.dump("Begin with onCategoriesContextMenuItemCommand()",1);
   let cards = GetSelectedAbCards();
-  let category = this.label;
+  let category = this.value;
   let enabled = (event.target.getAttribute("checked") == "false");
   
   for (let i = 0; i < cards.length; i++) {
