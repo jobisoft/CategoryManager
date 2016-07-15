@@ -126,24 +126,10 @@ jbCatMan.init = function () {
 
 jbCatMan.AbListenerToInitSOGoSync = {
 
-  onItemAdded: function AbListenerToInitSOGoSync_onItemAdded(aParentDir, aItem) {
-    if (aItem instanceof Components.interfaces.nsIAbCard) {
-      window.clearTimeout(jbCatMan.eventSOGoSyncTimeout);
-      jbCatMan.eventSOGoSyncTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemAdded(SOGoSync)",1); jbCatMan.initSOGoSync(); jbCatMan.dump("Done trigger by onItemAdded(SOGoSync)",-1);}, 2000);
-    }
-  },
-
   onItemPropertyChanged: function AbListenerToInitSOGoSync_onItemPropertyChanged(aItem, aProperty, aOldValue, aNewValue) {
     if (aItem instanceof Components.interfaces.nsIAbCard) {
       window.clearTimeout(jbCatMan.eventSOGoSyncTimeout);
-      jbCatMan.eventSOGoSyncTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemPropertyChanged(SOGoSync)",1); jbCatMan.initSOGoSync(); jbCatMan.dump("Done trigger by onItemPropertyChanged(SOGoSync)",-1);}, 2000);
-    }
-  },
-
-  onItemRemoved: function AbListenerToInitSOGoSync_onItemRemoved(aParentDir, aItem) {
-    if (aItem instanceof Components.interfaces.nsIAbCard) {
-      window.clearTimeout(jbCatMan.eventSOGoSyncTimeout);
-      jbCatMan.eventSOGoSyncTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemRemoved(SOGoSync)",1); jbCatMan.initSOGoSync(); jbCatMan.dump("Done trigger by onItemRemoved(SOGoSync)",-1);}, 2000);
+      jbCatMan.eventSOGoSyncTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemPropertyChanged(SOGoSync)",1); jbCatMan.initSOGoSync(); jbCatMan.dump("Done trigger by onItemPropertyChanged(SOGoSync)",-1);}, 1000);
     }
   },
 
