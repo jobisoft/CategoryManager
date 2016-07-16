@@ -25,13 +25,13 @@
 <!ENTITY sendtocategory.send.title "E-Mail an Kategorie senden">
 <!ENTITY sendtocategory.sendMenu.label "E-Mail an Kategorie ##name## senden">
 
-<!ENTITY sendtocategory.export.title "Kontakte als VCF-Datei exportieren">
-<!ENTITY sendtocategory.exportMenu.label "Kontakte der Kategorie ##name## als VCF-Datei exportieren">
-<!ENTITY sendtocategory.exportAllMenu.label "Adressbuch als VCF-Datei exportieren">
+<!ENTITY sendtocategory.export.title "Kontakte exportieren">
+<!ENTITY sendtocategory.exportMenu.label "Kontakte der Kategorie ##name## exportieren">
+<!ENTITY sendtocategory.exportAllMenu.label "Adressbuch exportieren">
 
-<!ENTITY sendtocategory.import.title "Kotakte aus VCF-Datei importieren">
-<!ENTITY sendtocategory.importMenu.label "VCF-Datei in Kategorie ##name## importieren">
-<!ENTITY sendtocategory.importAllMenu.label "VCF-Datei in Addressbuch importieren">
+<!ENTITY sendtocategory.import.title "Kotakte importieren">
+<!ENTITY sendtocategory.importMenu.label "Kontakte in Kategorie ##name## importieren">
+<!ENTITY sendtocategory.importAllMenu.label "Kontakte in Addressbuch importieren">
 
 <!ENTITY sendtocategory.catbox.header.catname "Kategoriename">
 <!ENTITY sendtocategory.catbox.header.catsize "Mitglieder">

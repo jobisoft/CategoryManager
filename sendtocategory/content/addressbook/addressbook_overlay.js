@@ -174,22 +174,22 @@ jbCatMan.updateButtons = function () {
   document.getElementById("CatManContextMenuSend").disabled = (jbCatMan.data.selectedCategory == "" || isRemote); 
 
   //Import and export for all address books, regardless of category (if no category selected, export entire abook or import without category tagging)
-  //document.getElementById("CatManContextMenuImport").disabled = isRemote;
-  //document.getElementById("CatManContextMenuExport").disabled = isRemote;
+  document.getElementById("CatManContextMenuImport").disabled = isRemote;
+  document.getElementById("CatManContextMenuExport").disabled = isRemote;
 
   document.getElementById("CatManAddContactCategoryButton").disabled = isRemote || isGlobal;
   document.getElementById("CatManContextMenuAdd").disabled = isRemote || isGlobal;
 
   if (jbCatMan.data.selectedCategory == "") {
-    //document.getElementById("CatManContextMenuImport").label = jbCatMan.locale.menuAllImport;
-    //document.getElementById("CatManContextMenuExport").label = jbCatMan.locale.menuAllExport;
+    document.getElementById("CatManContextMenuImport").label = jbCatMan.locale.menuAllImport;
+    document.getElementById("CatManContextMenuExport").label = jbCatMan.locale.menuAllExport;
     document.getElementById("CatManContextMenuRemove").label = jbCatMan.locale.menuRemove.replace("##name##","");
     document.getElementById("CatManContextMenuEdit").label = jbCatMan.locale.menuEdit.replace("##name##","");
     document.getElementById("CatManContextMenuSend").label = jbCatMan.locale.menuSend.replace("##name##","");
     document.getElementById("CatManContextMenuBulk").label = jbCatMan.locale.menuBulk.replace("##name##","");
   } else {
-    //document.getElementById("CatManContextMenuImport").label = jbCatMan.locale.menuImport.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
-    //document.getElementById("CatManContextMenuExport").label = jbCatMan.locale.menuExport.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
+    document.getElementById("CatManContextMenuImport").label = jbCatMan.locale.menuImport.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
+    document.getElementById("CatManContextMenuExport").label = jbCatMan.locale.menuExport.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
     document.getElementById("CatManContextMenuRemove").label = jbCatMan.locale.menuRemove.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
     document.getElementById("CatManContextMenuEdit").label = jbCatMan.locale.menuEdit.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
     document.getElementById("CatManContextMenuSend").label = jbCatMan.locale.menuSend.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
@@ -236,7 +236,18 @@ jbCatMan.writeToCategory = function () {
 
 jbCatMan.onImport = function () {
   jbCatMan.dump("Begin with onImport()",1);
-  jbCatMan.dump("todo");
+  
+  var nsIFilePicker = Components.interfaces.nsIFilePicker;
+  var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
+  fp.init(window, "Select a File", nsIFilePicker.modeOpen);
+  fp.appendFilter("Comma Seperated Values (UTF-8)" ,"*.csv");
+  fp.appendFilter("vCard" ,"*.vcf");
+
+  var res = fp.show();
+  if (res != nsIFilePicker.returnCancel) {
+    window.openDialog("chrome://sendtocategory/content/addressbook/import_wizzard.xul", "import_wizzard", "modal,centerscreen,chrome,resizable=no", fp.file, res);
+  }
+  
   jbCatMan.dump("Done with onImport()",-1);
 }
 
@@ -244,7 +255,18 @@ jbCatMan.onImport = function () {
 
 jbCatMan.onExport = function () {
   jbCatMan.dump("Begin with onExport()",1);
-  jbCatMan.dump("todo");
+
+  var nsIFilePicker = Components.interfaces.nsIFilePicker;
+  var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
+  fp.init(window, "Select a File", nsIFilePicker.modeSave);
+  fp.appendFilter("Comma Seperated Values (UTF-8)" ,"*.csv");
+  fp.appendFilter("vCard" ,"*.vcf");
+
+  var res = fp.show();
+  if (res != nsIFilePicker.returnCancel) {
+    window.openDialog("chrome://sendtocategory/content/addressbook/export_wizzard.xul", "export_wizzard", "modal,centerscreen,chrome,resizable=no", fp.file, res);
+  }
+
   jbCatMan.dump("Done with onExport()",-1);
 }
 

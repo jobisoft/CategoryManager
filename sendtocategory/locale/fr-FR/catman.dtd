@@ -26,13 +26,14 @@
 <!ENTITY sendtocategory.send.title "envoyer un e-mail à la catégorie">
 <!ENTITY sendtocategory.sendMenu.label "envoyer un e-mail à la catégorie ##name##">
 
-<!ENTITY sendtocategory.export.title "export contacts as VCF-file [no FR trans avail]">
-<!ENTITY sendtocategory.exportMenu.label "export contacts of category ##name## as VCF-file [no FR trans avail]">
-<!ENTITY sendtocategory.exportAllMenu.label "export address book as VCF-file [no FR trans avail]">
+<!ENTITY sendtocategory.export.title "export contacts [no FR trans avail]">
+<!ENTITY sendtocategory.exportMenu.label "export contacts of category ##name## [no FR trans avail]">
+<!ENTITY sendtocategory.exportAllMenu.label "export address book [no FR trans avail]">
 
-<!ENTITY sendtocategory.import.title "import contacts from VCF-file [no FR trans avail]">
-<!ENTITY sendtocategory.importMenu.label "import VCF-file into category ##name## [no FR trans avail]">
-<!ENTITY sendtocategory.importAllMenu.label "import VCF-file into address book [no FR trans avail]">
+<!ENTITY sendtocategory.import.title "import contact [no FR trans avail]">
+<!ENTITY sendtocategory.importMenu.label "import contacts into category ##name## [no FR trans avail]">
+<!ENTITY sendtocategory.importAllMenu.label "import contacts into address book [no FR trans avail]">
+
 
 <!ENTITY sendtocategory.catbox.header.catname "nom de la catégorie">
 <!ENTITY sendtocategory.catbox.header.catsize "membres">
