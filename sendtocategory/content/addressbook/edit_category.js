@@ -1,4 +1,4 @@
-let saveObject = null;
+var saveObject = null;
 
 function editCategoryLoad()
 {

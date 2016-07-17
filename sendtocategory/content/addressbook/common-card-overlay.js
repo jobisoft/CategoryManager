@@ -1,5 +1,5 @@
-let jbCatMan = window.opener.jbCatMan;
-let jbCatManEditDialog = {}
+var jbCatMan = window.opener.jbCatMan;
+var jbCatManEditDialog = {}
 
 jbCatManEditDialog.Init = function () {
   jbCatMan.dump("Begin with EditDialogInit()",1);
