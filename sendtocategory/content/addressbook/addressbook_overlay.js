@@ -174,8 +174,8 @@ jbCatMan.updateButtons = function () {
   document.getElementById("CatManContextMenuSend").disabled = (jbCatMan.data.selectedCategory == "" || isRemote); 
 
   //Import and export for all address books, regardless of category (if no category selected, export entire abook or import without category tagging)
-  document.getElementById("CatManContextMenuImport").disabled = isRemote;
-  document.getElementById("CatManContextMenuExport").disabled = isRemote;
+  document.getElementById("CatManContextMenuImport").disabled = isRemote || isGlobal;
+  document.getElementById("CatManContextMenuExport").disabled = isRemote || isGlobal;
 
   document.getElementById("CatManAddContactCategoryButton").disabled = isRemote || isGlobal;
   document.getElementById("CatManContextMenuAdd").disabled = isRemote || isGlobal;
