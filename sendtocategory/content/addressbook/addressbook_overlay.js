@@ -235,39 +235,13 @@ jbCatMan.writeToCategory = function () {
 //###################################################
 
 jbCatMan.onImport = function () {
-  jbCatMan.dump("Begin with onImport()",1);
-  
-  var nsIFilePicker = Components.interfaces.nsIFilePicker;
-  var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
-  fp.init(window, "Select a File", nsIFilePicker.modeOpen);
-  fp.appendFilter("Comma Seperated Values (UTF-8)" ,"*.csv");
-  fp.appendFilter("vCard" ,"*.vcf");
-
-  var res = fp.show();
-  if (res != nsIFilePicker.returnCancel) {
-    window.openDialog("chrome://sendtocategory/content/addressbook/import_wizzard.xul", "import_wizzard", "modal,centerscreen,chrome,resizable=no", fp.file, res);
-  }
-  
-  jbCatMan.dump("Done with onImport()",-1);
+  window.openDialog("chrome://sendtocategory/content/addressbook/import_wizard.xul", "import_wizard", "modal,dialog,centerscreen,chrome,resizable=no");
 }
 
 
 
 jbCatMan.onExport = function () {
-  jbCatMan.dump("Begin with onExport()",1);
-
-  var nsIFilePicker = Components.interfaces.nsIFilePicker;
-  var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
-  fp.init(window, "Select a File", nsIFilePicker.modeSave);
-  fp.appendFilter("Comma Seperated Values (UTF-8)" ,"*.csv");
-  fp.appendFilter("vCard" ,"*.vcf");
-
-  var res = fp.show();
-  if (res != nsIFilePicker.returnCancel) {
-    window.openDialog("chrome://sendtocategory/content/addressbook/export_wizzard.xul", "export_wizzard", "modal,centerscreen,chrome,resizable=no", fp.file, res);
-  }
-
-  jbCatMan.dump("Done with onExport()",-1);
+  window.openDialog("chrome://sendtocategory/content/addressbook/export_wizard.xul", "export_wizard", "modal,dialog,centerscreen,chrome,resizable=no");
 }
 
 

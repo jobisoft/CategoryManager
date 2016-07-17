@@ -1,0 +1,20 @@
+﻿<!ENTITY sendtocategory.export.wizard.title "Category Manager Export Wizard">
+<!ENTITY sendtocategory.export.done.text "Export erfolgreich abgeschlossen.">
+
+<!ENTITY sendtocategory.export.ExportType.title "Export-Typ festlegen">
+<!ENTITY sendtocategory.export.ExportType.desc "Dieser Wizard wird Ihnen helfen, die ##NUM## Kontakte {{der Kategorie [##CAT##] }}aus dem Adressbuch [##BOOK##] zu exportieren.">
+<!ENTITY sendtocategory.export.ExportType.caption "Bitte wählen Sie den Export-Typ:">
+<!ENTITY sendtocategory.export.ExportType.csv "Comma Seperated Values (*.csv)">
+<!ENTITY sendtocategory.export.ExportType.vCard "vCard (*.vcf)">
+
+<!ENTITY sendtocategory.export.VCardProperties.title "Einstellungen für den vCard-Export">
+<!ENTITY sendtocategory.export.VCardProperties.desc "Das vCard Dateiformat verwendet für Emailadressen die Einteilung in HOME und WORK. Thunderbird verwendet aber eine primäre und eine alternative Emailadresse. Sie müssen festlegen, wie diese Felder miteinander verknüpft werden sollen.">
+<!ENTITY sendtocategory.export.EmailMapping.caption "Bitte wählen Sie die Art der Verknüpfung:">
+<!ENTITY sendtocategory.export.EmailMapping.primaryeIsWork "primäre Email = WORK, alternative Email= HOME">
+<!ENTITY sendtocategory.export.EmailMapping.primaryeIsHome "primäre Email = HOME, alternative Email= WORK">
+
+<!ENTITY sendtocategory.export.FileSelection.title "Export-Ziel festlegen">
+<!ENTITY sendtocategory.export.FileSelection.desc "Je nachdem was Sie mit den exportierten Kontakten machen möchten, kann es notwendig sein, die Kontakte alle in eine gemeinsame Datei zu exportieren, oder jeden Kontakt in eine eigene Datei.">
+<!ENTITY sendtocategory.export.FileMode.caption "Bitte legen Sie das Export-Ziel fest:">
+<!ENTITY sendtocategory.export.FileMode.file "Alle Kontakte in die gleiche Datei exportieren">
+<!ENTITY sendtocategory.export.FileMode.files "Jeden Kontakt in eine eigene Datei exportieren">
