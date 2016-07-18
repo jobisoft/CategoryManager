@@ -77,10 +77,12 @@ jbCatManExportWizard.onFinish = function (wizard) {
     if (exportType == "csv") {
       fp.appendFilter("Comma Seperated Values (UTF-8)" ,"*.csv");
       defaultString = defaultString + ".csv";
+      jbCatManExportWizard.analyzeContacts = true;
     }
     else if (exportType == "vCard") {
       fp.appendFilter("vCard" ,"*.vcf");
       defaultString = defaultString + ".vcf";
+      jbCatManExportWizard.analyzeContacts = false;
     }
     fp.defaultString = defaultString;
     
@@ -98,6 +100,7 @@ jbCatManExportWizard.onFinish = function (wizard) {
     document.documentElement.getButton("back").hidden=true;
     document.documentElement.getButton("finish").hidden=true;
     jbCatManExportWizard.wizardLocked = true;
+
     
     // Init export
       window.clearTimeout(jbCatManExportWizard.localTimeout);
@@ -113,25 +116,47 @@ jbCatManExportWizard.onFinish = function (wizard) {
 
 jbCatManExportWizard.doExport = function (progress) {
   let progressBar = document.getElementById('CatManExportProgressBar');
+  //init 
   if (progress == 0) {
-     progressBar.style.display="block";
+    progressBar.style.display = "block";
+    if (jbCatManExportWizard.analyzeContacts) { document.getElementById('CatManExportProgressLabel').value = document.getElementById('CatManExportLocaleAnalysing').value; }
+    else { document.getElementById('CatManExportProgressLabel').value = document.getElementById('CatManExportLocaleExporting').value; }
   }
   
-  //process contact #progress
+  //calculate values for next step of current process cycle
+  let newProgressBarValue =  (100 * progress) / jbCatManExportWizard.size;
+  let newProgressValue = progress + 1;
+
+  //eval current step of current process cycle or go to next process cycle
   if (jbCatManExportWizard.size == progress) {
-    //done
-    progressBar.value = 100;
-    alert(document.getElementById('CatManExportLocaleDoneExport').value);
-    jbCatManExportWizard.wizardLocked = false;
-    window.close();
+    //current process cycle is done
+    newProgressBarValue = 100;
+    newProgressValue = 0;
+    //if analyzeContacts is true, wizard remains locked for export cycle, otherwise we are done 
+    jbCatManExportWizard.wizardLocked = jbCatManExportWizard.analyzeContacts; 
+    //whatever cycle currently finished, next one is not analysis
+    jbCatManExportWizard.analyzeContacts = false;
   } else {
-    //do actuall export
 
-    //update progress bar
-    progressBar.value = (100 * progress) / jbCatManExportWizard.size;
+    if (jbCatManExportWizard.analyzeContacts) {
+      //do actuall analysis
+    } else {
+      //do actuall export
+    }
+    
+  }
 
+  //update progress bar
+  progressBar.value = newProgressBarValue;
+
+  //process next contact or close wizard on finish
+  if (jbCatManExportWizard.wizardLocked) {
     //next contact
-    jbCatManExportWizard.localTimeout = window.setTimeout(function() { jbCatManExportWizard.doExport(progress+1); }, 1);
+    jbCatManExportWizard.localTimeout = window.setTimeout(function() { jbCatManExportWizard.doExport(newProgressValue); }, 1);
+  } else {
+    //close
+    alert(document.getElementById('CatManExportLocaleDoneExport').value);
+    window.close();
   }
   
 }

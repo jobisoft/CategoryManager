@@ -1,5 +1,7 @@
 ﻿<!ENTITY sendtocategory.export.wizard.title "Category Manager Export Wizard">
-<!ENTITY sendtocategory.export.done.text "Export erfolgreich abgeschlossen.">
+<!ENTITY sendtocategory.export.text.done "Export erfolgreich abgeschlossen.">
+<!ENTITY sendtocategory.export.text.exporting "Kontakte werden exportiert ...">
+<!ENTITY sendtocategory.export.text.analysing "Kontakte werden analysiert ...">
 
 <!ENTITY sendtocategory.export.ExportType.title "Export-Typ festlegen">
 <!ENTITY sendtocategory.export.ExportType.desc "Dieser Wizard wird Ihnen helfen, die ##NUM## Kontakte {{der Kategorie [##CAT##] }}aus dem Adressbuch [##BOOK##] zu exportieren.">

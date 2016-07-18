@@ -20,7 +20,9 @@
 
   <wizardpage pageid="CatManExportType" label="&sendtocategory.export.ExportType.title;" onpageadvanced="jbCatManExportWizard.setNextPage(this);" next="CatManExportVCardProperties">
   
-    <label id="CatManExportLocaleDoneExport" value="&sendtocategory.export.done.text;" style="display:none" />
+    <label id="CatManExportLocaleDoneExport" value="&sendtocategory.export.text.done;" style="display:none" />
+    <label id="CatManExportLocaleExporting" value="&sendtocategory.export.text.exporting;" style="display:none" />
+    <label id="CatManExportLocaleAnalysing" value="&sendtocategory.export.text.analysing;" style="display:none" />
   
     <description style='padding-bottom:2em;' id='CatManExportDescriptionLabel'>
       &sendtocategory.export.ExportType.desc;
@@ -64,6 +66,7 @@
     </radiogroup>
 
     <vbox flex="1" pack="end">
+      <label id="CatManExportProgressLabel" value="" />
       <progressmeter style="display:none"
           id="CatManExportProgressBar"
           mode="determined"
