@@ -312,6 +312,31 @@ jbCatMan.getUIDFromCard = function (card) {
 
 
 
+
+// this function expects to be run on a single book only (so DbRowID is unique enough), otherwise the full UID needs to be used to get the card 
+jbCatMan.getCardFromUID = function (UID, abURI) {
+  jbCatMan.dump("Begin with getCardFromUID("+UID+")",1);
+  let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
+
+  let UIDS = UID.split("\u001A");
+  let DbRowID = UIDS[0];
+  
+  let UUIDQuery = "(DbRowID,=,@V)";
+  let searchQuery = UUIDQuery.replace(/@V/g, encodeURIComponent(DbRowID));
+
+  let result = abManager.getDirectory(abURI + "?" + "(or" + searchQuery + ")").childCards;
+  if (result.hasMoreElements()) {
+    jbCatMan.dump("Done with getCardFromUID()",-1);
+    return result.getNext().QueryInterface(Components.interfaces.nsIAbCard);
+  } else {
+    jbCatMan.dump("Done with getCardFromUID()",-1);
+    return null;
+  }
+}
+
+
+
+
 jbCatMan.getCategoriesfromCard = function (card) {
   jbCatMan.debug("Begin with getCategoriesfromCard()",1);
   let catsArray = [];
