@@ -14,6 +14,16 @@ while (props.hasMoreElements()) {
     dump("Prop ["+ prop.name+"] = ["+prop.value+"]\n");
 }
 
+https://dxr.mozilla.org/comm-central/source/mailnews/addrbook/src/nsAbManager.cpp
+Standard field list
+
+https://dxr.mozilla.org/comm-central/source/mailnews/addrbook/src/nsAbDirectoryQuery.cpp#469
+CaseInsensitive StringComparison is hardcoded - if two categories with same name but different case -> resultsViewPane will sometimes mix cards, if categories string is equal but just differnt case 
+
+
+
+
+
 public LDAP Test account
 Hostname:ldap.adams.edu
 Base DN: ou=people,dc=adams,dc=edu
