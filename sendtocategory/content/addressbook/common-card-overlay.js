@@ -10,7 +10,7 @@ jbCatManEditDialog.Init = function () {
     if (categoriesTabButton) categoriesTabButton.style.display = 'none';
 
     //remove SOGo hook on OK Button
-    if (OldEditCardOKButton && EditCardOKButton) {
+    if (typeof OldEditCardOKButton != 'undefined' && typeof EditCardOKButton != 'undefined') {
       EditCardOKButton = OldEditCardOKButton
     } else {
       alert("Debug: Could not remove SOGo listerner! This is bad!\n");
