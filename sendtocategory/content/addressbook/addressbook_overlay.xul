@@ -95,6 +95,11 @@
                         oncommand="jbCatMan.onToggleDisplay(false)"/>
 
                     </hbox>
+
+                   <vbox id="CatManInfoBox" flex="1" pack="center" align="center" hidden="true" style="background-color:white;">
+                        <description style="font-style:italic; text-align:center">&sendtocategory.disableglobalbook.desc;</description>
+                   </vbox>
+                   
         </vbox>
         <vbox id="CatManShowBox" hidden="true" pack="end" >
                     <hbox pack="end" style="border-top: 1px solid grey; padding-top:2px;">

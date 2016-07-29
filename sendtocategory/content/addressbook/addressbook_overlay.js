@@ -286,18 +286,26 @@ jbCatMan.onToggleDisplay = function (show) {
 jbCatMan.onSelectAddressbook = function () {
   let selectedBook = GetSelectedDirectory();
   jbCatMan.dump("Begin with onSelectAddressbook("+gDirTree.view.selection.currentIndex+","+selectedBook+")",1);
-  if (selectedBook) {
+  let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
+  
+if (selectedBook) {
     let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
-    // disable and clear ResultTreePane, if global abook is selected and user enabled this option
-    if (gDirTree.view.selection.currentIndex == 0 && prefs.getBoolPref("disable_global_book")) {
-      document.getElementById("abResultsTree").disabled = true;
-      document.getElementById("peopleSearchInput").disabled = true;
-      SetAbView();
-    } else {
-      document.getElementById("abResultsTree").disabled = false;
-      document.getElementById("peopleSearchInput").disabled = false;
+    // disable and clear ResultTreePane, if global abook is selected, SOGo is installed and user enabled this option
+    if (jbCatMan.sogoInstalled && prefs.getBoolPref("disable_global_book")) {
+      if (gDirTree.view.selection.currentIndex == 0 ){
+        document.getElementById("abResultsTree").hidden = true;
+        document.getElementById("peopleSearchInput").disabled = true;
+        document.getElementById("SCSearchCriteriaButton").disabled = true;
+        document.getElementById("CatManInfoBoxClone").hidden = false;
+        document.getElementById("localResultsOnlyMessage").hidden = true;
+        document.getElementById("CardViewOuterBox").hidden = true;
+      } else {
+        document.getElementById("peopleSearchInput").disabled = false;
+        document.getElementById("SCSearchCriteriaButton").disabled = false;
+        document.getElementById("CatManInfoBoxClone").hidden = true;
+      }
     }
-
+    
     jbCatMan.data.emptyCategories = new Array();
     jbCatMan.data.selectedCategory = "";
     jbCatMan.updateCategoryList();
@@ -690,6 +698,13 @@ jbCatMan.initAddressbook = function() {
   let sogoContextMenu = document.getElementById("sc-categories-contextmenu");
   if (sogoContextMenu) sogoContextMenu.style.display = 'none';
 
+  //add element via JS/DOM instead of XUL/overlay, because the containing HBOX has no ID
+  var CatManInfoBox = document.getElementById("CatManInfoBox");
+  var CatManInfoBoxClone = CatManInfoBox.cloneNode(true);
+  CatManInfoBoxClone.id = "CatManInfoBoxClone";
+
+  var localResultsOnlyMessage = document.getElementById("localResultsOnlyMessage");
+  localResultsOnlyMessage.parentNode.insertBefore(CatManInfoBoxClone, localResultsOnlyMessage);
 
   jbCatMan.dump("Done with initAddressbook()",-1);
 }

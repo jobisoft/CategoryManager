@@ -50,7 +50,8 @@
 <!ENTITY sendtocategory.pref.generaltab.toaddr.desc3 "Bleibt dieses Feld leer, wird dem Betreff der Email der Name des Verteilers (in eckigen Klammern) vorangestellt, um die E-Mail leichter als Verteiler-E-Mail zu identifizieren.">
 
 <!ENTITY sendtocategory.pref.addressbooktab.label "Adressbuch">
-<!ENTITY sendtocategory.pref.addressbooktab.disableglobalbook.label "Globales Adressbuch deaktivieren">
+<!ENTITY sendtocategory.disableglobalbook.desc "Das globale Adressbuch wurde in den Einstellungen des Category Managers wegen Inkompatibilität mit dem SOGo-Connector deaktiviert.">
+<!ENTITY sendtocategory.pref.addressbooktab.disableglobalbook.label "Globales Adressbuch deaktivieren (nur wenn der SOGo Connector installiert ist)">
 <!ENTITY sendtocategory.pref.addressbooktab.disableglobalbook.desc "Mit TB38 wurde ein globales Addressbuch eingeführt, welches alle vorhandenen Adressbücher zusammenführt. Dieses Adressbuch ist jedoch nicht mit dem SOGo-Connector kompatibel: Werden Kontakte geändert, während dieses Buch aktiviert ist, werden die Änderungen nicht (nie!) zum hinterlegten CardDAV-Server übertragen. Es wird daher empfohlen, dieses Adressbuch zu deaktivieren.">
 <!ENTITY sendtocategory.pref.addressbooktab.rememberlastbook.label "Zuletzt benutztes Addressbuch merken">
 <!ENTITY sendtocategory.pref.addressbooktab.rememberlastbook.desc "In der Standardeinstellung öffnet Thunderbird immer das erste Adressbuch in der Liste, wenn das Thunderbird-Adressbuch geöffnet wird. Mit dieser Option wird beim Öffnen das zuletzt benutzte Adressbuch angezeigt.">
