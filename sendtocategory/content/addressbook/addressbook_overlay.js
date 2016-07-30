@@ -5,50 +5,6 @@ let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getServ
 loader.loadSubScript("chrome://sendtocategory/content/category_tools.js");
 
 
-/* stuff
-
-// Get all properties of a card
-props = card.properties;
-while (props.hasMoreElements()) {
-    prop = props.getNext().QueryInterface(Components.interfaces.nsIProperty); 
-    dump("Prop ["+ prop.name+"] = ["+prop.value+"]\n");
-}
-
-https://dxr.mozilla.org/comm-central/source/mailnews/addrbook/src/nsAbManager.cpp
-Standard field list
-
-https://dxr.mozilla.org/comm-central/source/mailnews/addrbook/src/nsAbDirectoryQuery.cpp#469
-CaseInsensitive StringComparison is hardcoded - if two categories with same name but different case -> resultsViewPane will sometimes mix cards, if categories string is equal but just differnt case 
-
-
-
-
-
-public LDAP Test account
-Hostname:ldap.adams.edu
-Base DN: ou=people,dc=adams,dc=edu
-Port number: 389
-Bind DN: LEAVE BLANK
-Use secure connection (SSL):UNCHECK
-
-
-CONCEPT CHANGES
- - do not mess with SOGo UUID, (SOGo is providing UUID from server, if not present)
- - groupDavVersion still needs to be set to -1, to indicate changes?
-
-
-TODO 2.01
- - rename and delete global category should be possible
- - should categories defined in book1 be available in dropdown/popup in book2 ???
- - bring back SCSearchCriteriaButtonMenu
-
-TODO 2.xx
-- import / export
-- work on lists
-- store/restore last addressbook used in messenger as well
-*/
-
-
 
 //###################################################
 // adding additional functions to the local jbCatMan Object
