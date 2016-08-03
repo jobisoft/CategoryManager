@@ -1,4 +1,5 @@
-﻿<!ENTITY sendtocategory.cancel.button "Cancelar">
+﻿<!ENTITY sendtocategory.ok.button "Ok">
+<!ENTITY sendtocategory.cancel.button "Cancelar">
 
 <!ENTITY sendtocategory.foundcategories.label "Categorías Encontradas:">
 <!ENTITY sendtocategory.category.label "Categorías">
@@ -84,3 +85,7 @@
 <!ENTITY sendtocategory.bulkedit.lastname "Apellido">
 <!ENTITY sendtocategory.bulkedit.choose "Seleccione un Contacto ...">
 <!ENTITY sendtocategory.bulkedit.noname "Nombre Desconocido">
+
+<!ENTITY sendtocategory.catsedit.title "Edit category membership of selected contacts">
+<!ENTITY sendtocategory.catsedit.label.in "Subset of the selected contatcs which should be part of category ##name##:">
+<!ENTITY sendtocategory.catsedit.desc "Please define, if all, none or a subset of the selected contacts should be part of category ##name##.">

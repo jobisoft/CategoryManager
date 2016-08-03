@@ -1,4 +1,5 @@
-﻿<!ENTITY sendtocategory.cancel.button "annuler">
+﻿<!ENTITY sendtocategory.ok.button "Ok">
+<!ENTITY sendtocategory.cancel.button "Annuler">
 
 <!ENTITY sendtocategory.foundcategories.label "Catégories trouvées:">
 <!ENTITY sendtocategory.category.label "Catégorie">
@@ -11,7 +12,6 @@
 <!ENTITY sendtocategory.helpButton.label "?">
 <!ENTITY sendtocategory.hideCategoryPaneButton.label "&#9660;">
 <!ENTITY sendtocategory.showCategoryPaneButton.label "&#9650;">
-
 
 <!ENTITY sendtocategory.add.title "ajouter une catégorie">
 <!ENTITY sendtocategory.addButton.label "ajouter une catégorie">
@@ -33,7 +33,6 @@
 <!ENTITY sendtocategory.import.title "import contact [no FR trans avail]">
 <!ENTITY sendtocategory.importMenu.label "import contacts into category ##name## [no FR trans avail]">
 <!ENTITY sendtocategory.importAllMenu.label "import contacts into address book [no FR trans avail]">
-
 
 <!ENTITY sendtocategory.catbox.header.catname "nom de la catégorie">
 <!ENTITY sendtocategory.catbox.header.catsize "membres">
@@ -87,5 +86,6 @@
 <!ENTITY sendtocategory.bulkedit.choose "Veuillez séléctionner un contact ...">
 <!ENTITY sendtocategory.bulkedit.noname "Nom Inconnu">
 
-
-
+<!ENTITY sendtocategory.catsedit.title "Edit category membership of selected contacts">
+<!ENTITY sendtocategory.catsedit.label.in "Subset of the selected contatcs which should be part of category ##name##:">
+<!ENTITY sendtocategory.catsedit.desc "Please define, if all, none or a subset of the selected contacts should be part of category ##name##.">

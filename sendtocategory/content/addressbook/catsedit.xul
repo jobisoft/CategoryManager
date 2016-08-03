@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<?xml-stylesheet href="chrome://sendtocategory/skin/richlist.css" type="text/css"?>
+<?xul-overlay href="chrome://global/content/dialogOverlay.xul"?>
+
+<!DOCTYPE dialog
+[
+    <!ENTITY % dtd1 SYSTEM "chrome://sendtocategory/locale/catman.dtd" > %dtd1;
+]>
+
+<dialog id="CatManCatsEditor"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    buttons="accept,cancel"
+    buttonlabelaccept="&sendtocategory.ok.button;"
+    buttonlabelcancel="&sendtocategory.cancel.button;"
+    ondialogaccept="return jbCatManCatsEdit.onAccept()"
+    title="&sendtocategory.catsedit.title;"
+    onload="jbCatManCatsEdit.init()">
+
+    <script type="text/javascript" src="chrome://sendtocategory/content/addressbook/catsedit.js"/>
+    
+    <vbox>
+        <hbox>
+            <vbox width="250" pack="end">
+                <listbox id="CatsEditOutBox" width="100%" height="350" seltype="multiple" onclick="jbCatManCatsEdit.onSelect()" />
+            </vbox>
+            <vbox pack="center">
+                <button id ="CatsEditAddButton" disabled="true" label="&gt;" onclick="jbCatManCatsEdit.onClickAdd()" />
+                <button id ="CatsEditRemoveButton" disabled="true" label="&lt;" onclick="jbCatManCatsEdit.onClickRemove()" />
+            </vbox>
+            <vbox width="250" pack="end">
+                <description id="CatsEditLabel">&sendtocategory.catsedit.label.in;</description>
+                <listbox id="CatsEditInBox" width="100%" height="350" seltype="multiple" onclick="jbCatManCatsEdit.onSelect()" />
+            </vbox>
+        </hbox>
+        
+        <progressmeter
+        id="CatsEditProgressBar"
+        style="visibility:hidden"
+        mode="determined"
+        value="0"/>
+        
+        <groupbox>
+            <caption label="&sendtocategory.bulkedit.note;"/>
+            <grid>
+                <columns>
+                    <column/>
+                </columns>
+                <rows>
+                    <row>
+                        <description id="CatsEditDescription">&sendtocategory.catsedit.desc;</description>
+                    </row>
+                </rows>
+            </grid>
+        </groupbox>
+    </vbox>
+
+</dialog>

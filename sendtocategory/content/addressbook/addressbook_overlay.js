@@ -427,25 +427,21 @@ jbCatMan.onResultsTreeContextMenuPopup = function () {
       }
       
       let newItem = document.createElement("menuitem");
-      newItem.setAttribute("type", "checkbox");
       //newItem.setAttribute("autocheck", "false");
-
-      if (countIn != 0 && countOut == 0) {
-        newItem.setAttribute("label", allCatsArray[k]);
-        newItem.setAttribute("value", allCatsArray[k]);
-        newItem.setAttribute("checked", "true");
-      } else if (countIn != 0 && countOut != 0) {
-        //mixed state: if set to false here, a click on it will put all cards into that group
-        newItem.setAttribute("label", allCatsArray[k] + " (*)");
-        newItem.setAttribute("value", allCatsArray[k]);
-        newItem.setAttribute("checked", "false");
-      } else {
-      newItem.setAttribute("label", allCatsArray[k]);
+      newItem.setAttribute("type", "checkbox");
       newItem.setAttribute("value", allCatsArray[k]);
-      newItem.setAttribute("checked", "false");
+      if (countIn != 0 && countOut == 0) newItem.setAttribute("checked", "true");
+      else newItem.setAttribute("checked", "false");        
+
+      //if it is a multiselection, add counts to label and open special popup on click
+      if (cards.length > 1) {
+        newItem.setAttribute("label", allCatsArray[k] + " ("+countIn + "/" + cards.length + ")");
+        newItem.addEventListener("click", jbCatMan.onMultiselectCategoriesContextMenuItemCommand, false);
+      } else {
+        newItem.setAttribute("label", allCatsArray[k]);
+        newItem.addEventListener("click", jbCatMan.onCategoriesContextMenuItemCommand, false);
       }
       
-      newItem.addEventListener("click", jbCatMan.onCategoriesContextMenuItemCommand, false);
       popup.appendChild(newItem);
     }
   }
@@ -454,7 +450,14 @@ jbCatMan.onResultsTreeContextMenuPopup = function () {
 
 
 
-// a category has been disabled/enabled via context menu -> store in property
+// a category has been clicked on in the context menu while multiple contacts have been selected -> open special edit dialog to make changes
+jbCatMan.onMultiselectCategoriesContextMenuItemCommand = function (event) {
+  window.openDialog("chrome://sendtocategory/content/addressbook/catsedit.xul", "editCategory", "modal,centerscreen,chrome,resizable=no", this.value);
+}
+
+
+
+// a category has been clicked on in the context menu while a single contact has been selected ->  invert current category property
 jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
   jbCatMan.dump("Begin with onCategoriesContextMenuItemCommand()",1);
   let cards = GetSelectedAbCards();

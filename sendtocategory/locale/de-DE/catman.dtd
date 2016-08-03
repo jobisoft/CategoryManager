@@ -1,4 +1,5 @@
-﻿<!ENTITY sendtocategory.cancel.button "Abbrechen">
+﻿<!ENTITY sendtocategory.ok.button "Ok">
+<!ENTITY sendtocategory.cancel.button "Abbrechen">
 
 <!ENTITY sendtocategory.foundcategories.label "Gefundene Kategorien">
 <!ENTITY sendtocategory.category.label "Kategorie">
@@ -44,6 +45,7 @@
 
 <!ENTITY sendtocategory.pref.label "Kategoriemanager">
 <!ENTITY sendtocategory.pref.generaltab.label "Verteiler">
+
 <!ENTITY sendtocategory.pref.generaltab.toaddr.label "Optionale 'An:' Adresse (für alle sichtbar, als sichtbarer Name wird der Name des Verteilers benutzt)">
 <!ENTITY sendtocategory.pref.generaltab.toaddr.desc1 "Das bayerische Landesamt für Datenschutzaufsicht hat unlängst bestätigt*, dass es unzulässig ist, bei einem Verteiler die Adressen in das An-Feld oder CC-Feld (carbon copy) einzufügen, weil damit personenbezogene E-Mail-Adressen einem großen Empfängerkreis zugänglich gemacht werden.">
 <!ENTITY sendtocategory.pref.generaltab.toaddr.desc2 "Daher werden die Emailadressen der Kategorie-Mitglieder beim Erzeugen einer Verteiler-Email in das BCC-Feld (blind carbon coppy) eingetragen. Eine so erstelle Email enthält keinen echten Adressaten, wodurch beim Empfänger (abhängig vom verwendeten Email Programm) in dem Feld 'An:' meist '<i>Verborgene_Empfänger:;</i>' steht. Bei BCC-Verteilern wird daher oft eine zusätzliche - für alle Empfänger sichtbare - E-Mail Adresse eingefügt (die eigene oder ein no-reply Adresse), die als Name den Namen des Verteilers trägt. Eine nicht existierende Adresse funktioniert i.d.R. nicht, da die meisten Mail-Server solche E-Mails nicht akzeptieren.">
@@ -83,3 +85,7 @@
 <!ENTITY sendtocategory.bulkedit.lastname "Nachname">
 <!ENTITY sendtocategory.bulkedit.choose "Bitte Kontakt auswählen ...">
 <!ENTITY sendtocategory.bulkedit.noname "Unbekannter Name">
+
+<!ENTITY sendtocategory.catsedit.title "Kategoriezugehörigkeit selektierter Kontakte bearbeiten">
+<!ENTITY sendtocategory.catsedit.label.in "Der Kategorie ##name## zuzuordnende Kontakte:">
+<!ENTITY sendtocategory.catsedit.desc "Bitte legen Sie fest, ob alle, keine oder nur ein Teil der gerade im Adressbuch selektierten Kontakte der Kategorie ##name## zugeordnet werden sollen.">
