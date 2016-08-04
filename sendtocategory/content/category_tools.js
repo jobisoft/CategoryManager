@@ -173,7 +173,7 @@ jbCatMan.AbListenerToInitSOGoSync = {
 */
 jbCatMan.modifyCard = function (card) {
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
-  //cannot simply use GetSelectedDirectory(), because the global book cannot modify cards, we need to get the true owner of the card
+  //cannot simply use GetSelectedDirectory(), because the global book cannot modify cards, we need to get the true owner of the card - this also works for mailinglists
   let abUri = jbCatMan.data.abURI[card.directoryId];
   let ab = abManager.getDirectory(abUri);
 
