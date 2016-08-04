@@ -42,6 +42,33 @@ jbCatManCatsEdit.init = function () {
     else this.inbox.appendItem(userName, UID)
   }
   
+  // add CTRL + A event listeners to listboxes
+  this.inbox.addEventListener("keydown", function(e) {
+    // Bind to both command (for Mac) and control (for Win/Linux)
+    if (e.ctrlKey && (e.keyCode == 65 || e.keyCode == 97)) {
+      jbCatManCatsEdit.inbox.selectAll();
+    }
+  }, false);
+  
+  this.outbox.addEventListener("keydown", function(e) {
+    // Bind to both command (for Mac) and control (for Win/Linux)
+    if (e.ctrlKey && (e.keyCode == 65 || e.keyCode == 97)) {
+      jbCatManCatsEdit.outbox.selectAll();
+    }
+  }, false);
+ 
+  
+  //add doubleclick event listernes to listboxes
+  this.inbox.addEventListener("dblclick", function(e) {
+    //inbox to outbox = remove
+    jbCatManCatsEdit.onClickRemove();
+  }, false);
+
+  this.outbox.addEventListener("dblclick", function(e) {
+    //outbox to inbox = add
+    jbCatManCatsEdit.onClickAdd();
+  }, false);
+  
 }
 
 /* Enable Add/Remove buttons, if at least one contact has been selected */
