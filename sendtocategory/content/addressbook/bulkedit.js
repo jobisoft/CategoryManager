@@ -324,7 +324,7 @@ jbCatManBulkEdit.saveList_AddCards = function (i) {
       } else { 
 
         //NOTOK - add new contact to addressbook, also add him to category jbCatMan.selectedCategory
-        let card = jbCatMan.newCard(addressBook);
+        let card = Components.classes["@mozilla.org/addressbook/cardproperty;1"].createInstance(Components.interfaces.nsIAbCard);
         card.setProperty("FirstName", jbCatMan.bulk.saveList.childNodes[i].childNodes[1].childNodes[0].getAttribute("value")); 
         card.setProperty("LastName", jbCatMan.bulk.saveList.childNodes[i].childNodes[1].childNodes[1].getAttribute("value"));
         card.setProperty("DisplayName", jbCatMan.bulk.saveList.childNodes[i].childNodes[1].childNodes[0].getAttribute("value") + " " + jbCatMan.bulk.saveList.childNodes[i].childNodes[1].childNodes[1].getAttribute("value")); 
@@ -333,7 +333,10 @@ jbCatManBulkEdit.saveList_AddCards = function (i) {
         let cats = new Array();
         cats.push(jbCatMan.data.selectedCategory);
         jbCatMan.setCategoriesforCard(card, cats);
-        jbCatMan.modifyCard(card);
+
+        //add the new card to the book and then call modify, which inits sysnc
+        jbCatMan.modifyCard(addressBook.addCard(card));
+
         //Log
         let row = document.createElement('listitem');
         let cell = document.createElement('listcell');

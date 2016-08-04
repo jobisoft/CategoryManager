@@ -194,23 +194,6 @@ jbCatMan.modifyCard = function (card) {
 
 
 
-/*
-  Create a new card and add it to the addressBook. If there are special task for SOGo
-  during create, this is where it should be done. Creating a new card will not trigger
-  a SOGoSync, this is done by jbCatMan.modifyCard after creating it.
-*/
-jbCatMan.newCard = function (addressBook) {
-  let card = Components.classes["@mozilla.org/addressbook/cardproperty;1"].createInstance(Components.interfaces.nsIAbCard);
-  if (jbCatMan.sogoInstalled && isGroupdavDirectory(addressBook.URI)) {  //TODO - what about sogo books with deactivated sogo?
-    //Do not mess with UUID, let the server do it
-    //let uuid = new UUID();
-    //card.setProperty("groupDavKey",uuid);
-  }
-  return addressBook.addCard(card);
-}
-
-
-
 /* Init requested SOGo syncs */
 jbCatMan.initSOGoSync = function () {
   if (jbCatMan.sogoInstalled) {
