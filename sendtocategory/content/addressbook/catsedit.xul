@@ -15,7 +15,8 @@
     buttonlabelcancel="&sendtocategory.cancel.button;"
     ondialogaccept="return jbCatManCatsEdit.onAccept()"
     title="&sendtocategory.catsedit.title;"
-    onload="jbCatManCatsEdit.init()">
+    onload="jbCatManCatsEdit.init()"
+    onclose="return jbCatManCatsEdit.closeCheck()">
 
     <script type="text/javascript" src="chrome://sendtocategory/content/addressbook/catsedit.js"/>
     
