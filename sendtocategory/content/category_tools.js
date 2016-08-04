@@ -403,7 +403,10 @@ jbCatMan.updateCategories = function (mode,oldName,newName) {
 
   let cards = addressBook.childCards;
 
-  while (cards.hasMoreElements()) {
+  while (true) {
+    let more = false;
+    try { more = cards.hasMoreElements() } catch (ex) {} 
+    if (!more) break;
     let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
     let catArray = jbCatMan.getCategoriesfromCard(card);
     let rebuildCatArray = [];
