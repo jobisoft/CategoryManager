@@ -353,8 +353,21 @@ jbCatMan.getCategoriesfromCard = function (card) {
 jbCatMan.setCategoriesforCard = function (card, catsArray) {
   jbCatMan.dump("Begin with setCategoriesforCard()",1);
   let retval = true;
+
+  // sanity check
+  let checkedArray = new Array();
+  for (let i = 0; i < catsArray.length; i++) {
+    if (catsArray[i]) {
+      checkedArray.push(catsArray[i]);
+    }
+  }
+  
+  let catsString = "";
+  if (checkedArray.length>0) catsString = checkedArray.join("\u001A");
+  dump("CatsString: " + catsString + "\n");
+
   try {
-     card.setPropertyAsAString("Categories", catsArray.join("\u001A"));
+     card.setPropertyAsAString("Categories", catsString);
   } catch (ex) {
     jbCatMan.dump("Could not set Categories.\n");
     retval = false;
