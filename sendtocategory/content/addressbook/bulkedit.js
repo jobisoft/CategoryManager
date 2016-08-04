@@ -314,7 +314,7 @@ jbCatManBulkEdit.saveList_AddCards = function (i) {
               //Log
               let row = document.createElement('listitem');
               let cell = document.createElement('listcell');
-              cell.setAttribute('label',  "keep contact [" + name + "] in ["+jbCatMan.bulk.selectedCategory+"]" );
+              cell.setAttribute('label',  "keep contact [" + name + "] in ["+jbCatMan.data.selectedCategory+"]" );
               row.appendChild(cell);
               CatManSaverList.appendChild(row);
             }
