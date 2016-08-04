@@ -8,14 +8,14 @@ jbCatManCatsEdit.init = function () {
   this.locked = false;
 
 
-  //Update label and description
+  // update label and description
   let xulLabel = document.getElementById("CatsEditLabel").textContent;
   document.getElementById("CatsEditLabel").textContent = xulLabel.replace("##name##","["+ this.category + "]");
 
   let xulDesc = document.getElementById("CatsEditDescription").textContent;
   document.getElementById("CatsEditDescription").textContent = xulDesc.replace("##name##","["+ this.category + "]");
 
-  //Fill listboxes
+  // fill listboxes
   this.inbox = document.getElementById('CatsEditInBox');
   this.outbox = document.getElementById('CatsEditOutBox');
   
@@ -23,7 +23,7 @@ jbCatManCatsEdit.init = function () {
     let card = this.cards[i];
     let UID = i;
     let fallback = UID;
-    //if no name is present, but an email, use the first part of the email as fallback for name - this is how TB is doing it as well
+    // if no name is present, but an email, use the first part of the email as fallback for name - this is how TB is doing it as well
     if (card.primaryEmail != "") fallback = card.primaryEmail.split("@")[0];
     
     let userName = jbCatMan.getUserNamefromCard(card,fallback);
@@ -38,27 +38,39 @@ jbCatManCatsEdit.init = function () {
     
     let catsArray = jbCatMan.getCategoriesfromCard(card);
     let catIdx = catsArray.indexOf(this.category);
-    if (catIdx == -1) this.outbox.appendItem(userName, UID)
-    else this.inbox.appendItem(userName, UID)
+    if (catIdx == -1) {
+      let newitem = this.outbox.appendItem(userName, UID)
+      this.outbox.ensureElementIsVisible(newitem); //workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=250123#c16
+    } else {
+      let newitem = this.inbox.appendItem(userName, UID);
+      this.inbox.ensureElementIsVisible(newitem); //workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=250123#c16
+    }
+
   }
+  
+  // scroll to top 
+  this.inbox.scrollToIndex(0);
+  this.outbox.scrollToIndex(0);
   
   // add CTRL + A event listeners to listboxes
   this.inbox.addEventListener("keydown", function(e) {
     // Bind to both command (for Mac) and control (for Win/Linux)
     if (e.ctrlKey && (e.keyCode == 65 || e.keyCode == 97)) {
       jbCatManCatsEdit.inbox.selectAll();
+      jbCatManCatsEdit.onSelect();
     }
   }, false);
   
   this.outbox.addEventListener("keydown", function(e) {
-    // Bind to both command (for Mac) and control (for Win/Linux)
+    // bind to both command (for Mac) and control (for Win/Linux)
     if (e.ctrlKey && (e.keyCode == 65 || e.keyCode == 97)) {
       jbCatManCatsEdit.outbox.selectAll();
+      jbCatManCatsEdit.onSelect();
     }
   }, false);
  
   
-  //add doubleclick event listernes to listboxes
+  // add doubleclick event listernes to listboxes
   this.inbox.addEventListener("dblclick", function(e) {
     //inbox to outbox = remove
     jbCatManCatsEdit.onClickRemove();
@@ -82,10 +94,12 @@ jbCatManCatsEdit.onClickAdd = function () {
   let count = this.outbox.selectedCount;
   while (count--) {
     let item = this.outbox.selectedItems[0];
-    this.inbox.appendChild(item);
+    let newitem = this.inbox.appendChild(item);
+    this.inbox.ensureElementIsVisible(newitem); //workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=250123#c16
+
     this.outbox.removeItemAt(this.outbox.getIndexOfItem(item));
   }
-  //update buttons after manipulating lists
+  // update buttons after manipulating lists
   jbCatManCatsEdit.onSelect()
 }
 
@@ -94,10 +108,12 @@ jbCatManCatsEdit.onClickRemove = function () {
   let count = this.inbox.selectedCount;
   while (count--) {
     let item = this.inbox.selectedItems[0];
-    this.outbox.appendChild(item);
+    let newitem = this.outbox.appendChild(item);
+    this.outbox.ensureElementIsVisible(newitem); //workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=250123#c16
+
     this.inbox.removeItemAt(this.inbox.getIndexOfItem(item));
   }
-  //update buttons after manipulating lists
+  // update buttons after manipulating lists
   jbCatManCatsEdit.onSelect()
 }
 
@@ -114,34 +130,29 @@ jbCatManCatsEdit.onAccept = function () {
 }
 
 
-/* check if category membership of card changed and update category property, if needed */
+/* Check if category membership of card changed and update category property, if needed */
  jbCatManCatsEdit.updateCard = function (progress) {
-  // Update progress bar
+  // update progress bar
   document.getElementById('CatsEditProgressBar').value =  (100 * progress) / this.cards.length;
    
   if (progress == this.cards.length) {
 
-    // Done: unlock, close and exit
+    // done: unlock, close and exit
     this.locked = false;
     window.close();
 
   } else {
 
     let item;
-    // Are we processing an outbox card or an inbox card?
-    if (progress < this.outbox.itemCount) {
-      this.outbox.ensureIndexIsVisible(progress); //bug? sometimes getItemAtIndex() returns an undefined item for items not visible
-      item = this.outbox.getItemAtIndex(progress);
-    } else {
-      this.inbox.ensureIndexIsVisible(progress-this.outbox.itemCount);
-      item = this.inbox.getItemAtIndex(progress-this.outbox.itemCount);
-    }
+    // are we processing an outbox card or an inbox card?
+    if (progress < this.outbox.itemCount) item = this.outbox.getItemAtIndex(progress)
+    else item = this.inbox.getItemAtIndex(progress-this.outbox.itemCount);
     
     let card = this.cards[item.value];
     let catsArray = jbCatMan.getCategoriesfromCard(card);
     let idx = catsArray.indexOf(this.category);
     
-    // Update card if needed
+    // update card if needed
     if (progress < this.outbox.itemCount) {
       // we are processing the outbox - check if card is in category, if yes -> remove it
       if (idx > -1) {
@@ -158,7 +169,7 @@ jbCatManCatsEdit.onAccept = function () {
       }
     }
     
-    // Continue with next contact
+    // continue with next contact
     this.localTimeout = window.setTimeout(function() { jbCatManCatsEdit.updateCard(progress + 1); }, 1);
 
   }
@@ -166,7 +177,7 @@ jbCatManCatsEdit.onAccept = function () {
 }
 
 
-/* prevent closing of the dialog, if it is locked (called by onclose event) */
+/* Prevent closing of the dialog, if it is locked (called by onclose event) */
  jbCatManCatsEdit.closeCheck = function () {
    return (this.locked == false);
 }
