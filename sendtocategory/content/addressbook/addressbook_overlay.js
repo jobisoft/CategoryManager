@@ -224,7 +224,7 @@ jbCatMan.onSelectAddressbook = function () {
   jbCatMan.dump("Begin with onSelectAddressbook("+gDirTree.view.selection.currentIndex+","+selectedBook+")",1);
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
   
-if (selectedBook) {
+  if (selectedBook) {
     let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
     // disable and clear ResultTreePane, if global abook is selected, SOGo is installed and user enabled this option
     if (jbCatMan.sogoInstalled && prefs.getBoolPref("disable_global_book")) {
@@ -379,7 +379,8 @@ jbCatMan.onDeleteCategory = function () {
     if (jbCatMan.data.selectedCategory in jbCatMan.data.foundCategories) {
       if (confirm(jbCatMan.locale.confirmDelete.replace("##oldname##",jbCatMan.data.selectedCategory).replace("##number##",jbCatMan.data.foundCategories[jbCatMan.data.selectedCategory].length))) {
         jbCatMan.updateCategories("remove",jbCatMan.data.selectedCategory);
-        jbCatMan.data.selectedCategory = "";
+        //no longer set category to nothing - updateCategoryList checks, if the current "category filter" is valid, if not it is cleared
+        jbCatMan.updateCategoryList();
       }
     }
     else {
