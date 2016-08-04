@@ -486,8 +486,11 @@ jbCatMan.scanCategories = function (abURI) {
 
     jbCatMan.dump("Scanning <"+addressBook.URI+">");
     let cards = addressBook.childCards;
+    while (true) {
+      let more = false;
+      try { more = cards.hasMoreElements() } catch (ex) {} 
+      if (!more) break;
 
-    while (cards.hasMoreElements()) {
       let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
       jbCatMan.data.abSize++;
 
