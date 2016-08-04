@@ -39,7 +39,7 @@
 
 <!ENTITY sendtocategory.error.rename "La categoría [##oldname##] no puede renombrarse a [##newname##]. Ya existe una categoría con ese nombre.">
 <!ENTITY sendtocategory.error.add "La categoría [##newname##] no puede agregarse. Ya existe una categoría con ese nombre.">
-<!ENTITY sendtocategory.info.add "Mientras que la nueva categoría [##newname##] no sea conectada con un contacto, no podrá ser sincronizada con el servidor. En caso de crear la libreta de direcciones sin asignarle ningún contacto, la nueva categoría será eliminada.">
+<!ENTITY sendtocategory.info.add "La nueva categoría [##newname##] no sea conectada con un contacto. En caso de crear la libreta de direcciones sin asignarle ningún contacto, la nueva categoría será eliminada.">
 <!ENTITY sendtocategory.confirm.rename "Esta acción reemplazará la categoría [##oldname##] por [##newname##] para ##number## contactos. Esta acción no puede deshacerse, ¿desea continuar?">
 <!ENTITY sendtocategory.confirm.delete "Esta acción eliminará la categoría [##oldname##], afectando a ##number## contactos. Esta acción no puede deshacerse, ¿desea continuar?">
 

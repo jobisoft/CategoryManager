@@ -39,7 +39,7 @@
 
 <!ENTITY sendtocategory.error.rename "Die Kategorie [##oldname##] kann nicht in [##newname##] umbenannt werden, da bereits eine Kategorie mit diesem Namen existiert.">
 <!ENTITY sendtocategory.error.add "Die Kategorie [##newname##] kann nicht in hinzugefügt werden, da bereits eine Kategorie mit diesem Namen existiert.">
-<!ENTITY sendtocategory.info.add "Die neue Kategorie [##newname##] kann noch nicht mit dem Server syncronisiert werden, da ihr noch keine Kontakte zugeordnet wurden. Sie existiert daher nur temporär auf Ihrem System. Sollten Sie das Addressbuch schließen, ohne dieser Kategorie einen Kontakt zuzuordnen, wird sie automatisch wieder gelöscht.">
+<!ENTITY sendtocategory.info.add "Die neue Kategorie [##newname##] wurde noch keinem Kontakt zugeordnet und existiert daher nur temporär. Sollten Sie das Addressbuch schließen, ohne dieser Kategorie einen Kontakt zuzuordnen, wird sie automatisch wieder gelöscht.">
 <!ENTITY sendtocategory.confirm.rename "Diese Aktion wird bei ##number## Kontakten die Kategorie-Eigenschaft ändern und die Zugehörigkeit zur Kategorie [##oldname##] durch eine Zugehörigkeit zur Kategorie [##newname##] ersetzen. Das kann nicht rückgänging gemacht werden, möchten Sie fortfahren?">
 <!ENTITY sendtocategory.confirm.delete "Diese Aktion wird bei ##number## Kontakten die Kategorie-Eigenschaft ändern und die Zugehörigkeit zur Kategorie [##oldname##] entfernen. Das kann nicht rückgänging gemacht werden, möchten Sie fortfahren?">
 

@@ -39,7 +39,7 @@
 
 <!ENTITY sendtocategory.error.rename "The category [##oldname##] cannot be renamed to [##newname##], cause a category with that name already exists.">
 <!ENTITY sendtocategory.error.add "The category [##newname##] cannot be added], cause a category with that name already exists.">
-<!ENTITY sendtocategory.info.add "As long as the new category [##newname##] has not been connected to a contact, it cannot be syncronized to the server. If you close the addressbook without assigning a contact, the newly created category will be removed.">
+<!ENTITY sendtocategory.info.add "The new category [##newname##] has not yet been connected to a contact. If you close the addressbook without assigning a contact, the newly created category will be removed.">
 <!ENTITY sendtocategory.confirm.rename "This action will change the category-property of ##number## contacts, the membership to category [##oldname##] will be replaced by a membership to category [##newname##]. This cannot be undone, do you want to continue?">
 <!ENTITY sendtocategory.confirm.delete "This action will change the category-property of ##number## contacts, the membership to category [##oldname##] will be removed. This cannot be undone, do you want to continue?">
 

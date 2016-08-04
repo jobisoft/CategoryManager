@@ -39,7 +39,7 @@
 
 <!ENTITY sendtocategory.error.rename "La catégorie [##oldname##] ne peut pas être renommée en [##newname##] car une catégorie avec ce nom existe déjà.">
 <!ENTITY sendtocategory.error.add "La catégorie [##oldname##] ne peut pas être ajoutée car une catégorie avec ce nom existe déjà.">
-<!ENTITY sendtocategory.info.add "Tant que la nouvelle catégorie [##newname##] n'est pas connectée à un contact, elle ne sera pas syncronisée sur le serveur. Si vous fermez le carnet d'adresse sans assigner à un contact, la catégorie nouvellement créee sera supprimée.">
+<!ENTITY sendtocategory.info.add "TLa nouvelle catégorie [##newname##] n'est pas connectée à un contact. Si vous fermez le carnet d'adresse sans assigner à un contact, la catégorie nouvellement créee sera supprimée.">
 <!ENTITY sendtocategory.confirm.rename "Cette  action changera la catégorie de ##number## contacts, les membres de la catégorie [##oldname##] deviendront membres de la catégorie [** newname **]. Vous ne pourrez pas annuler cette action, voulez-vous continuer ?">
 <!ENTITY sendtocategory.confirm.delete "Cette  action supprimera la catégorie de ##number## contacts, les membres de la catégorie [##oldname##] ne seront plus membres de celle-ci. Vous ne pourrez pas annuler cette action, voulez-vous continuer ?">
 
