@@ -388,7 +388,6 @@ jbCatMan.setCategoriesforCard = function (card, catsArray) {
   
   let catsString = "";
   if (checkedArray.length>0) catsString = checkedArray.join("\u001A");
-  dump("CatsString: " + catsString + "\n");
 
   try {
      card.setPropertyAsAString("Categories", catsString);
