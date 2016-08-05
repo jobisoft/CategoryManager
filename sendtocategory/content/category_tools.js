@@ -94,7 +94,7 @@ jbCatMan.init = function () {
   jbCatMan.data.foundCategories = [];
   jbCatMan.data.categoryList = [];
   jbCatMan.data.bcc = [];
-  jbCatMan.data.membersWithoutPrimaryEmail = [];
+  jbCatMan.data.membersWithoutAnyEmail = [];
   jbCatMan.data.emails = [];
   jbCatMan.data.abSize = 0;
   //create a map between directoryIds und abURI, so we can get the abURI for each card even if its directory is not known when using the global address book
@@ -397,6 +397,19 @@ jbCatMan.getCategoriesfromCard = function (card) {
 
 
 
+jbCatMan.getEmailFromCard = function (card) {
+  if (card.primaryEmail) return card.primaryEmail
+  else {
+    let email = "";
+    try {
+      email = card.getPropertyAsAString("SecondEmail");
+    } catch (ex) {}
+    return email;
+  }
+}
+
+
+
 //replacement for SOGo's arrayToMultiValue 
 jbCatMan.setCategoriesforCard = function (card, catsArray) {
   jbCatMan.dump("Begin with setCategoriesforCard()",1);
@@ -505,7 +518,7 @@ jbCatMan.scanCategories = function (abURI) {
   jbCatMan.data.foundCategories = [];
   jbCatMan.data.categoryList = [];
   jbCatMan.data.bcc = [];
-  jbCatMan.data.membersWithoutPrimaryEmail = [];
+  jbCatMan.data.membersWithoutAnyEmail = [];
   jbCatMan.data.emails = [];
   jbCatMan.data.abSize = 0;
   jbCatMan.data.abURI = [];
@@ -568,7 +581,7 @@ jbCatMan.scanCategories = function (abURI) {
           if (catArray[i] in jbCatMan.data.foundCategories == false) {
             jbCatMan.data.foundCategories[catArray[i]] = [];
             jbCatMan.data.bcc[catArray[i]] = [];
-            jbCatMan.data.membersWithoutPrimaryEmail[catArray[i]] = [];
+            jbCatMan.data.membersWithoutAnyEmail[catArray[i]] = 0;
             jbCatMan.data.emails[catArray[i]] = [];
             jbCatMan.data.categoryList.push(catArray[i]);
           }
@@ -576,18 +589,19 @@ jbCatMan.scanCategories = function (abURI) {
           //add card to category
           jbCatMan.data.foundCategories[catArray[i]].push(CardID);
           
-          //add card to emails-list and bcc-list (if primaryEmail is defined)
-          if (card.primaryEmail != "") {
-            jbCatMan.data.emails[catArray[i]].push(card.primaryEmail);
+          //add card to emails-list and bcc-list (if an email is defined)
+          let email = jbCatMan.getEmailFromCard(card);
+          if (email) {
+            jbCatMan.data.emails[catArray[i]].push(email);
             let bccfield = "";
             if (card.displayName != "") {
-              bccfield = "\"" + card.displayName + "\"" + " <" + card.primaryEmail + ">";
+              bccfield = "\"" + card.displayName + "\"" + " <" + email + ">";
             } else {
-              bccfield = card.primaryEmail;
+              bccfield = email;
             }
             jbCatMan.data.bcc[catArray[i]].push(bccfield);
           } else {
-            jbCatMan.data.membersWithoutPrimaryEmail[catArray[i]].push(card.primaryEmail);
+            jbCatMan.data.membersWithoutAnyEmail[catArray[i]]++;
           }
         }
       }

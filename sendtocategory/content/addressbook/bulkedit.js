@@ -48,10 +48,10 @@ jbCatManBulkEdit.loadBulkList = function () {
   }
   bulkbox.value=value;
   
-  //give feedback to users about possible category members without primaryEmails, 
+  //give feedback to users about possible category members without any email address, 
   //which will not be altered
-  if (jbCatMan.data.selectedCategory in jbCatMan.data.membersWithoutPrimaryEmail && jbCatMan.data.membersWithoutPrimaryEmail[jbCatMan.data.selectedCategory].length != 0) {
-    document.getElementById("CatManDescriptionNoPrimaryEmail").textContent = jbCatMan.locale.descriptionNoPrimaryEmail.replace("##counts##",jbCatMan.data.membersWithoutPrimaryEmail[jbCatMan.data.selectedCategory].length);
+  if (jbCatMan.data.selectedCategory in jbCatMan.data.membersWithoutAnyEmail && jbCatMan.data.membersWithoutAnyEmail[jbCatMan.data.selectedCategory] > 0) {
+    document.getElementById("CatManDescriptionNoPrimaryEmail").textContent = jbCatMan.locale.descriptionNoPrimaryEmail.replace("##counts##",jbCatMan.data.membersWithoutAnyEmail[jbCatMan.data.selectedCategory]);
   } else {
     document.getElementById("CatManInfoBox").style.display = "none";
   }
@@ -373,8 +373,8 @@ jbCatManBulkEdit.saveList_RemoveCards = function (i) {
       cell.setAttribute('label',  "Error: RemoveList contains unknown UID [" + UID + "], something is wrong." );
       row.appendChild(cell);
       CatManSaverList.appendChild(row);
-    } else if (card.primaryEmail == "") {
-      //This card has no primary email and must not be removed.
+    } else if (jbCatMan.getEmailFromCard(card) == false) {
+      //This card has no defined email and must not be removed.
       name  = jbCatMan.getUserNamefromCard(card);
       let row = document.createElement('listitem');
       let cell = document.createElement('listcell');
