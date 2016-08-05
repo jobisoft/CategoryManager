@@ -5,6 +5,49 @@ let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getServ
 loader.loadSubScript("chrome://sendtocategory/content/category_tools.js");
 
 
+/* stuff
+
+// Get all properties of a card
+props = card.properties;
+while (props.hasMoreElements()) {
+    prop = props.getNext().QueryInterface(Components.interfaces.nsIProperty); 
+    dump("Prop ["+ prop.name+"] = ["+prop.value+"]\n");
+}
+
+https://dxr.mozilla.org/comm-central/source/mailnews/addrbook/src/nsAbManager.cpp
+Standard field list
+
+https://dxr.mozilla.org/comm-central/source/mailnews/addrbook/src/nsAbDirectoryQuery.cpp#469
+CaseInsensitive StringComparison is hardcoded - if two categories with same name but different case -> resultsViewPane will sometimes mix cards, if categories string is equal but just differnt case 
+
+
+
+
+
+public LDAP Test account
+Hostname:ldap.adams.edu
+Base DN: ou=people,dc=adams,dc=edu
+Port number: 389
+Bind DN: LEAVE BLANK
+Use secure connection (SSL):UNCHECK
+
+
+CONCEPT CHANGES
+ - do not mess with SOGo UUID, (SOGo is providing UUID from server, if not present)
+ - groupDavVersion still needs to be set to -1, to indicate changes?
+
+
+TODO 2.02
+ - rename and delete global category should be possible
+ - should categories defined in book1 be available in dropdown/popup in book2 ???
+ - bring back SCSearchCriteriaButtonMenu
+
+TODO 2.xx
+- import / export
+- store/restore last addressbook used in messenger as well
+*/
+
+
 
 //###################################################
 // adding additional functions to the local jbCatMan Object
@@ -139,15 +182,23 @@ jbCatMan.updateButtons = function () {
 
   document.getElementById("CatManContextMenuSend").disabled = (jbCatMan.data.selectedCategory == "" || isRemote); 
 
+  //Import and export for all address books, regardless of category (if no category selected, export entire abook or import without category tagging)
+  document.getElementById("CatManContextMenuImport").disabled = isRemote || isGlobal;
+  document.getElementById("CatManContextMenuExport").disabled = isRemote || isGlobal;
+
   document.getElementById("CatManAddContactCategoryButton").disabled = isRemote || isGlobal;
   document.getElementById("CatManContextMenuAdd").disabled = isRemote || isGlobal;
 
   if (jbCatMan.data.selectedCategory == "") {
+    document.getElementById("CatManContextMenuImport").label = jbCatMan.locale.menuAllImport;
+    document.getElementById("CatManContextMenuExport").label = jbCatMan.locale.menuAllExport;
     document.getElementById("CatManContextMenuRemove").label = jbCatMan.locale.menuRemove.replace("##name##","");
     document.getElementById("CatManContextMenuEdit").label = jbCatMan.locale.menuEdit.replace("##name##","");
     document.getElementById("CatManContextMenuSend").label = jbCatMan.locale.menuSend.replace("##name##","");
     document.getElementById("CatManContextMenuBulk").label = jbCatMan.locale.menuBulk.replace("##name##","");
   } else {
+    document.getElementById("CatManContextMenuImport").label = jbCatMan.locale.menuImport.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
+    document.getElementById("CatManContextMenuExport").label = jbCatMan.locale.menuExport.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
     document.getElementById("CatManContextMenuRemove").label = jbCatMan.locale.menuRemove.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
     document.getElementById("CatManContextMenuEdit").label = jbCatMan.locale.menuEdit.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
     document.getElementById("CatManContextMenuSend").label = jbCatMan.locale.menuSend.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
@@ -192,10 +243,22 @@ jbCatMan.writeToCategory = function () {
 // onActions
 //###################################################
 
+jbCatMan.onImport = function () {
+  window.openDialog("chrome://sendtocategory/content/addressbook/import_wizard.xul", "import_wizard", "modal,dialog,centerscreen,chrome,resizable=no");
+}
+
+
+
+jbCatMan.onExport = function () {
+  window.openDialog("chrome://sendtocategory/content/addressbook/export_wizard.xul", "export_wizard", "modal,dialog,centerscreen,chrome,resizable=no");
+}
+
+
+
 jbCatMan.onHelpButton = function () {
   jbCatMan.dump("Begin with onHelpButton()",1);
   let ioservice = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
-  let uriToOpen = ioservice.newURI("https://github.com/jobisoft/CategoryManager/wiki/CategoryManager-2.01-Release-Notes", null, null);
+  let uriToOpen = ioservice.newURI("https://github.com/jobisoft/CategoryManager/wiki/CategoryManager-2.02-Release-Notes", null, null);
   let extps = Components.classes["@mozilla.org/uriloader/external-protocol-service;1"].getService(Components.interfaces.nsIExternalProtocolService);
   extps.loadURI(uriToOpen, null);
   jbCatMan.dump("Done with onHelpButton()",-1);
