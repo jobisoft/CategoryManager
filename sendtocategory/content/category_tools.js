@@ -401,9 +401,13 @@ jbCatMan.setCategoriesforCard = function (card, catsArray) {
 
 
 
-jbCatMan.getUserNamefromCard = function (card,fallback) {
+jbCatMan.getUserNamefromCard = function (card) {
   jbCatMan.dump("Begin with getUserNamefromCard()",1);
   let userName = "";
+  let fallback = jbCatMan.locale.bulkEditNoName;
+  // if no name is present, but an email, use the first part of the email as fallback for name - this is how TB is doing it as well
+  if (card.primaryEmail) fallback = card.primaryEmail.split("@")[0];
+  
   try {
       userName = card.getPropertyAsAString("DisplayName"); 
   } catch (ex) {}
