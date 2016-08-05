@@ -415,8 +415,13 @@ jbCatMan.onResultsTreeContextMenuPopup = function () {
     for (let k = 0; k < allCatsArray.length; k++) {
       let countIn = 0;
       let countOut = 0;
-      
+      let containsMailList = false;
+
       for (let i = 0; i < cards.length; i++) {
+        if (cards[i].isMailList) {
+          containsMailList = true;
+          continue;
+        }
         let thisCatsArray = jbCatMan.getCategoriesfromCard(cards[i]);
         if (thisCatsArray.indexOf(allCatsArray[k]) != -1) {
           //this card is in this category
@@ -436,13 +441,14 @@ jbCatMan.onResultsTreeContextMenuPopup = function () {
 
       //if it is a multiselection, add counts to label and open special popup on click
       if (cards.length > 1) {
-        newItem.setAttribute("label", allCatsArray[k] + " ("+countIn + "/" + cards.length + ")");
-        newItem.addEventListener("click", jbCatMan.onMultiselectCategoriesContextMenuItemCommand, false);
+        newItem.setAttribute("label", allCatsArray[k] + " ("+countIn + "/" + (countIn + countOut) + ")");
+        if (!containsMailList) newItem.addEventListener("click", jbCatMan.onMultiselectCategoriesContextMenuItemCommand, false);
       } else {
         newItem.setAttribute("label", allCatsArray[k]);
-        newItem.addEventListener("click", jbCatMan.onCategoriesContextMenuItemCommand, false);
+        if (!containsMailList) newItem.addEventListener("click", jbCatMan.onCategoriesContextMenuItemCommand, false);
       }
       
+      if (containsMailList) newItem.setAttribute("disabled","true");
       popup.appendChild(newItem);
     }
   }

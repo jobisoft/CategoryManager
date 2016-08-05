@@ -403,6 +403,9 @@ jbCatMan.setCategoriesforCard = function (card, catsArray) {
   let retval = true;
 
   // sanity check
+  if (card.isMailList)
+    return false;
+  
   let checkedArray = new Array();
   for (let i = 0; i < catsArray.length; i++) {
     if (catsArray[i] && checkedArray.indexOf(catsArray[i]) == -1) {
