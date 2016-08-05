@@ -156,7 +156,7 @@ jbCatManBulkEdit.validateEmailList = function (i) {
 
         case 1://OK
           //get name
-          let userName = jbCatMan.getUserNamefromCard(cards[0], jbCatMan.locale.bulkEditNoName + " ("+email+")");
+          let userName = jbCatMan.getUserNamefromCard(cards[0]);
           let cardID = jbCatMan.getUIDFromCard(cards[0]);
           
           //copy from template
@@ -198,9 +198,9 @@ jbCatManBulkEdit.validateEmailList = function (i) {
             let menuItem = document.createElement("menuitem");
 
             if (memberIdx == j) {
-              menuItem.setAttribute("label", jbCatMan.getUserNamefromCard(cards[j], jbCatMan.locale.bulkEditNoName + " ("+email+")") + " (*)");
+              menuItem.setAttribute("label", jbCatMan.getUserNamefromCard(cards[j]) + " (*)");
             } else {
-              menuItem.setAttribute("label", jbCatMan.getUserNamefromCard(cards[j], jbCatMan.locale.bulkEditNoName + " ("+email+")"));
+              menuItem.setAttribute("label", jbCatMan.getUserNamefromCard(cards[j]));
             }
             menuItem.setAttribute("value", jbCatMan.getUIDFromCard(cards[j]));
             newtemplate.childNodes[1].childNodes[0].childNodes[0].appendChild(menuItem);
@@ -277,7 +277,7 @@ jbCatManBulkEdit.saveList_AddCards = function (i) {
         //Has this UID been processed already? Do not add the same contact twice
         if (jbCatMan.bulk.processedUIDs.indexOf(UID)!=-1)  {
           //Ignore double contact
-          name  = jbCatMan.getUserNamefromCard(card, jbCatMan.locale.bulkEditNoName + " (UID: "+UID+")");
+          name  = jbCatMan.getUserNamefromCard(card);
           let row = document.createElement('listitem');
           let cell = document.createElement('listcell');
           cell.setAttribute('label',  "skipping contact [" + name + "], because he is already part of ["+jbCatMan.data.selectedCategory+"]" );
@@ -292,7 +292,7 @@ jbCatManBulkEdit.saveList_AddCards = function (i) {
               row.appendChild(cell);
               CatManSaverList.appendChild(row);
           } else {
-            name  = jbCatMan.getUserNamefromCard(card, jbCatMan.locale.bulkEditNoName + " (UID: "+UID+")");
+            name  = jbCatMan.getUserNamefromCard(card);
             jbCatMan.bulk.processedUIDs.push(UID);
             if(idx < 0) {
               //Selected card is not part of this category, ADD IT
@@ -374,14 +374,14 @@ jbCatManBulkEdit.saveList_RemoveCards = function (i) {
       CatManSaverList.appendChild(row);
     } else if (card.primaryEmail == "") {
       //This card has no primary email and must not be removed.
-      name  = jbCatMan.getUserNamefromCard(card, jbCatMan.locale.bulkEditNoName + " (UID: "+UID+")");
+      name  = jbCatMan.getUserNamefromCard(card);
       let row = document.createElement('listitem');
       let cell = document.createElement('listcell');
       cell.setAttribute('label',  "keep contact [" + name  + "] in [" + jbCatMan.data.selectedCategory + "]" );
       row.appendChild(cell);
       CatManSaverList.appendChild(row);
     } else {
-      name  = jbCatMan.getUserNamefromCard(card, jbCatMan.locale.bulkEditNoName + " (UID: "+UID+")");
+      name  = jbCatMan.getUserNamefromCard(card);
       //Contact is no longer part of this category - REMOVE IT
       let cats = jbCatMan.getCategoriesfromCard(card);
       let idx = cats.indexOf(jbCatMan.data.selectedCategory);

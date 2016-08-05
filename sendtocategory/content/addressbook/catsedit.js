@@ -22,11 +22,8 @@ jbCatManCatsEdit.init = function () {
   for (let i = 0; i < this.cards.length; i++) {
     let card = this.cards[i];
     let UID = i;
-    let fallback = UID;
-    // if no name is present, but an email, use the first part of the email as fallback for name - this is how TB is doing it as well
-    if (card.primaryEmail != "") fallback = card.primaryEmail.split("@")[0];
+    let userName = jbCatMan.getUserNamefromCard(card);
     
-    let userName = jbCatMan.getUserNamefromCard(card,fallback);
     if (card.primaryEmail != "") userName = userName + " (" + card.primaryEmail + ")";
     else {
       let secondEmail = "";
