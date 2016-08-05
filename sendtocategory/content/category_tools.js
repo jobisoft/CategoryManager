@@ -178,7 +178,7 @@ jbCatMan.modifyCard = function (card) {
   let selectedBook = abManager.getDirectory(selectedURI);
   let abUri;
 
-  //If the global book is selected, get the true card owner from directory.Id
+  //Get abUri, if the global book is selected, get the true card owner from directory.Id
   if (selectedURI == "moz-abdirectory://?") {
 
       if (card.directoryId == "") throw { name: "jbCatManException", message: "Found card in global book without directoryId (cannot add cards to global book).", toString: function() { return this.name + ": " + this.message; } };
@@ -194,19 +194,37 @@ jbCatMan.modifyCard = function (card) {
 
   }
 
-  //Get the working directory
-  let ab = abManager.getDirectory(abUri);
-
-  //Check, if the card is already added to a directory, if not add it to the working directory - not allowed for global addressbook (we have thrown already in that case)
-  if (card.directoryId == "") card = ab.addCard(card);
-  
+  //SOGo stuff
   if (jbCatMan.sogoInstalled && isGroupdavDirectory(abUri)) { //TODO - what about sogo books with deactivated sogo?
     let oldDavVersion = card.getProperty("groupDavVersion", "-1");
     card.setProperty("groupDavVersion", "-1"); 
     card.setProperty("groupDavVersionPrev", oldDavVersion);
   }
-  ab.modifyCard(card);
+  
+  //Get the working directory
+  let ab = abManager.getDirectory(abUri);
 
+  //Check, if the card is already added to a directory, if not add it to the working directory - not allowed for global addressbook (we have thrown already in that case)
+  if (card.directoryId == "") {
+      let newCard = ab.addCard(card);
+
+      //also add card to mailinglist, if it is a mailinglist
+      if (selectedBook.isMailList) {
+        //find this mailinglist card (nsIAbCard) in the parent directory (selectedURI == mailListCard.mailListURI)
+        let result = abManager.getDirectory(abUri + "?(or(IsMailList,=,TRUE))").childCards;
+        while (result.hasMoreElements()) {
+          let mailListCard = result.getNext().QueryInterface(Components.interfaces.nsIAbCard);
+          if (mailListCard.mailListURI == selectedURI) {
+            //mailListCard is the card representing the selected mailinglist in the parent directory - add newCard to mailinglist directory
+            let mailListDirectory = abManager.getDirectory(mailListCard.mailListURI);
+            mailListDirectory.addressLists.appendElement(newCard, false);
+            mailListDirectory.editMailListToDatabase(mailListCard);
+            break;
+          }
+        }
+      }
+  } else ab.modifyCard(card);
+    
   //Keep track of books which need to by synced
   if (jbCatMan.sogoInstalled && isGroupdavDirectory(abUri)) { //TODO - what about sogo books with deactivated sogo?
     jbCatMan.sogoSyncRequest[abUri] = true;
