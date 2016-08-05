@@ -381,7 +381,7 @@ jbCatMan.setCategoriesforCard = function (card, catsArray) {
   // sanity check
   let checkedArray = new Array();
   for (let i = 0; i < catsArray.length; i++) {
-    if (catsArray[i]) {
+    if (catsArray[i] && checkedArray.indexOf(catsArray[i]) == -1) {
       checkedArray.push(catsArray[i]);
     }
   }
