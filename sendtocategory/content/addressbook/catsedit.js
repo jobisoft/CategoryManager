@@ -2,7 +2,7 @@ var jbCatMan = window.opener.jbCatMan;
 var jbCatManCatsEdit = {}
 
 jbCatManCatsEdit.init = function () {
-  this.cards = window.opener.GetSelectedAbCards();
+  this.cards = [];
   this.category = window.arguments[0] ;
   this.localTimeout = null;
   this.locked = false;
@@ -18,10 +18,17 @@ jbCatManCatsEdit.init = function () {
   // fill listboxes
   this.inbox = document.getElementById('CatsEditInBox');
   this.outbox = document.getElementById('CatsEditOutBox');
+  let UID = -1;
   
-  for (let i = 0; i < this.cards.length; i++) {
-    let card = this.cards[i];
-    let UID = i;
+  for (let i = 0; i < window.opener.GetSelectedAbCards().length; i++) {
+    let card =window.opener.GetSelectedAbCards()[i];
+
+    if (card.isMailList)
+      continue;
+    
+    UID = UID + 1;
+    this.cards[UID] = card;
+    
     let userName = jbCatMan.getUserNamefromCard(card);
     
     if (card.primaryEmail != "") userName = userName + " (" + card.primaryEmail + ")";
