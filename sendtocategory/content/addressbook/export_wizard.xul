@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE overlay [
+<!ENTITY % abMainOverlayDTD SYSTEM "chrome://sendtocategory/locale/export_wizard.dtd" >
+%abMainOverlayDTD;
+]>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<wizard 
+      id="CatManExportWizard" 
+      title="&sendtocategory.export.wizard.title;" 
+      onwizardfinish="return jbCatManExportWizard.onFinish(this);"
+      xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="application/x-javascript" src="chrome://sendtocategory/content/addressbook/export_wizard.js"/>
+
+
+
+
+  <wizardpage pageid="CatManExportType" label="&sendtocategory.export.ExportType.title;" onpageadvanced="jbCatManExportWizard.setNextPage(this);" next="CatManExportVCardProperties">
+  
+    <label id="CatManExportLocaleDoneExport" value="&sendtocategory.export.text.done;" style="display:none" />
+    <label id="CatManExportLocaleExporting" value="&sendtocategory.export.text.exporting;" style="display:none" />
+    <label id="CatManExportLocaleAnalysing" value="&sendtocategory.export.text.analysing;" style="display:none" />
+  
+    <description style='padding-bottom:2em;' id='CatManExportDescriptionLabel'>
+      &sendtocategory.export.ExportType.desc;
+    </description>
+      <radiogroup id="CatManExportType">
+        <caption label="&sendtocategory.export.ExportType.caption;"/>
+        <radio value="csv" label="&sendtocategory.export.ExportType.csv;"/>
+        <radio value="vCard" label="&sendtocategory.export.ExportType.vCard;"/>
+      </radiogroup>
+  
+  </wizardpage>
+
+
+
+
+  <wizardpage pageid="CatManExportVCardProperties" label="&sendtocategory.export.VCardProperties.title;" next="CatManExportSelectFile">
+  
+    <description style='padding-bottom:2em;'>
+    &sendtocategory.export.VCardProperties.desc;
+    </description>
+    <radiogroup id="CatManExportEmailMapping">
+      <caption label="&sendtocategory.export.EmailMapping.caption;"/>
+      <radio value="primaryeIsWork" label="&sendtocategory.export.EmailMapping.primaryeIsWork;"/>
+      <radio value="primaryIsHome" label="&sendtocategory.export.EmailMapping.primaryeIsHome;"/>
+    </radiogroup>
+  
+  </wizardpage>
+
+
+
+
+  <wizardpage pageid="CatManExportSelectFile" label="&sendtocategory.export.FileSelection.title;">
+
+    <description style='padding-bottom:2em;'>
+      &sendtocategory.export.FileSelection.desc;
+    </description>
+    <radiogroup id="CatManExportFileMode">
+      <caption label="&sendtocategory.export.FileMode.caption;"/>
+      <radio value="file" label="&sendtocategory.export.FileMode.file;"/>
+      <radio value="files" label="&sendtocategory.export.FileMode.files;"/>
+    </radiogroup>
+
+    <vbox flex="1" pack="end">
+      <label id="CatManExportProgressLabel" value="" />
+      <progressmeter style="display:none"
+          id="CatManExportProgressBar"
+          mode="determined"
+          value="0"/> 
+    </vbox>
+
+  </wizardpage>
+
+
+
+
+</wizard>
