@@ -13,10 +13,10 @@ var jbCatManBulkEdit = {}
 
 jbCatManBulkEdit.getCardsFromEmail = function (email) {
   jbCatMan.dump("Begin with getCardsFromEmail("+email+")",1);
-  let abURI = jbCatMan.bulk.selectedDirectory;
 
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);        
-
+  let abURI = jbCatMan.getWorkAbUri(abManager.getDirectory(jbCatMan.bulk.selectedDirectory));
+  
   let EmailQuery = "(PrimaryEmail,bw,@V)(SecondEmail,bw,@V)";
   let searchQuery = EmailQuery.replace(/@V/g, encodeURIComponent(email));
 
@@ -259,6 +259,7 @@ jbCatManBulkEdit.saveList = function (){
 
 jbCatManBulkEdit.saveList_AddCards = function (i) {
   let CatManSaverList = document.getElementById("CatManSaverList");
+  let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);        
 
   if (i < jbCatMan.bulk.saveList.childNodes.length) {
 
@@ -271,7 +272,7 @@ jbCatManBulkEdit.saveList_AddCards = function (i) {
 
         //OK, DOUBLE, or DOUBLEOK
         let name = UID;
-        let card = jbCatMan.getCardFromUID(UID, jbCatMan.bulk.selectedDirectory);
+        let card = jbCatMan.getCardFromUID(UID, jbCatMan.getWorkAbUri(abManager.getDirectory(jbCatMan.bulk.selectedDirectory)));
         let idx = jbCatMan.bulk.cardsToBeRemovedFromCategory.indexOf(UID);
 
         //Has this UID been processed already? Do not add the same contact twice
