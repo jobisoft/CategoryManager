@@ -1,7 +1,7 @@
-let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-loader.loadSubScript("chrome://messenger/content/mailCore.js");
-loader.loadSubScript("chrome://messenger/content/addressbook/addressbook.js");
-loader.loadSubScript("chrome://messenger/content/addressbook/abCommon.js");
+//let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+//loader.loadSubScript("chrome://messenger/content/mailCore.js");
+//loader.loadSubScript("chrome://messenger/content/addressbook/addressbook.js");
+//loader.loadSubScript("chrome://messenger/content/addressbook/abCommon.js");
 
 var jbCatMan = window.opener.jbCatMan;
 var jbCatManBulkEdit = {}
@@ -259,8 +259,6 @@ jbCatManBulkEdit.saveList = function (){
 
 jbCatManBulkEdit.saveList_AddCards = function (i) {
   let CatManSaverList = document.getElementById("CatManSaverList");
-  let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
-  let addressBook = abManager.getDirectory(jbCatMan.bulk.selectedDirectory);
 
   if (i < jbCatMan.bulk.saveList.childNodes.length) {
 
@@ -335,7 +333,7 @@ jbCatManBulkEdit.saveList_AddCards = function (i) {
         jbCatMan.setCategoriesforCard(card, cats);
 
         //add the new card to the book and then call modify, which inits sysnc
-        jbCatMan.modifyCard(addressBook.addCard(card));
+        jbCatMan.modifyCard(card);
 
         //Log
         let row = document.createElement('listitem');
@@ -360,8 +358,6 @@ jbCatManBulkEdit.saveList_AddCards = function (i) {
 
 jbCatManBulkEdit.saveList_RemoveCards = function (i) {    
   let CatManSaverList = document.getElementById("CatManSaverList");
-  let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);        
-  let addressBook = abManager.getDirectory(jbCatMan.bulk.selectedDirectory);
   
   if (i <  jbCatMan.bulk.cardsToBeRemovedFromCategory.length) {
     document.getElementById("CatManSaverProgressBar").value = 80 + 20*(i+1/jbCatMan.bulk.cardsToBeRemovedFromCategory.length); // will reach 100%

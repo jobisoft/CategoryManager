@@ -173,10 +173,33 @@ jbCatMan.AbListenerToInitSOGoSync = {
 */
 jbCatMan.modifyCard = function (card) {
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
-  //cannot simply use GetSelectedDirectory(), because the global book cannot modify cards, we need to get the true owner of the card - this also works for mailinglists
-  let abUri = jbCatMan.data.abURI[card.directoryId];
+  
+  let selectedURI = GetSelectedDirectory();
+  let selectedBook = abManager.getDirectory(selectedURI);
+  let abUri;
+
+  //If the global book is selected, get the true card owner from directory.Id
+  if (selectedURI == "moz-abdirectory://?") {
+
+      if (card.directoryId == "") throw { name: "jbCatManException", message: "Found card in global book without directoryId (cannot add cards to global book).", toString: function() { return this.name + ": " + this.message; } };
+      abUri = jbCatMan.data.abURI[card.directoryId];
+
+  } else {
+
+      if (selectedBook.isMailList) {
+        //Get parent book
+        let idx = selectedURI.lastIndexOf("/");
+        abUri = selectedURI.substring(0,idx);
+      } else abUri = selectedURI;
+
+  }
+
+  //Get the working directory
   let ab = abManager.getDirectory(abUri);
 
+  //Check, if the card is already added to a directory, if not add it to the working directory - not allowed for global addressbook (we have thrown already in that case)
+  if (card.directoryId == "") card = ab.addCard(card);
+  
   if (jbCatMan.sogoInstalled && isGroupdavDirectory(abUri)) { //TODO - what about sogo books with deactivated sogo?
     let oldDavVersion = card.getProperty("groupDavVersion", "-1");
     card.setProperty("groupDavVersion", "-1"); 
