@@ -91,18 +91,18 @@ jbCatMan.init = function () {
   jbCatMan.data = {};
   
   //mainly managed by jbCatMan.scanCategories()
-  jbCatMan.data.foundCategories = new Array();
-  jbCatMan.data.categoryList = new Array();
-  jbCatMan.data.bcc = new Array();
-  jbCatMan.data.membersWithoutPrimaryEmail = new Array();
-  jbCatMan.data.emails = new Array();
+  jbCatMan.data.foundCategories = [];
+  jbCatMan.data.categoryList = [];
+  jbCatMan.data.bcc = [];
+  jbCatMan.data.membersWithoutPrimaryEmail = [];
+  jbCatMan.data.emails = [];
   jbCatMan.data.abSize = 0;
   //create a map between directoryIds und abURI, so we can get the abURI for each card even if its directory is not known when using the global address book
-  jbCatMan.data.abURI = new Array();
+  jbCatMan.data.abURI = [];
 
   //managed by addressbook_overlay.js
   jbCatMan.data.selectedCategory = "";
-  jbCatMan.data.emptyCategories = new Array();
+  jbCatMan.data.emptyCategories = [];
 
   // Add listener for card changes to init sync
   jbCatMan.AbListenerToInitSOGoSync.add();
@@ -309,7 +309,7 @@ jbCatMan.doCategorySearch = function () {
     SelectFirstCard();
   } else {
 
-    let searchKeys = new Array();
+    let searchKeys = [];
     if (jbCatMan.data.selectedCategory in jbCatMan.data.foundCategories) {
       //build searchQuery from UUID List of selected category
       for (let i=0; i<jbCatMan.data.foundCategories[jbCatMan.data.selectedCategory].length; i++) {
@@ -406,7 +406,7 @@ jbCatMan.setCategoriesforCard = function (card, catsArray) {
   if (card.isMailList)
     return false;
   
-  let checkedArray = new Array();
+  let checkedArray = [];
   for (let i = 0; i < catsArray.length; i++) {
     if (catsArray[i] && checkedArray.indexOf(catsArray[i]) == -1) {
       checkedArray.push(catsArray[i]);
@@ -502,19 +502,19 @@ jbCatMan.scanCategories = function (abURI) {
 
   //concept decision: we remove empty categories on addressbook switch (select) 
   //-> the category array is constantly cleared and build from scan results
-  jbCatMan.data.foundCategories = new Array();
-  jbCatMan.data.categoryList = new Array();
-  jbCatMan.data.bcc = new Array();
-  jbCatMan.data.membersWithoutPrimaryEmail = new Array();
-  jbCatMan.data.emails = new Array();
+  jbCatMan.data.foundCategories = [];
+  jbCatMan.data.categoryList = [];
+  jbCatMan.data.bcc = [];
+  jbCatMan.data.membersWithoutPrimaryEmail = [];
+  jbCatMan.data.emails = [];
   jbCatMan.data.abSize = 0;
-  jbCatMan.data.abURI = new Array();
+  jbCatMan.data.abURI = [];
 
   
   // scan all addressbooks, if this is the new root addressbook (introduced in TB38)
   // otherwise just scan the selected one
   let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
-  let addressBooks = new Array();
+  let addressBooks = [];
 
   if (abURI == "moz-abdirectory://?") {
     let allAddressBooks = abManager.directories;
@@ -566,10 +566,10 @@ jbCatMan.scanCategories = function (abURI) {
           //is this category known already?
           //-> foundCategories is using Strings as Keys
           if (catArray[i] in jbCatMan.data.foundCategories == false) {
-            jbCatMan.data.foundCategories[catArray[i]] = new Array();
-            jbCatMan.data.bcc[catArray[i]] = new Array();
-            jbCatMan.data.membersWithoutPrimaryEmail[catArray[i]] = new Array();
-            jbCatMan.data.emails[catArray[i]] = new Array();
+            jbCatMan.data.foundCategories[catArray[i]] = [];
+            jbCatMan.data.bcc[catArray[i]] = [];
+            jbCatMan.data.membersWithoutPrimaryEmail[catArray[i]] = [];
+            jbCatMan.data.emails[catArray[i]] = [];
             jbCatMan.data.categoryList.push(catArray[i]);
           }
           

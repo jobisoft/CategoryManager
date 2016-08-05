@@ -91,8 +91,8 @@ jbCatManBulkEdit.stopme = function (e) {
 jbCatManBulkEdit.loadValidateList = function() {
   document.title = window.arguments[1];
 
-  jbCatMan.bulk.validatorFields = new Array();
-  jbCatMan.bulk.toBeValidated = new Array();
+  jbCatMan.bulk.validatorFields = [];
+  jbCatMan.bulk.toBeValidated = [];
 
   let testToBeValidated = jbCatMan.bulk.bulkList.toLowerCase().replace(",","\n").replace(";","\n").split(/\r\n|\r|\n/g);
 
@@ -245,8 +245,8 @@ jbCatManBulkEdit.saveList = function (){
   document.getElementById("CatManBulkTextBoxLabel").value = jbCatMan.locale.bulkTextBoxLabel.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
 
   //walk recursively through the saveList (DOM richlist) and process item by item
-  jbCatMan.bulk.cardsToBeRemovedFromCategory = new Array();
-  jbCatMan.bulk.processedUIDs = new Array();
+  jbCatMan.bulk.cardsToBeRemovedFromCategory = [];
+  jbCatMan.bulk.processedUIDs = [];
   if (jbCatMan.data.selectedCategory in jbCatMan.data.foundCategories) {
     //copy the array of members of the selectedCategory, every member found in the validatorList will be removed from this copy
     //so in the end, the copy will contain those members, which are no longer part of this category
@@ -329,7 +329,7 @@ jbCatManBulkEdit.saveList_AddCards = function (i) {
         card.setProperty("DisplayName", jbCatMan.bulk.saveList.childNodes[i].childNodes[1].childNodes[0].getAttribute("value") + " " + jbCatMan.bulk.saveList.childNodes[i].childNodes[1].childNodes[1].getAttribute("value")); 
 
         card.primaryEmail = jbCatMan.bulk.saveList.childNodes[i].childNodes[0].childNodes[0].getAttribute("value");
-        let cats = new Array();
+        let cats = [];
         cats.push(jbCatMan.data.selectedCategory);
         jbCatMan.setCategoriesforCard(card, cats);
 

@@ -242,7 +242,7 @@ jbCatMan.onSelectAddressbook = function () {
       }
     }
     
-    jbCatMan.data.emptyCategories = new Array();
+    jbCatMan.data.emptyCategories = [];
     jbCatMan.data.selectedCategory = "";
     jbCatMan.updateCategoryList();
     prefs.setCharPref("last_book",selectedBook);
@@ -286,7 +286,7 @@ jbCatMan.onBulkEdit = function () {
   jbCatMan.bulk.needToSaveBulkList = false;
   jbCatMan.bulk.bulkList = "";
   jbCatMan.bulk.saveList = "";
-  jbCatMan.bulk.cardsToBeRemovedFromCategory = new Array();
+  jbCatMan.bulk.cardsToBeRemovedFromCategory = [];
   jbCatMan.bulk.selectedDirectory = GetSelectedDirectory();
   
   //all 3 dialogs are called in sequence. Skipped, if canceled.
