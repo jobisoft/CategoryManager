@@ -56,6 +56,7 @@ TODO 2.xx
 jbCatMan.updateCategoryList = function () {
   jbCatMan.dump("Begin with updateCategoryList()",1);
   jbCatMan.scanCategories(GetSelectedDirectory());
+  let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
   
   //it could be, that a category from emptyCategories is no longer empty (it was scanned) -> remove it from empty
   for (let i = 0; i < jbCatMan.data.categoryList.length; i++) {
@@ -78,8 +79,8 @@ jbCatMan.updateCategoryList = function () {
     categoriesList.removeItemAt(i-1);
   }
 
-  // add listitem to view contacts of all categories  if there is at least one other category
-  if (jbCatMan.data.categoryList.length>0) {
+  //disable "all" element if global book and global book empty or if remote book
+  if (!(abManager.getDirectory(GetSelectedDirectory()).isRemote || (GetSelectedDirectory() == "moz-abdirectory://?" && jbCatMan.data.abSize == 0))) {
       let newListItem = document.createElement("listitem");
       newListItem.setAttribute("id", "");
       let categoryName = document.createElement("listcell");
