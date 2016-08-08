@@ -290,19 +290,18 @@ jbCatMan.onSelectAddressbook = function () {
   if (selectedBook) {
     let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
     // disable and clear ResultTreePane, if global abook is selected, SOGo is installed and user enabled this option
-    if (jbCatMan.sogoInstalled && prefs.getBoolPref("disable_global_book")) {
-      if (gDirTree.view.selection.currentIndex == 0 ){
+    if (jbCatMan.sogoInstalled && prefs.getBoolPref("disable_global_book") && gDirTree.view.selection.currentIndex == 0 ){
+        SetAbView(GetSelectedDirectory()  + "?");
         document.getElementById("abResultsTree").hidden = true;
         document.getElementById("peopleSearchInput").disabled = true;
         document.getElementById("SCSearchCriteriaButton").disabled = true;
         document.getElementById("CatManInfoBoxClone").hidden = false;
         document.getElementById("localResultsOnlyMessage").hidden = true;
         document.getElementById("CardViewOuterBox").hidden = true;
-      } else {
+    } else {
         document.getElementById("peopleSearchInput").disabled = false;
         document.getElementById("SCSearchCriteriaButton").disabled = false;
         document.getElementById("CatManInfoBoxClone").hidden = true;
-      }
     }
     
     jbCatMan.data.emptyCategories = [];
