@@ -301,7 +301,7 @@ jbCatMan.onSelectAddressbook = function () {
         document.getElementById("CardViewOuterBox").hidden = true;
     } else {
         document.getElementById("peopleSearchInput").disabled = false;
-        document.getElementById("SCSearchCriteriaButton").disabled = false;
+        if (document.getElementById("SCSearchCriteriaButton")) document.getElementById("SCSearchCriteriaButton").disabled = false;
         document.getElementById("CatManInfoBoxClone").hidden = true;
     }
     
