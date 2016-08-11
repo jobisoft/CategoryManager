@@ -134,6 +134,11 @@ window.addEventListener("load", function() { jbCatManEditDialog.Init(); }, false
 //Add eventlistener for OK Button to save changes
 window.addEventListener("dialogaccept", function() { jbCatManEditDialog.Save(); }, false);
 
+// Bugfix "andre jutisz": I fail to understand how SOGo catches the creation of a new card (new card
+// dialog) and I am at the time unable to replace the SOGo code (mine was buggy) - using SOGo code 
+// of OK-Button in NewCardDialog and EditCardDialog again. However this would always overwrite 
+// my own category settings - as a quickfix I simply clear the SOGo function, which writes the categories 
+// from the GUI into the card property. 
 if (SCSaveCategories) SCSaveCategories = function() {
   dump("Doing nothing!\n");
 }
