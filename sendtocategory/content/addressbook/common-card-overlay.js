@@ -9,12 +9,15 @@ jbCatManEditDialog.Init = function () {
     let categoriesTabButton = document.getElementById("categoriesTabButton");
     if (categoriesTabButton) categoriesTabButton.style.display = 'none';
 
-    //remove SOGo hook on OK Button
-    if (typeof OldEditCardOKButton != 'undefined' && typeof EditCardOKButton != 'undefined') {
+  /* Bugfix "andre jutisz"
+    //remove SOGo hook on OK Button (either NEW or EDIT dialog)
+    if (typeof OldNewCardOKButton != 'undefined' && typeof NewCardOKButton != 'undefined') {
+      NewCardOKButton = OldNewCardOKButton
+    } else if (typeof OldEditCardOKButton != 'undefined' && typeof EditCardOKButton != 'undefined') {
       EditCardOKButton = OldEditCardOKButton
     } else {
-      alert("Debug: Could not remove SOGo listerner! This is bad!\n");
-    }
+      jbCatMan.dump("Could not remove SOGo listerner! This is bad!\n");
+    } */
   }
 
   jbCatManEditDialog.AllCatsArray = jbCatMan.data.categoryList;
@@ -86,7 +89,8 @@ jbCatManEditDialog.Save = function () {
   jbCatMan.dump("Setting categories to: " + catsArray.join(","));
 
   jbCatMan.setCategoriesforCard(gEditCard.card, catsArray);
-  jbCatMan.modifyCard(gEditCard.card);
+  //BugFix "andre jutisz"
+  //jbCatMan.modifyCard(gEditCard.card);
   jbCatMan.dump("Done with EditDialogSave()",-1);
 }
 
@@ -129,3 +133,7 @@ window.addEventListener("load", function() { jbCatManEditDialog.Init(); }, false
 
 //Add eventlistener for OK Button to save changes
 window.addEventListener("dialogaccept", function() { jbCatManEditDialog.Save(); }, false);
+
+if (SCSaveCategories) SCSaveCategories = function() {
+  dump("Doing nothing!\n");
+}
