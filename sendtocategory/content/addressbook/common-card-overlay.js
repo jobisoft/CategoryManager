@@ -4,20 +4,20 @@ var jbCatManEditDialog = {}
 jbCatManEditDialog.Init = function () {
   jbCatMan.dump("Begin with EditDialogInit()",1);
 
-  //Hide SOGo Category Tab and deactivate all SOGo update/sync functions - if installed
+  //Hide SOGo Category Tab
   if (jbCatMan.sogoInstalled) {
     let categoriesTabButton = document.getElementById("categoriesTabButton");
     if (categoriesTabButton) categoriesTabButton.style.display = 'none';
+  }
 
   /* Bugfix "andre jutisz"
-    //remove SOGo hook on OK Button (either NEW or EDIT dialog)
-    if (typeof OldNewCardOKButton != 'undefined' && typeof NewCardOKButton != 'undefined') {
-      NewCardOKButton = OldNewCardOKButton
-    } else if (typeof OldEditCardOKButton != 'undefined' && typeof EditCardOKButton != 'undefined') {
-      EditCardOKButton = OldEditCardOKButton
-    } else {
-      jbCatMan.dump("Could not remove SOGo listerner! This is bad!\n");
-    } */
+  The original idea was to remove the SOGo code, which was run after the OK button of the
+  new/edit dialog was pressed. Thinking about it, we do not need to manipulate the SOGo sync
+  code here, just let it do its stuff. All I have to do is to push the categories value from the 
+  CatMan-categories-tab into the card, and prevent the SOGo code to push the empty fields from
+  the hidden SOGo-categories-tab (which would clear the categories property) */
+  if (typeof SCSaveCategories != 'undefined') SCSaveCategories = function() {
+      jbCatMan.dump("Skipping SCSaveCategories function.");
   }
 
   jbCatManEditDialog.AllCatsArray = jbCatMan.data.categoryList;
@@ -89,8 +89,9 @@ jbCatManEditDialog.Save = function () {
   jbCatMan.dump("Setting categories to: " + catsArray.join(","));
 
   jbCatMan.setCategoriesforCard(gEditCard.card, catsArray);
-  //BugFix "andre jutisz"
-  //jbCatMan.modifyCard(gEditCard.card);
+  /* BugFix "andre jutisz"
+  It is not needed to call ab.modifyCard/ab.addCard, because this is
+  taken care of by the dialog itself. */
   jbCatMan.dump("Done with EditDialogSave()",-1);
 }
 
@@ -131,14 +132,5 @@ jbCatManEditDialog.ResetCategoriesMenu = function (menu) {
 //Init on load
 window.addEventListener("load", function() { jbCatManEditDialog.Init(); }, false);
 
-//Add eventlistener for OK Button to save changes
+//Add eventlistener for OK Button to save category changes
 window.addEventListener("dialogaccept", function() { jbCatManEditDialog.Save(); }, false);
-
-// Bugfix "andre jutisz": I fail to understand how SOGo catches the creation of a new card (new card
-// dialog) and I am at the time unable to replace the SOGo code (mine was buggy) - using SOGo code 
-// of OK-Button in NewCardDialog and EditCardDialog again. However this would always overwrite 
-// my own category settings - as a quickfix I simply clear the SOGo function, which writes the categories 
-// from the GUI into the card property. 
-if (SCSaveCategories) SCSaveCategories = function() {
-  dump("Doing nothing!\n");
-}
