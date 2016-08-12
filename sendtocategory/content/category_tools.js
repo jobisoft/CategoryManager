@@ -171,8 +171,7 @@ jbCatMan.AbListenerToInitSOGoSync = {
 */
 jbCatMan.getWorkAbUri = function(book) {
   if (book.isMailList) {
-    let idx = book.URI.lastIndexOf("/");
-    return book.URI.substring(0,idx);
+    return GetParentDirectoryFromMailingListURI(book.URI);
   } else {
     return book.URI;
   }
