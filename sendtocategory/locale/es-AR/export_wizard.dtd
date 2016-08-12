@@ -3,9 +3,9 @@
 <!ENTITY sendtocategory.export.text.exporting "Exporting contacts ...">
 <!ENTITY sendtocategory.export.text.analysing "Analysing contacts">
 
-<!ENTITY sendtocategory.export.exporttype.title "Select export type">
-<!ENTITY sendtocategory.export.exporttype.desc "This wizard will help you to export ##NUM## contacts from {{category [##CAT##] of }} address book [##BOOK##].">
-<!ENTITY sendtocategory.export.exporttype.caption "Please select an export type:">
+<!ENTITY sendtocategory.export.ExportType.title "Select export type">
+<!ENTITY sendtocategory.export.ExportType.desc "This wizard will help you to export ##NUM## contacts from {{category [##CAT##] of }} address book [##BOOK##].">
+<!ENTITY sendtocategory.export.ExportType.caption "Please select an export type:">
 <!ENTITY sendtocategory.export.ExportType.csv "Comma Seperated Values (*.csv)">
 <!ENTITY sendtocategory.export.ExportType.vCard "vCard (*.vcf)">
 
