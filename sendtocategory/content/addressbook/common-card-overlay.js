@@ -1,5 +1,14 @@
-var jbCatMan = window.opener.jbCatMan;
+
 var jbCatManEditDialog = {}
+jbCatManEditDialog.needToScan = false;
+
+if (window.opener.jbCatMan) {
+  var jbCatMan = window.opener.jbCatMan;
+} else {
+  let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+  loader.loadSubScript("chrome://sendtocategory/content/category_tools.js");
+  jbCatManEditDialog.needToScan = true;
+}
 
 jbCatManEditDialog.Init = function () {
   jbCatMan.dump("Begin with EditDialogInit()",1);
@@ -8,6 +17,11 @@ jbCatManEditDialog.Init = function () {
   if (jbCatMan.sogoInstalled) {
     let categoriesTabButton = document.getElementById("categoriesTabButton");
     if (categoriesTabButton) categoriesTabButton.style.display = 'none';
+  }
+
+  //only if needed
+  if (jbCatManEditDialog.needToScan) {
+    jbCatMan.scanCategories(gEditCard.abURI);
   }
 
   /* Bugfix "andre jutisz"
