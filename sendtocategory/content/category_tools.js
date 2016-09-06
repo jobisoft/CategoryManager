@@ -309,20 +309,17 @@ jbCatMan.doCategorySearch = function () {
   } else {
 
     let searchKeys = [];
-    if (jbCatMan.data.selectedCategory in jbCatMan.data.foundCategories) {
-      //build searchQuery from UUID List of selected category
-      for (let i=0; i<jbCatMan.data.foundCategories[jbCatMan.data.selectedCategory].length; i++) {
-        //CardIDs stored in foundCategories actually contains DbRowID and the category string -> category string is enough for (global) category serach
-        let UIDS = jbCatMan.data.foundCategories[jbCatMan.data.selectedCategory][i].split("\u001A");
-        let searchKey = "(Categories,=,"+encodeURIComponent(UIDS.slice(1).join("\u001A"))+")";
-        if (searchKeys.indexOf(searchKey) == -1) {
-          searchKeys.push(searchKey);
-        }
-      }
-    }
+    // encodeURIComponent does NOT encode brackets "(" and ")" - need to do that by hand
+    searchKeys.push("(Categories,bw,"+encodeURIComponent( jbCatMan.data.selectedCategory + "\u001A" ).replace("(","%28").replace(")","%29") +")");
+    searchKeys.push("(Categories,ew,"+encodeURIComponent( "\u001A" + jbCatMan.data.selectedCategory ).replace("(","%28").replace(")","%29") +")");
+    searchKeys.push("(Categories,c,"+encodeURIComponent( "\u001A" + jbCatMan.data.selectedCategory + "\u001A" ).replace("(","%28").replace(")","%29") +")");
+    searchKeys.push("(Categories,=,"+encodeURIComponent( jbCatMan.data.selectedCategory ).replace("(","%28").replace(")","%29") +")");
 
+    let searchString = abURI + "?" + "(or" + searchKeys.join("") + ")";
+    jbCatMan.dump("SearchString is <"+searchString+">");
+    
     //Filter by categories - http://mxr.mozilla.org/comm-central/source/mailnews/addrbook/src/nsAbQueryStringToExpression.cpp#278
-    SetAbView(abURI + "?" + "(or" + searchKeys.join("") + ")");
+    SetAbView(searchString);
     if (document.getElementById("CardViewBox") != null && jbCatMan.data.selectedCategory in jbCatMan.data.foundCategories) {
       SelectFirstCard();  
     }
