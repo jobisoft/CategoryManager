@@ -367,69 +367,18 @@ jbCatMan.onBulkEdit = function () {
 
 jbCatMan.onAddCategory = function () {
   jbCatMan.dump("Begin with onAddCategory()",1);
-  let saveObject = {
-    setCategoryName: function CM_setCategoryName(newName) {
-      newName=newName.trim();
-      if (jbCatMan.data.categoryList.indexOf(newName) < 0) {
-        jbCatMan.data.emptyCategories.push(newName);
-        alert(jbCatMan.locale.infoAdd.replace("##newname##",newName));
-        jbCatMan.updateCategoryList();
-      } 
-      else {
-        alert(jbCatMan.locale.errorAdd.replace("##newname##",newName));
-      }
-    }
-  };
-  window.openDialog("chrome://sendtocategory/content/addressbook/edit_category.xul", "addCategory", "modal,centerscreen,chrome,resizable=no", "", jbCatMan.locale.addTitle, saveObject);
+  window.openDialog("chrome://sendtocategory/content/addressbook/edit_category.xul", "addCategory", "modal,centerscreen,chrome,resizable=no", "", jbCatMan.locale.addTitle, "add");
   jbCatMan.dump("Done with onAddCategory()",-1);
 }
 
 
 
-jbCatMan.onEditCategory = function () {
-  jbCatMan.dump("Begin with onEditCategory()",1);
+jbCatMan.onRenameCategory = function () {
+  jbCatMan.dump("Begin with onRenameCategory()",1);
   if (jbCatMan.data.selectedCategory != "") {
-    let saveObject = null;
-    //Is it an empty category? If so, we can simply use the rename function, otherwise we have to go through all contacts and rename that category.
-    if (jbCatMan.data.selectedCategory in jbCatMan.data.foundCategories) {
-      saveObject = {
-        setCategoryName: function CM_setCategoryName(newName) {
-          newName=newName.trim();
-          //It is not allowed to rename a category to a name which exists already
-          if (jbCatMan.data.categoryList.indexOf(newName) < 0) {
-            if (confirm(jbCatMan.locale.confirmRename.replace("##oldname##",jbCatMan.data.selectedCategory).replace("##newname##",newName).replace("##number##",jbCatMan.data.foundCategories[jbCatMan.data.selectedCategory].length))) {
-              jbCatMan.updateCategories("rename",jbCatMan.data.selectedCategory,newName);
-              jbCatMan.updatePeopleSearchInput(newName);
-              jbCatMan.data.selectedCategory = newName;
-            }
-          } 
-          else {
-            alert(jbCatMan.locale.errorRename.replace("##oldname##",jbCatMan.data.selectedCategory).replace("##newname##",newName));
-          }
-        }
-      };
-    }
-    else {
-      saveObject = {
-        setCategoryName: function CM_setCategoryName(newName) {
-          newName=newName.trim();
-          //It is not allowed to rename a category to a name which exists already
-          if (jbCatMan.data.categoryList.indexOf(newName) < 0) {
-            //this category only exists in the temp
-            jbCatMan.data.emptyCategories[jbCatMan.data.emptyCategories.indexOf(jbCatMan.data.selectedCategory)] = newName;
-            jbCatMan.updatePeopleSearchInput(newName);
-            jbCatMan.data.selectedCategory = newName;
-            jbCatMan.updateCategoryList();
-          } 
-          else {
-            alert(jbCatMan.locale.errorRename.replace("##oldname##",jbCatMan.data.selectedCategory).replace("##newname##",newName));
-          }
-        }
-      };
-    }
-    window.openDialog("chrome://sendtocategory/content/addressbook/edit_category.xul", "editCategory", "modal,centerscreen,chrome,resizable=no", jbCatMan.data.selectedCategory, jbCatMan.locale.editTitle, saveObject);	    		    
+    window.openDialog("chrome://sendtocategory/content/addressbook/edit_category.xul", "editCategory", "modal,centerscreen,chrome,resizable=no", jbCatMan.data.selectedCategory, jbCatMan.locale.editTitle, "rename");
   }
-  jbCatMan.dump("Done with onEditCategory()",-1);
+  jbCatMan.dump("Done with onRenameCategory()",-1);
 }
 
 

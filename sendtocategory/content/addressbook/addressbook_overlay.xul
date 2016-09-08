@@ -42,7 +42,7 @@
         <menupopup id="CatManContextMenu">
             <menuitem id="CatManContextMenuSend" disabled="true" label="&sendtocategory.send.title;" oncommand="jbCatMan.writeToCategory();"/>
             <menuseparator/>
-            <menuitem id="CatManContextMenuEdit" disabled="true" label="&sendtocategory.edit.title;" oncommand="jbCatMan.onEditCategory()"/>
+            <menuitem id="CatManContextMenuEdit" disabled="true" label="&sendtocategory.edit.title;" oncommand="jbCatMan.onRenameCategory()"/>
             <menuitem id="CatManContextMenuRemove" disabled="true" label="&sendtocategory.remove.title;" oncommand="jbCatMan.onDeleteCategory()"/>
             <menuitem id="CatManContextMenuBulk" disabled="true" label="&sendtocategory.bulkedit.title;" oncommand="jbCatMan.onBulkEdit()"/>
 
