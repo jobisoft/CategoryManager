@@ -26,13 +26,8 @@
 <!ENTITY sendtocategory.send.title "send e-mail to category">
 <!ENTITY sendtocategory.sendMenu.label "send e-mail to category ##name##">
 
-<!ENTITY sendtocategory.export.title "export contacts">
-<!ENTITY sendtocategory.exportMenu.label "export contacts of category ##name##">
-<!ENTITY sendtocategory.exportAllMenu.label "export address book">
-
-<!ENTITY sendtocategory.import.title "import contact">
-<!ENTITY sendtocategory.importMenu.label "import contacts into category ##name##">
-<!ENTITY sendtocategory.importAllMenu.label "import contacts into address book">
+<!ENTITY sendtocategory.export.title "import/export category">
+<!ENTITY sendtocategory.exportAll.title "import/export address book">
 
 <!ENTITY sendtocategory.catbox.header.catname "category name">
 <!ENTITY sendtocategory.catbox.header.catsize "members">
