@@ -1,0 +1,159 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE overlay [
+<!ENTITY % abMainOverlayDTD SYSTEM "chrome://sendtocategory/locale/import-export-wizard.dtd" >
+%abMainOverlayDTD;
+]>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<wizard 
+      width="600"
+      height="600"
+      id="CatManWizard" 
+      title="&sendtocategory.wizard.title;"
+      onload="jbCatManWizard.Init();"
+      xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="application/x-javascript" src="chrome://sendtocategory/content/addressbook/import-export/import-export-wizard.js"/>
+
+
+
+
+  <wizardpage pageid="CatManWizardMode" label="&sendtocategory.wizard.mode.title;" onpageadvanced="return jbCatManWizard.onpageadvanced(this);" next="CatManWizardImport">
+
+  <!-- locales used in javascript -->
+  <label id="sendtocategory.wizard.types.csv" hidden="true" value="&sendtocategory.wizard.types.csv;" />
+  <label id="sendtocategory.wizard.types.vcf" hidden="true" value="&sendtocategory.wizard.types.vcf;" />
+  <label id="sendtocategory.wizard.import.error.empty" hidden="true" value="&sendtocategory.wizard.import.error.empty;" />
+  <label id="sendtocategory.wizard.import.error.csv" hidden="true" value="&sendtocategory.wizard.import.error.csv;" />
+  <label id="sendtocategory.wizard.import.error.reserved" hidden="true" value="&sendtocategory.wizard.import.error.reserved;" />
+  <label id="sendtocategory.wizard.mode.import.selectfile" hidden="true" value="&sendtocategory.wizard.mode.import.selectfile;" />
+  <label id="sendtocategory.wizard.mode.export.selectfile" hidden="true" value="&sendtocategory.wizard.mode.export.selectfile;" />
+
+
+  <description style='padding-bottom:2em;'>
+      &sendtocategory.wizard.mode.desc;
+    </description>
+      <radiogroup id="CatManWizardMode">
+        <radio value="Import" label="&sendtocategory.wizard.mode.import;" ondblclick="document.getElementById('CatManWizard').advance()" id="CatManWizardModeImport"/>
+        <radio value="Export" label="&sendtocategory.wizard.mode.export;"  ondblclick="document.getElementById('CatManWizard').advance()" id="CatManWizardModeExport"/>
+      </radiogroup>
+  </wizardpage>
+
+
+
+
+  <wizardpage pageid="CatManWizardImport_VCF" label="&sendtocategory.wizard.import.options.vcf.title;" onpageadvanced="return jbCatManWizard.onpageadvanced(this);" next="CatManWizardImport">
+      <label value="VCF Import Options" />
+  </wizardpage>
+  
+  <wizardpage pageid="CatManWizardExport_VCF" label="&sendtocategory.wizard.export.options.vcf.title;" onpageadvanced="return jbCatManWizard.onpageadvanced(this);" next="CatManWizardExport">
+      <label value="VCF Export Options" />
+  </wizardpage>
+
+
+
+
+
+  <wizardpage pageid="CatManWizardImport_CSV" label="&sendtocategory.wizard.import.options.csv.title;" onpageadvanced="return jbCatManWizard.onpageadvanced(this);" next="CatManWizardImport_Mapping_CSV"> 
+     <description style='padding-bottom:1ex;'>
+      &sendtocategory.wizard.import.options.csv.desc;
+    </description>
+    <richlistbox
+    flex="1"
+    ondblclick="this.selectedIndex = -1;"
+    seltype="multiple">
+
+        <richlistitem>
+            <listcell style="width:260px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.delimiter;"/></listcell>
+            <listcell flex="1">
+              <menulist id="CatManWizardImportCsvDelimiter">
+                <menupopup id="CatManWizardImportCsvDelimiterPopup">
+                  <menuitem label="," value=","/>
+                  <menuitem label=";" value=";"/>
+                  <menuitem label="&sendtocategory.wizard.import.options.csv.delimiter.tab;" value="&#9;"/>
+                </menupopup>
+              </menulist>
+            </listcell>
+        </richlistitem>
+
+    </richlistbox>
+  </wizardpage>
+
+  <wizardpage pageid="CatManWizardImport_Mapping_CSV" label="&sendtocategory.wizard.import.mapping.csv.title;" onpageadvanced="return jbCatManWizard.onpageadvanced(this);" next="CatManWizardImport"> 
+     <description style='padding-bottom:1ex;'>
+      &sendtocategory.wizard.import.mapping.csv.desc;
+    </description>
+
+    <richlistbox
+    hidden="true"
+    seltype="single">
+        <richlistitem id ="CatManImportDataFieldListTemplate" >
+            <listcell style="width:210px"><label crop="end" value=""/></listcell>
+            <listcell style="width:210px"><menulist editable="true"><menupopup><menuitem label="FirstName"/><menuitem label="LastName"/><menuitem label="DisplayName"/><menuitem label="NickName"/><menuitem label="SpouseName"/><menuitem label="FamilyName"/><menuitem label="PrimaryEmail"/><menuitem label="SecondEmail"/><menuitem label="HomeAddress"/><menuitem label="HomeAddress2"/><menuitem label="HomeCity"/><menuitem label="HomeState"/><menuitem label="HomeZipCode"/><menuitem label="HomeCountry"/><menuitem label="HomePhone"/><menuitem label="HomePhoneType"/><menuitem label="WorkAddress"/><menuitem label="WorkAddress2"/><menuitem label="WorkCity"/><menuitem label="WorkState"/><menuitem label="WorkZipCode"/><menuitem label="WorkCountry"/><menuitem label="WorkPhone"/><menuitem label="WorkPhoneType"/></menupopup></menulist></listcell>
+            <listcell flex="1" align="right"><checkbox label="" checked="true" /></listcell>
+        </richlistitem>
+    </richlistbox>
+
+    <richlistbox
+    id="CatManWizardImport_Mapping_CSV"
+    flex="1"
+    ondblclick="jbCatManWizard.togglecheck(this, 2);"
+    seltype="single">
+
+        <listheader style="border: 0; padding: 0; -moz-appearance:none;">
+            <treecol style="width:210px; font-weight:bold;" label="&sendtocategory.wizard.import.mapping.csvdatafield;" />
+            <treecol style="width:210px; font-weight:bold;" label="&sendtocategory.wizard.import.mapping.thunderbirdfield;" />
+            <treecol style="font-weight:bold;" flex="1" label="&sendtocategory.wizard.import.mapping.import;" />
+        </listheader>
+
+    </richlistbox>
+</wizardpage>
+
+  <wizardpage pageid="CatManWizardExport_CSV" label="&sendtocategory.wizard.export.options.csv.title;" onpageadvanced="return jbCatManWizard.onpageadvanced(this);" next="CatManWizardExport">
+     <description style='padding-bottom:1ex;'>
+      &sendtocategory.wizard.export.options.csv.desc;
+    </description>
+
+    <richlistbox
+    hidden="true"
+    seltype="single">
+        <richlistitem id ="CatManExportDataFieldListTemplate" >
+            <listcell style="width:410px"><label crop="end" value=""/></listcell>
+            <listcell flex="1" align="right"><checkbox label="" checked="true" /></listcell>
+        </richlistitem>
+    </richlistbox>
+
+    <richlistbox
+    id="CatManWizardExport_CSV"
+    flex="1"
+    ondblclick="jbCatManWizard.togglecheck(this, 1);"
+    seltype="single">
+
+        <listheader style="border: 0; padding: 0; -moz-appearance:none;">
+            <treecol style="width:410px; font-weight:bold;" label="&sendtocategory.wizard.import.mapping.thunderbirdfield;" />
+            <treecol style="font-weight:bold;" flex="1" label="&sendtocategory.wizard.export.options.export;" />
+        </listheader>
+
+    </richlistbox>
+    <checkbox id="CatManWizardExport_Categories_CSV" label="&sendtocategory.wizard.export.options.categorie;"  checked="true" />
+  </wizardpage>
+
+
+
+
+
+  <wizardpage pageid="CatManWizardImport" label="&sendtocategory.wizard.import.title;" onpageshow="jbCatManWizard.finishWizard();" next="">
+    <description style='padding-bottom:2em;'  id='CatManWizardImportDesc'>
+      &sendtocategory.wizard.import.desc;
+    </description>  
+  </wizardpage>
+  
+  <wizardpage pageid="CatManWizardExport" label="&sendtocategory.wizard.export.title;" onpageshow="jbCatManWizard.finishWizard();" next="">
+    <description style='padding-bottom:2em;'  id='CatManWizardExportDesc'>
+      &sendtocategory.wizard.export.desc;
+    </description>  
+  </wizardpage>
+
+</wizard>

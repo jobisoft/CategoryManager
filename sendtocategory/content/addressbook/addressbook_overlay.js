@@ -232,14 +232,8 @@ jbCatMan.writeToCategory = function () {
 // onActions
 //###################################################
 
-jbCatMan.onImport = function () {
-  window.openDialog("chrome://sendtocategory/content/addressbook/import_wizard.xul", "import_wizard", "modal,dialog,centerscreen,chrome,resizable=no");
-}
-
-
-
-jbCatMan.onExport = function () {
-  window.openDialog("chrome://sendtocategory/content/addressbook/export_wizard.xul", "export_wizard", "modal,dialog,centerscreen,chrome,resizable=no");
+jbCatMan.onImportExport = function () {
+  window.openDialog("chrome://sendtocategory/content/addressbook/import-export/import-export-wizard.xul", "import-export-wizard", "modal,dialog,centerscreen,chrome,resizable=no");
 }
 
 

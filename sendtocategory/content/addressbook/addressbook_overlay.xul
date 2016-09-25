@@ -39,7 +39,7 @@
             <menuitem id="CatManContextMenuRemove" disabled="true" label="&sendtocategory.remove.title;" oncommand="jbCatMan.onDeleteCategory()"/>
             <menuitem id="CatManContextMenuBulk" disabled="true" label="&sendtocategory.bulkedit.title;" oncommand="jbCatMan.onBulkEdit()"/>
             <menuseparator />
-            <menuitem id="CatManContextMenuImportExport" disabled="true" label="&sendtocategory.export.title;" oncommand="jbCatMan.onExport()" />
+            <menuitem id="CatManContextMenuImportExport" disabled="true" label="&sendtocategory.export.title;" oncommand="jbCatMan.onImportExport()" />
         </menupopup>
     </popupset>
     

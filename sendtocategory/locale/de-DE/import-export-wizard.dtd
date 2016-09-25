@@ -1,0 +1,48 @@
+﻿<!ENTITY sendtocategory.wizard.title "Category Manager Import/Export Wizard">
+
+<!ENTITY sendtocategory.wizard.types.csv "Comma Seperated Values">
+<!ENTITY sendtocategory.wizard.types.vcf "vCard">
+
+<!ENTITY sendtocategory.wizard.mode.title "Willkommen">
+<!ENTITY sendtocategory.wizard.mode.desc "Dieser Wizard wird sie beim Import bzw. Export Ihrer Kontakte unterstützen.">
+<!ENTITY sendtocategory.wizard.mode.import "Importiere Kontakte {{in die Kategorie '##CAT##' }}in das Adressbuch '##BOOK##'.">
+<!ENTITY sendtocategory.wizard.mode.export "Exportiere ##NUM## Kontakte {{der Kategorie '##CAT##' }}aus dem Adressbuch '##BOOK##'.">
+<!ENTITY sendtocategory.wizard.mode.import.selectfile "Datei zum Importieren auswählen">
+<!ENTITY sendtocategory.wizard.mode.export.selectfile "Datei für den Export auswählen">
+
+<!ENTITY sendtocategory.wizard.import.error.empty "Die ausgewählte Datei ist leer. Import nicht möglich.">
+<!ENTITY sendtocategory.wizard.import.error.csv "Die CSV Datei konnte nicht importiert werden, da nicht alle Zeilen die gleiche Anzahl von Feldern haben.">
+<!ENTITY sendtocategory.wizard.import.error.reserved "Die Feldbezeichnung '##fieldname##' ist reserviert und kann nicht benutzt werden. Bitte umbenennen oder den Import deaktivieren.">
+
+<!ENTITY sendtocategory.wizard.import.options.csv.title "Einstellungen für den Import einer CSV Datei">
+<!ENTITY sendtocategory.wizard.import.options.csv.delimiter "Feldtrennzeichen">
+<!ENTITY sendtocategory.wizard.import.options.csv.delimiter.tab "Tabulator">
+<!ENTITY sendtocategory.wizard.import.options.csv.desc "In der folgenden Übersicht können Eigenschaften der zu importierenden CSV Datei angegeben werden.">
+<!ENTITY sendtocategory.wizard.import.mapping.csv.title "Weitere Einstellungen für den Import einer CSV Datei">
+<!ENTITY sendtocategory.wizard.import.mapping.csv.desc "In der folgenden Tabelle sind alle gefundenen Felder aufgelistet. Für jedes Feld können Sie angeben, ob es importiert und auf welches Thunderbird-Feld es abgebildet werden soll. Sie können dabei aus einigen Standard-Feldern wählen oder eigene Feldnamen angeben. Einen Überblick über alle derzeit verwendeten Thunderbird-Felder erhalten Sie durch einen Export. Es ist meist einfacher, die Feldnamen direkt in der CSV Datei zu manipulieren, als über diese Eingabemaske.">
+<!ENTITY sendtocategory.wizard.import.mapping.csvdatafield "CSV Datenfeld">
+<!ENTITY sendtocategory.wizard.import.mapping.thunderbirdfield "Thunderbird Datenfeld">
+<!ENTITY sendtocategory.wizard.import.mapping.import "importieren">
+
+<!ENTITY sendtocategory.wizard.export.options.csv.title "Einstellungen für den Export einer CSV Datei">
+<!ENTITY sendtocategory.wizard.export.options.csv.desc "In der folgenden Übersicht können Sie festlegen, welche Felder der ausgewählten Kontakte exportiert werden sollen. ">
+<!ENTITY sendtocategory.wizard.export.options.export "exportieren">
+<!ENTITY sendtocategory.wizard.export.options.categorie "Auch wenn in obiger Liste das Feld 'Categories' nicht für den Export markiert wird, exportiere dennoch die Zugehörigkeit zur Kategorie '##CAT##'.">
+
+<!ENTITY sendtocategory.wizard.import.options.vcf.title "Einstellungen für den Import einer VCF Datei">
+<!ENTITY sendtocategory.wizard.export.options.vcf.title "Einstellungen für den Export einer VCF Datei">
+
+<!ENTITY sendtocategory.wizard.import.title "Importvorgang abgeschlossen">
+<!ENTITY sendtocategory.wizard.import.desc "Der Importvorgang ist abgeschlossen, es wurden ##IMPORTNUM## Kontakte in das Adressbuch '##BOOK##' importiert{{ und der Kategorie '##CAT##' hinzugefügt}}.">
+
+<!ENTITY sendtocategory.wizard.export.title "Exportvorgang abgeschlossen">
+<!ENTITY sendtocategory.wizard.export.desc "Der Exportvorgang ist abgeschlossen, es wurden ##EXPORTNUM## Kontakte{{ der Kategorie '##CAT##'}} aus dem Adressbuch '##BOOK##' exportiert.">
+
+
+
+
+<!ENTITY sendtocategory.wizard.VCardProperties.title "Einstellungen für den vCard-Export">
+<!ENTITY sendtocategory.wizard.VCardProperties.desc "Das vCard Dateiformat verwendet für Emailadressen die Einteilung in HOME und WORK. Thunderbird verwendet aber eine primäre und eine alternative Emailadresse. Sie müssen festlegen, wie diese Felder miteinander verknüpft werden sollen.">
+<!ENTITY sendtocategory.wizard.EmailMapping.caption "Bitte wählen Sie die Art der Verknüpfung:">
+<!ENTITY sendtocategory.wizard.EmailMapping.primaryeIsWork "primäre Email = WORK, alternative Email= HOME">
+<!ENTITY sendtocategory.wizard.EmailMapping.primaryeIsHome "primäre Email = HOME, alternative Email= WORK">
