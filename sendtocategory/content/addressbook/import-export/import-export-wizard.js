@@ -12,7 +12,9 @@ loader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcf.js");
     - fix csv parser to allow different textseperator on import
     - actual import
     - export options (linebreak, delim, textsep, encoding)
-    - allow export of entire address book 
+    - export of entire address book not working
+    - tag only known fields for export + category
+    - obey category option
 */
 
 
@@ -568,7 +570,7 @@ jbCatManWizard.csvEscape = function (value, delim, quote) {
   //a quote is replaced by double quotes - do we need to put a quote around everything in that case as well? YES!
   let newvalue = value;
   if (newvalue.indexOf(quote) != -1) newvalue = newvalue.split(quote).join(quote+quote);
-  if (newvalue.indexOf(delim) != -1 || newvalue.length != value.length) newvalue = quote + newvalue + quote;
+  if (newvalue.indexOf(delim) != -1 || newvalue.indexOf("\r") != -1 || newvalue.indexOf("\n") != -1 || newvalue.length != value.length) newvalue = quote + newvalue + quote;
   
   return newvalue; 
 }
