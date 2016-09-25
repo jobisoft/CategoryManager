@@ -293,6 +293,16 @@ jbCatMan.updatePeopleSearchInput = function (name) {
 }
 
 
+jbCatMan.getCategorySearchString = function(abURI, category) {
+    let searchKeys = "";
+    // encodeURIComponent does NOT encode brackets "(" and ")" - need to do that by hand
+    searchKeys = searchKeys + "(Categories,bw,"+encodeURIComponent( category + "\u001A" ).replace("(","%28").replace(")","%29") +")";
+    searchKeys = searchKeys + "(Categories,ew,"+encodeURIComponent( "\u001A" + category ).replace("(","%28").replace(")","%29") +")";
+    searchKeys = searchKeys + "(Categories,c,"+encodeURIComponent( "\u001A" + category + "\u001A" ).replace("(","%28").replace(")","%29") +")";
+    searchKeys = searchKeys + "(Categories,=,"+encodeURIComponent( category ).replace("(","%28").replace(")","%29") +")";
+
+    return abURI + "?" + "(or" + searchKeys + ")";
+}
 
 jbCatMan.doCategorySearch = function () {
   jbCatMan.dump("Begin with doCategorySearch()",1);
@@ -308,14 +318,7 @@ jbCatMan.doCategorySearch = function () {
     SelectFirstCard();
   } else {
 
-    let searchKeys = [];
-    // encodeURIComponent does NOT encode brackets "(" and ")" - need to do that by hand
-    searchKeys.push("(Categories,bw,"+encodeURIComponent( jbCatMan.data.selectedCategory + "\u001A" ).replace("(","%28").replace(")","%29") +")");
-    searchKeys.push("(Categories,ew,"+encodeURIComponent( "\u001A" + jbCatMan.data.selectedCategory ).replace("(","%28").replace(")","%29") +")");
-    searchKeys.push("(Categories,c,"+encodeURIComponent( "\u001A" + jbCatMan.data.selectedCategory + "\u001A" ).replace("(","%28").replace(")","%29") +")");
-    searchKeys.push("(Categories,=,"+encodeURIComponent( jbCatMan.data.selectedCategory ).replace("(","%28").replace(")","%29") +")");
-
-    let searchString = abURI + "?" + "(or" + searchKeys.join("") + ")";
+    let searchString = jbCatMan.getCategorySearchString(abURI, jbCatMan.data.selectedCategory);
     jbCatMan.dump("SearchString is <"+searchString+">");
     
     //Filter by categories - http://mxr.mozilla.org/comm-central/source/mailnews/addrbook/src/nsAbQueryStringToExpression.cpp#278
