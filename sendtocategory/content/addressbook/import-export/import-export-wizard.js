@@ -13,7 +13,7 @@ loader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcf.js");
     - actual import
     - export options (linebreak, delim, textsep, encoding)
     - export of entire address book not working
-    - tag only known fields for export + category
+    - tag only known fields for export + category + sort?
     - obey category option
 */
 
@@ -329,7 +329,9 @@ jbCatManWizard.ProgressBefore_Export_CSV = function (dialog, step = 0) {
 
   if (step == 0) {
     jbCatManWizard.resetThunderbirdProperties("CatManWizardExport_CSV");
-    jbCatManWizard.exportCards = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager).getDirectory(jbCatMan.getCategorySearchString(jbCatManWizard.currentAddressBook.URI, jbCatMan.data.selectedCategory)).childCards;
+    let searchstring = jbCatManWizard.currentAddressBook.URI;
+    if (jbCatMan.data.selectedCategory != "") searchstring = jbCatMan.getCategorySearchString(jbCatManWizard.currentAddressBook.URI, jbCatMan.data.selectedCategory);
+    jbCatManWizard.exportCards = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager).getDirectory(searchstring).childCards;
   }
   
   step = step + 1;
@@ -354,7 +356,9 @@ jbCatManWizard.ProgressAfter_Export_CSV = function (dialog, step = 0) {
     //init export file
     jbCatManWizard.initFile(jbCatManWizard.fileObj);
     //get cards to be exported
-    jbCatManWizard.exportCards = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager).getDirectory(jbCatMan.getCategorySearchString(jbCatManWizard.currentAddressBook.URI, jbCatMan.data.selectedCategory)).childCards;
+    let searchstring = jbCatManWizard.currentAddressBook.URI;
+    if (jbCatMan.data.selectedCategory != "") searchstring = jbCatMan.getCategorySearchString(jbCatManWizard.currentAddressBook.URI, jbCatMan.data.selectedCategory);
+    jbCatManWizard.exportCards = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager).getDirectory(searchstring).childCards;
     //escape header
     let header = []
     for (let h=0; h<jbCatManWizard.foundThunderbirdProperties.length; h++) {
@@ -367,7 +371,7 @@ jbCatManWizard.ProgressAfter_Export_CSV = function (dialog, step = 0) {
   if (jbCatManWizard.exportCards.hasMoreElements()) {
     dialog.setProgressBar(100*step/jbCatManWizard.exportsize);
     let card = jbCatManWizard.exportCards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
-    //get all properties
+    //get all properties of card and write it to csv file
     let data = [];
     for (let h=0; h<jbCatManWizard.foundThunderbirdProperties.length; h++) {
       let field = "";
@@ -379,6 +383,7 @@ jbCatManWizard.ProgressAfter_Export_CSV = function (dialog, step = 0) {
     jbCatManWizard.appendFile(data.join(delim)+linebreak);
     dialog.window.setTimeout(function() { jbCatManWizard.ProgressAfter_Export_CSV(dialog, step); }, 20);
   } else {
+    //close csv file
     jbCatManWizard.closeFile();
     dialog.done(true);
   }
