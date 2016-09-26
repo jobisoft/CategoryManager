@@ -289,20 +289,18 @@ jbCatManWizard.SilentAfter_Import_Mapping_CSV = function () {
 jbCatManWizard.ProgressAfter_Import_Mapping_CSV = function (dialog, step = 0) {
   //do import
   
-  if (step == 0) {
-    // update number of imported contacts, header row does not count
-    let v = document.getElementById('CatManWizardImportDesc').textContent;
-    document.getElementById('CatManWizardImportDesc').textContent = v.replace("##IMPORTNUM##",jbCatManWizard.csv.numberOfRows()-1);
-  }
-  
   step = step + 1;
-  if (step > jbCatManWizard.csv.numberOfRows()) dialog.done(true);
-  else {
+  if (step > jbCatManWizard.csv.numberOfRows()) {
+    //update number of imported contacts, header row does not count
+    //todo: maybe use other "real" value for numberOfImported here?
+    document.getElementById('CatManWizardImportDesc').textContent = document.getElementById('CatManWizardImportDesc').textContent.replace("##IMPORTNUM##",jbCatManWizard.csv.numberOfRows()-1);
+    dialog.done(true);
+  } else {
     dialog.setProgressBar(100*step/jbCatManWizard.csv.numberOfRows());
     //get dataset, skip header
     let data = jbCatManWizard.csv.rows[step];
  
-    //TODO
+    //todo: import
     if (data) dump(data[0] + "\n");
 
     dialog.window.setTimeout(function() { jbCatManWizard.ProgressAfter_Import_Mapping_CSV(dialog, step); }, 20);
@@ -385,6 +383,8 @@ jbCatManWizard.ProgressAfter_Export_CSV = function (dialog, step = 0) {
   } else {
     //close csv file
     jbCatManWizard.closeFile();
+    //update number of exported contacts
+    document.getElementById('CatManWizardExportDesc').textContent = document.getElementById('CatManWizardExportDesc').textContent.replace("##EXPORTNUM##",step-1);
     dialog.done(true);
   }
 }
