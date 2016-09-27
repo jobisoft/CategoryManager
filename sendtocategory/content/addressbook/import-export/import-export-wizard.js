@@ -12,8 +12,6 @@ loader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcf.js");
     - fix csv parser to allow different textseperator on import
     - actual import
     - export options (linebreak, delim, textsep, encoding)
-    - export of entire address book not working
-    - tag only known fields for export + category + sort?
     - obey category option
 */
 
@@ -240,7 +238,6 @@ jbCatManWizard.ProgressBefore_Import_Mapping_CSV = function (dialog, step = 0) {
       
       for (let x=0; x<jbCatManWizard.datafields.length; x++) {
         //copy from template
-        dump(jbCatManWizard.datafields[x] + "\n");
         let newListEntry = document.getElementById("CatManImportDataFieldListTemplate").cloneNode(true);
         newListEntry.removeAttribute("id");
         newListEntry.removeAttribute("current");
@@ -324,23 +321,37 @@ jbCatManWizard.ProgressAfter_Import_Mapping_CSV = function (dialog, step = 0) {
 
 
 jbCatManWizard.ProgressBefore_Export_CSV = function (dialog, step = 0) {
+  //scan to-be-exported contacts and extract all possible properties for csv header
 
   if (step == 0) {
-    jbCatManWizard.resetThunderbirdProperties("CatManWizardExport_CSV");
+    //get all to-be-exported contatcs
     let searchstring = jbCatManWizard.currentAddressBook.URI;
     if (jbCatMan.data.selectedCategory != "") searchstring = jbCatMan.getCategorySearchString(jbCatManWizard.currentAddressBook.URI, jbCatMan.data.selectedCategory);
     jbCatManWizard.exportCards = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager).getDirectory(searchstring).childCards;
+
+    //get all standard thunderbird fields (defined at csv inport wizard page)
+    jbCatManWizard.standardFields = [];
+    for (let c=0; c<document.getElementById('CatManImportDataFieldListTemplate').childNodes[1].childNodes[0].itemCount; c++)
+    {
+      let item = document.getElementById('CatManImportDataFieldListTemplate').childNodes[1].childNodes[0].getItemAtIndex(c).label;
+      jbCatManWizard.standardFields.push(item);
+    }
+
+    //reset list of found props with standard fields
+    jbCatManWizard.resetThunderbirdProperties("CatManWizardExport_CSV", jbCatManWizard.standardFields);
   }
   
   step = step + 1;
-
   if (jbCatManWizard.exportCards.hasMoreElements()) {
     dialog.setProgressBar(100*step/jbCatManWizard.exportsize);
-    let card = jbCatManWizard.exportCards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
-    jbCatManWizard.searchThunderbirdProperties(card.properties, "CatManWizardExport_CSV", "CatManExportDataFieldListTemplate");
-    dialog.window.setTimeout(function() { jbCatManWizard.ProgressBefore_Export_CSV(dialog, step); }, 20);
-  } else dialog.done(true);
 
+    //scan next found card
+    jbCatManWizard.searchThunderbirdProperties(jbCatManWizard.exportCards.getNext().QueryInterface(Components.interfaces.nsIAbCard).properties);
+    dialog.window.setTimeout(function() { jbCatManWizard.ProgressBefore_Export_CSV(dialog, step); }, 20);
+  } else {
+    jbCatManWizard.xuladdThunderbirdProperties("CatManWizardExport_CSV", "CatManExportDataFieldListTemplate", jbCatManWizard.standardFields);
+    dialog.done(true);
+  }
 }
 
 
@@ -531,35 +542,42 @@ jbCatManWizard.writeFile = function(file, data) {
 }
 
 
-
-jbCatManWizard.searchThunderbirdProperties = function (props, listname, template) {
-  //get XUL list which needs to be updated
-  let exportList = document.getElementById(listname);
-  while (props.hasMoreElements()) {
-    prop = props.getNext().QueryInterface(Components.interfaces.nsIProperty); 
-    if (jbCatManWizard.foundThunderbirdProperties.indexOf(prop.name) == -1 && jbCatManWizard.forbiddenFields.indexOf(prop.name) == -1) { 
-      jbCatManWizard.foundThunderbirdProperties.push(prop.name);
-
-        //copy from template
-        let newListEntry = document.getElementById(template).cloneNode(true);
-        newListEntry.removeAttribute("id");
-        newListEntry.removeAttribute("current");
-        newListEntry.removeAttribute("selected");
-        newListEntry.childNodes[0].childNodes[0].setAttribute("value",prop.name);
-        exportList.appendChild(newListEntry);
-
-    }
-  }
-}
-
-jbCatManWizard.resetThunderbirdProperties = function (listname) {
-  jbCatManWizard.foundThunderbirdProperties = [];
+jbCatManWizard.resetThunderbirdProperties = function (listname, defaults) {
+  jbCatManWizard.foundThunderbirdProperties = defaults.slice();
   //reset XUL list as well 
   let exportList = document.getElementById(listname);
   for(var i=exportList.getRowCount() -1; i>=0; i--){
     exportList.removeItemAt(i);
   }
 }
+
+jbCatManWizard.searchThunderbirdProperties = function (props) {
+  while (props.hasMoreElements()) {
+    prop = props.getNext().QueryInterface(Components.interfaces.nsIProperty); 
+    if (jbCatManWizard.foundThunderbirdProperties.indexOf(prop.name) == -1 && jbCatManWizard.forbiddenFields.indexOf(prop.name) == -1) { 
+      jbCatManWizard.foundThunderbirdProperties.push(prop.name);
+    }
+  }
+}
+
+jbCatManWizard.xuladdThunderbirdProperties = function (listname, template, defaults) {
+  //get XUL list which needs to be updated
+  let exportList = document.getElementById(listname);
+  for (let p=0; p<jbCatManWizard.foundThunderbirdProperties.length; p++) {
+    //copy from template
+    let newListEntry = document.getElementById(template).cloneNode(true);
+    newListEntry.setAttribute("id","CatManListItem_"+listname+"_"+p);
+    newListEntry.removeAttribute("current");
+    newListEntry.removeAttribute("selected");
+    newListEntry.childNodes[0].childNodes[0].setAttribute("value",jbCatManWizard.foundThunderbirdProperties[p]);
+    exportList.appendChild(newListEntry);
+    if (defaults.indexOf(jbCatManWizard.foundThunderbirdProperties[p]) == -1) {
+      document.getElementById("CatManListItem_"+listname+"_"+p).childNodes[0].childNodes[0].style.fontStyle="italic";
+      document.getElementById("CatManListItem_"+listname+"_"+p).childNodes[1].childNodes[0].checked=false;
+    }
+  }
+}
+
 
 
 
