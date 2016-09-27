@@ -376,11 +376,12 @@ jbCatManWizard.ProgressAfter_Export_CSV = function (dialog, step = 0) {
       let v = exportList.getItemAtIndex(i).childNodes[0].childNodes[0].value;
       let c = exportList.getItemAtIndex(i).childNodes[1].childNodes[0].checked;
 
-      //special treatment for Categories, if unchecked but CatManWizardExport_Categories_CSV is checked, do export Categories, but just the selected on
+      //special treatment for Categories, if unchecked but CatManWizardExport_Categories_CSV is checked, do export Categories, but just the selected one
       if (v=="Categories" && !c && document.getElementById("CatManWizardExport_Categories_CSV").checked) {
         jbCatManWizard.props4export[v] = jbCatMan.data.selectedCategory;
       }
       
+      //export property if checked or if a custom export value for that property has been defined
       if (c || jbCatManWizard.props4export[v]) {
         jbCatManWizard.props2export.push(v);
         header.push(jbCatManWizard.csvEscape(v, delim, quote));
