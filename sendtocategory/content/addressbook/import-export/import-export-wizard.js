@@ -12,7 +12,6 @@ loader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcf.js");
     - fix csv parser to allow different textseperator on import
     - actual import
     - export options (linebreak, delim, textsep, encoding)
-    - obey category option
 */
 
 
@@ -368,25 +367,44 @@ jbCatManWizard.ProgressAfter_Export_CSV = function (dialog, step = 0) {
     let searchstring = jbCatManWizard.currentAddressBook.URI;
     if (jbCatMan.data.selectedCategory != "") searchstring = jbCatMan.getCategorySearchString(jbCatManWizard.currentAddressBook.URI, jbCatMan.data.selectedCategory);
     jbCatManWizard.exportCards = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager).getDirectory(searchstring).childCards;
-    //escape header
-    let header = []
-    for (let h=0; h<jbCatManWizard.foundThunderbirdProperties.length; h++) {
-      header.push(jbCatManWizard.csvEscape(jbCatManWizard.foundThunderbirdProperties[h], delim, quote));
+    //escape header of all fields which need to be exported
+    let header = [];
+    jbCatManWizard.props2export = [];
+    jbCatManWizard.props4export = {};
+    let exportList = document.getElementById("CatManWizardExport_CSV");
+    for(var i=0; i<exportList.getRowCount(); i++){
+      let v = exportList.getItemAtIndex(i).childNodes[0].childNodes[0].value;
+      let c = exportList.getItemAtIndex(i).childNodes[1].childNodes[0].checked;
+
+      //special treatment for Categories, if unchecked but CatManWizardExport_Categories_CSV is checked, do export Categories, but just the selected on
+      if (v=="Categories" && !c && document.getElementById("CatManWizardExport_Categories_CSV").checked) {
+        jbCatManWizard.props4export[v] = jbCatMan.data.selectedCategory;
+      }
+      
+      if (c || jbCatManWizard.props4export[v]) {
+        jbCatManWizard.props2export.push(v);
+        header.push(jbCatManWizard.csvEscape(v, delim, quote));
+      }
     }
+
     jbCatManWizard.appendFile(header.join(delim)+linebreak);
   }
- 
+
   step = step + 1;
   if (jbCatManWizard.exportCards.hasMoreElements()) {
     dialog.setProgressBar(100*step/jbCatManWizard.exportsize);
     let card = jbCatManWizard.exportCards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
     //get all properties of card and write it to csv file
     let data = [];
-    for (let h=0; h<jbCatManWizard.foundThunderbirdProperties.length; h++) {
+    for (let h=0; h<jbCatManWizard.props2export.length; h++) {
       let field = "";
       try {
-        field = card.getPropertyAsAString(jbCatManWizard.foundThunderbirdProperties[h]);
+        field = card.getPropertyAsAString(jbCatManWizard.props2export[h]);
       } catch(e) {}
+      //allow to override export value - crrently used only for Categories
+      if (jbCatManWizard.props4export[jbCatManWizard.props2export[h]]) {
+        field = jbCatManWizard.props4export[jbCatManWizard.props2export[h]];
+      }
       data.push(jbCatManWizard.csvEscape(field, delim, quote));
     }
     jbCatManWizard.appendFile(data.join(delim)+linebreak);
