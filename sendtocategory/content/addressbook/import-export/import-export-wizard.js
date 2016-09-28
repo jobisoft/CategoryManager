@@ -175,7 +175,7 @@ jbCatManWizard.ProgressBefore_Import_CSV = function (dialog, step = 0) {
   switch (step) {
     case 1:
       //read CSV file 
-      jbCatManWizard.fileContent = jbCatManWizard.readFile(jbCatManWizard.fileObj);
+      jbCatManWizard.fileContent = jbCatManWizard.readFile(jbCatManWizard.fileObj, document.getElementById("CatManWizardImportCsvCharset").value);
     break;
     
     case 2:
@@ -490,8 +490,11 @@ jbCatManWizard.replaceCustomStrings = function (element) {
 
 
 // http://forums.mozillazine.org/viewtopic.php?p=13321043#p13321043
-jbCatManWizard.readFile = function(file) {
+jbCatManWizard.readFile = function(file, charset) {
   var response = "";
+  var converter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"].createInstance(Components.interfaces.nsIScriptableUnicodeConverter);
+  converter.charset = charset;
+
   try
   {
      if (file.exists() && file.isReadable())
@@ -503,7 +506,7 @@ jbCatManWizard.readFile = function(file) {
         var str = sstream.read(4096);
         while (str.length > 0)
         {
-           response += str;
+           response += converter.ConvertToUnicode(str);
            str = sstream.read(4096);
         }
         sstream.close();
