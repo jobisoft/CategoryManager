@@ -493,8 +493,13 @@ jbCatManWizard.replaceCustomStrings = function (element) {
 jbCatManWizard.readFile = function(file, charset) {
   var response = "";
   var converter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"].createInstance(Components.interfaces.nsIScriptableUnicodeConverter);
-  converter.charset = charset;
-
+  try {
+    converter.charset = charset;
+  } catch(e) {
+    alert("Error converting from charset <" + charset + ">.");
+    return "";
+  }
+  
   try
   {
      if (file.exists() && file.isReadable())
