@@ -10,7 +10,7 @@ loader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcf.js");
     - allow csv comment on import?
     - import confirmation screen
     - fix csv parser to allow different textseperator on import
-    - respect all import options (encoding, textsep, delim, linebreak )
+    - respect all import options (, textsep, ,  )
     - actual import
 */
 
