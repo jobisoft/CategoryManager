@@ -114,8 +114,8 @@
               <menulist flex="1" id="CatManWizardImportCsvCharset">
                 <menupopup>
                   <menuitem label="UTF-8" value="UTF-8"/>
-                  <menuitem label="WINDOWS-1252" value="WINDOWS-1252"/>
-                  <menuitem label="ISO-8859-1" value="ISO-8859-1"/>
+                  <menuitem label="Windows-1252 (ANSI)" value="WINDOWS-1252"/>
+                  <menuitem label="ISO-8859-1 (Latin1)" value="ISO-8859-1"/>
                 </menupopup>
               </menulist>
             </listcell>
@@ -277,8 +277,8 @@
               <menulist flex="1" id="CatManWizardExportCsvCharset">
                 <menupopup>
                   <menuitem label="UTF-8" value="UTF-8"/>
-                  <menuitem label="WINDOWS-1252" value="WINDOWS-1252"/>
-                  <menuitem label="ISO-8859-1" value="ISO-8859-1"/>
+                  <menuitem label="Windows-1252 (ANSI)" value="WINDOWS-1252"/>
+                  <menuitem label="ISO-8859-1 (Latin1)" value="ISO-8859-1"/>
                 </menupopup>
               </menulist>
             </listcell>
