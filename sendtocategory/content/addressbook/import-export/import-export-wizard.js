@@ -56,6 +56,13 @@ jbCatManWizard.Init = function () {
   for(let x=0; x<elements.length ;x++){
     jbCatManWizard.csvDelimiter.push(elements[x].value);
   }
+
+  // Get all options from CatManWizardImportCsvTextsep Popup.
+  elements = document.getElementById('CatManWizardImportCsvTextsep').children[0].children;
+  jbCatManWizard.csvTextsep = [];
+  for(let x=0; x<elements.length ;x++){
+    jbCatManWizard.csvTextsep.push(elements[x].value);
+  }
   
 }
 
@@ -181,6 +188,7 @@ jbCatManWizard.ProgressBefore_Import_CSV = function (dialog, step = 0) {
     case 2:
       //scan CSV file to guess import options
       if (jbCatManWizard.fileContent.trim().length > 0) {
+        //guess delim
         let guess = 0;
         let count = 0;
         for(let x=0; x<jbCatManWizard.csvDelimiter.length ;x++){
@@ -189,6 +197,18 @@ jbCatManWizard.ProgressBefore_Import_CSV = function (dialog, step = 0) {
         }
         //set xul field to guess
         document.getElementById('CatManWizardImportCsvDelimiter').selectedIndex = guess;
+        
+        //guess textsep
+        guess = 0;
+        count = 0;
+        for(let x=0; x<jbCatManWizard.csvTextsep.length ;x++){
+          let c = jbCatManWizard.fileContent.split(jbCatManWizard.csvTextsep[x]).length;
+          if (c>count) {count = c; guess= x; } 
+        }
+        //set xul field to guess
+        document.getElementById('CatManWizardImportCsvTextsep').selectedIndex = guess;
+        
+        
       } else {
         alert(document.getElementById('sendtocategory.wizard.import.error.empty').value);
         dialog.done(false);
