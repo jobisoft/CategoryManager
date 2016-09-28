@@ -15,9 +15,12 @@
 <!ENTITY sendtocategory.wizard.import.error.reserved "Die Feldbezeichnung '##fieldname##' ist reserviert und kann nicht benutzt werden. Bitte umbenennen oder den Import deaktivieren.">
 
 <!ENTITY sendtocategory.wizard.import.options.csv.title "Einstellungen für den Import einer CSV Datei">
+<!ENTITY sendtocategory.wizard.import.options.csv.desc "In der folgenden Übersicht können Eigenschaften der zu importierenden CSV Datei angegeben werden.">
 <!ENTITY sendtocategory.wizard.import.options.csv.delimiter "Feldtrennzeichen">
 <!ENTITY sendtocategory.wizard.import.options.csv.delimiter.tab "Tabulator">
-<!ENTITY sendtocategory.wizard.import.options.csv.desc "In der folgenden Übersicht können Eigenschaften der zu importierenden CSV Datei angegeben werden.">
+<!ENTITY sendtocategory.wizard.import.options.csv.textsep "Textbegrenzungszeichen">
+<!ENTITY sendtocategory.wizard.import.options.csv.linebreak "Zeilenumbruch">
+<!ENTITY sendtocategory.wizard.import.options.csv.charset "Zeichensatz">
 <!ENTITY sendtocategory.wizard.import.mapping.csv.title "Weitere Einstellungen für den Import einer CSV Datei">
 <!ENTITY sendtocategory.wizard.import.mapping.csv.desc "In der folgenden Tabelle sind alle gefundenen Felder aufgelistet. Für jedes Feld können Sie angeben, ob es importiert und auf welches Thunderbird-Feld es abgebildet werden soll. Sie können dabei aus einigen Standard-Feldern wählen oder eigene Feldnamen angeben. Einen Überblick über alle derzeit verwendeten Thunderbird-Felder erhalten Sie durch einen Export. Es ist meist einfacher, die Feldnamen direkt in der CSV Datei zu manipulieren, als über diese Eingabemaske.">
 <!ENTITY sendtocategory.wizard.import.mapping.csvdatafield "CSV Datenfeld">
@@ -25,7 +28,8 @@
 <!ENTITY sendtocategory.wizard.import.mapping.import "importieren">
 
 <!ENTITY sendtocategory.wizard.export.options.csv.title "Einstellungen für den Export einer CSV Datei">
-<!ENTITY sendtocategory.wizard.export.options.csv.desc "In der folgenden Übersicht können Sie festlegen, welche Felder der ausgewählten Kontakte exportiert werden sollen. ">
+<!ENTITY sendtocategory.wizard.export.options.csv.desc1 "In der folgenden Übersicht können die Eigenschaften der CSV Datei festgelegt werden.">
+<!ENTITY sendtocategory.wizard.export.options.csv.desc2 "In der folgenden Übersicht können Sie festlegen, welche Felder der ausgewählten Kontakte exportiert werden sollen. ">
 <!ENTITY sendtocategory.wizard.export.options.export "exportieren">
 <!ENTITY sendtocategory.wizard.export.options.categorie "Auch wenn in obiger Liste das Feld 'Categories' nicht für den Export markiert wird, exportiere dennoch die Zugehörigkeit zur Kategorie '##CAT##'.">
 

@@ -65,14 +65,57 @@
     ondblclick="this.selectedIndex = -1;"
     seltype="multiple">
 
+        <listheader style="border: 0; padding: 0; -moz-appearance:none;">
+            <treecol style="width:290px; font-weight:bold;" label="Einstellung" />
+            <treecol flex="1" style="font-weight:bold;" label="Wert" />
+        </listheader>
+
         <richlistitem>
-            <listcell style="width:260px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.delimiter;"/></listcell>
+            <listcell style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.delimiter;"/></listcell>
             <listcell flex="1">
-              <menulist id="CatManWizardImportCsvDelimiter">
-                <menupopup id="CatManWizardImportCsvDelimiterPopup">
+              <menulist flex="1" id="CatManWizardImportCsvDelimiter">
+                <menupopup>
                   <menuitem label="," value=","/>
                   <menuitem label=";" value=";"/>
                   <menuitem label="&sendtocategory.wizard.import.options.csv.delimiter.tab;" value="&#9;"/>
+                </menupopup>
+              </menulist>
+            </listcell>
+        </richlistitem>
+        
+        <richlistitem>
+            <listcell style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.textsep;"/></listcell>
+            <listcell flex="1">
+              <menulist flex="1"  id="CatManWizardImportCsvTextsep">
+                <menupopup>
+                  <menuitem label='"' value='"'/>
+                  <menuitem label="'" value="'"/>
+                </menupopup>
+              </menulist>
+            </listcell>
+        </richlistitem>
+
+        <richlistitem>
+            <listcell style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.linebreak;"/></listcell>
+            <listcell flex="1">
+              <menulist flex="1" id="CatManWizardImportCsvLinebreak">
+                <menupopup>
+                  <menuitem label="Standard (CR+LF)" value="CRLF"/>
+                  <menuitem label="Linux (LF)" value="LF"/>
+                  <menuitem label="Other (CR)" value="CR"/>
+                </menupopup>
+              </menulist>
+            </listcell>
+        </richlistitem>
+
+        <richlistitem>
+            <listcell style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.charset;"/></listcell>
+            <listcell flex="1">
+              <menulist flex="1" id="CatManWizardImportCsvCharset">
+                <menupopup>
+                  <menuitem label="UTF-8" value="UTF-8"/>
+                  <menuitem label="WINDOWS-1252" value="WINDOWS-1252"/>
+                  <menuitem label="ISO-8859-1" value="ISO-8859-1"/>
                 </menupopup>
               </menulist>
             </listcell>
@@ -167,9 +210,6 @@
 </wizardpage>
 
   <wizardpage pageid="CatManWizardExport_CSV" label="&sendtocategory.wizard.export.options.csv.title;" onpageadvanced="return jbCatManWizard.onpageadvanced(this);" next="CatManWizardExport">
-     <description style='padding-bottom:1ex;'>
-      &sendtocategory.wizard.export.options.csv.desc;
-    </description>
 
     <richlistbox
     hidden="true"
@@ -179,6 +219,76 @@
             <listcell flex="1" align="right"><checkbox label="" checked="true" /></listcell>
         </richlistitem>
     </richlistbox>
+    
+    <description style='padding-bottom:1ex;'>
+      &sendtocategory.wizard.export.options.csv.desc1;
+    </description>
+
+    <richlistbox
+    ondblclick="this.selectedIndex = -1;"
+    seltype="multiple">
+
+        <listheader style="border: 0; padding: 0; -moz-appearance:none;">
+            <treecol style="width:290px; font-weight:bold;" label="Einstellung" />
+            <treecol flex="1" style="font-weight:bold;" label="Wert" />
+        </listheader>
+
+        <richlistitem>
+            <listcell style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.delimiter;"/></listcell>
+            <listcell flex="1">
+              <menulist flex="1" id="CatManWizardExportCsvDelimiter">
+                <menupopup>
+                  <menuitem label="," value=","/>
+                  <menuitem label=";" value=";"/>
+                  <menuitem label="&sendtocategory.wizard.import.options.csv.delimiter.tab;" value="&#9;"/>
+                </menupopup>
+              </menulist>
+            </listcell>
+        </richlistitem>
+
+        <richlistitem>
+            <listcell style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.textsep;"/></listcell>
+            <listcell flex="1">
+              <menulist flex="1"  id="CatManWizardExportCsvTextsep">
+                <menupopup>
+                  <menuitem label='"' value='"'/>
+                  <menuitem label="'" value="'"/>
+                </menupopup>
+              </menulist>
+            </listcell>
+        </richlistitem>
+
+        <richlistitem>
+            <listcell style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.linebreak;"/></listcell>
+            <listcell flex="1">
+              <menulist flex="1" id="CatManWizardExportCsvLinebreak">
+                <menupopup>
+                  <menuitem label="Standard (CR+LF)" value="CRLF"/>
+                  <menuitem label="Linux (LF)" value="LF"/>
+                  <menuitem label="Other (CR)" value="CR"/>
+                </menupopup>
+              </menulist>
+            </listcell>
+        </richlistitem>
+
+        <richlistitem>
+            <listcell style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.charset;"/></listcell>
+            <listcell flex="1">
+              <menulist flex="1" id="CatManWizardExportCsvCharset">
+                <menupopup>
+                  <menuitem label="UTF-8" value="UTF-8"/>
+                  <menuitem label="WINDOWS-1252" value="WINDOWS-1252"/>
+                  <menuitem label="ISO-8859-1" value="ISO-8859-1"/>
+                </menupopup>
+              </menulist>
+            </listcell>
+        </richlistitem>
+
+    </richlistbox>
+
+    <description style='padding-bottom:1ex; padding-top:2ex;'>
+      &sendtocategory.wizard.export.options.csv.desc2;
+    </description>
 
     <richlistbox
     id="CatManWizardExport_CSV"

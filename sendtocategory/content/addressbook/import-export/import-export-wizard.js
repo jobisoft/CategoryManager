@@ -10,8 +10,8 @@ loader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcf.js");
     - allow csv comment on import?
     - import confirmation screen
     - fix csv parser to allow different textseperator on import
+    - respect all import options (encoding, textsep, delim, linebreak )
     - actual import
-    - export options (linebreak, delim, textsep, encoding)
 */
 
 
@@ -50,8 +50,8 @@ jbCatManWizard.Init = function () {
   
   this.replaceCustomStrings(document.getElementById('CatManWizardExport_Categories_CSV'));
 
-  // Get all options from CatManWizardImportCsvDelimiterPopup.
-  elements = document.getElementById('CatManWizardImportCsvDelimiterPopup').children;
+  // Get all options from CatManWizardImportCsvDelimiter Popup.
+  elements = document.getElementById('CatManWizardImportCsvDelimiter').children[0].children;
   jbCatManWizard.csvDelimiter = [];
   for(let x=0; x<elements.length ;x++){
     jbCatManWizard.csvDelimiter.push(elements[x].value);
@@ -356,9 +356,10 @@ jbCatManWizard.ProgressBefore_Export_CSV = function (dialog, step = 0) {
 
 jbCatManWizard.ProgressAfter_Export_CSV = function (dialog, step = 0) {
   //do export
-  let delim = ",";
-  let quote = "\"";
-  let linebreak = "\n";
+  let delim = document.getElementById("CatManWizardExportCsvDelimiter").value;
+  let textsep = document.getElementById("CatManWizardExportCsvTextsep").value;
+  let linebreak = document.getElementById("CatManWizardExportCsvLinebreak").value.replace("LF","\n").replace("CR","\r");
+  let charset = document.getElementById("CatManWizardExportCsvCharset").value;
   
   if (step == 0) {
     //init export file
@@ -384,11 +385,11 @@ jbCatManWizard.ProgressAfter_Export_CSV = function (dialog, step = 0) {
       //export property if checked or if a custom export value for that property has been defined
       if (c || jbCatManWizard.props4export[v]) {
         jbCatManWizard.props2export.push(v);
-        header.push(jbCatManWizard.csvEscape(v, delim, quote));
+        header.push(jbCatManWizard.csvEscape(v, delim, textsep));
       }
     }
 
-    jbCatManWizard.appendFile(header.join(delim)+linebreak);
+    jbCatManWizard.appendFile(header.join(delim)+linebreak, charset);
   }
 
   step = step + 1;
@@ -406,9 +407,9 @@ jbCatManWizard.ProgressAfter_Export_CSV = function (dialog, step = 0) {
       if (jbCatManWizard.props4export[jbCatManWizard.props2export[h]]) {
         field = jbCatManWizard.props4export[jbCatManWizard.props2export[h]];
       }
-      data.push(jbCatManWizard.csvEscape(field, delim, quote));
+      data.push(jbCatManWizard.csvEscape(field, delim, textsep));
     }
-    jbCatManWizard.appendFile(data.join(delim)+linebreak);
+    jbCatManWizard.appendFile(data.join(delim)+linebreak, charset);
     dialog.window.setTimeout(function() { jbCatManWizard.ProgressAfter_Export_CSV(dialog, step); }, 20);
   } else {
     //close csv file
@@ -523,18 +524,29 @@ jbCatManWizard.initFile = function(file) {
   } catch(e) {
     alert("Error opening to file.");
     return false;
-  };
+  }
   return true;
 }
 
-jbCatManWizard.appendFile = function(data) {
-  try
-  {
+jbCatManWizard.appendFile = function(src, charset) {
+  /* https://developer.mozilla.org/en-US/docs/Writing_textual_data */
+  var converter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"].createInstance(Components.interfaces.nsIScriptableUnicodeConverter);
+  
+  let data = "";  
+  try {
+    converter.charset = charset;
+    data = converter.ConvertFromUnicode(src);
+  } catch(e) {
+    alert("Error converting to charset <" + charset + ">.");
+    return false;
+  }
+
+  try{
      jbCatManWizard.stream.write(data, data.length);
   } catch(e) {
     alert("Error writing to file.");
     return false;
-  };
+  }
   return true;
 }
 
@@ -608,11 +620,11 @@ jbCatManWizard.togglecheck = function (element, pos) {
 
 
 
-jbCatManWizard.csvEscape = function (value, delim, quote) {
-  //a quote is replaced by double quotes - do we need to put a quote around everything in that case as well? YES!
+jbCatManWizard.csvEscape = function (value, delim, textsep) {
+  //a textsep is replaced by double textseps - do we need to put a textsep around everything in that case as well? YES!
   let newvalue = value;
-  if (newvalue.indexOf(quote) != -1) newvalue = newvalue.split(quote).join(quote+quote);
-  if (newvalue.indexOf(delim) != -1 || newvalue.indexOf("\r") != -1 || newvalue.indexOf("\n") != -1 || newvalue.length != value.length) newvalue = quote + newvalue + quote;
+  if (newvalue.indexOf(textsep) != -1) newvalue = newvalue.split(textsep).join(textsep+textsep);
+  if (newvalue.indexOf(delim) != -1 || newvalue.indexOf("\r") != -1 || newvalue.indexOf("\n") != -1 || newvalue.length != value.length) newvalue = textsep + newvalue + textsep;
   
   return newvalue; 
 }
