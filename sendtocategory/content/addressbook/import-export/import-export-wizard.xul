@@ -66,8 +66,8 @@
     seltype="multiple">
 
         <listheader style="border: 0; padding: 0; -moz-appearance:none;">
-            <treecol style="width:290px; font-weight:bold;" label="Einstellung" />
-            <treecol flex="1" style="font-weight:bold;" label="Wert" />
+            <treecol style="width:290px; font-weight:bold;" label="&sendtocategory.wizard.import.options.setting;" />
+            <treecol flex="1" style="font-weight:bold;" label="&sendtocategory.wizard.import.options.value;" />
         </listheader>
 
         <richlistitem>

@@ -14,8 +14,11 @@
 <!ENTITY sendtocategory.wizard.import.error.csv "Die CSV Datei konnte nicht importiert werden, da nicht alle Zeilen die gleiche Anzahl von Feldern haben.">
 <!ENTITY sendtocategory.wizard.import.error.reserved "Die Feldbezeichnung '##fieldname##' ist reserviert und kann nicht benutzt werden. Bitte umbenennen oder den Import deaktivieren.">
 
+<!ENTITY sendtocategory.wizard.import.options.setting "Einstellung">
+<!ENTITY sendtocategory.wizard.import.options.value "Wert">
+
 <!ENTITY sendtocategory.wizard.import.options.csv.title "Einstellungen für den Import einer CSV Datei">
-<!ENTITY sendtocategory.wizard.import.options.csv.desc "In der folgenden Übersicht können Eigenschaften der zu importierenden CSV Datei angegeben werden.">
+<!ENTITY sendtocategory.wizard.import.options.csv.desc "Die folgenden Eigenschaften der zu importierenden CSV Datei wurden erkannt.">
 <!ENTITY sendtocategory.wizard.import.options.csv.delimiter "Feldtrennzeichen">
 <!ENTITY sendtocategory.wizard.import.options.csv.delimiter.tab "Tabulator">
 <!ENTITY sendtocategory.wizard.import.options.csv.textident "Textbegrenzungszeichen">
@@ -28,8 +31,8 @@
 <!ENTITY sendtocategory.wizard.import.mapping.thunderbirdfield "Thunderbird Datenfeld">
 <!ENTITY sendtocategory.wizard.import.mapping.import "importieren">
 
-<!ENTITY sendtocategory.wizard.import.control.desc "Folgende Kontakte werden importiert:">
-<!ENTITY sendtocategory.wizard.import.control.title "Import Überprüfen">
+<!ENTITY sendtocategory.wizard.import.control.desc "Folgende Kontakte und Felder werden importiert:">
+<!ENTITY sendtocategory.wizard.import.control.title "Import überprüfen">
 
 <!ENTITY sendtocategory.wizard.export.options.csv.title "Einstellungen für den Export einer CSV Datei">
 <!ENTITY sendtocategory.wizard.export.options.csv.desc1 "In der folgenden Übersicht können die Eigenschaften der CSV Datei festgelegt werden.">
