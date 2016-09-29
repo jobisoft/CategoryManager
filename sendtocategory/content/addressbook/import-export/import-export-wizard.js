@@ -7,7 +7,6 @@ loader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcard.js");
 loader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcf.js");
 
 /* TODO 
-    - allow csv comment on import?
     - import confirmation screen
     - actual import
 */
@@ -432,7 +431,7 @@ jbCatManWizard.ProgressAfter_Export_CSV = function (dialog, step = 0) {
       let c = exportList.getItemAtIndex(i).childNodes[1].childNodes[0].checked;
 
       //special treatment for Categories, if unchecked but CatManWizardExport_Categories_CSV is checked, do export Categories, but just the selected one
-      if (v=="Categories" && !c && document.getElementById("CatManWizardExport_Categories_CSV").checked) {
+      if (v=="Categories" && !c && jbCatMan.data.selectedCategory !="" && document.getElementById("CatManWizardExport_Categories_CSV").checked) {
         jbCatManWizard.props4export[v] = jbCatMan.data.selectedCategory;
       }
       
