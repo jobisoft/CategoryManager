@@ -238,7 +238,7 @@ jbCatManWizard.ProgressBefore_Import_CSV = function (dialog, step = 0) {
 }
 
 
-/* extract cvs fields and prepare XUL list */
+/* extract cvs fields and prepare XUL fields list */
 jbCatManWizard.ProgressBefore_Import_Mapping_CSV = function (dialog, step = 0) {
   step = step + 1;
 
@@ -320,9 +320,11 @@ jbCatManWizard.ProgressBefore_Import_Mapping_CSV = function (dialog, step = 0) {
   }
 }
 
+
 jbCatManWizard.SilentAfter_Import_Mapping_CSV = function () {
   //check user selection of import mapping for forbidden fields
   let mappingList = document.getElementById("CatManWizardImport_Mapping_CSV");
+  jbCatManWizard.importMap = {};
   for (var i=mappingList.getRowCount() -1; i>=0; i--) {
     let v = mappingList.getItemAtIndex(i).childNodes[1].childNodes[0].label;
     let c = mappingList.getItemAtIndex(i).childNodes[2].childNodes[0].checked;
@@ -331,30 +333,36 @@ jbCatManWizard.SilentAfter_Import_Mapping_CSV = function () {
       alert(document.getElementById('sendtocategory.wizard.import.error.reserved').value.replace("##fieldname##",v));
       return false;
     }
+    //add fields to header for import - mapout the used fields
+    if (c) jbCatManWizard.importMap[i] = v;
   }
+  jbCatManWizard.importControlView.init("elementList", jbCatManWizard.csv.rows, jbCatManWizard.importMap);
   return true;
 }
 
-jbCatManWizard.ProgressAfter_Import_Mapping_CSV = function (dialog, step = 0) {
+
+jbCatManWizard.ProgressAfter_Import_Control_CSV = function (dialog, step = 0) {
   //do import
   
   step = step + 1;
   if (step > jbCatManWizard.csv.numberOfRows()) {
-    //update number of imported contacts, header row does not count
-    //todo: maybe use other "real" value for numberOfImported here?
+    //update number of imported contacts, header row does not count and is skipped
     document.getElementById('CatManWizardImportDesc').textContent = document.getElementById('CatManWizardImportDesc').textContent.replace("##IMPORTNUM##",jbCatManWizard.csv.numberOfRows()-1);
     dialog.done(true);
   } else {
     dialog.setProgressBar(100*step/jbCatManWizard.csv.numberOfRows());
-    //get dataset, skip header
+
+    //get dataset, skip header (by skipping step == 0)
     let data = jbCatManWizard.csv.rows[step];
  
-    //todo: import
+    //todo: import selected fields - header= map is stored in jbCatManWizard.importMap
     if (data) dump(data[0] + "\n");
 
-    dialog.window.setTimeout(function() { jbCatManWizard.ProgressAfter_Import_Mapping_CSV(dialog, step); }, 20);
+    dialog.window.setTimeout(function() { jbCatManWizard.ProgressAfter_Import_Control_CSV(dialog, step); }, 20);
   }
 }
+
+
 
 
 
@@ -688,3 +696,90 @@ jbCatManWizard.csvEscape = function (value, delim, textident) {
   
   return newvalue; 
 }
+
+
+
+
+
+/* TreeView based on Example: https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XUL/Tutorial/Tree_View_Details */
+jbCatManWizard.importControlView = {
+
+  treeBox: null,
+  selection: null,
+  data: null,
+  columns: null,
+
+  init: function(id, importData, importMap) {
+    const XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+
+    this.columns = importData[0].slice();
+    this.data = importData.slice();
+    
+    //remove header from data
+    this.data.shift();
+
+    //clear any present columns
+    {
+      let cols = document.getElementById(id).children[0];
+      while (cols.firstChild) {
+        cols.removeChild(cols.firstChild);
+      }
+    }
+    
+    //build column header - but use renamed and mapped labels
+    for (let i=0; i<this.columns.length; i++) {
+      if (importMap[i]) {
+        let newListEntry = document.createElementNS(XUL_NS, "treecol");
+        newListEntry.setAttribute("id", "CatManimportControlViewCol_" + i); //this will store the index of the actual field
+        newListEntry.setAttribute("label", importMap[i]);
+        newListEntry.setAttribute("fixed", "false");
+        newListEntry.setAttribute("width", "150");
+        document.getElementById(id).children[0].appendChild(newListEntry);
+      }
+    }
+    document.getElementById(id).view = jbCatManWizard.importControlView;
+  },
+  
+  get rowCount()                     { return this.data.length; },
+  setTree: function(treeBox)         { this.treeBox = treeBox; },
+  getCellText: function(idx, column) { return this.data[idx][column.id.replace("CatManimportControlViewCol_","")]; },
+  isContainer: function(idx)         { return false; },
+  isContainerOpen: function(idx)     { return false; },
+  isContainerEmpty: function(idx)    { return false; },
+  isSeparator: function(idx)         { return false; },
+  isSorted: function()               { return false; },
+  isEditable: function(idx, column)  { return false; },
+
+  getParentIndex: function(idx) {
+    if (this.isContainer(idx)) return -1;
+    for (var t = idx - 1; t >= 0 ; t--) {
+      if (this.isContainer(t)) return t;
+    }
+  },
+  getLevel: function(idx) {
+    if (this.isContainer(idx)) return 0;
+    return 1;
+  },
+  hasNextSibling: function(idx, after) {
+    var thisLevel = this.getLevel(idx);
+    for (var t = after + 1; t < this.data.length; t++) {
+      var nextLevel = this.getLevel(t);
+      if (nextLevel == thisLevel) return true;
+      if (nextLevel < thisLevel) break;
+    }
+    return false;
+  },
+  toggleOpenState: function(idx) { return; },
+
+  getImageSrc: function(idx, column) {},
+  getProgressMode : function(idx ,column) {},
+  getCellValue: function(idx, column) {},
+  cycleHeader: function(col, elem) {},
+  selectionChanged: function() {},
+  cycleCell: function(idx, column) {},
+  performAction: function(action) {},
+  performActionOnCell: function(action, index, column) {},
+  getRowProperties: function(idx, prop) {},
+  getCellProperties: function(idx, column, prop) {},
+  getColumnProperties: function(column, element, prop) {},
+};
