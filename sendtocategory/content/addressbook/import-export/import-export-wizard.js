@@ -7,9 +7,10 @@ loader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcard.js");
 loader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcf.js");
 
 /* TODO 
-	- add imported contacts to "import_on_<timestamp>" category
-	- actual import
-	- header in dtd
+  - add imported contacts to "import_on_<timestamp>" category
+  - cannot import into empty category
+  - do not show empty fields/cols - HOW DO THEY GET THERE?
+  - do not export empty cols?
 */
 
 
@@ -23,7 +24,7 @@ jbCatManWizard.Init = function () {
   jbCatManWizard.filetypes = {};
   jbCatManWizard.filetypes.csv = document.getElementById('sendtocategory.wizard.types.csv').value;
   //jbCatManWizard.filetypes.vcf = document.getElementById('sendtocategory.wizard.types.vcf').value;
-    
+
   // Define all fields, which are not allowed to be imported/exported, because they are managed by TB itself.
   jbCatManWizard.forbiddenFields = ["DbRowID","RecordKey","LastRecordKey"];
   
@@ -334,20 +335,19 @@ jbCatManWizard.SilentAfter_Import_Mapping_CSV = function () {
       alert(document.getElementById('sendtocategory.wizard.import.error.reserved').value.replace("##fieldname##",v));
       return false;
     }
-    //add fields to header for import - mapout the used fields
+    //add fields to header for import - mapout the used fields - HACK: the Categories field cannot be supressed if selected category is present
     if (c) jbCatManWizard.importMap[i] = v;
+    else if (v == "Categories" && jbCatMan.data.selectedCategory != "") jbCatManWizard.importMap[-1-i] = v; //so we can reconstruct the real i later
   }
   jbCatManWizard.importControlView.init("elementList", jbCatManWizard.csv.rows, jbCatManWizard.importMap);
   return true;
 }
 
-
+/* actual import */
 jbCatManWizard.ProgressAfter_Import_Control_CSV = function (dialog, step = 0) {
-  //do import
-  
   step = step + 1;
   if (step > jbCatManWizard.csv.numberOfRows()) {
-    //update number of imported contacts, header row does not count and is skipped
+    //after import is done, update number of imported contacts, header row does not count and is skipped
     document.getElementById('CatManWizardImportDesc').textContent = document.getElementById('CatManWizardImportDesc').textContent.replace("##IMPORTNUM##",jbCatManWizard.csv.numberOfRows()-1);
     dialog.done(true);
   } else {
@@ -356,8 +356,16 @@ jbCatManWizard.ProgressAfter_Import_Control_CSV = function (dialog, step = 0) {
     //get dataset, skip header (by skipping step == 0)
     let data = jbCatManWizard.csv.rows[step];
  
-    //todo: import selected fields - header= map is stored in jbCatManWizard.importMap
-    if (data) dump(data[0] + "\n");
+    if (data) {
+      let card = Components.classes["@mozilla.org/addressbook/cardproperty;1"].createInstance(Components.interfaces.nsIAbCard);
+      for (var p in jbCatManWizard.importMap) {
+        let prop = jbCatManWizard.importMap[p];
+        // substitute the value for the categories field, if found
+        card.setProperty(prop, jbCatManWizard.getFieldValue4Import(data, p));
+      }
+      //add the new card to the book and then call modify, which inits sysnc
+      jbCatMan.modifyCard(card);
+    }
 
     dialog.window.setTimeout(function() { jbCatManWizard.ProgressAfter_Import_Control_CSV(dialog, step); }, 20);
   }
@@ -698,8 +706,21 @@ jbCatManWizard.csvEscape = function (value, delim, textident) {
   return newvalue; 
 }
 
-
-
+/* returns data[p] except for the Categories field, where the currently selected category gets added */
+jbCatManWizard.getFieldValue4Import = function(data, p) {
+  let prop = jbCatManWizard.importMap[p];
+  if (prop == "Categories") {
+    //special treatment for Categories field
+    let cats = [];
+    //a negative index indicates, the user deselected the Categories field (import cats = empty), but we still have to add the currently selected category
+    if (p > -1) cats = data[p].split("\u001A");
+    if (cats.indexOf(jbCatMan.data.selectedCategory) == -1 && jbCatMan.data.selectedCategory != "") cats.push(jbCatMan.data.selectedCategory);
+    return cats.join("\u001A");
+  } else {
+    //default
+    return data[p];
+  }
+}
 
 
 /* TreeView based on Example: https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XUL/Tutorial/Tree_View_Details */
@@ -727,23 +748,30 @@ jbCatManWizard.importControlView = {
       }
     }
     
-    //build column header - but use renamed and mapped labels
+    //build column header - but use renamed and/or mapped labels
     for (let i=0; i<this.columns.length; i++) {
-      if (importMap[i]) {
-        let newListEntry = document.createElementNS(XUL_NS, "treecol");
-        newListEntry.setAttribute("id", "CatManimportControlViewCol_" + i); //this will store the index of the actual field
-        newListEntry.setAttribute("label", importMap[i]);
-        newListEntry.setAttribute("width", "150");
-        newListEntry.setAttribute("style", "font-weight:bold");
-        document.getElementById(id).children[0].appendChild(newListEntry);
-      }
+      let idx = 0;
+
+      if (importMap[i]) idx = i;
+      else if (importMap[-1-i]) idx = -1-i;
+      else continue;
+
+      //the negativ index is fake, but this loop sorts it at position "i"
+      //the negative index is used to identify the forced Categories field, even though the user had deselected it - but he also instructed to import all contacts into category XY
+      
+      let newListEntry = document.createElementNS(XUL_NS, "treecol");
+      newListEntry.setAttribute("id", "CatManimportControlViewCol_" + idx); 
+      newListEntry.setAttribute("label", importMap[idx]);
+      newListEntry.setAttribute("width", "150");
+      newListEntry.setAttribute("style", "font-weight:bold");
+      document.getElementById(id).children[0].appendChild(newListEntry);
     }
     document.getElementById(id).view = jbCatManWizard.importControlView;
   },
   
   get rowCount()                       { return this.data.length; },
   setTree: function(treeBox)           { this.treeBox = treeBox; },
-  getCellText: function(idx, column)   { return this.data[idx][column.id.replace("CatManimportControlViewCol_","")]; },
+  getCellText: function(idx, column)   { return jbCatManWizard.getFieldValue4Import(this.data[idx], column.id.replace("CatManimportControlViewCol_","")); },
   isContainer: function(idx)           { return false; },
   isContainerOpen: function(idx)       { return false; },
   isContainerEmpty: function(idx)      { return false; },
