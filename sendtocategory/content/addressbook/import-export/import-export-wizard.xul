@@ -84,9 +84,9 @@
         </richlistitem>
         
         <richlistitem>
-            <listcell style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.textsep;"/></listcell>
+            <listcell style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.textident;"/></listcell>
             <listcell flex="1">
-              <menulist flex="1"  id="CatManWizardImportCsvTextsep">
+              <menulist flex="1"  id="CatManWizardImportCsvTextIdentifier">
                 <menupopup>
                   <menuitem label='"' value='"'/>
                   <menuitem label="'" value="'"/>
@@ -234,9 +234,9 @@
         </richlistitem>
 
         <richlistitem>
-            <listcell style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.textsep;"/></listcell>
+            <listcell style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.textident;"/></listcell>
             <listcell flex="1">
-              <menulist flex="1"  id="CatManWizardExportCsvTextsep">
+              <menulist flex="1"  id="CatManWizardExportCsvTextIdentifier">
                 <menupopup>
                   <menuitem label='"' value='"'/>
                   <menuitem label="'" value="'"/>

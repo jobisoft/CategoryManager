@@ -10,7 +10,7 @@ var CSVParser = (function(){
     }
 
     function Parser(data, options){
-        var defaultOptions = { "fieldSeparator": ",", "strict": true, "ignoreEmpty": true};
+        var defaultOptions = { "textIdentifier": "\"", "fieldSeparator": ",", "strict": true, "ignoreEmpty": true};
         if (options === undefined) options = {};
         this.options = {};
         Object.keys(defaultOptions).forEach(function(key) {
@@ -29,12 +29,12 @@ var CSVParser = (function(){
             "(\\" + this.options.fieldSeparator + "|\\r?\\n|\\r|^)" +
 
             // Quoted fields.
-            "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+            "(?:" + this.options.textIdentifier + "([^" + this.options.textIdentifier + "]*(?:" + this.options.textIdentifier + this.options.textIdentifier + "[^" + this.options.textIdentifier + "]*)*)" + this.options.textIdentifier + "|" +
 
             // Standard fields.
-            "([^\"\\" + this.options.fieldSeparator + "\\r\\n]*))");
+            "([^" + this.options.textIdentifier + "\\" + this.options.fieldSeparator + "\\r\\n]*))");
             var objPattern = new RegExp(regexString, "gi");
-            var doubleQuotePattern = new RegExp( "\"\"", "g" );
+            var doubleQuotePattern = new RegExp(this.options.textIdentifier + this.options.textIdentifier, "g" );
 
         var fields = [];
         var arrMatches = null;
@@ -49,7 +49,7 @@ var CSVParser = (function(){
             }
 
             if (arrMatches[ 2 ]){
-                strMatchedValue = arrMatches[ 2 ].replace(doubleQuotePattern, "\"");
+                strMatchedValue = arrMatches[ 2 ].replace(doubleQuotePattern, this.options.textIdentifier);
             } else {
                 strMatchedValue = arrMatches[ 3 ];
             }

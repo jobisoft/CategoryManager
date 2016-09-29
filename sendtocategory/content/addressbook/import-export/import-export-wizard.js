@@ -9,8 +9,6 @@ loader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcf.js");
 /* TODO 
     - allow csv comment on import?
     - import confirmation screen
-    - fix csv parser to allow different textseperator on import
-    - respect all import options (, textsep, ,  )
     - actual import
 */
 
@@ -57,11 +55,11 @@ jbCatManWizard.Init = function () {
     jbCatManWizard.csvDelimiter.push(elements[x].value);
   }
 
-  // Get all options from CatManWizardImportCsvTextsep Popup.
-  elements = document.getElementById('CatManWizardImportCsvTextsep').children[0].children;
-  jbCatManWizard.csvTextsep = [];
+  // Get all options from CatManWizardImportCsvTextIdentifier Popup.
+  elements = document.getElementById('CatManWizardImportCsvTextIdentifier').children[0].children;
+  jbCatManWizard.csvTextIdentifier = [];
   for (let x=0; x<elements.length ;x++) {
-    jbCatManWizard.csvTextsep.push(elements[x].value);
+    jbCatManWizard.csvTextIdentifier.push(elements[x].value);
   }
   
   // Get all options from CatManWizardImportCsvCharset Popup.
@@ -215,16 +213,16 @@ jbCatManWizard.ProgressBefore_Import_CSV = function (dialog, step = 0) {
       break;
     
     case 3:
-      //guess textsep
+      //guess TextIdentifier
       {
         let guess = 0;
         let count = 0;
-        for (let x=0; x<jbCatManWizard.csvTextsep.length ;x++) {
-          let c = jbCatManWizard.fileContent.split(jbCatManWizard.csvTextsep[x]).length;
+        for (let x=0; x<jbCatManWizard.csvTextIdentifier.length ;x++) {
+          let c = jbCatManWizard.fileContent.split(jbCatManWizard.csvTextIdentifier[x]).length;
           if (c>count) {count = c; guess= x; } 
         }
         //set xul field to guess
-        document.getElementById('CatManWizardImportCsvTextsep').selectedIndex = guess;
+        document.getElementById('CatManWizardImportCsvTextIdentifier').selectedIndex = guess;
       }
       break;
 
@@ -257,7 +255,7 @@ jbCatManWizard.ProgressBefore_Import_Mapping_CSV = function (dialog, step = 0) {
 
     case 2:
       //parse file with selected options
-      jbCatManWizard.csv = new CSVParser(jbCatManWizard.fileContent, {fieldSeparator : jbCatManWizard.csvDelimiter[document.getElementById('CatManWizardImportCsvDelimiter').selectedIndex], strict : true,  ignoreEmpty: true});
+      jbCatManWizard.csv = new CSVParser(jbCatManWizard.fileContent, {textIdentifier : jbCatManWizard.csvTextIdentifier[document.getElementById('CatManWizardImportCsvTextIdentifier').selectedIndex], fieldSeparator : jbCatManWizard.csvDelimiter[document.getElementById('CatManWizardImportCsvDelimiter').selectedIndex], strict : true,  ignoreEmpty: true});
       try {jbCatManWizard.csv.parse();} catch (e) {alert (document.getElementById('sendtocategory.wizard.import.error.csv').value); dialog.done(false);}
     break;
 
@@ -413,7 +411,7 @@ jbCatManWizard.ProgressBefore_Export_CSV = function (dialog, step = 0) {
 jbCatManWizard.ProgressAfter_Export_CSV = function (dialog, step = 0) {
   //do export
   let delim = document.getElementById("CatManWizardExportCsvDelimiter").value;
-  let textsep = document.getElementById("CatManWizardExportCsvTextsep").value;
+  let textident = document.getElementById("CatManWizardExportCsvTextIdentifier").value;
   let linebreak = document.getElementById("CatManWizardExportCsvLinebreak").value.replace("LF","\n").replace("CR","\r");
   let charset = document.getElementById("CatManWizardExportCsvCharset").value;
   
@@ -441,7 +439,7 @@ jbCatManWizard.ProgressAfter_Export_CSV = function (dialog, step = 0) {
       //export property if checked or if a custom export value for that property has been defined
       if (c || jbCatManWizard.props4export[v]) {
         jbCatManWizard.props2export.push(v);
-        header.push(jbCatManWizard.csvEscape(v, delim, textsep));
+        header.push(jbCatManWizard.csvEscape(v, delim, textident));
       }
     }
 
@@ -463,7 +461,7 @@ jbCatManWizard.ProgressAfter_Export_CSV = function (dialog, step = 0) {
       if (jbCatManWizard.props4export[jbCatManWizard.props2export[h]]) {
         field = jbCatManWizard.props4export[jbCatManWizard.props2export[h]];
       }
-      data.push(jbCatManWizard.csvEscape(field, delim, textsep));
+      data.push(jbCatManWizard.csvEscape(field, delim, textident));
     }
     jbCatManWizard.appendFile(data.join(delim)+linebreak, charset);
     dialog.window.setTimeout(function() { jbCatManWizard.ProgressAfter_Export_CSV(dialog, step); }, 20);
@@ -683,11 +681,11 @@ jbCatManWizard.togglecheck = function (element, pos) {
 
 
 
-jbCatManWizard.csvEscape = function (value, delim, textsep) {
-  //a textsep is replaced by double textseps - do we need to put a textsep around everything in that case as well? YES!
+jbCatManWizard.csvEscape = function (value, delim, textident) {
+  //a TextIdentifier is replaced by double TextIdentifiers - do we need to put a TextIdentifier around everything in that case as well? YES!
   let newvalue = value;
-  if (newvalue.indexOf(textsep) != -1) newvalue = newvalue.split(textsep).join(textsep+textsep);
-  if (newvalue.indexOf(delim) != -1 || newvalue.indexOf("\r") != -1 || newvalue.indexOf("\n") != -1 || newvalue.length != value.length) newvalue = textsep + newvalue + textsep;
+  if (newvalue.indexOf(textident) != -1) newvalue = newvalue.split(textident).join(textident+textident);
+  if (newvalue.indexOf(delim) != -1 || newvalue.indexOf("\r") != -1 || newvalue.indexOf("\n") != -1 || newvalue.length != value.length) newvalue = textident + newvalue + textident;
   
   return newvalue; 
 }

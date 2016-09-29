@@ -18,7 +18,7 @@
 <!ENTITY sendtocategory.wizard.import.options.csv.desc "In der folgenden Übersicht können Eigenschaften der zu importierenden CSV Datei angegeben werden.">
 <!ENTITY sendtocategory.wizard.import.options.csv.delimiter "Feldtrennzeichen">
 <!ENTITY sendtocategory.wizard.import.options.csv.delimiter.tab "Tabulator">
-<!ENTITY sendtocategory.wizard.import.options.csv.textsep "Textbegrenzungszeichen">
+<!ENTITY sendtocategory.wizard.import.options.csv.textident "Textbegrenzungszeichen">
 <!ENTITY sendtocategory.wizard.import.options.csv.linebreak "Zeilenumbruch">
 <!ENTITY sendtocategory.wizard.import.options.csv.charset "Zeichensatz">
 <!ENTITY sendtocategory.wizard.import.mapping.csv.title "Weitere Einstellungen für den Import einer CSV Datei">
