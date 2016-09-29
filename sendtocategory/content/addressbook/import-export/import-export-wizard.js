@@ -7,8 +7,9 @@ loader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcard.js");
 loader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcf.js");
 
 /* TODO 
-    - import confirmation screen
-    - actual import
+	- add imported contacts to "import_on_<timestamp>" category
+	- actual import
+	- header in dtd
 */
 
 
@@ -732,44 +733,27 @@ jbCatManWizard.importControlView = {
         let newListEntry = document.createElementNS(XUL_NS, "treecol");
         newListEntry.setAttribute("id", "CatManimportControlViewCol_" + i); //this will store the index of the actual field
         newListEntry.setAttribute("label", importMap[i]);
-        newListEntry.setAttribute("fixed", "false");
         newListEntry.setAttribute("width", "150");
+        newListEntry.setAttribute("style", "font-weight:bold");
         document.getElementById(id).children[0].appendChild(newListEntry);
       }
     }
     document.getElementById(id).view = jbCatManWizard.importControlView;
   },
   
-  get rowCount()                     { return this.data.length; },
-  setTree: function(treeBox)         { this.treeBox = treeBox; },
-  getCellText: function(idx, column) { return this.data[idx][column.id.replace("CatManimportControlViewCol_","")]; },
-  isContainer: function(idx)         { return false; },
-  isContainerOpen: function(idx)     { return false; },
-  isContainerEmpty: function(idx)    { return false; },
-  isSeparator: function(idx)         { return false; },
-  isSorted: function()               { return false; },
-  isEditable: function(idx, column)  { return false; },
-
-  getParentIndex: function(idx) {
-    if (this.isContainer(idx)) return -1;
-    for (var t = idx - 1; t >= 0 ; t--) {
-      if (this.isContainer(t)) return t;
-    }
-  },
-  getLevel: function(idx) {
-    if (this.isContainer(idx)) return 0;
-    return 1;
-  },
-  hasNextSibling: function(idx, after) {
-    var thisLevel = this.getLevel(idx);
-    for (var t = after + 1; t < this.data.length; t++) {
-      var nextLevel = this.getLevel(t);
-      if (nextLevel == thisLevel) return true;
-      if (nextLevel < thisLevel) break;
-    }
-    return false;
-  },
-  toggleOpenState: function(idx) { return; },
+  get rowCount()                       { return this.data.length; },
+  setTree: function(treeBox)           { this.treeBox = treeBox; },
+  getCellText: function(idx, column)   { return this.data[idx][column.id.replace("CatManimportControlViewCol_","")]; },
+  isContainer: function(idx)           { return false; },
+  isContainerOpen: function(idx)       { return false; },
+  isContainerEmpty: function(idx)      { return false; },
+  isSeparator: function(idx)           { return false; },
+  isSorted: function()                 { return false; },
+  isEditable: function(idx, column)    { return false; },
+  getParentIndex: function(idx)        { return false; },
+  getLevel: function(idx)              { return false; },
+  hasNextSibling: function(idx, after) { return false; },
+  toggleOpenState: function(idx)       { return false; },
 
   getImageSrc: function(idx, column) {},
   getProgressMode : function(idx ,column) {},
