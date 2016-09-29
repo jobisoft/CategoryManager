@@ -246,19 +246,6 @@
         </richlistitem>
 
         <richlistitem>
-            <listcell style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.linebreak;"/></listcell>
-            <listcell flex="1">
-              <menulist flex="1" id="CatManWizardExportCsvLinebreak">
-                <menupopup>
-                  <menuitem label="Standard (CR+LF)" value="CRLF"/>
-                  <menuitem label="Linux (LF)" value="LF"/>
-                  <menuitem label="Other (CR)" value="CR"/>
-                </menupopup>
-              </menulist>
-            </listcell>
-        </richlistitem>
-
-        <richlistitem>
             <listcell style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.charset;"/></listcell>
             <listcell flex="1">
               <menulist flex="1" id="CatManWizardExportCsvCharset">
@@ -266,6 +253,19 @@
                   <menuitem label="UTF-8" value="UTF-8"/>
                   <menuitem label="Windows-1252 (ANSI)" value="WINDOWS-1252"/>
                   <menuitem label="ISO-8859-1 (Latin1)" value="ISO-8859-1"/>
+                </menupopup>
+              </menulist>
+            </listcell>
+        </richlistitem>
+
+        <richlistitem>
+            <listcell style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.linebreak;"/></listcell>
+            <listcell flex="1">
+              <menulist flex="1" id="CatManWizardExportCsvLinebreak">
+                <menupopup>
+                  <menuitem label="Standard (CR+LF)" value="CRLF"/>
+                  <menuitem label="Linux (LF)" value="LF"/>
+                  <menuitem label="Other (CR)" value="CR"/>
                 </menupopup>
               </menulist>
             </listcell>
