@@ -53,17 +53,23 @@ jbCatManWizard.Init = function () {
   // Get all options from CatManWizardImportCsvDelimiter Popup.
   elements = document.getElementById('CatManWizardImportCsvDelimiter').children[0].children;
   jbCatManWizard.csvDelimiter = [];
-  for(let x=0; x<elements.length ;x++){
+  for (let x=0; x<elements.length ;x++) {
     jbCatManWizard.csvDelimiter.push(elements[x].value);
   }
 
   // Get all options from CatManWizardImportCsvTextsep Popup.
   elements = document.getElementById('CatManWizardImportCsvTextsep').children[0].children;
   jbCatManWizard.csvTextsep = [];
-  for(let x=0; x<elements.length ;x++){
+  for (let x=0; x<elements.length ;x++) {
     jbCatManWizard.csvTextsep.push(elements[x].value);
   }
   
+  // Get all options from CatManWizardImportCsvCharset Popup.
+  elements = document.getElementById('CatManWizardImportCsvCharset').children[0].children;
+  jbCatManWizard.csvCharset = [];
+  for (let x=0; x<elements.length ;x++) {
+    jbCatManWizard.csvCharset.push(elements[x].value);
+  }
 }
 
 
@@ -83,7 +89,7 @@ jbCatManWizard.onpageadvanced = function (curPage) {
   // it looks for a function jbCatManWizard.SilentAfter_<currentPage>
   let type = "SilentAfter_" + curPage.pageid.replace("CatManWizard","");
   let typeFunction = this[type]; 
-  if(typeof typeFunction === 'function') {
+  if (typeof typeFunction === 'function') {
       this.advance = typeFunction();
       if (!this.advance) return false;
   }
@@ -92,7 +98,7 @@ jbCatManWizard.onpageadvanced = function (curPage) {
   // it looks for a function jbCatManWizard.ProgressAfter_<currentPage>
   type = "ProgressAfter_" + curPage.pageid.replace("CatManWizard","");
   typeFunction = this[type]; 
-  if(typeof typeFunction === 'function') {
+  if (typeof typeFunction === 'function') {
       this.advance = true;
       this.more = true;
       window.openDialog("chrome://sendtocategory/content/addressbook/import-export/progress.xul", "progress-window", "modal,dialog,centerscreen,chrome,resizable=no,width=300, height=20", type);
@@ -131,7 +137,7 @@ jbCatManWizard.onpageadvanced = function (curPage) {
   // it looks for a function jbCatManWizard.SilentBefore_<nextPage>
   type = "SilentBefore_" + curPage.next.replace("CatManWizard","");
   typeFunction = this[type]; 
-  if(typeof typeFunction === 'function') {
+  if (typeof typeFunction === 'function') {
       this.advance = typeFunction();
       if (!this.advance) return false;
   }
@@ -140,7 +146,7 @@ jbCatManWizard.onpageadvanced = function (curPage) {
   // it looks for a function jbCatManWizard.ProgressBefore_<nextPage>
   type = "ProgressBefore_" + curPage.next.replace("CatManWizard","");
   typeFunction = this[type]; 
-  if(typeof typeFunction === 'function') {
+  if (typeof typeFunction === 'function') {
       this.advance = true;
       this.more = true;
       window.openDialog("chrome://sendtocategory/content/addressbook/import-export/progress.xul", "progress-window", "modal,dialog,centerscreen,chrome,resizable=no,width=300, height=20", type);
@@ -177,67 +183,85 @@ jbCatManWizard.onpageadvanced = function (curPage) {
 
 jbCatManWizard.ProgressBefore_Import_CSV = function (dialog, step = 0) {
   step = step + 1;
-  dialog.setProgressBar(step*50);
-
+  
   switch (step) {
     case 1:
-      //read CSV file 
-      jbCatManWizard.fileContent = jbCatManWizard.readFile(jbCatManWizard.fileObj, document.getElementById("CatManWizardImportCsvCharset").value);
+      //read CSV file with guessed charset - use the first one, that does not return an empty string
+      {
+        let guess = 0;
+        let count = 0;
+        for (let x=0; x<jbCatManWizard.csvCharset.length && count == 0; x++) {
+          jbCatManWizard.fileContent = jbCatManWizard.readFile(jbCatManWizard.fileObj, jbCatManWizard.csvCharset[x]);
+          count = jbCatManWizard.fileContent.trim().length;
+          guess = x;
+        }
+        //set xul field to guess
+        document.getElementById('CatManWizardImportCsvCharset').selectedIndex = guess;
+      }
     break;
     
     case 2:
-      //scan CSV file to guess import options
-      if (jbCatManWizard.fileContent.trim().length > 0) {
-        //guess delim
+      //guess delim
+      {
         let guess = 0;
         let count = 0;
-        for(let x=0; x<jbCatManWizard.csvDelimiter.length ;x++){
+        for (let x=0; x<jbCatManWizard.csvDelimiter.length ;x++) {
           let c = jbCatManWizard.fileContent.split(jbCatManWizard.csvDelimiter[x]).length;
           if (c>count) {count = c; guess= x; } 
         }
         //set xul field to guess
         document.getElementById('CatManWizardImportCsvDelimiter').selectedIndex = guess;
-        
-        //guess textsep
-        guess = 0;
-        count = 0;
-        for(let x=0; x<jbCatManWizard.csvTextsep.length ;x++){
+      }
+      break;
+    
+    case 3:
+      //guess textsep
+      {
+        let guess = 0;
+        let count = 0;
+        for (let x=0; x<jbCatManWizard.csvTextsep.length ;x++) {
           let c = jbCatManWizard.fileContent.split(jbCatManWizard.csvTextsep[x]).length;
           if (c>count) {count = c; guess= x; } 
         }
         //set xul field to guess
         document.getElementById('CatManWizardImportCsvTextsep').selectedIndex = guess;
-        
-        
-      } else {
+      }
+      break;
+
+    case 4:
+      //done
+      dialog.done(true);
+    break;
+  }
+
+  if (jbCatManWizard.more) {
+      dialog.setProgressBar((step*100)/4);
+      dialog.window.setTimeout(function() { jbCatManWizard.ProgressBefore_Import_CSV(dialog, step); }, 100);
+  }
+}
+
+
+/* extract cvs fields and prepare XUL list */
+jbCatManWizard.ProgressBefore_Import_Mapping_CSV = function (dialog, step = 0) {
+  step = step + 1;
+
+  switch (step) {
+    case 1:
+      //re-read file with selected encoding
+      jbCatManWizard.fileContent = jbCatManWizard.readFile(jbCatManWizard.fileObj, document.getElementById("CatManWizardImportCsvCharset").value);
+      if (jbCatManWizard.fileContent.trim().length == 0) {
         alert(document.getElementById('sendtocategory.wizard.import.error.empty').value);
         dialog.done(false);
       }
     break;
 
-    case 3:
-      //done
-      dialog.done(true);
-    break;
-  }
-  if (jbCatManWizard.more) dialog.window.setTimeout(function() { jbCatManWizard.ProgressBefore_Import_CSV(dialog, step); }, 100);
-}
-
-jbCatManWizard.ProgressBefore_Import_Mapping_CSV = function (dialog, step = 0) {
-  //extract cvs fields and prepare list
-  step = step + 1;
-  dialog.setProgressBar(step*33);
-  
-  switch (step) {
-    case 1:
-      //re-read file to use selected encoding
-      jbCatManWizard.fileContent = jbCatManWizard.readFile(jbCatManWizard.fileObj, document.getElementById("CatManWizardImportCsvCharset").value);
+    case 2:
       //parse file with selected options
       jbCatManWizard.csv = new CSVParser(jbCatManWizard.fileContent, {fieldSeparator : jbCatManWizard.csvDelimiter[document.getElementById('CatManWizardImportCsvDelimiter').selectedIndex], strict : true,  ignoreEmpty: true});
       try {jbCatManWizard.csv.parse();} catch (e) {alert (document.getElementById('sendtocategory.wizard.import.error.csv').value); dialog.done(false);}
     break;
 
-    case 2:
+    case 3:
       // Get  standard thunderbird fields defined in XUL  - https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Reference/nsIAbCard_(Tb3)
       jbCatManWizard.standardFields = [];
       for (let c=0; c<document.getElementById('CatManImportDataFieldListTemplate').childNodes[1].childNodes[0].itemCount; c++)
@@ -247,52 +271,62 @@ jbCatManWizard.ProgressBefore_Import_Mapping_CSV = function (dialog, step = 0) {
       }
     break;
       
-    case 3:
+    case 4:
       //extract all data fields from import file
       jbCatManWizard.datafields = jbCatManWizard.csv.rows[0];
 
       // clear list
-      let mappingList = document.getElementById("CatManWizardImport_Mapping_CSV");
-      for(var i=mappingList.getRowCount() -1; i>=0; i--){
-        mappingList.removeItemAt(i);
-      }
-      
-      for (let x=0; x<jbCatManWizard.datafields.length; x++) {
-        //copy from template
-        let newListEntry = document.getElementById("CatManImportDataFieldListTemplate").cloneNode(true);
-        newListEntry.removeAttribute("id");
-        newListEntry.removeAttribute("current");
-        newListEntry.removeAttribute("selected");
-
-        //append selected field, if not in standardFields
-        let itemIndex = jbCatManWizard.standardFields.indexOf(jbCatManWizard.datafields[x]);
-        if (itemIndex == -1)
-        {
-          let menuItem = document.createElement("menuitem");
-          menuItem.setAttribute("label", jbCatManWizard.datafields[x]);
-          newListEntry.childNodes[1].childNodes[0].childNodes[0].appendChild(menuItem);
-          itemIndex = jbCatManWizard.standardFields.length;
+      {
+        let mappingList = document.getElementById("CatManWizardImport_Mapping_CSV");
+        for (var i=mappingList.getRowCount() -1; i>=0; i--) {
+          mappingList.removeItemAt(i);
         }
-        newListEntry.childNodes[1].childNodes[0].childNodes[0].childNodes[itemIndex].setAttribute("selected", "true");
-        newListEntry.childNodes[1].childNodes[0].childNodes[0].childNodes[itemIndex].setAttribute("style", "font-weight:bold;")
-        newListEntry.childNodes[0].childNodes[0].setAttribute("value",jbCatManWizard.datafields[x]);
-        mappingList.appendChild(newListEntry);
       }
-    break;
+      break;
+
+    case 5:
+      {
+        let mappingList = document.getElementById("CatManWizardImport_Mapping_CSV");
+        for (let x=0; x<jbCatManWizard.datafields.length; x++) {
+          //copy from template
+          let newListEntry = document.getElementById("CatManImportDataFieldListTemplate").cloneNode(true);
+          newListEntry.removeAttribute("id");
+          newListEntry.removeAttribute("current");
+          newListEntry.removeAttribute("selected");
+
+          //append selected field, if not in standardFields
+          let itemIndex = jbCatManWizard.standardFields.indexOf(jbCatManWizard.datafields[x]);
+          if (itemIndex == -1)
+          {
+            let menuItem = document.createElement("menuitem");
+            menuItem.setAttribute("label", jbCatManWizard.datafields[x]);
+            newListEntry.childNodes[1].childNodes[0].childNodes[0].appendChild(menuItem);
+            itemIndex = jbCatManWizard.standardFields.length;
+          }
+          newListEntry.childNodes[1].childNodes[0].childNodes[0].childNodes[itemIndex].setAttribute("selected", "true");
+          newListEntry.childNodes[1].childNodes[0].childNodes[0].childNodes[itemIndex].setAttribute("style", "font-weight:bold;")
+          newListEntry.childNodes[0].childNodes[0].setAttribute("value",jbCatManWizard.datafields[x]);
+          mappingList.appendChild(newListEntry);
+        }
+      }
+      break;
       
-    case 4:
+    case 6:
       //done
       dialog.done(true);
     break;
   }
   
-  if (jbCatManWizard.more) dialog.window.setTimeout(function() { jbCatManWizard.ProgressBefore_Import_Mapping_CSV(dialog, step); }, 100);
+  if (jbCatManWizard.more) {
+    dialog.setProgressBar((step*100)/6);
+    dialog.window.setTimeout(function() { jbCatManWizard.ProgressBefore_Import_Mapping_CSV(dialog, step); }, 100);
+  }
 }
 
 jbCatManWizard.SilentAfter_Import_Mapping_CSV = function () {
   //check user selection of import mapping for forbidden fields
   let mappingList = document.getElementById("CatManWizardImport_Mapping_CSV");
-  for(var i=mappingList.getRowCount() -1; i>=0; i--){
+  for (var i=mappingList.getRowCount() -1; i>=0; i--) {
     let v = mappingList.getItemAtIndex(i).childNodes[1].childNodes[0].label;
     let c = mappingList.getItemAtIndex(i).childNodes[2].childNodes[0].checked;
     if (c && jbCatManWizard.forbiddenFields.indexOf(v) != -1)
@@ -395,7 +429,7 @@ jbCatManWizard.ProgressAfter_Export_CSV = function (dialog, step = 0) {
     jbCatManWizard.props2export = [];
     jbCatManWizard.props4export = {};
     let exportList = document.getElementById("CatManWizardExport_CSV");
-    for(var i=0; i<exportList.getRowCount(); i++){
+    for (var i=0; i<exportList.getRowCount(); i++) {
       let v = exportList.getItemAtIndex(i).childNodes[0].childNodes[0].value;
       let c = exportList.getItemAtIndex(i).childNodes[1].childNodes[0].checked;
 
@@ -515,25 +549,27 @@ jbCatManWizard.replaceCustomStrings = function (element) {
 jbCatManWizard.readFile = function(file, charset) {
   var response = "";
   var converter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"].createInstance(Components.interfaces.nsIScriptableUnicodeConverter);
-  try {
-    converter.charset = charset;
-  } catch(e) {
-    alert("Error converting from charset <" + charset + ">.");
-    return "";
+
+  if (charset) {
+    try {
+      converter.charset = charset;
+    } catch(e) {
+      alert("Error converting from charset <" + charset + ">.");
+      return "";
+    }
   }
   
-  try
-  {
-     if (file.exists() && file.isReadable())
-     {
+  try {
+     if (file.exists() && file.isReadable()) {
         var fstream = Components.classes["@mozilla.org/network/file-input-stream;1"].createInstance(Components.interfaces.nsIFileInputStream);
         var sstream = Components.classes["@mozilla.org/scriptableinputstream;1"].createInstance(Components.interfaces.nsIScriptableInputStream);
         fstream.init(file, -1, 0, 0);
         sstream.init(fstream); 
         var str = sstream.read(4096);
-        while (str.length > 0)
-        {
-           response += converter.ConvertToUnicode(str);
+        while (str.length > 0) {
+           if (charset) response += converter.ConvertToUnicode(str);
+           else response += str;
+          
            str = sstream.read(4096);
         }
         sstream.close();
@@ -547,8 +583,7 @@ jbCatManWizard.readFile = function(file, charset) {
 
 
 jbCatManWizard.initFile = function(file) {
-  try
-  {
+  try {
      jbCatManWizard.stream = Components.classes["@mozilla.org/network/safe-file-output-stream;1"].createInstance(Components.interfaces.nsISafeOutputStream);
      jbCatManWizard.stream.QueryInterface(Components.interfaces.nsIFileOutputStream).init(file, 0x02 | 0x08 | 0x20, 0666, 0); // write, create, truncate, rw-rw-rw-
   } catch(e) {
@@ -571,7 +606,7 @@ jbCatManWizard.appendFile = function(src, charset) {
     return false;
   }
 
-  try{
+  try {
      jbCatManWizard.stream.write(data, data.length);
   } catch(e) {
     alert("Error writing to file.");
@@ -581,8 +616,7 @@ jbCatManWizard.appendFile = function(src, charset) {
 }
 
 jbCatManWizard.closeFile = function() {
-  try
-  {
+  try {
      jbCatManWizard.stream.finish();
   } catch(e) {
     alert("Error closing to file.");
@@ -592,8 +626,7 @@ jbCatManWizard.closeFile = function() {
 }
 
 jbCatManWizard.writeFile = function(file, data) {
-  try
-  {
+  try {
      var stream = Components.classes["@mozilla.org/network/safe-file-output-stream;1"].createInstance(Components.interfaces.nsISafeOutputStream);
      stream.QueryInterface(Components.interfaces.nsIFileOutputStream).init(file, 0x02 | 0x08 | 0x20, 0666, 0); // write, create, truncate, rw-rw-rw-
      stream.write(data, data.length);
@@ -607,7 +640,7 @@ jbCatManWizard.resetThunderbirdProperties = function (listname, defaults) {
   jbCatManWizard.foundThunderbirdProperties = defaults.slice();
   //reset XUL list as well 
   let exportList = document.getElementById(listname);
-  for(var i=exportList.getRowCount() -1; i>=0; i--){
+  for (var i=exportList.getRowCount() -1; i>=0; i--) {
     exportList.removeItemAt(i);
   }
 }
