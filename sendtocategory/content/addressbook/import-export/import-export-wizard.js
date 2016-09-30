@@ -8,7 +8,7 @@ loader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcf.js");
 
 /* TODO 
   - add imported contacts to "import_on_<timestamp>" category
-  - cannot import into empty category
+  - Categories does not get added, if import data contains no Categories field
   - do not show empty fields/cols - HOW DO THEY GET THERE?
   - do not export empty cols?
 */
@@ -34,7 +34,11 @@ jbCatManWizard.Init = function () {
   
   if (jbCatMan.data.selectedCategory != "") {
     //user selected a category
-    jbCatManWizard.exportsize = jbCatMan.data.foundCategories[jbCatMan.data.selectedCategory].length;
+    if (jbCatMan.data.foundCategories[jbCatMan.data.selectedCategory]) jbCatManWizard.exportsize = jbCatMan.data.foundCategories[jbCatMan.data.selectedCategory].length;
+    else {
+      jbCatManWizard.exportsize = 0;
+      document.getElementById('CatManWizardMode').children[1].disabled = true;
+    }
   } else {
     //user selected an entire address book
     document.getElementById('CatManWizardExport_Categories_CSV').hidden = true;
@@ -360,8 +364,10 @@ jbCatManWizard.ProgressAfter_Import_Control_CSV = function (dialog, step = 0) {
       let card = Components.classes["@mozilla.org/addressbook/cardproperty;1"].createInstance(Components.interfaces.nsIAbCard);
       for (var p in jbCatManWizard.importMap) {
         let prop = jbCatManWizard.importMap[p];
-        // substitute the value for the categories field, if found
-        card.setProperty(prop, jbCatManWizard.getFieldValue4Import(data, p));
+        // get field value to import from data (function may manipulate data, used for Categories field)
+        let value = jbCatManWizard.getFieldValue4Import(data, p);
+        //do not add empty properties
+        if (trim(value)  !=  "") card.setProperty(prop, value);
       }
       //add the new card to the book and then call modify, which inits sysnc
       jbCatMan.modifyCard(card);
