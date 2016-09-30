@@ -7,8 +7,6 @@ loader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcard.js");
 loader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcf.js");
 
 /* TODO 
-  - add imported contacts to "import_on_<timestamp>" category
-  - Categories does not get added, if import data contains no Categories field
   - do not show empty fields/cols - HOW DO THEY GET THERE?
   - do not export empty cols?
 */
@@ -31,7 +29,8 @@ jbCatManWizard.Init = function () {
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
   jbCatManWizard.currentAddressBook = abManager.getDirectory(window.opener.GetSelectedDirectory()); //GetSelectedDirectory() returns an URI, but we need the directory itself
   jbCatManWizard.exportsize = jbCatMan.data.abSize;
-  
+  jbCatManWizard.timestamp = (new Date()).toISOString().substring(0, 19);
+    
   if (jbCatMan.data.selectedCategory != "") {
     //user selected a category
     if (jbCatMan.data.foundCategories[jbCatMan.data.selectedCategory]) jbCatManWizard.exportsize = jbCatMan.data.foundCategories[jbCatMan.data.selectedCategory].length;
@@ -331,6 +330,10 @@ jbCatManWizard.SilentAfter_Import_Mapping_CSV = function () {
   //check user selection of import mapping for forbidden fields
   let mappingList = document.getElementById("CatManWizardImport_Mapping_CSV");
   jbCatManWizard.importMap = {};
+    
+  //keep track, if Categories field has been added to the map
+  let foundCategoriesField = false;
+    
   for (var i=mappingList.getRowCount() -1; i>=0; i--) {
     let v = mappingList.getItemAtIndex(i).childNodes[1].childNodes[0].label;
     let c = mappingList.getItemAtIndex(i).childNodes[2].childNodes[0].checked;
@@ -339,10 +342,17 @@ jbCatManWizard.SilentAfter_Import_Mapping_CSV = function () {
       alert(document.getElementById('sendtocategory.wizard.import.error.reserved').value.replace("##fieldname##",v));
       return false;
     }
-    //add fields to header for import - mapout the used fields - HACK: the Categories field cannot be supressed if selected category is present
-    if (c) jbCatManWizard.importMap[i] = v;
-    else if (v == "Categories" && jbCatMan.data.selectedCategory != "") jbCatManWizard.importMap[-1-i] = v; //so we can reconstruct the real i later
+    //add fields to header for import - mapout the used fields
+    if (c) {
+      jbCatManWizard.importMap[i] = v;
+      if (v == "Categories") foundCategoriesField = true;
+    }
   }
+
+  //verify that Categories field is present, even though it might not be in the data
+  //an index of -1 means, there is no data for that field and we have pass it on thy fly - see getFieldValue4Import
+  if (!foundCategoriesField) jbCatManWizard.importMap[-1] = "Categories";
+
   jbCatManWizard.importControlView.init("elementList", jbCatManWizard.csv.rows, jbCatManWizard.importMap);
   return true;
 }
@@ -365,9 +375,9 @@ jbCatManWizard.ProgressAfter_Import_Control_CSV = function (dialog, step = 0) {
       for (var p in jbCatManWizard.importMap) {
         let prop = jbCatManWizard.importMap[p];
         // get field value to import from data (function may manipulate data, used for Categories field)
-        let value = jbCatManWizard.getFieldValue4Import(data, p);
+        let value = jbCatManWizard.getFieldValue4Import(data, p, jbCatManWizard.importMap);
         //do not add empty properties
-        if (trim(value)  !=  "") card.setProperty(prop, value);
+        if (value.trim() !=  "") card.setProperty(prop, value);
       }
       //add the new card to the book and then call modify, which inits sysnc
       jbCatMan.modifyCard(card);
@@ -712,21 +722,28 @@ jbCatManWizard.csvEscape = function (value, delim, textident) {
   return newvalue; 
 }
 
+
+
+jbCatManWizard.addSelectedCategoryToCategories = function(catstring) {
+  let cats = jbCatMan.getCategoriesFromString(catstring);
+  if (cats.indexOf(jbCatMan.data.selectedCategory) == -1 && jbCatMan.data.selectedCategory != "") cats.push(jbCatMan.data.selectedCategory);
+  cats.push("I" + jbCatManWizard.timestamp);
+  return jbCatMan.getStringFromCategories(cats);
+}
+
 /* returns data[p] except for the Categories field, where the currently selected category gets added */
-jbCatManWizard.getFieldValue4Import = function(data, p) {
-  let prop = jbCatManWizard.importMap[p];
-  if (prop == "Categories") {
-    //special treatment for Categories field
-    let cats = [];
-    //a negative index indicates, the user deselected the Categories field (import cats = empty), but we still have to add the currently selected category
-    if (p > -1) cats = data[p].split("\u001A");
-    if (cats.indexOf(jbCatMan.data.selectedCategory) == -1 && jbCatMan.data.selectedCategory != "") cats.push(jbCatMan.data.selectedCategory);
-    return cats.join("\u001A");
+jbCatManWizard.getFieldValue4Import = function(data, p, importMap) {
+  let prop = importMap[p];
+  if (p == -1) {
+    //an index of -1 means, there is no Categories data, and we have to genereate it on the fly
+    return jbCatManWizard.addSelectedCategoryToCategories("");
   } else {
-    //default
+    //data is present, but we still have to manipulate the Categories field
+    if (prop == "Categories") return jbCatManWizard.addSelectedCategoryToCategories(data[p]);
     return data[p];
   }
 }
+
 
 
 /* TreeView based on Example: https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XUL/Tutorial/Tree_View_Details */
@@ -736,12 +753,14 @@ jbCatManWizard.importControlView = {
   selection: null,
   data: null,
   columns: null,
+  map: null,
 
   init: function(id, importData, importMap) {
     const XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 
     this.columns = importData[0].slice();
     this.data = importData.slice();
+    this.map = importMap;
     
     //remove header from data
     this.data.shift();
@@ -755,19 +774,17 @@ jbCatManWizard.importControlView = {
     }
     
     //build column header - but use renamed and/or mapped labels
-    for (let i=0; i<this.columns.length; i++) {
-      let idx = 0;
+    for (let idx=-1; idx<this.columns.length; idx++) {
 
-      if (importMap[i]) idx = i;
-      else if (importMap[-1-i]) idx = -1-i;
-      else continue;
+      if (!this.map[idx]) continue;
 
-      //the negativ index is fake, but this loop sorts it at position "i"
-      //the negative index is used to identify the forced Categories field, even though the user had deselected it - but he also instructed to import all contacts into category XY
+      //the negative index is used to identify "fake" fields, where the original data should not be used or is not pressent,
+      //which is managed by getFieldValue4Import()
+      //an index of -1 represents a fake Categories field
       
       let newListEntry = document.createElementNS(XUL_NS, "treecol");
       newListEntry.setAttribute("id", "CatManimportControlViewCol_" + idx); 
-      newListEntry.setAttribute("label", importMap[idx]);
+      newListEntry.setAttribute("label", this.map[idx]);
       newListEntry.setAttribute("width", "150");
       newListEntry.setAttribute("style", "font-weight:bold");
       document.getElementById(id).children[0].appendChild(newListEntry);
@@ -777,7 +794,7 @@ jbCatManWizard.importControlView = {
   
   get rowCount()                       { return this.data.length; },
   setTree: function(treeBox)           { this.treeBox = treeBox; },
-  getCellText: function(idx, column)   { return jbCatManWizard.getFieldValue4Import(this.data[idx], column.id.replace("CatManimportControlViewCol_","")); },
+  getCellText: function(idx, column)   { return jbCatManWizard.getFieldValue4Import(this.data[idx], column.id.replace("CatManimportControlViewCol_",""), this.map); },
   isContainer: function(idx)           { return false; },
   isContainerOpen: function(idx)       { return false; },
   isContainerEmpty: function(idx)      { return false; },
