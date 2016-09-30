@@ -382,14 +382,32 @@ jbCatMan.getCardFromUID = function (UID, abURI) {
 }
 
 
+jbCatMan.getCategoriesFromString = function(catString) {
+  let catsArray = [];
+  if (catString.trim().length>0) catsArray = catString.split("\u001A").filter(String);
+  return catsArray;
+}
 
+jbCatMan.getStringFromCategories = function(catsArray) {
+  if (catsArray.length == 0) return "";
+  else {
+    let checkedArray = [];
+    for (let i = 0; i < catsArray.length; i++) {
+      if (catsArray[i] && catsArray[i] != "" && checkedArray.indexOf(catsArray[i]) == -1) {
+        checkedArray.push(catsArray[i]);
+      }
+    }
+    return checkedArray.join("\u001A");
+  }
+}
 
 jbCatMan.getCategoriesfromCard = function (card) {
   jbCatMan.debug("Begin with getCategoriesfromCard()",1);
-  let catsArray = [];
+  let catString = "";
   try {
-    catsArray = card.getPropertyAsAString("Categories").split("\u001A");
-  } catch (ex) {}  
+    catString = card.getPropertyAsAString("Categories");
+  } catch (ex) {}
+  let catsArray = jbCatMan.getCategoriesFromString(catString);
   jbCatMan.debug("Done with getCategoriesfromCard()",-1);
   return catsArray;
 }
@@ -418,15 +436,7 @@ jbCatMan.setCategoriesforCard = function (card, catsArray) {
   if (card.isMailList)
     return false;
   
-  let checkedArray = [];
-  for (let i = 0; i < catsArray.length; i++) {
-    if (catsArray[i] && checkedArray.indexOf(catsArray[i]) == -1) {
-      checkedArray.push(catsArray[i]);
-    }
-  }
-  
-  let catsString = "";
-  if (checkedArray.length>0) catsString = checkedArray.join("\u001A");
+  let catsString = jbCatMan.getStringFromCategories(catsArray);
 
   try {
      card.setPropertyAsAString("Categories", catsString);

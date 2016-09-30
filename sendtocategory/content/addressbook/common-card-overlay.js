@@ -35,11 +35,13 @@ jbCatManEditDialog.Init = function () {
   }
 
   jbCatManEditDialog.AllCatsArray = jbCatMan.data.categoryList;
-  jbCatManEditDialog.CatsArray = [];
+  lets catString = "";
   try {
-    jbCatManEditDialog.CatsArray = gEditCard.card.getPropertyAsAString("Categories").split("\u001A");
+    catString = gEditCard.card.getPropertyAsAString("Categories");
   } catch (ex) {}  
-
+  jbCatManEditDialog.CatsArray = jbCatMan.getCategoriesFromString(catString);
+  
+  
   // add the combo boxes for each category
   for (let i = 0; i < jbCatManEditDialog.CatsArray.length; i++) {
     jbCatManEditDialog.AppendCategory(jbCatManEditDialog.CatsArray[i]);
