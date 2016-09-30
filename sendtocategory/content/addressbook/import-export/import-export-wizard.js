@@ -7,7 +7,6 @@ loader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcard.js");
 loader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcf.js");
 
 /* TODO 
-  - do not show empty fields/cols - HOW DO THEY GET THERE?
   - do not export empty cols?
 */
 
@@ -29,7 +28,7 @@ jbCatManWizard.Init = function () {
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
   jbCatManWizard.currentAddressBook = abManager.getDirectory(window.opener.GetSelectedDirectory()); //GetSelectedDirectory() returns an URI, but we need the directory itself
   jbCatManWizard.exportsize = jbCatMan.data.abSize;
-  jbCatManWizard.timestamp = (new Date()).toISOString().substring(0, 19);
+  jbCatManWizard.timestamp = "Import_" + (new Date()).toISOString().substring(0, 19);
     
   if (jbCatMan.data.selectedCategory != "") {
     //user selected a category
@@ -395,16 +394,6 @@ jbCatManWizard.ProgressAfter_Import_Control_CSV = function (dialog, step = 0) {
  * CSV EXPORT FUNCTIONS 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-//find all fields used by selected contacts
-//let user select, whichg fields to export
-//export
-/*    try {
-      dump(step + ": " + card.getPropertyAsAString("FirstName") + "\n");
-    } catch(e) {
-      dump(step + ": Error \n");
-    }*/
-
-
 jbCatManWizard.ProgressBefore_Export_CSV = function (dialog, step = 0) {
   //scan to-be-exported contacts and extract all possible properties for csv header
 
@@ -556,7 +545,8 @@ jbCatManWizard.replaceCustomStrings = function (element) {
   desc = desc.replace("##NUM##", jbCatManWizard.exportsize);
   desc = desc.replace("##BOOK##", jbCatManWizard.currentAddressBook.dirName);
   desc = desc.replace("##CAT##", jbCatMan.data.selectedCategory);
-
+  desc = desc.replace("##TIMECAT##", jbCatManWizard.timestamp);
+  
   //find category substring
   let p1 = desc.indexOf("{{");
   let p2 = desc.indexOf("}}", p1);
@@ -727,7 +717,7 @@ jbCatManWizard.csvEscape = function (value, delim, textident) {
 jbCatManWizard.addSelectedCategoryToCategories = function(catstring) {
   let cats = jbCatMan.getCategoriesFromString(catstring);
   if (cats.indexOf(jbCatMan.data.selectedCategory) == -1 && jbCatMan.data.selectedCategory != "") cats.push(jbCatMan.data.selectedCategory);
-  cats.push("I" + jbCatManWizard.timestamp);
+  cats.push(jbCatManWizard.timestamp);
   return jbCatMan.getStringFromCategories(cats);
 }
 
@@ -774,18 +764,25 @@ jbCatManWizard.importControlView = {
     }
     
     //build column header - but use renamed and/or mapped labels
-    for (let idx=-1; idx<this.columns.length; idx++) {
-
-      if (!this.map[idx]) continue;
+    for (let col=-1; col<this.columns.length; col++) {
 
       //the negative index is used to identify "fake" fields, where the original data should not be used or is not pressent,
       //which is managed by getFieldValue4Import()
       //an index of -1 represents a fake Categories field
+
+      if (!this.map[col]) continue;
+
+      //check, if any contact has a value in that field - if there is none, do not add the col to the view
+      let isEmpty = true;
+      for (let idx = 0;  idx<this.data.length && isEmpty; idx++) {
+        isEmpty = (jbCatManWizard.getFieldValue4Import(this.data[idx], col, this.map) == "");
+      }
+      if (isEmpty) continue;
       
       let newListEntry = document.createElementNS(XUL_NS, "treecol");
-      newListEntry.setAttribute("id", "CatManimportControlViewCol_" + idx); 
-      newListEntry.setAttribute("label", this.map[idx]);
-      newListEntry.setAttribute("width", "150");
+      newListEntry.setAttribute("id", "CatManimportControlViewCol_" + col); 
+      newListEntry.setAttribute("label", this.map[col]);
+      newListEntry.setAttribute("width", "160");
       newListEntry.setAttribute("style", "font-weight:bold");
       document.getElementById(id).children[0].appendChild(newListEntry);
     }

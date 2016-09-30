@@ -5,7 +5,7 @@
 
 <!ENTITY sendtocategory.wizard.mode.title "Willkommen">
 <!ENTITY sendtocategory.wizard.mode.desc "Dieser Wizard wird sie beim Import bzw. Export Ihrer Kontakte unterstützen.">
-<!ENTITY sendtocategory.wizard.mode.import "Importiere Kontakte {{in die Kategorie '##CAT##' }}in das Adressbuch '##BOOK##'.">
+<!ENTITY sendtocategory.wizard.mode.import "Importiere Kontakte {{in die Kategorie '##CAT##' }}in das Adressbuch '##BOOK##'. Alle importierten Kontakte werden zusätzlich zur Kategorie '##TIMECAT##' hinzugefügt.">
 <!ENTITY sendtocategory.wizard.mode.export "Exportiere ##NUM## Kontakte {{der Kategorie '##CAT##' }}aus dem Adressbuch '##BOOK##'.">
 <!ENTITY sendtocategory.wizard.mode.import.selectfile "Datei zum Importieren auswählen">
 <!ENTITY sendtocategory.wizard.mode.export.selectfile "Datei für den Export auswählen">
@@ -31,7 +31,7 @@
 <!ENTITY sendtocategory.wizard.import.mapping.thunderbirdfield "Thunderbird Datenfeld">
 <!ENTITY sendtocategory.wizard.import.mapping.import "importieren">
 
-<!ENTITY sendtocategory.wizard.import.control.desc "Folgende Kontakte und Felder werden importiert:">
+<!ENTITY sendtocategory.wizard.import.control.desc "Folgende Kontakte und Felder werden importiert (leere Spalten werden nicht angezeigt):">
 <!ENTITY sendtocategory.wizard.import.control.title "Import überprüfen">
 
 <!ENTITY sendtocategory.wizard.export.options.csv.title "Einstellungen für den Export einer CSV Datei">
@@ -44,7 +44,7 @@
 <!ENTITY sendtocategory.wizard.export.options.vcf.title "Einstellungen für den Export einer VCF Datei">
 
 <!ENTITY sendtocategory.wizard.import.title "Importvorgang abgeschlossen">
-<!ENTITY sendtocategory.wizard.import.desc "Der Importvorgang ist abgeschlossen, es wurden ##IMPORTNUM## Kontakte in das Adressbuch '##BOOK##' importiert{{ und der Kategorie '##CAT##' hinzugefügt}}.">
+<!ENTITY sendtocategory.wizard.import.desc "Der Importvorgang ist abgeschlossen, es wurden ##IMPORTNUM## Kontakte in das Adressbuch '##BOOK##' importiert{{ und der Kategorie '##CAT##' hinzugefügt}}. Außerdem wurden alle importierten Kontakte zur Kategorie '##TIMECAT##' hinzugefügt.">
 
 <!ENTITY sendtocategory.wizard.export.title "Exportvorgang abgeschlossen">
 <!ENTITY sendtocategory.wizard.export.desc "Der Exportvorgang ist abgeschlossen, es wurden ##EXPORTNUM## Kontakte{{ der Kategorie '##CAT##'}} aus dem Adressbuch '##BOOK##' exportiert.">
