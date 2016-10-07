@@ -48,12 +48,3 @@
 
 <!ENTITY sendtocategory.wizard.export.title "Exportvorgang abgeschlossen">
 <!ENTITY sendtocategory.wizard.export.desc "Der Exportvorgang ist abgeschlossen, es wurden ##EXPORTNUM## Kontakte{{ der Kategorie '##CAT##'}} aus dem Adressbuch '##BOOK##' exportiert.">
-
-
-
-
-<!ENTITY sendtocategory.wizard.VCardProperties.title "Einstellungen für den vCard-Export">
-<!ENTITY sendtocategory.wizard.VCardProperties.desc "Das vCard Dateiformat verwendet für Emailadressen die Einteilung in HOME und WORK. Thunderbird verwendet aber eine primäre und eine alternative Emailadresse. Sie müssen festlegen, wie diese Felder miteinander verknüpft werden sollen.">
-<!ENTITY sendtocategory.wizard.EmailMapping.caption "Bitte wählen Sie die Art der Verknüpfung:">
-<!ENTITY sendtocategory.wizard.EmailMapping.primaryeIsWork "primäre Email = WORK, alternative Email= HOME">
-<!ENTITY sendtocategory.wizard.EmailMapping.primaryeIsHome "primäre Email = HOME, alternative Email= WORK">
