@@ -36,8 +36,8 @@
       &sendtocategory.wizard.mode.desc;
     </description>
       <radiogroup id="CatManWizardMode">
-        <radio value="Import" label="&sendtocategory.wizard.mode.import;" ondblclick="document.getElementById('CatManWizard').advance()" id="CatManWizardModeImport"/>
         <radio value="Export" label="&sendtocategory.wizard.mode.export;"  ondblclick="document.getElementById('CatManWizard').advance()" id="CatManWizardModeExport"/>
+        <radio value="Import" label="&sendtocategory.wizard.mode.import;" ondblclick="document.getElementById('CatManWizard').advance()" id="CatManWizardModeImport"/>
       </radiogroup>
   </wizardpage>
 
