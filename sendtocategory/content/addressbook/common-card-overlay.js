@@ -1,5 +1,5 @@
 
-var jbCatManEditDialog = {}
+var jbCatManEditDialog = {};
 jbCatManEditDialog.needToScan = false;
 
 if (window.opener.jbCatMan) {
