@@ -37,7 +37,7 @@ CONCEPT CHANGES
  - groupDavVersion still needs to be set to -1, to indicate changes?
 
 
-TODO 2.04
+TODO 
  - rename and delete global category should be possible
  - should categories defined in book1 be available in dropdown/popup in book2 ???
  - bring back SCSearchCriteriaButtonMenu
