@@ -37,14 +37,11 @@ CONCEPT CHANGES
  - groupDavVersion still needs to be set to -1, to indicate changes?
 
 
-TODO 2.02
+TODO 2.04
  - rename and delete global category should be possible
  - should categories defined in book1 be available in dropdown/popup in book2 ???
  - bring back SCSearchCriteriaButtonMenu
-
-TODO 2.xx
-- import / export
-- store/restore last addressbook used in messenger as well
+ - store/restore last addressbook used in messenger as well
 */
 
 
@@ -241,7 +238,7 @@ jbCatMan.onImportExport = function () {
 jbCatMan.onHelpButton = function () {
   jbCatMan.dump("Begin with onHelpButton()",1);
   let ioservice = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
-  let uriToOpen = ioservice.newURI("https://github.com/jobisoft/CategoryManager/wiki/CategoryManager-2.02-Release-Notes", null, null);
+  let uriToOpen = ioservice.newURI("https://github.com/jobisoft/CategoryManager/wiki/CategoryManager-2.03-Release-Notes", null, null);
   let extps = Components.classes["@mozilla.org/uriloader/external-protocol-service;1"].getService(Components.interfaces.nsIExternalProtocolService);
   extps.loadURI(uriToOpen, null);
   jbCatMan.dump("Done with onHelpButton()",-1);
