@@ -35,7 +35,7 @@ jbCatManEditDialog.Init = function () {
   }
 
   jbCatManEditDialog.AllCatsArray = jbCatMan.data.categoryList;
-  lets catString = "";
+  let catString = "";
   try {
     catString = gEditCard.card.getPropertyAsAString("Categories");
   } catch (ex) {}  
