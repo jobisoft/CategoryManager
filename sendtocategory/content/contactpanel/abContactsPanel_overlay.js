@@ -2,6 +2,40 @@ let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getServ
 loader.loadSubScript("chrome://sendtocategory/content/category_tools.js");
 
 //###################################################
+// overriding a core thunderbird function
+//###################################################
+
+// The function 'GenerateAddressFromCard' is defined at: https://dxr.mozilla.org/comm-central/source/mail/components/addrbook/content/abCommon.js#596 
+// Overiding this function to fix bugs:
+// 1: Also check for secondary email, if primary not present.
+// 2: Do not return anything (not even the name), if no email present, so that addSelectedAddresses (https://dxr.mozilla.org/comm-central/source/mail/components/addrbook/content/abContactsPanel.js#56) does not add contacts without email.
+function GenerateAddressFromCard(card)
+{
+  if (!card)
+    return "";
+
+  var email;
+
+  if (card.isMailList)
+  {
+    var directory = GetDirectoryFromURI(card.mailListURI);
+    email = directory.description || card.displayName;
+  } else {
+    email = card.primaryEmail 
+    if (email == "") try {email = card.getPropertyAsAString("SecondEmail");} catch (ex) {}
+  }
+
+  if (email) {
+    return MailServices.headerParser.makeMimeAddress(card.displayName, email);
+  } else {
+    return ""
+  }
+}
+
+
+
+
+//###################################################
 //adding additional functions to the local jbCatMan Object
 //###################################################
 
