@@ -3,8 +3,8 @@ var jbCatManWizard = {}
 
 let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
 loader.loadSubScript("chrome://sendtocategory/content/parser/csv/csv.js");
-loader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcard.js");
-loader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcf.js");
+//loader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcard.js");
+//loader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcf.js");
 
 /* TODO 
   - do not export empty cols?
