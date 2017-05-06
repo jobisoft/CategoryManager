@@ -45,8 +45,8 @@
     
     <vbox id="dirTreeBox">
 
-        <splitter id="CatManSplitter" collapse="after" persist="state"/> 
-        <vbox id="CatManBox" flex="2" >
+        <splitter id="CatManSplitter" collapse="after" resizeafter="closest" persist="state"/> 
+        <vbox id="CatManBox" persist="height top">
                     <label value="&sendtocategory.foundcategories.label;" style="padding:1ex 0" />
                     <listbox 
                     id="CatManCategoriesList"
