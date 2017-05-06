@@ -51,7 +51,8 @@ jbCatMan.contactPanelCategoryMenuInit = function () {
   //contactPanelCategoryMenuInit is called onSelect, which is triggered once without a book selected
   let currentlySelectedAddressbook = document.getElementById('addressbookList').value;
   if (currentlySelectedAddressbook != "") {
-    jbCatMan.scanCategories(GetSelectedDirectory());
+    
+    jbCatMan.scanCategories(GetSelectedDirectory(), true); //override global addressbook disable
 
     let menulist = document.getElementById("CatManCategoryFilterList");
     menulist.selectedItem = null;
