@@ -47,7 +47,7 @@
 <!ENTITY sendtocategory.pref.generaltab.toaddr.desc3 "Bleibt dieses Feld leer, wird dem Betreff der Email der Name des Verteilers (in eckigen Klammern) vorangestellt, um die E-Mail leichter als Verteiler-E-Mail zu identifizieren.">
 
 <!ENTITY sendtocategory.pref.addressbooktab.label "Adressbuch">
-<!ENTITY sendtocategory.disableglobalbook.desc "Da das globale Adressbuch nicht mit dem SOGo-Connector kompatibel ist, wurde es vom Category Manager deaktiviert (kann in den Einstellungen des Category Managers geändert werden).">
+<!ENTITY sendtocategory.disableglobalbook.desc "Das globale Adressbuch es nicht mit dem SOGo-Connector kompatibel, daher wurde die Bearbeitung von Kontakten durch den Category Manager deaktiviert (kann in den Einstellungen des Category Managers geändert werden).">
 <!ENTITY sendtocategory.pref.addressbooktab.disableglobalbook.label "Globales Adressbuch deaktivieren (nur wenn der SOGo Connector installiert ist)">
 <!ENTITY sendtocategory.pref.addressbooktab.disableglobalbook.desc "Mit TB38 wurde ein globales Addressbuch eingeführt, welches alle vorhandenen Adressbücher zusammenführt. Dieses Adressbuch ist jedoch nicht mit dem SOGo-Connector kompatibel: Werden Kontakte geändert, während dieses Buch aktiviert ist, werden die Änderungen nicht (nie!) zum hinterlegten CardDAV-Server übertragen. Es wird daher empfohlen, dieses Adressbuch zu deaktivieren.">
 <!ENTITY sendtocategory.pref.addressbooktab.rememberlastbook.label "Zuletzt benutztes Addressbuch merken">

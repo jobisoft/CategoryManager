@@ -47,7 +47,7 @@
 <!ENTITY sendtocategory.pref.generaltab.toaddr.label "Adresse Facultative(visible par tout le monde, le nom affiché sera le nom de la liste)">
 
 <!ENTITY sendtocategory.pref.addressbooktab.label "Addressbook (missing FR translation)">
-<!ENTITY sendtocategory.disableglobalbook.desc "Global address book has been disabled in the settings of the Category Manager due to incompatibility with the SOGo-connector.">
+<!ENTITY sendtocategory.disableglobalbook.desc "Modifying the global address book has been disabled in the settings of the Category Manager due to incompatibility with the SOGo-connector.">
 <!ENTITY sendtocategory.pref.addressbooktab.disableglobalbook.label "Deactivate global addressbook (only if SOGo connector is installed)">
 <!ENTITY sendtocategory.pref.addressbooktab.disableglobalbook.desc "Since TB38 the thunderbird addressbook list includes a global addressbook, which contains all contacts of all available addressbooks. This global addressbook is not compatible with the SOGo-Connector: If contacts are modified while this book is selected, the changes will not (never!) be synchronized with the backend CardDAV server. It is therefore advised to disable the global addressbook.">
 <!ENTITY sendtocategory.pref.addressbooktab.rememberlastbook.label "Remember last used addressbook">

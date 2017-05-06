@@ -52,7 +52,7 @@ jbCatMan.contactPanelCategoryMenuInit = function () {
   let currentlySelectedAddressbook = document.getElementById('addressbookList').value;
   if (currentlySelectedAddressbook != "") {
     
-    jbCatMan.scanCategories(GetSelectedDirectory(), true); //override global addressbook disable
+    jbCatMan.scanCategories(GetSelectedDirectory());
 
     let menulist = document.getElementById("CatManCategoryFilterList");
     menulist.selectedItem = null;
