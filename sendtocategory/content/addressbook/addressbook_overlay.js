@@ -273,7 +273,6 @@ jbCatMan.onSelectAddressbook = function () {
     if (jbCatMan.sogoInstalled && prefs.getBoolPref("disable_global_book") && gDirTree.view.selection.currentIndex == 0 ){
         document.getElementById("abResultsTree").disabled = true;
         document.getElementById("CatManInfoBoxClone").hidden = false;
-        document.getElementById("localResultsOnlyMessage").hidden = true;
         jbCatMan.BackupABonclick = document.getElementById("abResultsTree").getAttribute("onclick");
         jbCatMan.BackupABcontext = document.getElementById("abResultsTree").getAttribute("context");
         document.getElementById("abResultsTree").setAttribute("onclick","");
