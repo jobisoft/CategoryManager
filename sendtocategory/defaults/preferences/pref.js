@@ -1,3 +1,7 @@
+pref("extensions.sendtocategory.seperator", "\u001A");
+pref("extensions.sendtocategory.categoryfield", "Categories");
+pref("extensions.sendtocategory.mffab_mode", false);
+
 pref("extensions.sendtocategory.to_address", "");
 pref("extensions.sendtocategory.last_book", "");
 pref("extensions.sendtocategory.disable_global_book", true);

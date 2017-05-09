@@ -53,6 +53,9 @@
 <!ENTITY sendtocategory.pref.addressbooktab.rememberlastbook.label "Remember last used addressbook">
 <!ENTITY sendtocategory.pref.addressbooktab.rememberlastbook.desc "If the thunderbird addressbook is opened, usually the first found addressbook will be displayed. With this option set, the last used addressbook will be displayed.">
 
+<!ENTITY sendtocategory.pref.optionstab.label "Options">
+<!ENTITY sendtocategory.pref.optionstab.mffabmode.label "MFFAB category mode">
+
 <!ENTITY sendtocategory.bulkedit.note "Allusion">
 <!ENTITY sendtocategory.bulkedit.membersWithoutPrimaryEmail "Cette catégorie contient ##counts## contacts sans une adresse e-mail associée. Les informations de catégorie de ces contacts ne peut pas être édité avec cette boîte de dialogue. Ils ne sont pas représentés dans la liste ci-dessus.">
 

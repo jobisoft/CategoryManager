@@ -344,13 +344,13 @@ jbCatManWizard.SilentAfter_Import_Mapping_CSV = function () {
     //add fields to header for import - mapout the used fields
     if (c) {
       jbCatManWizard.importMap[i] = v;
-      if (v == "Categories") foundCategoriesField = true;
+      if (v == jbCatMan.getCategoryField()) foundCategoriesField = true;
     }
   }
 
   //verify that Categories field is present, even though it might not be in the data
   //an index of -1 means, there is no data for that field and we have pass it on thy fly - see getFieldValue4Import
-  if (!foundCategoriesField) jbCatManWizard.importMap[-1] = "Categories";
+  if (!foundCategoriesField) jbCatManWizard.importMap[-1] = jbCatMan.getCategoryField();
 
   jbCatManWizard.importControlView.init("elementList", jbCatManWizard.csv.rows, jbCatManWizard.importMap);
   return true;
@@ -453,7 +453,7 @@ jbCatManWizard.ProgressAfter_Export_CSV = function (dialog, step = 0) {
       let c = exportList.getItemAtIndex(i).childNodes[1].childNodes[0].checked;
 
       //special treatment for Categories, if unchecked but CatManWizardExport_Categories_CSV is checked, do export Categories, but just the selected one
-      if (v=="Categories" && !c && jbCatMan.data.selectedCategory !="" && document.getElementById("CatManWizardExport_Categories_CSV").checked) {
+      if (v==jbCatMan.getCategoryField() && !c && jbCatMan.data.selectedCategory !="" && document.getElementById("CatManWizardExport_Categories_CSV").checked) {
         jbCatManWizard.props4export[v] = jbCatMan.data.selectedCategory;
       }
       
@@ -729,7 +729,7 @@ jbCatManWizard.getFieldValue4Import = function(data, p, importMap) {
     return jbCatManWizard.addSelectedCategoryToCategories("");
   } else {
     //data is present, but we still have to manipulate the Categories field
-    if (prop == "Categories") return jbCatManWizard.addSelectedCategoryToCategories(data[p]);
+    if (prop == jbCatMan.getCategoryField()) return jbCatManWizard.addSelectedCategoryToCategories(data[p]);
     return data[p];
   }
 }

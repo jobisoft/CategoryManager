@@ -53,6 +53,9 @@
 <!ENTITY sendtocategory.pref.addressbooktab.rememberlastbook.label "Zuletzt benutztes Addressbuch merken">
 <!ENTITY sendtocategory.pref.addressbooktab.rememberlastbook.desc "In der Standardeinstellung öffnet Thunderbird immer das erste Adressbuch in der Liste, wenn das Thunderbird-Adressbuch geöffnet wird. Mit dieser Option wird beim Öffnen das zuletzt benutzte Adressbuch angezeigt.">
 
+<!ENTITY sendtocategory.pref.optionstab.label "Optionen">
+<!ENTITY sendtocategory.pref.optionstab.mffabmode.label "MFFAB Category Modus">
+
 <!ENTITY sendtocategory.bulkedit.note "Hinweis">
 <!ENTITY sendtocategory.bulkedit.membersWithoutPrimaryEmail "Diese Kategorie enthält ##counts## Kontakte, die keine Email-Adresse besitzen. Die Kategoriezugehörigkeit dieser Kontakte kann durch diesen Dialog nicht verändert werden. Sie fehlen in obiger Liste.">
 

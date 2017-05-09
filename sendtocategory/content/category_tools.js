@@ -296,10 +296,12 @@ jbCatMan.updatePeopleSearchInput = function (name) {
 jbCatMan.getCategorySearchString = function(abURI, category) {
     let searchKeys = "";
     // encodeURIComponent does NOT encode brackets "(" and ")" - need to do that by hand
-    searchKeys = searchKeys + "(Categories,bw,"+encodeURIComponent( category + "\u001A" ).replace("(","%28").replace(")","%29") +")";
-    searchKeys = searchKeys + "(Categories,ew,"+encodeURIComponent( "\u001A" + category ).replace("(","%28").replace(")","%29") +")";
-    searchKeys = searchKeys + "(Categories,c,"+encodeURIComponent( "\u001A" + category + "\u001A" ).replace("(","%28").replace(")","%29") +")";
-    searchKeys = searchKeys + "(Categories,=,"+encodeURIComponent( category ).replace("(","%28").replace(")","%29") +")";
+    let sep = jbCatMan.getCategorySeperator();
+    let field = jbCatMan.getCategoryField();
+    searchKeys = searchKeys + "("+field+",bw,"+encodeURIComponent( category + sep ).replace("(","%28").replace(")","%29") +")";
+    searchKeys = searchKeys + "("+field+",ew,"+encodeURIComponent( sep + category ).replace("(","%28").replace(")","%29") +")";
+    searchKeys = searchKeys + "("+field+",c,"+encodeURIComponent( sep + category + sep ).replace("(","%28").replace(")","%29") +")";
+    searchKeys = searchKeys + "("+field+",=,"+encodeURIComponent( category ).replace("(","%28").replace(")","%29") +")";
 
     return abURI + "?" + "(or" + searchKeys + ")";
 }
@@ -350,7 +352,7 @@ jbCatMan.getUIDFromCard = function (card) {
   
   try {
     DbRowID = card.getPropertyAsAString("DbRowID"); //DbRowID is not avail on LDAP directories, but since we cannot modify LDAP directories, CatMan is not working at all on LDAP (isRemote)
-    categories = card.getPropertyAsAString("Categories")
+    categories = card.getPropertyAsAString(jbCatMan.getCategoryField())
   } catch (ex) {}
 
   jbCatMan.dump("Done with getUIDFromCard()",-1);
@@ -382,9 +384,31 @@ jbCatMan.getCardFromUID = function (UID, abURI) {
 }
 
 
+
+jbCatMan.getCategorySeperator = function () {
+    let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+    let sep = prefs.getCharPref("extensions.sendtocategory.seperator");
+
+    if (prefs.getBoolPref("extensions.sendtocategory.mffab_mode")) {
+        try {
+            sep = prefs.getCharPref("extensions.sendtocategory.seperator");
+        } catch (ex) {}
+    }
+
+    return sep;
+}
+
+jbCatMan.getCategoryField = function () {
+    let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+
+    if (prefs.getBoolPref("extensions.sendtocategory.mffab_mode")) return "Category";
+    else return prefs.getCharPref("extensions.sendtocategory.categoryfield");
+}
+
+
 jbCatMan.getCategoriesFromString = function(catString) {
   let catsArray = [];
-  if (catString.trim().length>0) catsArray = catString.split("\u001A").filter(String);
+  if (catString.trim().length>0) catsArray = catString.split(jbCatMan.getCategorySeperator()).filter(String);
   return catsArray;
 }
 
@@ -397,7 +421,7 @@ jbCatMan.getStringFromCategories = function(catsArray) {
         checkedArray.push(catsArray[i]);
       }
     }
-    return checkedArray.join("\u001A");
+    return checkedArray.join(jbCatMan.getCategorySeperator());
   }
 }
 
@@ -405,7 +429,7 @@ jbCatMan.getCategoriesfromCard = function (card) {
   jbCatMan.debug("Begin with getCategoriesfromCard()",1);
   let catString = "";
   try {
-    catString = card.getPropertyAsAString("Categories");
+    catString = card.getPropertyAsAString(jbCatMan.getCategoryField());
   } catch (ex) {}
   let catsArray = jbCatMan.getCategoriesFromString(catString);
   jbCatMan.debug("Done with getCategoriesfromCard()",-1);
@@ -439,7 +463,7 @@ jbCatMan.setCategoriesforCard = function (card, catsArray) {
   let catsString = jbCatMan.getStringFromCategories(catsArray);
 
   try {
-     card.setPropertyAsAString("Categories", catsString);
+     card.setPropertyAsAString(jbCatMan.getCategoryField(), catsString);
   } catch (ex) {
     jbCatMan.dump("Could not set Categories.\n");
     retval = false;

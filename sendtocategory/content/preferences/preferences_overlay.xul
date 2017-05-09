@@ -16,12 +16,14 @@
             <preference id="sendtocategory.to_address" name="extensions.sendtocategory.to_address" type="string" />
             <preference id="sendtocategory.disable_global_book" name="extensions.sendtocategory.disable_global_book" type="bool" />
             <preference id="sendtocategory.remember_last_book" name="extensions.sendtocategory.remember_last_book" type="bool" />
+            <preference id="sendtocategory.mffab_mode" name="extensions.sendtocategory.mffab_mode" type="bool" />
         </preferences>
 
             <tabbox id="CatManPreferencesTabbox" flex="1" >
                 <tabs>
                     <tab id="CatManPreferencesTabCategories" label="&sendtocategory.pref.generaltab.label;"/>
                     <tab id="CatManPreferencesTabAddressbook" label="&sendtocategory.pref.addressbooktab.label;"/>
+                    <tab id="CatManPreferencesTabOptions" label="&sendtocategory.pref.optionstab.label;"/>
                 </tabs>
 
                 <tabpanels flex="1">
@@ -48,6 +50,15 @@
 
                         </vbox>
                     </tabpanel>
+
+                    <tabpanel orient="vertical">
+                        <vbox id="CatManPreferencesBoxOptions">
+
+                            <checkbox preference='sendtocategory.mffab_mode' label="&sendtocategory.pref.optionstab.mffabmode.label;" />
+
+                        </vbox>
+                    </tabpanel>
+
                 </tabpanels>
             </tabbox>
         </prefpane>
