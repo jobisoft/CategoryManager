@@ -391,7 +391,7 @@ jbCatMan.getCategorySeperator = function () {
 
     if (prefs.getBoolPref("extensions.sendtocategory.mffab_mode")) {
         try {
-            sep = prefs.getCharPref("extensions.sendtocategory.seperator");
+            sep = prefs.getCharPref("morecols.category.separator") + " ";
         } catch (ex) {}
     }
 
