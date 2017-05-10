@@ -390,18 +390,21 @@ jbCatMan.getCardFromUID = function (UID, abURI) {
 
 jbCatMan.isMFFABCategoryMode = function () {
     let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-    let sep = "";
 
     //make sure, if MFFAB mode is activated, we can actually get the seperator
-    //fallback to standard mode, if not possible
+    //switch back to standard mode, if not possible
     if (prefs.getBoolPref("extensions.sendtocategory.mffab_mode")) {
+        let sep = "";
         try {
-            sep = prefs.getCharPref("morecols.category.separator") + " ";
+            sep = prefs.getCharPref("morecols.category.separator2") + " ";
         } catch (ex) {}
-    }
+        if (sep != "") return true;
+            
+        //if we are still here, it did not work, switch to default mode
+        prefs.setBoolPref("extensions.sendtocategory.mffab_mode",false); 
+    } 
 
-    if (sep == "") return false;
-    else return true;
+    return false;
 }
 
 jbCatMan.getCategorySeperator = function () {
