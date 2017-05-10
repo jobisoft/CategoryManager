@@ -19,6 +19,9 @@ jbCatMan.jsInclude = function (files, target) {
 
 
 
+jbCatMan.quickdump = function (str) {
+    Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService).logStringMessage("[CatMan] " + str);
+}
 jbCatMan.dump = function (str,lvl) {
   if (jbCatMan.printDumps) {
     //to see dump messages, follow instructions here: https://wiki.mozilla.org/Thunderbird:Debugging_Gloda
@@ -385,24 +388,33 @@ jbCatMan.getCardFromUID = function (UID, abURI) {
 
 
 
-jbCatMan.getCategorySeperator = function () {
+jbCatMan.isMFFABCategoryMode = function () {
     let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-    let sep = prefs.getCharPref("extensions.sendtocategory.seperator");
+    let sep = "";
 
+    //make sure, if MFFAB mode is activated, we can actually get the seperator
+    //fallback to standard mode, if not possible
     if (prefs.getBoolPref("extensions.sendtocategory.mffab_mode")) {
         try {
             sep = prefs.getCharPref("morecols.category.separator") + " ";
         } catch (ex) {}
     }
 
-    return sep;
+    if (sep == "") return false;
+    else return true;
+}
+
+jbCatMan.getCategorySeperator = function () {
+    let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+    //everytime we switch books, this information is re-querried
+    if (jbCatMan.isMFFABCategoryMode()) return prefs.getCharPref("morecols.category.separator") + " ";
+    else return prefs.getCharPref("extensions.sendtocategory.seperator");
 }
 
 jbCatMan.getCategoryField = function () {
-    let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-
-    if (prefs.getBoolPref("extensions.sendtocategory.mffab_mode")) return "Category";
-    else return prefs.getCharPref("extensions.sendtocategory.categoryfield");
+    //everytime we switch books, this information is re-querried
+    if (jbCatMan.isMFFABCategoryMode()) return "Category";
+    else return "Categories";
 }
 
 
