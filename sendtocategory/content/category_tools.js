@@ -396,7 +396,7 @@ jbCatMan.isMFFABCategoryMode = function () {
     if (prefs.getBoolPref("extensions.sendtocategory.mffab_mode")) {
         let sep = "";
         try {
-            sep = prefs.getCharPref("morecols.category.separator2") + " ";
+            sep = prefs.getCharPref("morecols.category.separator") + " ";
         } catch (ex) {}
         if (sep != "") return true;
             
