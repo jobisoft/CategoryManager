@@ -388,24 +388,21 @@ jbCatMan.getCardFromUID = function (UID, abURI) {
 }
 
 
+
+
+//MFFAB integration stuff
 jbCatMan.checkIfMFFABInstalled = function () {
     let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
     let sep = "";
     try {
         sep = prefs.getCharPref("morecols.category.separator");
     } catch (ex) {}
-    if (sep != "") {
-        jbCatMan.quickdump("MFFAB installed.");
-        return true;
-    } else {
-        jbCatMan.quickdump("MFFAB not installed.");
-        return false;
-    }
+    if (sep != "") return true;
+    else return false;
 }
 
 jbCatMan.isMFFABCategoryMode = function () {
     let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-
     //make sure, if MFFAB mode is activated, we can actually get the seperator
     //switch back to standard mode, if not possible
     if (prefs.getBoolPref("extensions.sendtocategory.mffab_mode")) {
@@ -415,7 +412,6 @@ jbCatMan.isMFFABCategoryMode = function () {
         //if we are still here, MFAAB is not installed, switch to default mode
         prefs.setBoolPref("extensions.sendtocategory.mffab_mode",false); 
     } 
-
     return false;
 }
 
@@ -431,6 +427,9 @@ jbCatMan.getCategoryField = function () {
     if (jbCatMan.isMFFABCategoryMode()) return "Category";
     else return "Categories";
 }
+
+
+
 
 
 jbCatMan.getCategoriesFromString = function(catString) {
