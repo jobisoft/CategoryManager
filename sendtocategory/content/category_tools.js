@@ -57,6 +57,7 @@ jbCatMan.init = function () {
   jbCatMan.printDebugDumps = false;
   jbCatMan.printDumpsIndent = " ";
   
+  jbCatMan.isMFFABInstalled = jbCatMan.checkIfMFFABInstalled(); //we only need to do this once
   jbCatMan.printDebugCounts = Array();
   jbCatMan.printDebugCounts[jbCatMan.printDumpsIndent] = 0;
   
@@ -387,6 +388,20 @@ jbCatMan.getCardFromUID = function (UID, abURI) {
 }
 
 
+jbCatMan.checkIfMFFABInstalled = function () {
+    let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+    let sep = "";
+    try {
+        sep = prefs.getCharPref("morecols.category.separator");
+    } catch (ex) {}
+    if (sep != "") {
+        jbCatMan.quickdump("MFFAB installed.");
+        return true;
+    } else {
+        jbCatMan.quickdump("MFFAB not installed.");
+        return false;
+    }
+}
 
 jbCatMan.isMFFABCategoryMode = function () {
     let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
@@ -394,13 +409,10 @@ jbCatMan.isMFFABCategoryMode = function () {
     //make sure, if MFFAB mode is activated, we can actually get the seperator
     //switch back to standard mode, if not possible
     if (prefs.getBoolPref("extensions.sendtocategory.mffab_mode")) {
-        let sep = "";
-        try {
-            sep = prefs.getCharPref("morecols.category.separator") + " ";
-        } catch (ex) {}
-        if (sep != "") return true;
+        //user requested MFFAB mode, is MFFAB installed?
+        if (jbCatMan.isMFFABInstalled) return true;
             
-        //if we are still here, it did not work, switch to default mode
+        //if we are still here, MFAAB is not installed, switch to default mode
         prefs.setBoolPref("extensions.sendtocategory.mffab_mode",false); 
     } 
 
