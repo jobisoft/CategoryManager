@@ -260,7 +260,19 @@ jbCatMan.onToggleDisplay = function (show) {
   jbCatMan.dump("End with onToggleDisplay()",-1);
 }
 
-
+jbCatMan.booksHaveContactsWithProperty = function (abManager, field) {
+    let allAddressBooks = abManager.directories;
+    while (allAddressBooks.hasMoreElements()) {
+        let abook = allAddressBooks.getNext().QueryInterface(Components.interfaces.nsIAbDirectory);
+        if (abook instanceof Components.interfaces.nsIAbDirectory) { // or nsIAbItem or nsIAbCollection
+            let searchstring = abook.URI + "?(or("+field+",!=,))";
+            jbCatMan.quickdump("SEARCH: " + searchstring);
+            let cards = GetDirectoryFromURI(searchstring).childCards;
+            if (cards && cards.hasMoreElements()) return true;
+        }
+    }
+    return false;
+}
 
 jbCatMan.onSelectAddressbook = function () {
   let selectedBook = GetSelectedDirectory();
@@ -321,6 +333,14 @@ jbCatMan.onPeopleSearchClick = function () {
   jbCatMan.dump("Done with onPeopleSearchClick()",-1);
 }
 
+jbCatMan.onSwitchCategoryMode = function (doswitch = true) {
+    let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+    if (doswitch) prefs.setBoolPref("extensions.sendtocategory.mffab_mode",!prefs.getBoolPref("extensions.sendtocategory.mffab_mode"));
+
+    if (jbCatMan.isMFFABCategoryMode()) document.getElementById("CatManContextMenuMFFABSwitch").label = "switch to standard category mode";
+    else document.getElementById("CatManContextMenuMFFABSwitch").label = "switch to MFFAB category mode";
+    jbCatMan.updateCategoryList();
+}
 
 
 jbCatMan.onBulkEdit = function () {
@@ -643,6 +663,21 @@ jbCatMan.initAddressbook = function() {
   var localResultsOnlyMessage = document.getElementById("localResultsOnlyMessage");
   localResultsOnlyMessage.parentNode.insertBefore(CatManInfoBoxClone, localResultsOnlyMessage);
 
+  //show/hide special MFFAB context menu entries
+  document.getElementById("CatManContextMenuMFFABSplitter").hidden = !jbCatMan.isMFFABInstalled;
+  document.getElementById("CatManContextMenuMFFABSwitch").hidden = !jbCatMan.isMFFABInstalled;
+  
+  //if MFFAB is installed and default category mode, check if it might be better to silently switch to MFFAB mode
+  let doswitch = false;
+  if (jbCatMan.isMFFABInstalled && !jbCatMan.isMFFABCategoryMode()) {
+    let hasCategories = jbCatMan.booksHaveContactsWithProperty(abManager, "Categories");
+    let hasCategory = jbCatMan.booksHaveContactsWithProperty(abManager, "Category");
+    if (hatCategory && !hasCategories) doswitch = true;
+  }
+  
+  //onSwitch sets the context menu labels after switching, however if doswitch is false, switching itself is skipped
+  jbCatMan.onSwitchCategoryMode(doswitch);
+  
   jbCatMan.dump("Done with initAddressbook()",-1);
 }
 
