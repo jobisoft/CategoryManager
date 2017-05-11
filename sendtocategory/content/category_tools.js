@@ -405,6 +405,57 @@ jbCatMan.getCardFromUID = function (UID, abURI) {
 
 
 //MFFAB integration stuff
+jbCatMan.convertCategory = function (abURI, category) {
+    //get all cards, which are part of the category we want to convert
+    let searchstring = jbCatMan.getCategorySearchString(abURI, category);
+    let cards = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager).getDirectory(searchstring).childCards;
+
+    while (cards.hasMoreElements()) {
+        let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
+
+        //get both category strings
+        let mffabCatString = ""; try { mffabCatString = card.getPropertyAsAString(jbCatMan.getCategoryField(true)); } catch (ex) {} //use MFFAB field
+        let standardCatString = ""; try { standardCatString = card.getPropertyAsAString(jbCatMan.getCategoryField(false)); } catch (ex) {} //use standard field
+
+        //get both category strings as arrays
+        let mffabCatArray = jbCatMan.getCategoriesFromString(mffabCatString, jbCatMan.getCategorySeperator(true)); //use MFFAB seperator
+        let standardCatArray = jbCatMan.getCategoriesFromString(standardCatString, jbCatMan.getCategorySeperator(false)); //use standard seperator
+            
+        if (jbCatMan.isMFFABCategoryMode()) { //convert from MFFAB to standard
+
+            //add to standard 
+            if (standardCatArray.indexOf(category) == -1) standardCatArray.push(category);
+            //remove from MFFAB
+            let i = mffabCatArray.indexOf(category);
+            while (i != -1) {
+                mffabCatArray.splice(i,1);
+                i = mffabCatArray.indexOf(category);
+            } 
+            
+        } else { //convert from standard to MFFAB
+            
+            //add to MFFAB
+            if (mffabCatArray.indexOf(category) == -1) mffabCatArray.push(category);
+            //remove from standard
+            let i = standardCatArray.indexOf(category);
+            while (i != -1) {
+                standardCatArray.splice(i,1);
+                i = standardCatArray.indexOf(category);
+            } 
+        }
+        
+        //convert array back to strings
+        mffabCatString = jbCatMan.getStringFromCategories(mffabCatArray, jbCatMan.getCategorySeperator(true)); //use MFFAB seperator
+        standardCatString = jbCatMan.getStringFromCategories(standardCatArray, jbCatMan.getCategorySeperator(false)); //use standard seperator
+        
+        //set both category strings
+        card.setPropertyAsAString(jbCatMan.getCategoryField(true), mffabCatString);
+        card.setPropertyAsAString(jbCatMan.getCategoryField(false), standardCatString);
+        jbCatMan.modifyCard(card);
+    }
+}
+
+
 jbCatMan.checkIfMFFABInstalled = function () {
     let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
     let sep = "";
@@ -429,16 +480,16 @@ jbCatMan.isMFFABCategoryMode = function () {
     return false;
 }
 
-jbCatMan.getCategorySeperator = function () {
+jbCatMan.getCategorySeperator = function (mode = jbCatMan.isMFFABCategoryMode()) {
     let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-    //everytime we switch books, this information is re-querried
-    if (jbCatMan.isMFFABCategoryMode()) return prefs.getCharPref("morecols.category.separator") + " ";
+    
+    if (mode) return prefs.getCharPref("morecols.category.separator") + " ";
     else return prefs.getCharPref("extensions.sendtocategory.seperator");
 }
 
-jbCatMan.getCategoryField = function () {
+jbCatMan.getCategoryField = function (mode = jbCatMan.isMFFABCategoryMode()) {
     //everytime we switch books, this information is re-querried
-    if (jbCatMan.isMFFABCategoryMode()) return "Category";
+    if (mode) return "Category";
     else return "Categories";
 }
 
@@ -446,13 +497,13 @@ jbCatMan.getCategoryField = function () {
 
 
 
-jbCatMan.getCategoriesFromString = function(catString) {
+jbCatMan.getCategoriesFromString = function(catString, seperator = jbCatMan.getCategorySeperator()) {
   let catsArray = [];
-  if (catString.trim().length>0) catsArray = catString.split(jbCatMan.getCategorySeperator()).filter(String);
+  if (catString.trim().length>0) catsArray = catString.split(seperator).filter(String);
   return catsArray;
 }
 
-jbCatMan.getStringFromCategories = function(catsArray) {
+jbCatMan.getStringFromCategories = function(catsArray, seperator = jbCatMan.getCategorySeperator()) {
   if (catsArray.length == 0) return "";
   else {
     let checkedArray = [];
@@ -461,7 +512,7 @@ jbCatMan.getStringFromCategories = function(catsArray) {
         checkedArray.push(catsArray[i]);
       }
     }
-    return checkedArray.join(jbCatMan.getCategorySeperator());
+    return checkedArray.join(seperator);
   }
 }
 

@@ -41,6 +41,7 @@
             <menuseparator />
             <menuitem id="CatManContextMenuImportExport" disabled="true" label="&sendtocategory.export.title;" oncommand="jbCatMan.onImportExport()" />
             <menuseparator id="CatManContextMenuMFFABSplitter"/>
+            <menuitem id="CatManContextMenuMFFABConvert" label="" oncommand="jbCatMan.onConvertCategory()" />
             <menuitem id="CatManContextMenuMFFABSwitch" label="" oncommand="jbCatMan.onSwitchCategoryMode()" />
         </menupopup>
     </popupset>

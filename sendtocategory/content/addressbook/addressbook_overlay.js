@@ -177,6 +177,7 @@ jbCatMan.updateButtons = function () {
   document.getElementById("CatManContextMenuRemove").disabled = (jbCatMan.data.selectedCategory == "" || isRemote || isGlobal);
   document.getElementById("CatManContextMenuEdit").disabled = (jbCatMan.data.selectedCategory == "" || isRemote || isGlobal);
   document.getElementById("CatManContextMenuBulk").disabled = (jbCatMan.data.selectedCategory == "" || isRemote || isGlobal);
+  document.getElementById("CatManContextMenuMFFABConvert").disabled = (jbCatMan.data.selectedCategory == "" || isRemote || isGlobal);
 
   document.getElementById("CatManContextMenuSend").disabled = (jbCatMan.data.selectedCategory == "" || isRemote); 
 
@@ -333,14 +334,21 @@ jbCatMan.onPeopleSearchClick = function () {
   jbCatMan.dump("Done with onPeopleSearchClick()",-1);
 }
 
+jbCatMan.onConvertCategory = function () {
+    jbCatMan.convertCategory(GetSelectedDirectory(), jbCatMan.data.selectedCategory);
+    jbCatMan.updateCategoryList();
+}
+
 jbCatMan.onSwitchCategoryMode = function (doswitch = true, refreshlist = true) {
     let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
     if (doswitch) prefs.setBoolPref("extensions.sendtocategory.mffab_mode",!prefs.getBoolPref("extensions.sendtocategory.mffab_mode"));
 
     if (jbCatMan.isMFFABCategoryMode()) {
+        document.getElementById("CatManContextMenuMFFABConvert").label = jbCatMan.getLocalizedMessage("convert_to_standard_category");
         document.getElementById("CatManContextMenuMFFABSwitch").label = jbCatMan.getLocalizedMessage("switch_to_standard_mode");
         document.getElementById("CatManBoxLabel").value = jbCatMan.getLocalizedMessage("found_categories", "(MFFAB) ");
     } else {
+        document.getElementById("CatManContextMenuMFFABConvert").label = jbCatMan.getLocalizedMessage("convert_to_MFFAB_category");
         document.getElementById("CatManContextMenuMFFABSwitch").label = jbCatMan.getLocalizedMessage("switch_to_MFFAB_mode");
         document.getElementById("CatManBoxLabel").value = jbCatMan.getLocalizedMessage("found_categories", "");
     }
@@ -671,6 +679,7 @@ jbCatMan.initAddressbook = function() {
   //show/hide special MFFAB context menu entries
   document.getElementById("CatManContextMenuMFFABSplitter").hidden = !jbCatMan.isMFFABInstalled;
   document.getElementById("CatManContextMenuMFFABSwitch").hidden = !jbCatMan.isMFFABInstalled;
+  document.getElementById("CatManContextMenuMFFABConvert").hidden = !jbCatMan.isMFFABInstalled;
   
   //if MFFAB is installed and default category mode, check if it might be better to silently switch to MFFAB mode
   let doswitch = false;
