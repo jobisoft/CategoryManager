@@ -337,8 +337,13 @@ jbCatMan.onSwitchCategoryMode = function (doswitch = true, refreshlist = true) {
     let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
     if (doswitch) prefs.setBoolPref("extensions.sendtocategory.mffab_mode",!prefs.getBoolPref("extensions.sendtocategory.mffab_mode"));
 
-    if (jbCatMan.isMFFABCategoryMode()) document.getElementById("CatManContextMenuMFFABSwitch").label = "switch to standard category mode";
-    else document.getElementById("CatManContextMenuMFFABSwitch").label = "switch to MFFAB category mode";
+    if (jbCatMan.isMFFABCategoryMode()) {
+        document.getElementById("CatManContextMenuMFFABSwitch").label = jbCatMan.getLocalizedMessage("switch_to_standard_mode");
+        document.getElementById("CatManBoxLabel").value = jbCatMan.getLocalizedMessage("found_categories", "(MFFAB) ");
+    } else {
+        document.getElementById("CatManContextMenuMFFABSwitch").label = jbCatMan.getLocalizedMessage("switch_to_MFFAB_mode");
+        document.getElementById("CatManBoxLabel").value = jbCatMan.getLocalizedMessage("found_categories", "");
+    }
     if (refreshlist && doswitch) jbCatMan.updateCategoryList();
 }
 

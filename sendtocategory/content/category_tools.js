@@ -51,6 +51,20 @@ jbCatMan.debug = function (str,lvl) {
 
 
 
+
+
+jbCatMan.getLocalizedMessage = function (msg, replacement = "") {
+  let bundle = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService).createBundle("chrome://sendtocategory/locale/bundle.strings");
+  let localized = msg;
+  try {
+    localized = bundle.GetStringFromName(msg).replace("####", replacement);
+  } catch (e) {}
+  
+  return localized;
+}
+
+
+
 jbCatMan.init = function () { 
   //enable or disable debug dump messages
   jbCatMan.printDumps = false;

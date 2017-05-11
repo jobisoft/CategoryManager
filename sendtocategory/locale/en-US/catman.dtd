@@ -1,7 +1,6 @@
 ﻿<!ENTITY sendtocategory.ok.button "Ok">
 <!ENTITY sendtocategory.cancel.button "Cancel">
 
-<!ENTITY sendtocategory.foundcategories.label "Found categories:">
 <!ENTITY sendtocategory.category.label "category">
 <!ENTITY sendtocategory.category.all "All">
 <!ENTITY sendtocategory.name.label "name">
