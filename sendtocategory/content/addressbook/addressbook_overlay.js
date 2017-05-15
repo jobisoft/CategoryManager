@@ -170,16 +170,17 @@ jbCatMan.updateButtons = function () {
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
   let isRemote = true;
   let isGlobal = false;
+  let isAll = (jbCatMan.data.selectedCategory == "");
   let selectedBook = GetSelectedDirectory();
   if (selectedBook) isRemote = abManager.getDirectory(selectedBook).isRemote;
   if (selectedBook == "moz-abdirectory://?") isGlobal = true;
 
-  document.getElementById("CatManContextMenuRemove").disabled = (jbCatMan.data.selectedCategory == "" || isRemote || isGlobal);
-  document.getElementById("CatManContextMenuEdit").disabled = (jbCatMan.data.selectedCategory == "" || isRemote || isGlobal);
-  document.getElementById("CatManContextMenuBulk").disabled = (jbCatMan.data.selectedCategory == "" || isRemote || isGlobal);
-  document.getElementById("CatManContextMenuMFFABConvert").disabled = (jbCatMan.data.selectedCategory == "" || isRemote || isGlobal);
+  document.getElementById("CatManContextMenuRemove").disabled = (isAll || isRemote || isGlobal);
+  document.getElementById("CatManContextMenuEdit").disabled = (isAll || isRemote || isGlobal);
+  document.getElementById("CatManContextMenuBulk").disabled = (isAll || isRemote || isGlobal);
+  document.getElementById("CatManContextMenuMFFABConvert").disabled = (isRemote || isGlobal);
 
-  document.getElementById("CatManContextMenuSend").disabled = (jbCatMan.data.selectedCategory == "" || isRemote); 
+  document.getElementById("CatManContextMenuSend").disabled = (isAll || isRemote); 
 
   //Import and export for all address books, regardless of category (if no category selected, export entire abook or import without category tagging)
   document.getElementById("CatManContextMenuImportExport").disabled = isRemote || isGlobal;

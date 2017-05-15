@@ -312,6 +312,8 @@ jbCatMan.updatePeopleSearchInput = function (name) {
 
 
 jbCatMan.getCategorySearchString = function(abURI, category) {
+    if (category == "") return abURI;
+
     let searchKeys = "";
     // encodeURIComponent does NOT encode brackets "(" and ")" - need to do that by hand
     let sep = jbCatMan.getCategorySeperator();
@@ -403,10 +405,26 @@ jbCatMan.getCardFromUID = function (UID, abURI) {
 
 
 
+jbCatMan.moveCategoryBetweenArrays = function (category, srcArray, dstArray) {
+    let removedCats = [];
+
+    //remove from MFFAB
+    let startAt = (category == "") ? 0 : srcArray.indexOf(category);
+    let howmany = (category == "") ? srcArray.length : 1;
+    while (startAt != -1) {
+        removedCats = srcArray.splice(startAt, howmany); //returns an array with the removed cat - if a single cat is present multiple times, we still get an array with only one entry (it gets overwritten)
+        startAt = srcArray.indexOf(category);
+    }
+
+    //add all removed cats to dstArray 
+    for (let i=0; i<removedCats.length; i++) {
+        if (dstArray.indexOf(removedCats[i]) == -1) dstArray.push(removedCats[i]);
+    }
+}
 
 //MFFAB integration stuff
 jbCatMan.convertCategory = function (abURI, category) {
-    //get all cards, which are part of the category we want to convert
+    //get all cards, which are part of the category we want to convert (is empty if all cats get converted)
     let searchstring = jbCatMan.getCategorySearchString(abURI, category);
     let cards = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager).getDirectory(searchstring).childCards;
 
@@ -420,28 +438,13 @@ jbCatMan.convertCategory = function (abURI, category) {
         //get both category strings as arrays
         let mffabCatArray = jbCatMan.getCategoriesFromString(mffabCatString, jbCatMan.getCategorySeperator(true)); //use MFFAB seperator
         let standardCatArray = jbCatMan.getCategoriesFromString(standardCatString, jbCatMan.getCategorySeperator(false)); //use standard seperator
-            
-        if (jbCatMan.isMFFABCategoryMode()) { //convert from MFFAB to standard
 
-            //add to standard 
-            if (standardCatArray.indexOf(category) == -1) standardCatArray.push(category);
-            //remove from MFFAB
-            let i = mffabCatArray.indexOf(category);
-            while (i != -1) {
-                mffabCatArray.splice(i,1);
-                i = mffabCatArray.indexOf(category);
-            } 
-            
+        //if a single cat is to be converted, we take that cat out of the old property and put it into the other property
+        //if all cats are to be converted, we take out ALL cats from the old prop and add all found cats to the other property
+        if (jbCatMan.isMFFABCategoryMode()) { //convert from MFFAB to standard
+            jbCatMan.moveCategoryBetweenArrays(category, mffabCatArray, standardCatArray);
         } else { //convert from standard to MFFAB
-            
-            //add to MFFAB
-            if (mffabCatArray.indexOf(category) == -1) mffabCatArray.push(category);
-            //remove from standard
-            let i = standardCatArray.indexOf(category);
-            while (i != -1) {
-                standardCatArray.splice(i,1);
-                i = standardCatArray.indexOf(category);
-            } 
+            jbCatMan.moveCategoryBetweenArrays(category, standardCatArray, mffabCatArray);
         }
         
         //convert array back to strings
