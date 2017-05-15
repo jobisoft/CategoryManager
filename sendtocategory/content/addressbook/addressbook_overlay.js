@@ -344,12 +344,15 @@ jbCatMan.onSwitchCategoryMode = function (doswitch = true, refreshlist = true) {
     let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
     if (doswitch) prefs.setBoolPref("extensions.sendtocategory.mffab_mode",!prefs.getBoolPref("extensions.sendtocategory.mffab_mode"));
 
+    let all = "_";
+    if (jbCatMan.data.selectedCategory == "") all = "_all_";
+    
     if (jbCatMan.isMFFABCategoryMode()) {
-        document.getElementById("CatManContextMenuMFFABConvert").label = jbCatMan.getLocalizedMessage("convert_to_standard_category");
+        document.getElementById("CatManContextMenuMFFABConvert").label = jbCatMan.getLocalizedMessage("convert"+all+"to_standard_category");
         document.getElementById("CatManContextMenuMFFABSwitch").label = jbCatMan.getLocalizedMessage("switch_to_standard_mode");
         document.getElementById("CatManBoxLabel").value = jbCatMan.getLocalizedMessage("found_categories", "(MFFAB) ");
     } else {
-        document.getElementById("CatManContextMenuMFFABConvert").label = jbCatMan.getLocalizedMessage("convert_to_MFFAB_category");
+        document.getElementById("CatManContextMenuMFFABConvert").label = jbCatMan.getLocalizedMessage("convert"+all+"to_MFFAB_category");
         document.getElementById("CatManContextMenuMFFABSwitch").label = jbCatMan.getLocalizedMessage("switch_to_MFFAB_mode");
         document.getElementById("CatManBoxLabel").value = jbCatMan.getLocalizedMessage("found_categories", "");
     }

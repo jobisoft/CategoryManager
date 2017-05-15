@@ -3,3 +3,5 @@ switch_to_MFFAB_mode=switch to MFFAB category mode
 found_categories=Found categories ####:
 convert_to_MFFAB_category=convert to MFFAB category
 convert_to_standard_category=convert to standard category
+convert_all_to_MFFAB_category=convert all categories to MFFAB categories
+convert_all_to_standard_category=convert all categories to standard categories

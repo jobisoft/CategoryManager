@@ -408,7 +408,7 @@ jbCatMan.getCardFromUID = function (UID, abURI) {
 jbCatMan.moveCategoryBetweenArrays = function (category, srcArray, dstArray) {
     let removedCats = [];
 
-    //remove from MFFAB
+    //remove from srcArray
     let startAt = (category == "") ? 0 : srcArray.indexOf(category);
     let howmany = (category == "") ? srcArray.length : 1;
     while (startAt != -1) {

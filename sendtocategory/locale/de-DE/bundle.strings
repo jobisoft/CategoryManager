@@ -1,5 +1,7 @@
-switch_to_standard_mode=zum Standard Kategorie-Modus wechseln
-switch_to_MFFAB_mode=zum MFFAB Kategorie-Modus wechseln
+switch_to_standard_mode=aktiviere Standard Kategorie-Modus
+switch_to_MFFAB_mode=aktiviere MFFAB Kategorie-Modus
 found_categories=Gefundene Kategorien ####:
-convert_to_MFFAB_category=in MFFAB Kategorie konvertieren
-convert_to_standard_category=in Standard Kategorie konvertieren
+convert_to_MFFAB_category=konvertieren zu MFFAB Kategorie
+convert_to_standard_category=konvertieren zu Standard Kategorie
+convert_all_to_MFFAB_category=konvertiere alle Kategorien zu MFFAB Kategorien
+convert_all_to_standard_category=konvertiere alle Kategorien zu Standard Kategorien
