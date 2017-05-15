@@ -178,7 +178,7 @@ jbCatMan.updateButtons = function () {
   document.getElementById("CatManContextMenuRemove").disabled = (isAll || isRemote || isGlobal);
   document.getElementById("CatManContextMenuEdit").disabled = (isAll || isRemote || isGlobal);
   document.getElementById("CatManContextMenuBulk").disabled = (isAll || isRemote || isGlobal);
-  document.getElementById("CatManContextMenuMFFABConvert").disabled = (isRemote || isGlobal);
+  document.getElementById("CatManContextMenuMFFABConvert").disabled = (isRemote || isGlobal || jbCatMan.data.categoryList.length == 0);
 
   document.getElementById("CatManContextMenuSend").disabled = (isAll || isRemote); 
 
