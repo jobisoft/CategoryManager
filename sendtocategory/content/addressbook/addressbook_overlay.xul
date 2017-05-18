@@ -49,7 +49,7 @@
 
         <splitter id="CatManSplitter" collapse="after" resizeafter="closest" persist="state"/> 
         <vbox id="CatManBox" persist="height top">
-                    <hbox align="center" style="padding:1ex 5px 1ex 0"><label id ="CatManBoxLabel" value="" flex="1" /><label hidden="true" value="MFFAB" pack="end" /><image hidden="true" id="CatManModeSlider" src='chrome://sendtocategory/skin/slider-on.png' style="width:24px; height:11px;" onclick="jbCatMan.onSwitchCategoryMode()" tooltiptext="&sendtocategory.catogorybox.MFFAB.tooltip;" pack="end"/></hbox>
+                    <hbox align="center" style="padding:1ex 5px 1ex 0"><label id ="CatManBoxLabel" value="" flex="1" /><label hidden="true" value="MFFAB" pack="end" /><image hidden="true" id="CatManModeSlider" src='chrome://sendtocategory/skin/slider-off.png'  onclick="jbCatMan.onSwitchCategoryMode()" tooltiptext="&sendtocategory.catogorybox.MFFAB.tooltip;" pack="end"/></hbox>
                     <listbox 
                     id="CatManCategoriesList"
                     flex="1"

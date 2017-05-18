@@ -215,14 +215,13 @@ jbCatMan.updateButtons = function () {
     if (jbCatMan.isMFFABCategoryMode()) {
         document.getElementById("CatManBoxLabel").value = jbCatMan.getLocalizedMessage("found_categories", "(MFFAB) ");
         document.getElementById("CatManModeSlider").src = "chrome://sendtocategory/skin/slider-on.png";
-        document.getElementById("CatManModeSlider").hidden = false;
     } else {
         document.getElementById("CatManBoxLabel").value = jbCatMan.getLocalizedMessage("found_categories", "");
         document.getElementById("CatManModeSlider").src = "chrome://sendtocategory/skin/slider-off.png";
-        document.getElementById("CatManModeSlider").hidden = false;
     }
+    document.getElementById("CatManModeSlider").hidden = !jbCatMan.isMFFABInstalled;
+    
 }
-
 
 
 jbCatMan.writeToCategory = function () {
@@ -710,10 +709,6 @@ jbCatMan.initAddressbook = function() {
     if (hasCategory && !hasCategories) doswitch = true;
   }
 
-  jbCatMan.updateButtons();
-
-  //onSwitch sets the context menu labels after switching, however if doswitch is false, switching itself is skipped
-  //do not refresh categorylist, because there is no list yet
   jbCatMan.onSwitchCategoryMode(doswitch);
   
   jbCatMan.dump("Done with initAddressbook()",-1);

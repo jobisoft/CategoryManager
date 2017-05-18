@@ -10,4 +10,5 @@ This add-on scans all contact-cards of the currently selected addressbook, extra
 
 ## Icon sources
 
-* [slider-on/off.png] https://www.iconfinder.com/zlaten
+* [slider-on.png] http://www.flaticon.com/free-icon/on-slider_84162
+* [slider-off.png] http://www.flaticon.com/free-icon/switch-off_84021
