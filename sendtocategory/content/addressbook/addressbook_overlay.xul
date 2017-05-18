@@ -62,8 +62,8 @@
                             <listheader label="&sendtocategory.catbox.header.catsize;" />
                         </listhead>
                         <listcols id="CatManCategoriesListColumns">
-                            <listcol flex="3"/>
-                        <listcol flex="1"/>
+                            <listcol flex="1"/>
+                            <listcol pack="end"/>
                         </listcols>
                     </listbox>
                     <hbox pack="end">
