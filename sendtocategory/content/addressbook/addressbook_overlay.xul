@@ -42,7 +42,6 @@
             <menuitem id="CatManContextMenuImportExport" disabled="true" label="&sendtocategory.export.title;" oncommand="jbCatMan.onImportExport()" />
             <menuseparator id="CatManContextMenuMFFABSplitter"/>
             <menuitem id="CatManContextMenuMFFABConvert" label="" oncommand="jbCatMan.onConvertCategory()" />
-            <menuitem id="CatManContextMenuMFFABSwitch" label="" oncommand="jbCatMan.onSwitchCategoryMode()" />
         </menupopup>
     </popupset>
     
@@ -50,7 +49,7 @@
 
         <splitter id="CatManSplitter" collapse="after" resizeafter="closest" persist="state"/> 
         <vbox id="CatManBox" persist="height top">
-                    <label id ="CatManBoxLabel" value="" style="padding:1ex 0" />
+                    <hbox align="center" style="padding:1ex 5px 1ex 0"><label id ="CatManBoxLabel" value="" flex="1" /><label hidden="true" value="MFFAB" pack="end" /><image hidden="true" id="CatManModeSlider" src='chrome://sendtocategory/skin/slider-on.png' style="width:24px; height:11px;" onclick="jbCatMan.onSwitchCategoryMode()" tooltiptext="&sendtocategory.catogorybox.MFFAB.tooltip;" pack="end"/></hbox>
                     <listbox 
                     id="CatManCategoriesList"
                     flex="1"

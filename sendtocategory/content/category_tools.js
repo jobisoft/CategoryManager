@@ -23,7 +23,7 @@ jbCatMan.quickdump = function (str) {
     Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService).logStringMessage("[CatMan] " + str);
 }
 jbCatMan.dump = function (str,lvl) {
-  if (jbCatMan.printDumps) {
+/*  if (jbCatMan.printDumps) {
     //to see dump messages, follow instructions here: https://wiki.mozilla.org/Thunderbird:Debugging_Gloda
     //also enable "javascript.options.showInConsole" and "javascript.options.strict"
     let d = new Date();
@@ -39,15 +39,9 @@ jbCatMan.dump = function (str,lvl) {
       jbCatMan.printDumpsIndent = jbCatMan.printDumpsIndent + "  ";
       jbCatMan.printDebugCounts[jbCatMan.printDumpsIndent] = 0;
     }
-  }
+  }*/
 }
-jbCatMan.debug = function (str,lvl) {
-  if (jbCatMan.printDebugDumps) {
-    jbCatMan.dump(str,lvl);
-  } else {
-    jbCatMan.printDebugCounts[jbCatMan.printDumpsIndent] =  jbCatMan.printDebugCounts[jbCatMan.printDumpsIndent] + 1;
-  }
-}
+
 
 
 
@@ -68,7 +62,6 @@ jbCatMan.getLocalizedMessage = function (msg, replacement = "") {
 jbCatMan.init = function () { 
   //enable or disable debug dump messages
   jbCatMan.printDumps = false;
-  jbCatMan.printDebugDumps = false;
   jbCatMan.printDumpsIndent = " ";
   
   jbCatMan.isMFFABInstalled = jbCatMan.checkIfMFFABInstalled(); //we only need to do this once
@@ -520,13 +513,11 @@ jbCatMan.getStringFromCategories = function(catsArray, seperator = jbCatMan.getC
 }
 
 jbCatMan.getCategoriesfromCard = function (card) {
-  jbCatMan.debug("Begin with getCategoriesfromCard()",1);
   let catString = "";
   try {
     catString = card.getPropertyAsAString(jbCatMan.getCategoryField());
   } catch (ex) {}
   let catsArray = jbCatMan.getCategoriesFromString(catString);
-  jbCatMan.debug("Done with getCategoriesfromCard()",-1);
   return catsArray;
 }
 

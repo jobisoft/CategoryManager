@@ -12,6 +12,9 @@
 <!ENTITY sendtocategory.hideCategoryPaneButton.label "&#9660;">
 <!ENTITY sendtocategory.showCategoryPaneButton.label "&#9650;">
 
+<!ENTITY sendtocategory.catogorybox.label "Catégories trouvées">
+<!ENTITY sendtocategory.catogorybox.MFFAB.tooltip "Switch between standard category mode and MFFAB category mode">
+
 <!ENTITY sendtocategory.add.title "ajouter une catégorie">
 <!ENTITY sendtocategory.addButton.label "ajouter une catégorie">
 <!ENTITY sendtocategory.addButton.accesskey "A">

@@ -195,29 +195,32 @@ jbCatMan.updateContextMenu = function () {
     
     if (jbCatMan.isMFFABCategoryMode()) {
         document.getElementById("CatManContextMenuMFFABConvert").label = jbCatMan.getLocalizedMessage("convert"+all+"to_standard_category");
-        document.getElementById("CatManContextMenuMFFABSwitch").label = jbCatMan.getLocalizedMessage("switch_to_standard_mode");
-        document.getElementById("CatManBoxLabel").value = jbCatMan.getLocalizedMessage("found_categories", "(MFFAB) ");
-    } else {
+  } else {
         document.getElementById("CatManContextMenuMFFABConvert").label = jbCatMan.getLocalizedMessage("convert"+all+"to_MFFAB_category");
-        document.getElementById("CatManContextMenuMFFABSwitch").label = jbCatMan.getLocalizedMessage("switch_to_MFFAB_mode");
-        document.getElementById("CatManBoxLabel").value = jbCatMan.getLocalizedMessage("found_categories", "");
     }
   
 }
 
 jbCatMan.updateButtons = function () {
-  jbCatMan.dump("Begin with updateButtons()",1);
-  let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
-  let isRemote = true;
-  let isGlobal = false;
-  let isAll = (jbCatMan.data.selectedCategory == "");
-  let selectedBook = GetSelectedDirectory();
-  if (selectedBook) isRemote = abManager.getDirectory(selectedBook).isRemote;
-  if (selectedBook == "moz-abdirectory://?") isGlobal = true;
+    let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
+    let isRemote = true;
+    let isGlobal = false;
+    let isAll = (jbCatMan.data.selectedCategory == "");
+    let selectedBook = GetSelectedDirectory();
+    if (selectedBook) isRemote = abManager.getDirectory(selectedBook).isRemote;
+    if (selectedBook == "moz-abdirectory://?") isGlobal = true;
 
-  document.getElementById("CatManAddContactCategoryButton").disabled = isRemote || isGlobal;
+    document.getElementById("CatManAddContactCategoryButton").disabled = isRemote || isGlobal;
 
-  jbCatMan.dump("Done with updateButtons()",-1);
+    if (jbCatMan.isMFFABCategoryMode()) {
+        document.getElementById("CatManBoxLabel").value = jbCatMan.getLocalizedMessage("found_categories", "(MFFAB) ");
+        document.getElementById("CatManModeSlider").src = "chrome://sendtocategory/skin/slider-on.png";
+        document.getElementById("CatManModeSlider").hidden = false;
+    } else {
+        document.getElementById("CatManBoxLabel").value = jbCatMan.getLocalizedMessage("found_categories", "");
+        document.getElementById("CatManModeSlider").src = "chrome://sendtocategory/skin/slider-off.png";
+        document.getElementById("CatManModeSlider").hidden = false;
+    }
 }
 
 
@@ -697,7 +700,6 @@ jbCatMan.initAddressbook = function() {
 
   //show/hide special MFFAB context menu entries
   document.getElementById("CatManContextMenuMFFABSplitter").hidden = !jbCatMan.isMFFABInstalled;
-  document.getElementById("CatManContextMenuMFFABSwitch").hidden = !jbCatMan.isMFFABInstalled;
   document.getElementById("CatManContextMenuMFFABConvert").hidden = !jbCatMan.isMFFABInstalled;
   
   //if MFFAB is installed and default category mode, check if it might be better to silently switch to MFFAB mode
@@ -707,7 +709,9 @@ jbCatMan.initAddressbook = function() {
     let hasCategory = jbCatMan.booksHaveContactsWithProperty("Category");
     if (hasCategory && !hasCategories) doswitch = true;
   }
-  
+
+  jbCatMan.updateButtons();
+
   //onSwitch sets the context menu labels after switching, however if doswitch is false, switching itself is skipped
   //do not refresh categorylist, because there is no list yet
   jbCatMan.onSwitchCategoryMode(doswitch);
@@ -717,3 +721,6 @@ jbCatMan.initAddressbook = function() {
 
 // run init function after window has been loaded
 window.addEventListener("load", function() { jbCatMan.initAddressbook(); }, false);
+
+//https://www.iconfinder.com/zlaten
+//https://www.iconfinder.com/icons/809272/interface_off_on_switch_toggle_icon#size=32
