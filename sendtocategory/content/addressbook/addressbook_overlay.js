@@ -163,7 +163,47 @@ jbCatMan.updateCategoryList = function () {
   jbCatMan.dump("Done with updateCategoryList()",-1);
 }
 
+jbCatMan.updateContextMenu = function () {
+    let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
+    let isRemote = true;
+    let isGlobal = false;
+    let isAll = (jbCatMan.data.selectedCategory == "");
+    let selectedBook = GetSelectedDirectory();
 
+    if (selectedBook) isRemote = abManager.getDirectory(selectedBook).isRemote;
+    if (selectedBook == "moz-abdirectory://?") isGlobal = true;
+
+    document.getElementById("CatManContextMenuRemove").disabled = (isAll || isRemote || isGlobal);
+    document.getElementById("CatManContextMenuEdit").disabled = (isAll || isRemote || isGlobal);
+    document.getElementById("CatManContextMenuBulk").disabled = (isAll || isRemote || isGlobal);
+    document.getElementById("CatManContextMenuMFFABConvert").disabled = (isRemote || isGlobal || jbCatMan.data.categoryList.length == 0);
+
+    document.getElementById("CatManContextMenuSend").disabled = (isAll || isRemote); 
+
+    //Import and export for all address books, regardless of category (if no category selected, export entire abook or import without category tagging)
+    document.getElementById("CatManContextMenuImportExport").disabled = isRemote || isGlobal;
+
+    if (jbCatMan.data.selectedCategory == "") {
+        document.getElementById("CatManContextMenuImportExport").label = jbCatMan.locale.menuAllExport;
+    } else {
+        document.getElementById("CatManContextMenuImportExport").label = jbCatMan.locale.menuExport;
+    }
+  
+    //Special MFFAB entries
+    let all = "_";
+    if (jbCatMan.data.selectedCategory == "") all = "_all_";
+    
+    if (jbCatMan.isMFFABCategoryMode()) {
+        document.getElementById("CatManContextMenuMFFABConvert").label = jbCatMan.getLocalizedMessage("convert"+all+"to_standard_category");
+        document.getElementById("CatManContextMenuMFFABSwitch").label = jbCatMan.getLocalizedMessage("switch_to_standard_mode");
+        document.getElementById("CatManBoxLabel").value = jbCatMan.getLocalizedMessage("found_categories", "(MFFAB) ");
+    } else {
+        document.getElementById("CatManContextMenuMFFABConvert").label = jbCatMan.getLocalizedMessage("convert"+all+"to_MFFAB_category");
+        document.getElementById("CatManContextMenuMFFABSwitch").label = jbCatMan.getLocalizedMessage("switch_to_MFFAB_mode");
+        document.getElementById("CatManBoxLabel").value = jbCatMan.getLocalizedMessage("found_categories", "");
+    }
+  
+}
 
 jbCatMan.updateButtons = function () {
   jbCatMan.dump("Begin with updateButtons()",1);
@@ -175,23 +215,7 @@ jbCatMan.updateButtons = function () {
   if (selectedBook) isRemote = abManager.getDirectory(selectedBook).isRemote;
   if (selectedBook == "moz-abdirectory://?") isGlobal = true;
 
-  document.getElementById("CatManContextMenuRemove").disabled = (isAll || isRemote || isGlobal);
-  document.getElementById("CatManContextMenuEdit").disabled = (isAll || isRemote || isGlobal);
-  document.getElementById("CatManContextMenuBulk").disabled = (isAll || isRemote || isGlobal);
-  document.getElementById("CatManContextMenuMFFABConvert").disabled = (isRemote || isGlobal || jbCatMan.data.categoryList.length == 0);
-
-  document.getElementById("CatManContextMenuSend").disabled = (isAll || isRemote); 
-
-  //Import and export for all address books, regardless of category (if no category selected, export entire abook or import without category tagging)
-  document.getElementById("CatManContextMenuImportExport").disabled = isRemote || isGlobal;
-
   document.getElementById("CatManAddContactCategoryButton").disabled = isRemote || isGlobal;
-
-  if (jbCatMan.data.selectedCategory == "") {
-    document.getElementById("CatManContextMenuImportExport").label = jbCatMan.locale.menuAllExport;
-  } else {
-    document.getElementById("CatManContextMenuImportExport").label = jbCatMan.locale.menuExport;
-  }
 
   jbCatMan.dump("Done with updateButtons()",-1);
 }
@@ -331,7 +355,6 @@ jbCatMan.onSelectCategoryList = function () {
 jbCatMan.onPeopleSearchClick = function () {
   jbCatMan.dump("Begin with onPeopleSearchClick()",1);
   jbCatMan.data.selectedCategory = "";
-  jbCatMan.updateButtons();
   jbCatMan.dump("Done with onPeopleSearchClick()",-1);
 }
 
@@ -340,23 +363,12 @@ jbCatMan.onConvertCategory = function () {
     jbCatMan.updateCategoryList();
 }
 
-jbCatMan.onSwitchCategoryMode = function (doswitch = true, refreshlist = true) {
+jbCatMan.onSwitchCategoryMode = function (doswitch = true) {
     let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-    if (doswitch) prefs.setBoolPref("extensions.sendtocategory.mffab_mode",!prefs.getBoolPref("extensions.sendtocategory.mffab_mode"));
-
-    let all = "_";
-    if (jbCatMan.data.selectedCategory == "") all = "_all_";
-    
-    if (jbCatMan.isMFFABCategoryMode()) {
-        document.getElementById("CatManContextMenuMFFABConvert").label = jbCatMan.getLocalizedMessage("convert"+all+"to_standard_category");
-        document.getElementById("CatManContextMenuMFFABSwitch").label = jbCatMan.getLocalizedMessage("switch_to_standard_mode");
-        document.getElementById("CatManBoxLabel").value = jbCatMan.getLocalizedMessage("found_categories", "(MFFAB) ");
-    } else {
-        document.getElementById("CatManContextMenuMFFABConvert").label = jbCatMan.getLocalizedMessage("convert"+all+"to_MFFAB_category");
-        document.getElementById("CatManContextMenuMFFABSwitch").label = jbCatMan.getLocalizedMessage("switch_to_MFFAB_mode");
-        document.getElementById("CatManBoxLabel").value = jbCatMan.getLocalizedMessage("found_categories", "");
+    if (doswitch) {
+        prefs.setBoolPref("extensions.sendtocategory.mffab_mode",!prefs.getBoolPref("extensions.sendtocategory.mffab_mode"));
+        jbCatMan.updateCategoryList();
     }
-    if (refreshlist && doswitch) jbCatMan.updateCategoryList();
 }
 
 
@@ -665,9 +677,12 @@ jbCatMan.initAddressbook = function() {
   // Add listener for action in addressbook pane
   document.getElementById("dirTree").addEventListener('select', function () { jbCatMan.dump("Begin trigger by event onSelectAddressbook()",1); jbCatMan.onSelectAddressbook(); jbCatMan.dump("Done trigger by event onSelectAddressbook()",-1); }, true);
 
-  //Add listener for category context menu
+  //Add listener for category context menu in results pane
   document.getElementById("CatManCategoriesContextMenu-popup").addEventListener("popupshowing", function () { jbCatMan.dump("Begin trigger by event onResultsTreeContextMenuPopup()",1); jbCatMan.onResultsTreeContextMenuPopup(); jbCatMan.dump("Done trigger by event onResultsTreeContextMenuPopup()",-1); } , false);
 
+  //Add listener for category context menu in category pane
+  document.getElementById("CatManContextMenu").addEventListener("popupshowing", jbCatMan.updateContextMenu , false);
+  
   //Hide SOGo Categories ContextMenu
   let sogoContextMenu = document.getElementById("sc-categories-contextmenu");
   if (sogoContextMenu) sogoContextMenu.style.display = 'none';
@@ -695,7 +710,7 @@ jbCatMan.initAddressbook = function() {
   
   //onSwitch sets the context menu labels after switching, however if doswitch is false, switching itself is skipped
   //do not refresh categorylist, because there is no list yet
-  jbCatMan.onSwitchCategoryMode(doswitch, false);
+  jbCatMan.onSwitchCategoryMode(doswitch);
   
   jbCatMan.dump("Done with initAddressbook()",-1);
 }
