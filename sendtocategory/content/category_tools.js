@@ -63,7 +63,8 @@ jbCatMan.init = function () {
   //enable or disable debug dump messages
   jbCatMan.printDumps = false;
   jbCatMan.printDumpsIndent = " ";
-  
+  jbCatMan.sogoError  = "";
+
   jbCatMan.isMFFABInstalled = jbCatMan.checkIfMFFABInstalled(); //we only need to do this once
   jbCatMan.printDebugCounts = Array();
   jbCatMan.printDebugCounts[jbCatMan.printDumpsIndent] = 0;

@@ -716,6 +716,3 @@ jbCatMan.initAddressbook = function() {
 
 // run init function after window has been loaded
 window.addEventListener("load", function() { jbCatMan.initAddressbook(); }, false);
-
-//https://www.iconfinder.com/zlaten
-//https://www.iconfinder.com/icons/809272/interface_off_on_switch_toggle_icon#size=32
