@@ -19,7 +19,7 @@ jbCatManEditDialog.Init = function () {
     if (categoriesTabButton) categoriesTabButton.style.display = 'none';
   }
 
-  //only if needed
+  //only if needed - DROP and use sub-function to just get all avail categories of req field
   if (jbCatManEditDialog.needToScan) {
     jbCatMan.scanCategories(gEditCard.abURI);
   }
@@ -34,13 +34,8 @@ jbCatManEditDialog.Init = function () {
       jbCatMan.dump("Skipping SCSaveCategories function.");
   }
 
-  jbCatManEditDialog.AllCatsArray = jbCatMan.data.categoryList;
-  let catString = "";
-  try {
-    catString = gEditCard.card.getPropertyAsAString(jbCatMan.getCategoryField());
-  } catch (ex) {}  
-  jbCatManEditDialog.CatsArray = jbCatMan.getCategoriesFromString(catString);
-  
+  jbCatManEditDialog.AllCatsArray = jbCatMan.data.categoryList; //we need to get independent from scanCategories
+  jbCatManEditDialog.CatsArray = jbCatMan.getCategoriesfromCard(gEditCard.card,"Categories"); 
   
   // add the combo boxes for each category
   for (let i = 0; i < jbCatManEditDialog.CatsArray.length; i++) {
@@ -104,7 +99,7 @@ jbCatManEditDialog.Save = function () {
   }
   jbCatMan.dump("Setting categories to: " + catsArray.join(","));
 
-  jbCatMan.setCategoriesforCard(gEditCard.card, catsArray);
+  jbCatMan.setCategoriesforCard(gEditCard.card, catsArray, "Categories");
   /* BugFix "andre jutisz"
   It is not needed to call ab.modifyCard/ab.addCard, because this is
   taken care of by the dialog itself. */

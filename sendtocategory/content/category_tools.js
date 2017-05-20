@@ -425,13 +425,8 @@ jbCatMan.convertCategory = function (abURI, category) {
     while (cards.hasMoreElements()) {
         let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
 
-        //get both category strings
-        let mffabCatString = ""; try { mffabCatString = card.getPropertyAsAString(jbCatMan.getCategoryField(true)); } catch (ex) {} //use MFFAB field
-        let standardCatString = ""; try { standardCatString = card.getPropertyAsAString(jbCatMan.getCategoryField(false)); } catch (ex) {} //use standard field
-
-        //get both category strings as arrays
-        let mffabCatArray = jbCatMan.getCategoriesFromString(mffabCatString, jbCatMan.getCategorySeperator(true)); //use MFFAB seperator
-        let standardCatArray = jbCatMan.getCategoriesFromString(standardCatString, jbCatMan.getCategorySeperator(false)); //use standard seperator
+        let mffabCatArray = jbCatMan.getCategoriesfromCard(card, "Category");
+        let standardCatArray = jbCatMan.getCategoriesfromCard(card, "Categories");
 
         //if a single cat is to be converted, we take that cat out of the old property and put it into the other property
         //if all cats are to be converted, we take out ALL cats from the old prop and add all found cats to the other property
@@ -441,13 +436,8 @@ jbCatMan.convertCategory = function (abURI, category) {
             jbCatMan.moveCategoryBetweenArrays(category, standardCatArray, mffabCatArray);
         }
         
-        //convert array back to strings
-        mffabCatString = jbCatMan.getStringFromCategories(mffabCatArray, jbCatMan.getCategorySeperator(true)); //use MFFAB seperator
-        standardCatString = jbCatMan.getStringFromCategories(standardCatArray, jbCatMan.getCategorySeperator(false)); //use standard seperator
-        
-        //set both category strings
-        card.setPropertyAsAString(jbCatMan.getCategoryField(true), mffabCatString);
-        card.setPropertyAsAString(jbCatMan.getCategoryField(false), standardCatString);
+        jbCatMan.setCategoriesforCard(card, mffabCatArray, "Category");
+        jbCatMan.setCategoriesforCard(card, standardCatArray, "Categories");
         jbCatMan.modifyCard(card);
     }
 }
@@ -477,10 +467,10 @@ jbCatMan.isMFFABCategoryMode = function () {
     return false;
 }
 
-jbCatMan.getCategorySeperator = function (mode = jbCatMan.isMFFABCategoryMode()) {
+jbCatMan.getCategorySeperator = function (field = jbCatMan.getCategoryField()) {
     let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
     
-    if (mode) return prefs.getCharPref("morecols.category.separator") + " ";
+    if (field == "Category") return prefs.getCharPref("morecols.category.separator") + " ";
     else return prefs.getCharPref("extensions.sendtocategory.seperator");
 }
 
@@ -513,13 +503,33 @@ jbCatMan.getStringFromCategories = function(catsArray, seperator = jbCatMan.getC
   }
 }
 
-jbCatMan.getCategoriesfromCard = function (card) {
+jbCatMan.getCategoriesfromCard = function (card, field = jbCatMan.getCategoryField()) {
   let catString = "";
   try {
-    catString = card.getPropertyAsAString(jbCatMan.getCategoryField());
+    catString = card.getPropertyAsAString(field);
   } catch (ex) {}
-  let catsArray = jbCatMan.getCategoriesFromString(catString);
+  let catsArray = jbCatMan.getCategoriesFromString(catString, jbCatMan.getCategorySeperator(field));
   return catsArray;
+}
+
+jbCatMan.setCategoriesforCard = function (card, catsArray,  field = jbCatMan.getCategoryField()) {
+  jbCatMan.dump("Begin with setCategoriesforCard()",1);
+  let retval = true;
+
+  // sanity check
+  if (card.isMailList)
+    return false;
+  
+  let catsString = jbCatMan.getStringFromCategories(catsArray, jbCatMan.getCategorySeperator(field));
+
+  try {
+     card.setPropertyAsAString(field, catsString);
+  } catch (ex) {
+    jbCatMan.dump("Could not set Categories.\n");
+    retval = false;
+  }
+  jbCatMan.dump("Done with setCategoriesforCard()",-1);
+  return retval;
 }
 
 
@@ -533,29 +543,6 @@ jbCatMan.getEmailFromCard = function (card) {
     } catch (ex) {}
     return email;
   }
-}
-
-
-
-//replacement for SOGo's arrayToMultiValue 
-jbCatMan.setCategoriesforCard = function (card, catsArray) {
-  jbCatMan.dump("Begin with setCategoriesforCard()",1);
-  let retval = true;
-
-  // sanity check
-  if (card.isMailList)
-    return false;
-  
-  let catsString = jbCatMan.getStringFromCategories(catsArray);
-
-  try {
-     card.setPropertyAsAString(jbCatMan.getCategoryField(), catsString);
-  } catch (ex) {
-    jbCatMan.dump("Could not set Categories.\n");
-    retval = false;
-  }
-  jbCatMan.dump("Done with setCategoriesforCard()",-1);
-  return retval;
 }
 
 
