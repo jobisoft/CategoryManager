@@ -356,21 +356,19 @@ jbCatMan.doCategorySearch = function () {
 // cards related functions
 //##############################################
 
-// each local card has a unique property DbRowID, which can be used to get (search) this card (not working with LDAP) - however, it is not unique across different abooks
+// each local card has a unique property DbRowID, which can be used to get (search) this card (not working with LDAP)
+// however, it is not unique across different abooks -> append directoryId
 jbCatMan.getUIDFromCard = function (card) {
   jbCatMan.dump("Begin with getUIDFromCard()",1);
   
-  //since DbRowID is not unique across different ABs, it is not sufficient for global categoriy searches -> add category property
   let DbRowID = "";
-  let categories = "";
   
   try {
     DbRowID = card.getPropertyAsAString("DbRowID"); //DbRowID is not avail on LDAP directories, but since we cannot modify LDAP directories, CatMan is not working at all on LDAP (isRemote)
-    categories = card.getPropertyAsAString(jbCatMan.getCategoryField())
   } catch (ex) {}
 
   jbCatMan.dump("Done with getUIDFromCard()",-1);
-  return DbRowID + "\u001A" + categories;
+  return DbRowID + "\u001A" + card.directoryId
 }
 
 
