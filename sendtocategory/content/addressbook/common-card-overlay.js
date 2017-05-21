@@ -36,7 +36,7 @@ jbCatManEditDialog.Init = function () {
       jbCatMan.dump("Skipping SCSaveCategories function.");
   }
 
-  jbCatManEditDialog.AllCatsArray = jbCatMan.scanCategories(gEditCard.abURI, "Categories");
+  jbCatManEditDialog.AllCatsArray = jbCatMan.scanCategories(gEditCard.abURI, "Categories", true);
   jbCatManEditDialog.CatsArray = jbCatMan.getCategoriesfromCard(gEditCard.card,"Categories"); 
   
   // add the combo boxes for each category
