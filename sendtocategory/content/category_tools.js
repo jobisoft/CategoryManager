@@ -611,7 +611,7 @@ jbCatMan.updateCategories = function (mode,oldName,newName) {
 
 
 
-jbCatMan.scanCategories = function (abURI) {
+jbCatMan.scanCategories = function (abURI, field = jbCatMan.getCategoryField(), quickscan = false) {
   jbCatMan.dump("Begin with scanCategories()",1);
 
   //get address book manager
@@ -619,14 +619,16 @@ jbCatMan.scanCategories = function (abURI) {
 
   //concept decision: we remove empty categories on addressbook switch (select) 
   //-> the category array is constantly cleared and build from scan results
-  jbCatMan.data.foundCategories = [];
-  jbCatMan.data.categoryList = [];
-  jbCatMan.data.bcc = [];
-  jbCatMan.data.membersWithoutAnyEmail = [];
-  jbCatMan.data.emails = [];
-  jbCatMan.data.abSize = 0;
-  jbCatMan.data.abURI = [];
+  let data = {};
+  if (quickscan === false) data = jbCatMan.data;
 
+  data.foundCategories = [];
+  data.categoryList = [];
+  data.bcc = [];
+  data.membersWithoutAnyEmail = [];
+  data.emails = [];
+  data.abSize = 0;
+  data.abURI = [];
   
   // scan all addressbooks, if this is the new root addressbook (introduced in TB38)
   // otherwise just scan the selected one
@@ -663,14 +665,14 @@ jbCatMan.scanCategories = function (abURI) {
       if (!more) break;
 
       let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
-      jbCatMan.data.abSize++;
+      data.abSize++;
 
       //Keep track of mapping between directoryID and abURI, to get the owning AB for each card
-      if (card.directoryId in jbCatMan.data.abURI == false) {
-        jbCatMan.data.abURI[card.directoryId] = addressBook.URI;
+      if (card.directoryId in data.abURI == false) {
+        data.abURI[card.directoryId] = addressBook.URI;
       }
 
-      let catArray = jbCatMan.getCategoriesfromCard(card);
+      let catArray = jbCatMan.getCategoriesfromCard(card, field);
       if (catArray.length > 0) {
         //this person belongs to at least one category, extract UUID
         let CardID = jbCatMan.getUIDFromCard(card);
@@ -679,36 +681,36 @@ jbCatMan.scanCategories = function (abURI) {
         for (let i=0; i < catArray.length; i++) {
           //is this category known already?
           //-> foundCategories is using Strings as Keys
-          if (catArray[i] in jbCatMan.data.foundCategories == false) {
-            jbCatMan.data.foundCategories[catArray[i]] = [];
-            jbCatMan.data.bcc[catArray[i]] = [];
-            jbCatMan.data.membersWithoutAnyEmail[catArray[i]] = 0;
-            jbCatMan.data.emails[catArray[i]] = [];
-            jbCatMan.data.categoryList.push(catArray[i]);
+          if (catArray[i] in data.foundCategories == false) {
+            data.foundCategories[catArray[i]] = [];
+            data.bcc[catArray[i]] = [];
+            data.membersWithoutAnyEmail[catArray[i]] = 0;
+            data.emails[catArray[i]] = [];
+            data.categoryList.push(catArray[i]);
           }
           
           //add card to category
-          jbCatMan.data.foundCategories[catArray[i]].push(CardID);
+          data.foundCategories[catArray[i]].push(CardID);
           
           //add card to emails-list and bcc-list (if an email is defined)
           let email = jbCatMan.getEmailFromCard(card);
           if (email) {
-            jbCatMan.data.emails[catArray[i]].push(email);
+            data.emails[catArray[i]].push(email);
             let bccfield = "";
             if (card.displayName != "") {
               bccfield = "\"" + card.displayName + "\"" + " <" + email + ">";
             } else {
               bccfield = email;
             }
-            jbCatMan.data.bcc[catArray[i]].push(bccfield);
+            data.bcc[catArray[i]].push(bccfield);
           } else {
-            jbCatMan.data.membersWithoutAnyEmail[catArray[i]]++;
+            data.membersWithoutAnyEmail[catArray[i]]++;
           }
         }
       }
     }
   }
-  jbCatMan.data.categoryList.sort();
+  data.categoryList.sort();
 
   //clear SOGo categories if present - we do not use them
   if (jbCatMan.sogoInstalled){
@@ -717,6 +719,7 @@ jbCatMan.scanCategories = function (abURI) {
   }
   
   jbCatMan.dump("Done with scanCategories()",-1);
+  return data.categoryList;
 }
 
 

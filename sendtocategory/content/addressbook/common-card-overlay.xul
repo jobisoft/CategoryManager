@@ -25,6 +25,7 @@
       <vbox id="abCatManCategories">
       </vbox>
       <textbox id="abCatManEmptyCategory" readonly="true"/>
+      <description id="abCatManCategoriesDescription" hidden="true" style="margin-top:1em; width:400px"></description>
     </vbox>
   </tabpanels>
 </overlay>

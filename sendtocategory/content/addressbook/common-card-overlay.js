@@ -1,13 +1,11 @@
 
 var jbCatManEditDialog = {};
-jbCatManEditDialog.needToScan = false;
 
 if (window.opener.jbCatMan) {
   var jbCatMan = window.opener.jbCatMan;
 } else {
   let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
   loader.loadSubScript("chrome://sendtocategory/content/category_tools.js");
-  jbCatManEditDialog.needToScan = true;
 }
 
 jbCatManEditDialog.Init = function () {
@@ -19,11 +17,15 @@ jbCatManEditDialog.Init = function () {
     if (categoriesTabButton) categoriesTabButton.style.display = 'none';
   }
 
-  //only if needed - DROP and use sub-function to just get all avail categories of req field
-  if (jbCatManEditDialog.needToScan) {
-    jbCatMan.scanCategories(gEditCard.abURI);
+  if (jbCatMan.isMFFABInstalled) {
+    if (jbCatMan.sogoInstalled) {
+        document.getElementById('abCatManCategoriesDescription').textContent = jbCatMan.getLocalizedMessage("category_description", "Category Manager / SOGo")
+    } else {
+        document.getElementById('abCatManCategoriesDescription').textContent = jbCatMan.getLocalizedMessage("category_description", "Category Manager")
+    }
+    document.getElementById('abCatManCategoriesDescription').hidden = false;
   }
-
+  
   /* Bugfix "andre jutisz"
   The original idea was to remove the SOGo code, which was run after the OK button of the
   new/edit dialog was pressed. Thinking about it, we do not need to manipulate the SOGo sync
@@ -34,7 +36,7 @@ jbCatManEditDialog.Init = function () {
       jbCatMan.dump("Skipping SCSaveCategories function.");
   }
 
-  jbCatManEditDialog.AllCatsArray = jbCatMan.data.categoryList; //we need to get independent from scanCategories
+  jbCatManEditDialog.AllCatsArray = jbCatMan.scanCategories(gEditCard.abURI, "Categories");
   jbCatManEditDialog.CatsArray = jbCatMan.getCategoriesfromCard(gEditCard.card,"Categories"); 
   
   // add the combo boxes for each category

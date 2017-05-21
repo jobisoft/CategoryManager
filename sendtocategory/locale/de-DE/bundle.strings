@@ -5,3 +5,4 @@ convert_to_MFFAB_category=konvertieren zu MFFAB Kategorie
 convert_to_standard_category=konvertieren zu Standard Kategorie
 convert_all_to_MFFAB_category=konvertiere alle Kategorien zu MFFAB Kategorien
 convert_all_to_standard_category=konvertiere alle Kategorien zu Standard Kategorien
+category_description=Achtung: Bei diesen Kategorien handelt es sich um "#### Kategorien", diese sind unabhängig von den "MFFAB Kategorien", die in einer anderen Kontakt-Eigenschaft gespeichert und unter dem Reiter 'Other data' bearbeitet werden können.
