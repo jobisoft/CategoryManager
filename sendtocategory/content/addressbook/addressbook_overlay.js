@@ -642,19 +642,6 @@ SelectFirstAddressBook = function() {
 
 
 
-/********************************************************************************
- This is copied from SOGo to include the categories field in the card view pane.
- If the SOGo-connector is installed, DisplayCardViewPane() is not touched and the
- SOGo version is used (//sogo-connector/content/addressbook/cardview-overlay.js)
-********************************************************************************/
-jbCatMan.DisplayCardViewPane_ORIG = DisplayCardViewPane;
-if (!jbCatMan.sogoInstalled) DisplayCardViewPane = function(card) {
-        jbCatMan.DisplayCardViewPane_ORIG.apply(window, arguments);
-        let CatManCategoriesLabel = document.getElementById("CatManCategoriesLabel");
-        let cats = jbCatMan.getCategoriesfromCard(card).sort().join(", ");
-        cvSetNodeWithLabel(CatManCategoriesLabel, CatManCategoriesLabel.getAttribute("CatManCategoriesLabelText"), cats);
-}
-
 
 
 
@@ -706,6 +693,22 @@ jbCatMan.initAddressbook = function() {
     let hasCategory = jbCatMan.booksHaveContactsWithProperty("Category");
     if (hasCategory && !hasCategories) jbCatMan.onSwitchCategoryMode();
   }
+
+  
+
+  
+  /********************************************************************************
+  This is based on SOGo code to include the categories field in the card view pane.
+  If the SOGo-connector is installed, its own label is hidden.
+  ********************************************************************************/
+  if (jbCatMan.sogoInstalled) document.getElementById("SCCvCategories").hidden = true;
+  
+	jbCatMan.DisplayCardViewPane_ORIG = DisplayCardViewPane;
+  DisplayCardViewPane = function(card) {
+    jbCatMan.DisplayCardViewPane_ORIG(card);
+    let CatManCategoriesLabel = document.getElementById("CatManCategoriesLabel");    
+    let cats = jbCatMan.getCategoriesfromCard(card).sort().join(", ");
+    document.getElementById("CatManCategoriesHeader").hidden = !cvSetNodeWithLabel(CatManCategoriesLabel, CatManCategoriesLabel.getAttribute("CatManCategoriesLabelText"), cats);
   }
 
   
