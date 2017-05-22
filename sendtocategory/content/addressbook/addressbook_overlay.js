@@ -365,12 +365,11 @@ jbCatMan.onConvertCategory = function () {
     jbCatMan.updateCategoryList();
 }
 
-jbCatMan.onSwitchCategoryMode = function (doswitch = true) {
+jbCatMan.onSwitchCategoryMode = function () {
     let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-    if (doswitch) {
-        prefs.setBoolPref("extensions.sendtocategory.mffab_mode",!prefs.getBoolPref("extensions.sendtocategory.mffab_mode"));
-        jbCatMan.updateCategoryList();
-    }
+    prefs.setBoolPref("extensions.sendtocategory.mffab_mode",!prefs.getBoolPref("extensions.sendtocategory.mffab_mode"));
+    jbCatMan.data.selectedCategory = "";
+    jbCatMan.updateCategoryList();
 }
 
 
@@ -702,14 +701,13 @@ jbCatMan.initAddressbook = function() {
   document.getElementById("CatManContextMenuMFFABConvert").hidden = !jbCatMan.isMFFABInstalled;
   
   //if MFFAB is installed and default category mode, check if it might be better to silently switch to MFFAB mode
-  let doswitch = false;
   if (jbCatMan.isMFFABInstalled && !jbCatMan.isMFFABCategoryMode()) {
     let hasCategories = jbCatMan.booksHaveContactsWithProperty("Categories");
     let hasCategory = jbCatMan.booksHaveContactsWithProperty("Category");
-    if (hasCategory && !hasCategories) doswitch = true;
+    if (hasCategory && !hasCategories) jbCatMan.onSwitchCategoryMode();
+  }
   }
 
-  jbCatMan.onSwitchCategoryMode(doswitch);
   
   jbCatMan.dump("Done with initAddressbook()",-1);
 }
