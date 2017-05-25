@@ -724,5 +724,19 @@ jbCatMan.scanCategories = function (abURI, field = jbCatMan.getCategoryField(), 
 
 
 
+
+//###################################################
+// override global functions
+//###################################################
+
+/********************************************************************************
+ SelectFirstCard() seems to be broken.
+********************************************************************************/
+SelectFirstCard = function() {
+  if (gAbView && gAbView.selection && gAbView.rowCount > 0) gAbView.selection.select(0);
+}
+
+
+
 //init data object and check if SOGo-Connector has been installed
 jbCatMan.init();
