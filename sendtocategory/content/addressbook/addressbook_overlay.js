@@ -120,9 +120,9 @@ jbCatMan.updateCategoryList = function () {
       //Selected Category does not exist, fallback 
       ClearCardViewPane();
       jbCatMan.data.selectedCategory = "";
-      SetAbView(GetSelectedDirectory());
-      if (jbCatMan.data.abSize>0) SelectFirstCard();  
       jbCatMan.updatePeopleSearchInput("");
+      SetAbView(GetSelectedDirectory());
+      SelectFirstCard();
     }
   } else {
     /* 
@@ -368,8 +368,13 @@ jbCatMan.onConvertCategory = function () {
 jbCatMan.onSwitchCategoryMode = function () {
     let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
     prefs.setBoolPref("extensions.sendtocategory.mffab_mode",!prefs.getBoolPref("extensions.sendtocategory.mffab_mode"));
-    jbCatMan.data.selectedCategory = "";
+
+    //updateList
     jbCatMan.updateCategoryList();
+    
+    //check selected card after update
+    let cards = GetSelectedAbCards();
+    if (cards.length == 1 && cards[0].isMailList == false) DisplayCardViewPane(cards[0]);
 }
 
 
