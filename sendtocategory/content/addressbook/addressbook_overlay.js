@@ -133,33 +133,6 @@ jbCatMan.updateCategoryList = function () {
   }
   
   jbCatMan.updateButtons();
-  
-/**  Its nice, but uses sogo - I never used it - has to go !!! **
-
-  //  remove all catmenuitems from cat search menu
-  let menupopup = document.getElementById("SCSearchCriteriaButtonMenu");
-  for (let i = menupopup.childNodes.length ; i > 0; i--) {
-    if (menupopup.childNodes[i-1].getAttribute("value") == "catmenuitem") {
-      menupopup.removeChild(menupopup.childNodes[i-1]);
-    }
-  }
-
-  //update search menu dropdown
-  if (jbCatMan.data.categoryList.length>0) {
-    let newItem = document.createElement("menuseparator");
-    newItem.setAttribute("value", "catmenuitem");
-    menupopup.appendChild( newItem );
-
-    //update search menu dropdown
-    for (let i = 0; i < jbCatMan.data.categoryList.length; i++) {
-      let newItem = document.createElement("menuitem");
-      newItem.setAttribute("label", jbCatMan.locale.prefixForPeopleSearch + ": " + jbCatMan.data.categoryList[i]);
-      newItem.setAttribute("value", "catmenuitem");
-      newItem.catName =jbCatMan.data.categoryList[i];
-      newItem.addEventListener("command",  function(e){ jbCatMan.data.selectedCategory=e.target.catName; jbCatMan.doCategorySearch(); }, false);
-      menupopup.appendChild( newItem );
-    }
-  } **/
   jbCatMan.dump("Done with updateCategoryList()",-1);
 }
 
@@ -220,7 +193,6 @@ jbCatMan.updateButtons = function () {
         document.getElementById("CatManModeSlider").src = "chrome://sendtocategory/skin/slider-off.png";
     }
     document.getElementById("CatManModeSlider").hidden = !jbCatMan.isMFFABInstalled;
-    
 }
 
 
