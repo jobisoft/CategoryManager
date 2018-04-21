@@ -1,12 +1,8 @@
 <?xml version="1.0"?>
 
 <!DOCTYPE overlay [
-<!ENTITY % abResultsPaneOverlayDTD SYSTEM "chrome://messenger/locale/addressbook/abResultsPaneOverlay.dtd" >
-%abResultsPaneOverlayDTD;
-<!ENTITY % abContactsPanelDTD SYSTEM "chrome://messenger/locale/addressbook/abContactsPanel.dtd" >
-%abContactsPanelDTD;
-<!ENTITY % abContactsPanelCM SYSTEM "chrome://sendtocategory/locale/catman.dtd">
-    %abContactsPanelCM;
+<!ENTITY % abMainOverlayDTD SYSTEM "chrome://sendtocategory/locale/catman.dtd" >
+%abMainOverlayDTD;
 ]>
 
 <overlay id="CatManContactPanelOverlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
