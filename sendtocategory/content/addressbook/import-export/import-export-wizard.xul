@@ -20,7 +20,7 @@
 
 
 
-  <wizardpage pageid="CatManWizardMode" label="&sendtocategory.wizard.mode.title;" onpageadvanced="return jbCatManWizard.onpageadvanced(this);" next="CatManWizardImport">
+  <wizardpage pageid="CatManWizardMode" label="&sendtocategory.wizard.mode.title;" onpageshow="jbCatManWizard.reset();" onpageadvanced="return jbCatManWizard.onpageadvanced(this);" next="CatManWizardImport">
 
   <!-- locales used in javascript -->
   <label id="sendtocategory.wizard.types.csv" hidden="true" value="&sendtocategory.wizard.types.csv;" />

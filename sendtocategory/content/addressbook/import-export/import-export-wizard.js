@@ -1,6 +1,6 @@
 var jbCatMan = window.opener.jbCatMan;
-var jbCatManWizard = {}
-
+var jbCatManWizard = {};
+    
 let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
 loader.loadSubScript("chrome://sendtocategory/content/parser/csv/csv.js");
 //loader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcard.js");
@@ -82,6 +82,9 @@ jbCatManWizard.finishWizard = function () {
 }
 
 
+jbCatManWizard.reset = function () {
+    jbCatManWizard.fileObj = null;
+}
 
 /* Do things on hitting advance button */
 jbCatManWizard.onpageadvanced = function (curPage) {
@@ -111,7 +114,7 @@ jbCatManWizard.onpageadvanced = function (curPage) {
 
     case "CatManWizardMode":
       let nsIFilePicker = Components.interfaces.nsIFilePicker;
-      let fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
+      let fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(Components.interfaces.nsIFilePicker);
       if (document.getElementById('CatManWizardMode').value == "Export") fp.init(window, document.getElementById('sendtocategory.wizard.mode.export.selectfile').value , nsIFilePicker.modeSave);
       else fp.init(window, document.getElementById('sendtocategory.wizard.mode.import.selectfile').value, nsIFilePicker.modeOpen);
 
@@ -123,12 +126,21 @@ jbCatManWizard.onpageadvanced = function (curPage) {
         extAtIndex.push(ext);
       }
 
-      // determine next XUL page based on filetype selection and load default landing page
-      let res = fp.show();
-      if (res == nsIFilePicker.returnCancel) return false;
-      else curPage.next = "CatManWizard" + document.getElementById('CatManWizardMode').value + "_" + extAtIndex[fp.filterIndex].toUpperCase();
+      //fp.show has been deprecated, and open is async: on initial advanced return false and init filepicker
+      //the callback will trigger the advance again
+      if (jbCatManWizard.fileObj === null) {
+
+          // determine next XUL page based on filetype selection and load default landing page
+          fp.open(function (rv) {
+              if (rv != nsIFilePicker.returnCancel) {
+                  jbCatManWizard.fileObj = fp.file;
+                  document.getElementById('CatManWizard').advance();
+              }
+            });
+          return false;
+      }
       
-      jbCatManWizard.fileObj = fp.file;
+      curPage.next = "CatManWizard" + document.getElementById('CatManWizardMode').value + "_" + extAtIndex[fp.filterIndex].toUpperCase();
 
     break;
 
