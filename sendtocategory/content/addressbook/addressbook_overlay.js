@@ -1,5 +1,5 @@
 //using mailservices to open message window
-Components.utils.import("resource://app/modules/mailServices.js");
+Components.utils.import("resource:///modules/mailServices.js")
 
 let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
 loader.loadSubScript("chrome://sendtocategory/content/category_tools.js");
