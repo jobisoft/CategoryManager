@@ -4,7 +4,7 @@
     <Description about="urn:mozilla:install-manifest">
         <em:id>sendtocategory@jobisoft.de</em:id>
         <em:name>CategoryManager</em:name>
-        <em:version>2.06</em:version>
+        <em:version>2.07</em:version>
         <em:description>Category manager for contacts, also allows to send an email to all members of a category. (category based contact groups)</em:description>
         <em:creator>John Bieling</em:creator>
         <em:homepageURL>https://github.com/jobisoft/CategoryManager/</em:homepageURL>
