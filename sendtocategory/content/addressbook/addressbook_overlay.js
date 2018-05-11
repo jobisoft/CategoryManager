@@ -678,9 +678,9 @@ jbCatMan.initAddressbook = function() {
   This is based on SOGo code to include the categories field in the card view pane.
   If the SOGo-connector is installed, its own label is hidden.
   ********************************************************************************/
-  if (jbCatMan.sogoInstalled) document.getElementById("SCCvCategories").hidden = true;
+  if (document.getElementById("SCCvCategories")) document.getElementById("SCCvCategories").hidden = true;
   
-	jbCatMan.DisplayCardViewPane_ORIG = DisplayCardViewPane;
+  jbCatMan.DisplayCardViewPane_ORIG = DisplayCardViewPane;
   DisplayCardViewPane = function(card) {
     jbCatMan.DisplayCardViewPane_ORIG(card);
     let CatManCategoriesLabel = document.getElementById("CatManCategoriesLabel");    
