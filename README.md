@@ -10,5 +10,6 @@ This add-on scans all contact-cards of the currently selected addressbook, extra
 
 ## Icon sources
 
-* [slider-on.png] http://www.flaticon.com/free-icon/on-slider_84162
-* [slider-off.png] http://www.flaticon.com/free-icon/switch-off_84021
+* [slider-on.png] by [John Bieling](https://github.com/jobisoft/TbSync/blob/master/skin/src/LICENSE)
+* [slider-off.png] by [John Bieling](https://github.com/jobisoft/TbSync/blob/master/skin/src/LICENSE)
+* 
