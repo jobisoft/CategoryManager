@@ -3,25 +3,10 @@ var jbCatMan = {};
 
 
 
-//copied from sgo-connector
-jbCatMan.jsInclude = function (files, target) {
-  let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-  for (let i = 0; i < files.length; i++) {
-    jbCatMan.dump("Trying to load: " + files[i] + "\n");
-    try {
-      loader.loadSubScript(files[i], target);
-    }
-    catch(e) {
-      jbCatMan.sogoError = jbCatMan.sogoError + "category_tools.js failed to include '" + files[i] + "' (" + e + ")\n";
-    }
-  }
-}
-
-
-
 jbCatMan.quickdump = function (str) {
     Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService).logStringMessage("[CatMan] " + str);
 }
+
 jbCatMan.dump = function (str,lvl) {
 /*  if (jbCatMan.printDumps) {
     //to see dump messages, follow instructions here: https://wiki.mozilla.org/Thunderbird:Debugging_Gloda
@@ -63,7 +48,6 @@ jbCatMan.init = function () {
   //enable or disable debug dump messages
   jbCatMan.printDumps = false;
   jbCatMan.printDumpsIndent = " ";
-  jbCatMan.sogoError  = "";
 
   jbCatMan.isMFFABInstalled = jbCatMan.checkIfMFFABInstalled(); //we only need to do this once
   jbCatMan.printDebugCounts = Array();
@@ -72,29 +56,9 @@ jbCatMan.init = function () {
   jbCatMan.dump("Begin with init()",1);
   
   jbCatMan.eventUpdateTimeout = null;
-  jbCatMan.eventSOGoSyncTimeout = null;
 
   //locale object to store names from locale file
   jbCatMan.locale = {};
-
-  //SOGoSync related stuff
-  jbCatMan.sogoInstalled = false;
-  jbCatMan.sogoSyncRequest = {};
-
-  //SynchronizeGroupdavAddressbook is def in sync.addressbook.groupdav.js
-  //isGroupdavDirectory is def in /sync.addressbook.groupdav.js which is included by sync.addressbook.groupdav.js
-  if (typeof(SynchronizeGroupdavAddressbook) != "function") {
-    jbCatMan.jsInclude(["chrome://sogo-connector/content/general/sync.addressbook.groupdav.js"]);
-  }
-
-  //Verify
-  if (typeof(SynchronizeGroupdavAddressbook)  != "function") {
-    jbCatMan.dump("SOGo function 'SynchronizeGroupdavAddressbook' is not defined.");
-  } else if (typeof(isGroupdavDirectory) != "function") {
-    jbCatMan.dump("SOGo function 'isGroupdavDirectory' is not defined.");
-  } else {
-    jbCatMan.sogoInstalled = true;
-  }
 
   //data object for bulkedit dialog
   jbCatMan.bulk = {};
@@ -116,65 +80,8 @@ jbCatMan.init = function () {
   jbCatMan.data.selectedCategory = "";
   jbCatMan.data.emptyCategories = [];
 
-  // Add listener for card changes to init sync
-  jbCatMan.AbListenerToInitSOGoSync.add();
-   window.addEventListener("unload", function unloadListener(e) {
-        window.removeEventListener("unload", unloadListener, false);
-        jbCatMan.AbListenerToInitSOGoSync.remove();
-      }, false);
-
   jbCatMan.dump("Done with init()",-1);
 }
-
-
-
-
-
-//##############################################
-// SOGoSync related functions
-//##############################################
-
-/* 
-  A SOGo sync is initiated by jbCatMan.modifyCard which sets a SOGoSyncRequest. The 
-  following itemPropertyChanged event will trigger a SOGoSync, if there is a valid request.
-*/
-jbCatMan.AbListenerToInitSOGoSync = {
-
-  onItemPropertyChanged: function AbListenerToInitSOGoSync_onItemPropertyChanged(aItem, aProperty, aOldValue, aNewValue) {
-    if (aItem instanceof Components.interfaces.nsIAbCard) {
-      window.clearTimeout(jbCatMan.eventSOGoSyncTimeout);
-      jbCatMan.eventSOGoSyncTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemPropertyChanged(SOGoSync)",1); jbCatMan.initSOGoSync(); jbCatMan.dump("Done trigger by onItemPropertyChanged(SOGoSync)",-1);}, 1000);
-    }
-  },
-
-  add: function AbListenerToInitSOGoSync_add() {
-    if (Components.classes["@mozilla.org/abmanager;1"]) {
-      // Thunderbird 3+
-      Components.classes["@mozilla.org/abmanager;1"]
-                .getService(Components.interfaces.nsIAbManager)
-                .addAddressBookListener(jbCatMan.AbListenerToInitSOGoSync, Components.interfaces.nsIAbListener.all);
-    } else {
-      // Thunderbird 2
-      Components.classes["@mozilla.org/addressbook/services/session;1"]
-                .getService(Components.interfaces.nsIAddrBookSession)
-                .addAddressBookListener(jbCatMan.AbListenerToInitSOGoSync, Components.interfaces.nsIAbListener.all);
-    }
-  },
-
-  remove: function AbListenerToInitSOGoSync_remove() {
-    if (Components.classes["@mozilla.org/abmanager;1"]) {
-      // Thunderbird 3+
-      Components.classes["@mozilla.org/abmanager;1"]
-                .getService(Components.interfaces.nsIAbManager)
-                .removeAddressBookListener(jbCatMan.AbListenerToInitSOGoSync);
-    } else {
-      // Thunderbird 2
-      Components.classes["@mozilla.org/addressbook/services/session;1"]
-                .getService(Components.interfaces.nsIAddrBookSession)
-                .removeAddressBookListener(jbCatMan.AbListenerToInitSOGoSync);
-    }
-  }
-};
 
 
 
@@ -223,7 +130,6 @@ jbCatMan.updateMailinglist = function(abUri, selectedBook, card) {
 /* 
   Save a given card using the internal mapping between the directoryId (attribute of card) 
   and directoryURI, so all cards can be modified, even if the directoryURI is not known. 
-  Also does all SOGoSync related stuff.
 */
 jbCatMan.modifyCard = function (card) {
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
@@ -236,13 +142,6 @@ jbCatMan.modifyCard = function (card) {
       if (card.directoryId == "") throw { name: "jbCatManException", message: "Found card in global book without directoryId (cannot add cards to global book).", toString: function() { return this.name + ": " + this.message; } };
       abUri = jbCatMan.data.abURI[card.directoryId];
   } else abUri = jbCatMan.getWorkAbUri(selectedBook);
-
-  //SOGo stuff
-  if (jbCatMan.sogoInstalled && isGroupdavDirectory(abUri)) { //TODO - what about sogo books with deactivated sogo?
-    let oldDavVersion = card.getProperty("groupDavVersion", "-1");
-    card.setProperty("groupDavVersion", "-1"); 
-    card.setProperty("groupDavVersionPrev", oldDavVersion);
-  }
   
   //Get the working directory
   let ab = abManager.getDirectory(abUri);
@@ -260,32 +159,8 @@ jbCatMan.modifyCard = function (card) {
     jbCatMan.updateMailinglist(abUri, selectedBook, card);
   }
   
-  //Keep track of books which need to by synced
-  if (jbCatMan.sogoInstalled && isGroupdavDirectory(abUri)) { //TODO - what about sogo books with deactivated sogo?
-    jbCatMan.sogoSyncRequest[abUri] = true;
-  }
-
   return abUri;
 }
-
-
-
-/* Init requested SOGo syncs */
-jbCatMan.initSOGoSync = function () {
-  if (jbCatMan.sogoInstalled) {
-    //check all entries in jbCatMan.sogoSyncRequest
-    for (var abUri in jbCatMan.sogoSyncRequest) {
-      if (jbCatMan.sogoSyncRequest[abUri] == true && isGroupdavDirectory(abUri)) { //TODO - what about sogo books with deactivated sogo?
-        jbCatMan.dump("Sync <"+abUri+"> using sogo-connector.");
-        jbCatMan.sogoSyncRequest[abUri] = false;
-        SynchronizeGroupdavAddressbook(abUri);
-      } else {
-        jbCatMan.dump("Skipping sync of <"+abUri+">.");
-      }
-    }
-  }
-}
-
 
 
 
@@ -629,7 +504,8 @@ jbCatMan.scanCategories = function (abURI, field = jbCatMan.getCategoryField(), 
   data.emails = [];
   data.abSize = 0;
   data.abURI = [];
-  
+  data.cardsWithoutCategories = [];
+    
   // scan all addressbooks, if this is the new root addressbook (introduced in TB38)
   // otherwise just scan the selected one
   let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
@@ -673,10 +549,8 @@ jbCatMan.scanCategories = function (abURI, field = jbCatMan.getCategoryField(), 
       }
 
       let catArray = jbCatMan.getCategoriesfromCard(card, field);
+      let CardID = jbCatMan.getUIDFromCard(card);
       if (catArray.length > 0) {
-        //this person belongs to at least one category, extract UUID
-        let CardID = jbCatMan.getUIDFromCard(card);
-        
         //add card to all categories it belongs to
         for (let i=0; i < catArray.length; i++) {
           //is this category known already?
@@ -707,16 +581,12 @@ jbCatMan.scanCategories = function (abURI, field = jbCatMan.getCategoryField(), 
             data.membersWithoutAnyEmail[catArray[i]]++;
           }
         }
+      } else {
+          data.cardsWithoutCategories.push(CardID);
       }
     }
   }
   data.categoryList.sort();
-
-  //clear SOGo categories if present - we do not use them
-  if (jbCatMan.sogoInstalled){
-    let prefService = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-    prefService.setCharPref("sogo-connector.contacts.categories", "");
-  }
   
   jbCatMan.dump("Done with scanCategories()",-1);
   return data.categoryList;
@@ -738,5 +608,5 @@ SelectFirstCard = function() {
 
 
 
-//init data object and check if SOGo-Connector has been installed
+//init data object
 jbCatMan.init();

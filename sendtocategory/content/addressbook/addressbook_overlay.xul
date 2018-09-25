@@ -47,7 +47,8 @@
     
     <vbox id="dirTreeBox">
 
-        <splitter id="CatManSplitter" collapse="after" resizeafter="closest" persist="state"/> 
+        <splitter id="CatManSplitter" collapse="after" resizebefore="closest" resizeafter="closest" state="open" orient="vertical"><grippy /></splitter>
+	
         <vbox id="CatManBox" persist="height top">
                     <hbox align="center" style="padding:1ex 5px 1ex 0"><label id ="CatManBoxLabel" value="" flex="1" /><label hidden="true" value="MFFAB" pack="end" /><image hidden="true" id="CatManModeSlider" src='chrome://sendtocategory/skin/slider-off.png'  onclick="jbCatMan.onSwitchCategoryMode()" tooltiptext="&sendtocategory.catogorybox.MFFAB.tooltip;" pack="end"/></hbox>
                     <listbox 
@@ -78,31 +79,6 @@
                         disabled="false"
                         label="&sendtocategory.helpButton.label;"
                         oncommand="jbCatMan.onHelpButton()"/>
-                        <button style="width: 2em; min-width: 2em;"
-                        id="CatManHideCategoryPaneButton"
-                        disabled="false"
-                        label="&sendtocategory.hideCategoryPaneButton.label;"
-                        oncommand="jbCatMan.onToggleDisplay(false)"/>
-
-                    </hbox>
-
-                   <vbox id="CatManInfoBox" flex="1" pack="center" align="center" hidden="true" style="background-color:white;">
-                        <description style="font-style:italic; text-align:center">&sendtocategory.disableglobalbook.desc;</description>
-                   </vbox>
-                   
-        </vbox>
-        <vbox id="CatManShowBox" hidden="true" pack="end" >
-                    <hbox pack="end" style="border-top: 1px solid grey; padding-top:2px;">
-                        <button style="width: 2em; min-width: 2em;"
-                        id="CatManHelpButton"
-                        disabled="false"
-                        label="&sendtocategory.helpButton.label;"
-                        oncommand="jbCatMan.onHelpButton()"/>
-                        <button style="width: 2em; min-width: 2em;"
-                        id="CatManShowCategoryPaneButton"
-                        disabled="false"
-                        label="&sendtocategory.showCategoryPaneButton.label;"
-                        oncommand="jbCatMan.onToggleDisplay(true)"/>
                     </hbox>
         </vbox>
     </vbox>

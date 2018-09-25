@@ -11,18 +11,11 @@ if (window.opener.jbCatMan) {
 jbCatManEditDialog.Init = function () {
   jbCatMan.dump("Begin with EditDialogInit()",1);
 
-  //Hide SOGo Category Tab
-  if (jbCatMan.sogoInstalled) {
-    let categoriesTabButton = document.getElementById("categoriesTabButton");
-    if (categoriesTabButton) categoriesTabButton.style.display = 'none';
-  }
+  //hide SOGo Category Tab
+  if (document.getElementById("categoriesTabButton")) document.getElementById("categoriesTabButton").style.display = 'none';
 
   if (jbCatMan.isMFFABInstalled) {
-    if (jbCatMan.sogoInstalled) {
-        document.getElementById('abCatManCategoriesDescription').textContent = jbCatMan.getLocalizedMessage("category_description", "Category Manager / SOGo")
-    } else {
-        document.getElementById('abCatManCategoriesDescription').textContent = jbCatMan.getLocalizedMessage("category_description", "Category Manager")
-    }
+    document.getElementById('abCatManCategoriesDescription').textContent = jbCatMan.getLocalizedMessage("category_description", "Category Manager")
     document.getElementById('abCatManCategoriesDescription').hidden = false;
   }
   

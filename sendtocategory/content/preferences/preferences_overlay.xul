@@ -41,8 +41,6 @@
                     <tabpanel orient="vertical">
                         <vbox id="CatManPreferencesBoxAddressbook">
 
-                            <description style="padding:0 0 0 0">&sendtocategory.pref.addressbooktab.disableglobalbook.desc;</description>
-                            <checkbox preference='sendtocategory.disable_global_book' label="&sendtocategory.pref.addressbooktab.disableglobalbook.label;" />
                             <description style="padding:1ex 0 0 0">&sendtocategory.pref.addressbooktab.rememberlastbook.desc;</description>
                             <checkbox preference='sendtocategory.remember_last_book' label="&sendtocategory.pref.addressbooktab.rememberlastbook.label;" />
 

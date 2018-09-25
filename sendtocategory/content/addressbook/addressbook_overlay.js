@@ -32,11 +32,6 @@ Bind DN: LEAVE BLANK
 Use secure connection (SSL):UNCHECK
 
 
-CONCEPT CHANGES
- - do not mess with SOGo UUID, (SOGo is providing UUID from server, if not present)
- - groupDavVersion still needs to be set to -1, to indicate changes?
-
-
 TODO 
  - rename and delete global category should be possible
  - should categories defined in book1 be available in dropdown/popup in book2 ???
@@ -238,7 +233,7 @@ jbCatMan.onImportExport = function () {
 jbCatMan.onHelpButton = function () {
   jbCatMan.dump("Begin with onHelpButton()",1);
   let ioservice = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
-  let uriToOpen = ioservice.newURI("https://github.com/jobisoft/CategoryManager/wiki/CategoryManager-2.05-Release-Notes", null, null);
+  let uriToOpen = ioservice.newURI("https://github.com/jobisoft/CategoryManager/wiki/CategoryManager-2.10-Release-Notes", null, null);
   let extps = Components.classes["@mozilla.org/uriloader/external-protocol-service;1"].getService(Components.interfaces.nsIExternalProtocolService);
   extps.loadURI(uriToOpen, null);
   jbCatMan.dump("Done with onHelpButton()",-1);
@@ -246,19 +241,6 @@ jbCatMan.onHelpButton = function () {
 
 
 
-jbCatMan.onToggleDisplay = function (show) {
-  jbCatMan.dump("Begin with onToggleDisplay("+show+")",1);
-  if (show) {
-    document.getElementById('CatManBox').collapsed = false;
-    document.getElementById('CatManSplitter').hidden = false;
-    document.getElementById('CatManShowBox').hidden = true;
-  } else {
-    document.getElementById('CatManBox').collapsed = true;
-    document.getElementById('CatManSplitter').hidden = true;
-    document.getElementById('CatManShowBox').hidden = false;
-  }
-  jbCatMan.dump("End with onToggleDisplay()",-1);
-}
 
 jbCatMan.booksHaveContactsWithProperty = function (field) {
     let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
@@ -281,23 +263,6 @@ jbCatMan.onSelectAddressbook = function () {
   
   if (selectedBook) {
     let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
-    // disable edit functions of addressbook, if SOGo is installed and user enabled this option
-    if (jbCatMan.sogoInstalled && prefs.getBoolPref("disable_global_book") && gDirTree.view.selection.currentIndex == 0 ){
-        document.getElementById("abResultsTree").disabled = true;
-        document.getElementById("CatManInfoBoxClone").hidden = false;
-        jbCatMan.BackupABonclick = document.getElementById("abResultsTree").getAttribute("onclick");
-        jbCatMan.BackupABcontext = document.getElementById("abResultsTree").getAttribute("context");
-        document.getElementById("abResultsTree").setAttribute("onclick","");
-        document.getElementById("abResultsTree").setAttribute("context","");
-    } else {
-        document.getElementById("abResultsTree").disabled = false;
-        document.getElementById("CatManInfoBoxClone").hidden = true;
-        if (jbCatMan.BackupABonclick) {
-            document.getElementById("abResultsTree").setAttribute("onclick", jbCatMan.BackupABonclick);
-            document.getElementById("abResultsTree").setAttribute("context", jbCatMan.BackupABcontext);
-        }
-    }
-    
     jbCatMan.data.emptyCategories = [];
     jbCatMan.data.selectedCategory = "";
     jbCatMan.updateCategoryList();
@@ -629,9 +594,10 @@ SelectFirstAddressBook = function() {
 
 jbCatMan.initAddressbook = function() {
   jbCatMan.dump("Begin with initAddressbook()",1);
+
   // Add listener for card changes to update CategoryList
   jbCatMan.AbListenerToUpdateCategoryList.add();
-   window.addEventListener("unload", function unloadListener(e) {
+  window.addEventListener("unload", function unloadListener(e) {
         window.removeEventListener("unload", unloadListener, false);
         jbCatMan.AbListenerToUpdateCategoryList.remove();
       }, false);
@@ -648,17 +614,8 @@ jbCatMan.initAddressbook = function() {
   //Add listener for category context menu in category pane
   document.getElementById("CatManContextMenu").addEventListener("popupshowing", jbCatMan.updateContextMenu , false);
   
-  //Hide SOGo Categories ContextMenu
-  let sogoContextMenu = document.getElementById("sc-categories-contextmenu");
-  if (sogoContextMenu) sogoContextMenu.style.display = 'none';
-
-  //add element via JS/DOM instead of XUL/overlay, because the containing HBOX has no ID
-  var CatManInfoBox = document.getElementById("CatManInfoBox");
-  var CatManInfoBoxClone = CatManInfoBox.cloneNode(true);
-  CatManInfoBoxClone.id = "CatManInfoBoxClone";
-
-  var localResultsOnlyMessage = document.getElementById("localResultsOnlyMessage");
-  localResultsOnlyMessage.parentNode.insertBefore(CatManInfoBoxClone, localResultsOnlyMessage);
+  //Add listener for changed selection in results pane, to update CardViewPane
+  document.getElementById("abResultsTree").addEventListener("select", jbCatMan.onAbResultsPaneSelectionChanged, false);
 
   //show/hide special MFFAB context menu entries
   document.getElementById("CatManContextMenuMFFABSplitter").hidden = !jbCatMan.isMFFABInstalled;
@@ -671,26 +628,30 @@ jbCatMan.initAddressbook = function() {
     if (hasCategory && !hasCategories) jbCatMan.onSwitchCategoryMode();
   }
 
-  
+  //hide SOGo Categories ContextMenu
+  if (document.getElementById("sc-categories-contextmenu")) document.getElementById("sc-categories-contextmenu").style.display = 'none';
 
-  
-  /********************************************************************************
-  This is based on SOGo code to include the categories field in the card view pane.
-  If the SOGo-connector is installed, its own label is hidden.
-  ********************************************************************************/
+  //hide SOGo categories field in CardViewPane
   if (document.getElementById("SCCvCategories")) document.getElementById("SCCvCategories").hidden = true;
-  
-  jbCatMan.DisplayCardViewPane_ORIG = DisplayCardViewPane;
-  DisplayCardViewPane = function(card) {
-    jbCatMan.DisplayCardViewPane_ORIG(card);
-    let CatManCategoriesLabel = document.getElementById("CatManCategoriesLabel");    
-    let cats = jbCatMan.getCategoriesfromCard(card).sort().join(", ");
-    document.getElementById("CatManCategoriesHeader").hidden = !cvSetNodeWithLabel(CatManCategoriesLabel, CatManCategoriesLabel.getAttribute("CatManCategoriesLabelText"), cats);
-  }
-
   
   jbCatMan.dump("Done with initAddressbook()",-1);
 }
+
+
+jbCatMan.onAbResultsPaneSelectionChanged = function () {
+  let cards = window.GetSelectedAbCards();
+
+  if (cards.length == 1) {
+    let cats = jbCatMan.getCategoriesfromCard(cards[0]).sort().join(", ");
+    let CatManCategoriesLabel = document.getElementById("CatManCategoriesLabel");    
+    document.getElementById("CatManCategoriesHeader").hidden = !cvSetNodeWithLabel(CatManCategoriesLabel, CatManCategoriesLabel.getAttribute("CatManCategoriesLabelText"), cats);
+  } else {
+    document.getElementById("CatManCategoriesHeader").hidden = true;
+  }
+
+}
+  
+
 
 // run init function after window has been loaded
 window.addEventListener("load", function() { jbCatMan.initAddressbook(); }, false);
