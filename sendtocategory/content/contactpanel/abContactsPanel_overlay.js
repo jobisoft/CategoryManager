@@ -94,7 +94,7 @@ jbCatMan.contactPanelCategoryMenuChanged = function () {
     menulist.selectedItem = menulist.getItemAtIndex(0);
 
     //apply filter
-    jbCatMan.doCategorySearch(document.getElementById('addressbookList').value);
+    jbCatMan.doCategorySearch();
 
     //select all members of the selected category to save mouse clicks (if only
     //one member is to be selected, the user still has to click once as before)
