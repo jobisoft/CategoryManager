@@ -78,6 +78,8 @@ jbCatMan.init = function () {
 
   //managed by addressbook_overlay.js
   jbCatMan.data.selectedCategory = "";
+  jbCatMan.data.selectedCategoryType = "";
+
   jbCatMan.data.emptyCategories = [];
 
   jbCatMan.dump("Done with init()",-1);
@@ -180,19 +182,37 @@ jbCatMan.updatePeopleSearchInput = function (name) {
 }
 
 
-jbCatMan.getCategorySearchString = function(abURI, category) {
-    if (category == "") return abURI;
-
+jbCatMan.getCategorySearchString = function(abURI, category, type = "category") {
+    //Filter by categories - http://mxr.mozilla.org/comm-central/source/mailnews/addrbook/src/nsAbQueryStringToExpression.cpp#278
+    let searchstring = "";
     let searchKeys = "";
-    // encodeURIComponent does NOT encode brackets "(" and ")" - need to do that by hand
-    let sep = jbCatMan.getCategorySeperator();
-    let field = jbCatMan.getCategoryField();
-    searchKeys = searchKeys + "("+field+",bw,"+encodeURIComponent( category + sep ).replace("(","%28").replace(")","%29") +")";
-    searchKeys = searchKeys + "("+field+",ew,"+encodeURIComponent( sep + category ).replace("(","%28").replace(")","%29") +")";
-    searchKeys = searchKeys + "("+field+",c,"+encodeURIComponent( sep + category + sep ).replace("(","%28").replace(")","%29") +")";
-    searchKeys = searchKeys + "("+field+",=,"+encodeURIComponent( category ).replace("(","%28").replace(")","%29") +")";
 
-    return abURI + "?" + "(or" + searchKeys + ")";
+    if (type == "all") {
+
+      searchstring = abURI;
+
+    } else if (type == "uncategorized") {
+
+      for (let i=0; i < jbCatMan.data.cardsWithoutCategories.length; i++) {
+         searchKeys += "(DbRowID,=,"+ jbCatMan.data.cardsWithoutCategories[i].split("\u001A")[0] +")";
+      }
+      searchstring =  abURI + "?" + "(or" + searchKeys + ")";
+
+    } else {
+
+      // encodeURIComponent does NOT encode brackets "(" and ")" - need to do that by hand
+      let sep = jbCatMan.getCategorySeperator();
+      let field = jbCatMan.getCategoryField();
+      searchKeys = searchKeys + "("+field+",bw,"+encodeURIComponent( category + sep ).replace("(","%28").replace(")","%29") +")";
+      searchKeys = searchKeys + "("+field+",ew,"+encodeURIComponent( sep + category ).replace("(","%28").replace(")","%29") +")";
+      searchKeys = searchKeys + "("+field+",c,"+encodeURIComponent( sep + category + sep ).replace("(","%28").replace(")","%29") +")";
+      searchKeys = searchKeys + "("+field+",=,"+encodeURIComponent( category ).replace("(","%28").replace(")","%29") +")";
+
+      searchstring =  abURI + "?" + "(or" + searchKeys + ")";
+    }
+    
+    Services.console.logStringMessage("SearchString is <"+searchstring+">");
+    return searchstring;
 }
 
 jbCatMan.doCategorySearch = function () {
@@ -203,17 +223,14 @@ jbCatMan.doCategorySearch = function () {
     ClearCardViewPane();
   }
 
-  // update results pane based on selected category
+  //update results pane based on selected category 
+  let searchString = jbCatMan.getCategorySearchString(abURI, jbCatMan.data.selectedCategory, jbCatMan.data.selectedCategoryType);
+  SetAbView(searchString);
+
   if ( jbCatMan.data.selectedCategory == "" ) {
-    SetAbView(abURI);
     SelectFirstCard();
   } else {
-
-    let searchString = jbCatMan.getCategorySearchString(abURI, jbCatMan.data.selectedCategory);
-    jbCatMan.dump("SearchString is <"+searchString+">");
-    
-    //Filter by categories - http://mxr.mozilla.org/comm-central/source/mailnews/addrbook/src/nsAbQueryStringToExpression.cpp#278
-    SetAbView(searchString);
+    //replace by count == 0 TODO
     if (document.getElementById("CardViewBox") != null && jbCatMan.data.selectedCategory in jbCatMan.data.foundCategories) {
       SelectFirstCard();  
     }
@@ -582,7 +599,7 @@ jbCatMan.scanCategories = function (abURI, field = jbCatMan.getCategoryField(), 
           }
         }
       } else {
-          data.cardsWithoutCategories.push(CardID);
+        data.cardsWithoutCategories.push(CardID);
       }
     }
   }

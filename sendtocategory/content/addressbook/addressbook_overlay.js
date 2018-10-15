@@ -73,23 +73,41 @@ jbCatMan.updateCategoryList = function () {
 
   //disable "all" element if global book and global book empty or if remote book
   if (!(abManager.getDirectory(GetSelectedDirectory()).isRemote || (GetSelectedDirectory() == "moz-abdirectory://?" && jbCatMan.data.abSize == 0))) {
-      let newListItem = document.createElement("listitem");
-      newListItem.setAttribute("id", "");
-      let categoryName = document.createElement("listcell");
-      categoryName.setAttribute("label", jbCatMan.locale.viewAllCategories);
-      categoryName.setAttribute("style", "font-style:italic;");
-      newListItem.appendChild(categoryName);
-      let categorySize = document.createElement("listcell");
-      categorySize.setAttribute("label", jbCatMan.data.abSize);
-      categorySize.setAttribute("style", "font-style:italic;");
-      newListItem.appendChild(categorySize);
-      categoriesList.appendChild(newListItem);
+    let newListItem = document.createElement("listitem");
+    newListItem.setAttribute("id", "");
+    newListItem.setAttribute("type", "all");
+    let categoryName = document.createElement("listcell");
+    categoryName.setAttribute("label", jbCatMan.locale.viewAllCategories);
+    categoryName.setAttribute("style", "font-style:italic;");
+    newListItem.appendChild(categoryName);
+    let categorySize = document.createElement("listcell");
+    categorySize.setAttribute("label", jbCatMan.data.abSize);
+    categorySize.setAttribute("style", "font-style:italic;");
+    newListItem.appendChild(categorySize);
+    categoriesList.appendChild(newListItem);
+  }
+    
+  //disable cardsWithoutCategories for  global and remote book 
+  if (!(abManager.getDirectory(GetSelectedDirectory()).isRemote || GetSelectedDirectory() == "moz-abdirectory://?" )) {
+    let newListItem = document.createElement("listitem");
+    newListItem.setAttribute("id", "");
+    newListItem.setAttribute("type", "uncategorized");
+    let categoryName = document.createElement("listcell");
+    categoryName.setAttribute("label", jbCatMan.getLocalizedMessage("viewWithoutCategories"));
+    categoryName.setAttribute("style", "font-style:italic;");
+    newListItem.appendChild(categoryName);
+    let categorySize = document.createElement("listcell");
+    categorySize.setAttribute("label", jbCatMan.data.cardsWithoutCategories.length);
+    categorySize.setAttribute("style", "font-style:italic;");
+    newListItem.appendChild(categorySize);
+    categoriesList.appendChild(newListItem);
   }
   
   //add all categories from the updated/merged array to the category listbox
   for (let i = 0; i < jbCatMan.data.categoryList.length; i++) {
     let newListItem = document.createElement("listitem");
     newListItem.setAttribute("id", jbCatMan.data.categoryList[i]);
+    newListItem.setAttribute("type", "category");
 
     let categoryName = document.createElement("listcell");
     categoryName.setAttribute("label", jbCatMan.data.categoryList[i]);
@@ -136,6 +154,7 @@ jbCatMan.updateContextMenu = function () {
     let isRemote = true;
     let isGlobal = false;
     let isAll = (jbCatMan.data.selectedCategory == "");
+    let isUncategorized = (jbCatMan.data.selectedCategoryType == "uncategorized");
     let selectedBook = GetSelectedDirectory();
 
     if (selectedBook) isRemote = abManager.getDirectory(selectedBook).isRemote;
@@ -144,14 +163,14 @@ jbCatMan.updateContextMenu = function () {
     document.getElementById("CatManContextMenuRemove").disabled = (isAll || isRemote || isGlobal);
     document.getElementById("CatManContextMenuEdit").disabled = (isAll || isRemote || isGlobal);
     document.getElementById("CatManContextMenuBulk").disabled = (isAll || isRemote || isGlobal);
-    document.getElementById("CatManContextMenuMFFABConvert").disabled = (isRemote || isGlobal || jbCatMan.data.categoryList.length == 0);
+    document.getElementById("CatManContextMenuMFFABConvert").disabled = (isUncategorized || isRemote || isGlobal || jbCatMan.data.categoryList.length == 0);
 
     document.getElementById("CatManContextMenuSend").disabled = (isAll || isRemote); 
 
     //Import and export for all address books, regardless of category (if no category selected, export entire abook or import without category tagging)
     document.getElementById("CatManContextMenuImportExport").disabled = isRemote || isGlobal;
 
-    if (jbCatMan.data.selectedCategory == "") {
+    if (jbCatMan.data.selectedCategoryType == "all") {
         document.getElementById("CatManContextMenuImportExport").label = jbCatMan.locale.menuAllExport;
     } else {
         document.getElementById("CatManContextMenuImportExport").label = jbCatMan.locale.menuExport;
@@ -159,7 +178,7 @@ jbCatMan.updateContextMenu = function () {
   
     //Special MFFAB entries
     let all = "_";
-    if (jbCatMan.data.selectedCategory == "") all = "_all_";
+    if (jbCatMan.data.selectedCategoryType == "all") all = "_all_";
     
     if (jbCatMan.isMFFABCategoryMode()) {
         document.getElementById("CatManContextMenuMFFABConvert").label = jbCatMan.getLocalizedMessage("convert"+all+"to_standard_category");
@@ -173,7 +192,7 @@ jbCatMan.updateButtons = function () {
     let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
     let isRemote = true;
     let isGlobal = false;
-    let isAll = (jbCatMan.data.selectedCategory == "");
+    let isAll = (jbCatMan.data.selectedCategoryType == "all");
     let selectedBook = GetSelectedDirectory();
     if (selectedBook) isRemote = abManager.getDirectory(selectedBook).isRemote;
     if (selectedBook == "moz-abdirectory://?") isGlobal = true;
@@ -281,7 +300,8 @@ jbCatMan.onSelectCategoryList = function () {
   jbCatMan.dump("Begin with onSelectCategoryList()",1);
   let categoriesList = document.getElementById("CatManCategoriesList");
   if (categoriesList.selectedIndex != -1) {
-    jbCatMan.data.selectedCategory = categoriesList.selectedItem.id
+    jbCatMan.data.selectedCategory = categoriesList.selectedItem.id;
+    jbCatMan.data.selectedCategoryType = categoriesList.selectedItem.getAttribute("type");
     categoriesList.clearSelection();
     jbCatMan.doCategorySearch();
   }

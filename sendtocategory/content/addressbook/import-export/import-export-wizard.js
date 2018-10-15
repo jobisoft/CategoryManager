@@ -27,19 +27,21 @@ jbCatManWizard.Init = function () {
   
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
   jbCatManWizard.currentAddressBook = abManager.getDirectory(window.opener.GetSelectedDirectory()); //GetSelectedDirectory() returns an URI, but we need the directory itself
-  jbCatManWizard.exportsize = jbCatMan.data.abSize;
   jbCatManWizard.timestamp = "Import_" + (new Date()).toISOString().substring(0, 19);
     
-  if (jbCatMan.data.selectedCategory != "") {
+  document.getElementById('CatManWizardExport_Categories_CSV').hidden = (jbCatMan.data.selectedCategory == "");
+
+  if (jbCatMan.data.selectedCategoryType == "category") {
     //user selected a category
     if (jbCatMan.data.foundCategories[jbCatMan.data.selectedCategory]) jbCatManWizard.exportsize = jbCatMan.data.foundCategories[jbCatMan.data.selectedCategory].length;
     else {
       jbCatManWizard.exportsize = 0;
       document.getElementById('CatManWizardMode').children[1].disabled = true;
     }
+  } else if (jbCatMan.data.selectedCategoryType == "uncategorized") {
+    jbCatManWizard.exportsize = jbCatMan.data.cardsWithoutCategories.length;    
   } else {
-    //user selected an entire address book
-    document.getElementById('CatManWizardExport_Categories_CSV').hidden = true;
+    jbCatManWizard.exportsize = jbCatMan.data.abSize;
   }
 
 
@@ -411,8 +413,7 @@ jbCatManWizard.ProgressBefore_Export_CSV = function (dialog, step = 0) {
 
   if (step == 0) {
     //get all to-be-exported contatcs
-    let searchstring = jbCatManWizard.currentAddressBook.URI;
-    if (jbCatMan.data.selectedCategory != "") searchstring = jbCatMan.getCategorySearchString(jbCatManWizard.currentAddressBook.URI, jbCatMan.data.selectedCategory);
+    let searchstring =  jbCatMan.getCategorySearchString(jbCatManWizard.currentAddressBook.URI, jbCatMan.data.selectedCategory, jbCatMan.data.selectedCategoryType);
     jbCatManWizard.exportCards = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager).getDirectory(searchstring).childCards;
 
     //get all standard thunderbird fields (defined at csv inport wizard page)
@@ -452,8 +453,7 @@ jbCatManWizard.ProgressAfter_Export_CSV = function (dialog, step = 0) {
     //init export file
     jbCatManWizard.initFile(jbCatManWizard.fileObj);
     //get cards to be exported
-    let searchstring = jbCatManWizard.currentAddressBook.URI;
-    if (jbCatMan.data.selectedCategory != "") searchstring = jbCatMan.getCategorySearchString(jbCatManWizard.currentAddressBook.URI, jbCatMan.data.selectedCategory);
+    let searchstring = jbCatMan.getCategorySearchString(jbCatManWizard.currentAddressBook.URI, jbCatMan.data.selectedCategory, jbCatMan.data.selectedCategoryType);
     jbCatManWizard.exportCards = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager).getDirectory(searchstring).childCards;
     //escape header of all fields which need to be exported
     let header = [];
