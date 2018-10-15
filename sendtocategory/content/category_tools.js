@@ -211,7 +211,6 @@ jbCatMan.getCategorySearchString = function(abURI, category, type = "category") 
       searchstring =  abURI + "?" + "(or" + searchKeys + ")";
     }
     
-    Services.console.logStringMessage("SearchString is <"+searchstring+">");
     return searchstring;
 }
 
