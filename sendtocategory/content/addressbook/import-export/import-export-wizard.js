@@ -40,7 +40,7 @@ jbCatManWizard.Init = function () {
     }
   } else if (jbCatMan.data.selectedCategoryType == "uncategorized") {
     jbCatManWizard.exportsize = jbCatMan.data.cardsWithoutCategories.length;    
-  } else {
+  } else { //all
     jbCatManWizard.exportsize = jbCatMan.data.abSize;
   }
 

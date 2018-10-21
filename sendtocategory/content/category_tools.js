@@ -226,13 +226,8 @@ jbCatMan.doCategorySearch = function () {
   let searchString = jbCatMan.getCategorySearchString(abURI, jbCatMan.data.selectedCategory, jbCatMan.data.selectedCategoryType);
   SetAbView(searchString);
 
-  if ( jbCatMan.data.selectedCategory == "" ) {
-    SelectFirstCard();
-  } else {
-    //replace by count == 0 TODO
-    if (document.getElementById("CardViewBox") != null && jbCatMan.data.selectedCategory in jbCatMan.data.foundCategories) {
-      SelectFirstCard();  
-    }
+  if (document.getElementById("CardViewBox") != null) {
+    SelectFirstCard();  
   }
   
   jbCatMan.updatePeopleSearchInput(jbCatMan.data.selectedCategory);
