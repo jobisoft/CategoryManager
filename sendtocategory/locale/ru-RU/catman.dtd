@@ -1,8 +1,8 @@
-<!ENTITY sendtocategory.ok.button "Ok">
-<!ENTITY sendtocategory.cancel.button "Cancel">
+<!ENTITY sendtocategory.ok.button "Готово">
+<!ENTITY sendtocategory.cancel.button "Отмена">
 
 <!ENTITY sendtocategory.category.label "category">
-<!ENTITY sendtocategory.category.all "All">
+<!ENTITY sendtocategory.category.all "Все">
 <!ENTITY sendtocategory.name.label "name">
 
 <!ENTITY sendtocategory.categoryfilter.label "Categories ...">
