@@ -72,8 +72,8 @@
 <!ENTITY sendtocategory.bulkedit.legend.caption "легенда">
 <!ENTITY sendtocategory.bulkedit.legend.ok "E-mail address could be unambiguously assigned to a contact, and this contact will be added to the category.">
 <!ENTITY sendtocategory.bulkedit.legend.notok "E-mail address was not found in the address book. A new contact needs to be created and will be added to the category.">
-<!ENTITY sendtocategory.bulkedit.legend.double "E-mail address was found in multiple contacts. Please select the which of these contacts should be added to the category.">
-<!ENTITY sendtocategory.bulkedit.legend.okdouble "E-mail address was found in multiple contacts. However, one of these contacts is already assigned to this category and has been automatically selected.">
+<!ENTITY sendtocategory.bulkedit.legend.double "Адрес электронной почты был найден в нескольких контактах. Выберите, какой из этих контактов следует добавить в категорию.">
+<!ENTITY sendtocategory.bulkedit.legend.okdouble "Адрес электронной почты был найден в нескольких контактах. Однако один из этих контактов уже назначен этой категории и был автоматически выбран.">
 
 <!ENTITY sendtocategory.bulkedit.firstname "имя">
 <!ENTITY sendtocategory.bulkedit.lastname "фамилия">
