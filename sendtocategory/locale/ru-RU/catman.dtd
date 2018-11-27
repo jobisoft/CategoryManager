@@ -32,7 +32,7 @@
 <!ENTITY sendtocategory.exportAll.title "импорт/экспорт адресной книги">
 
 <!ENTITY sendtocategory.catbox.header.catname "имя категории">
-<!ENTITY sendtocategory.catbox.header.catsize "члены">
+<!ENTITY sendtocategory.catbox.header.catsize "участники">
 
 <!ENTITY sendtocategory.error.rename "Категория [##oldname##] не может быть переименована в [##newname##], так как категория с таким именем уже существует.">
 <!ENTITY sendtocategory.error.add "Категория [##newname##] не может быть добавлена, так как категория с таким именем уже существует.">
@@ -49,17 +49,17 @@
 <!ENTITY sendtocategory.pref.generaltab.toaddr.label "необязательный 'to:' адрес (видимый для всех, отображаемое имя - это имя списка)">
 
 <!ENTITY sendtocategory.pref.addressbooktab.label "Адресная книга">
-<!ENTITY sendtocategory.pref.addressbooktab.rememberlastbook.label "Remember last used addressbook">
+<!ENTITY sendtocategory.pref.addressbooktab.rememberlastbook.label "Запомнить последнюю использованную адресную книгу">
 <!ENTITY sendtocategory.pref.addressbooktab.rememberlastbook.desc "If the thunderbird addressbook is opened, usually the first found addressbook will be displayed. With this option set, the last used addressbook will be displayed.">
 
-<!ENTITY sendtocategory.bulkedit.note "Note">
+<!ENTITY sendtocategory.bulkedit.note "Заметка">
 <!ENTITY sendtocategory.bulkedit.membersWithoutPrimaryEmail "This category contains ##counts## contacts without an associated email address. The category information of these contacts cannot be edited with this dialog. They are not shown in the list above.">
 
-<!ENTITY sendtocategory.bulkedit.title "Edit category directly">
-<!ENTITY sendtocategory.bulkeditMenu.label "edit category ##name## directly">
+<!ENTITY sendtocategory.bulkedit.title "Редактировать категорию непосредственно">
+<!ENTITY sendtocategory.bulkeditMenu.label "редактировать категорию ##name## непосредственно">
 
-<!ENTITY sendtocategory.bulkedit.edit.title "Edit members of category ##name## directly:">
-<!ENTITY sendtocategory.bulkedit.save.title "The following changes have been applied to category ##name##:">
+<!ENTITY sendtocategory.bulkedit.edit.title "Редактировать участников категории ##name## непосредственно:">
+<!ENTITY sendtocategory.bulkedit.save.title "Следующие изменения были применены к категории ##name##:">
 
 <!ENTITY sendtocategory.bulkedit.validate.button "validate e-mail addresses">
 <!ENTITY sendtocategory.bulkedit.save.button "save category">
