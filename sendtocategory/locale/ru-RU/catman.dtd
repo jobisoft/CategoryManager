@@ -1,12 +1,12 @@
 <!ENTITY sendtocategory.ok.button "Готово">
 <!ENTITY sendtocategory.cancel.button "Отмена">
 
-<!ENTITY sendtocategory.category.label "category">
+<!ENTITY sendtocategory.category.label "категория">
 <!ENTITY sendtocategory.category.all "Все">
-<!ENTITY sendtocategory.name.label "name">
+<!ENTITY sendtocategory.name.label "имя">
 
-<!ENTITY sendtocategory.categoryfilter.label "Categories ...">
-<!ENTITY sendtocategory.categoriescontext.label "Categories">
+<!ENTITY sendtocategory.categoryfilter.label "Категории ...">
+<!ENTITY sendtocategory.categoriescontext.label "Категории">
 
 <!ENTITY sendtocategory.catogorybox.label "Found categories">
 <!ENTITY sendtocategory.catogorybox.MFFAB.tooltip "Switch between standard category mode and MFFAB category mode">
