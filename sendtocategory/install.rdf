@@ -32,9 +32,7 @@
         <em:localized>
             <Description>
                 <em:locale>fr-FR</em:locale>
-                <em:description>Category Manager pour contacts, permet aussi d'envoyer un email à tous les membres d'une catégorie (category based contact groups).</em:description>
-                <em:translator>Alexey Sinitsyn</em:translator>
-                <em:homepageURL>https://github.com/sinya13/CategoryManager/</em:homepageURL>            
+                <em:description>Category Manager pour contacts, permet aussi d'envoyer un email à tous les membres d'une catégorie (category based contact groups).</em:description>           
              </Description>
         </em:localized>
 
@@ -49,6 +47,8 @@
             <Description>
                 <em:locale>ru-RU</em:locale>
                 <em:description>Administrador de categorias para contactos, que permite enviar un correo a todos los miembros de una categoria. (category based contact groups)</em:description>
+                <em:translator>Alexey Sinitsyn</em:translator>
+                <em:homepageURL>https://github.com/sinya13/CategoryManager/</em:homepageURL> 
             </Description>
          </em:localized>
 
