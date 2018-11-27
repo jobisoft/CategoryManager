@@ -34,21 +34,21 @@
 <!ENTITY sendtocategory.catbox.header.catname "имя категории">
 <!ENTITY sendtocategory.catbox.header.catsize "члены">
 
-<!ENTITY sendtocategory.error.rename "The category [##oldname##] cannot be renamed to [##newname##], cause a category with that name already exists.">
-<!ENTITY sendtocategory.error.add "The category [##newname##] cannot be added], cause a category with that name already exists.">
+<!ENTITY sendtocategory.error.rename "Категория [##oldname##] не может быть переименована в [##newname##], так как категория с таким именем уже существует.">
+<!ENTITY sendtocategory.error.add "Категория [##newname##] не может быть добавлена, так как категория с таким именем уже существует.">
 <!ENTITY sendtocategory.info.add "The new category [##newname##] has not yet been connected to a contact. If you close the addressbook without assigning a contact, the newly created category will be removed.">
 <!ENTITY sendtocategory.confirm.rename "This action will change the category-property of ##number## contacts, the membership to category [##oldname##] will be replaced by a membership to category [##newname##]. This cannot be undone, do you want to continue?">
 <!ENTITY sendtocategory.confirm.delete "This action will change the category-property of ##number## contacts, the membership to category [##oldname##] will be removed. This cannot be undone, do you want to continue?">
 
 <!ENTITY sendtocategory.pref.label "Category Manager">
-<!ENTITY sendtocategory.pref.generaltab.label "Bulk-Mails">
+<!ENTITY sendtocategory.pref.generaltab.label "Большие письма">
 
 <!ENTITY sendtocategory.pref.generaltab.toaddr.desc1 "Из-за немецких законов защиты данных не разрешается * вставлять всех членов списка в поле «Кому:» или «cc:», поскольку это будет раскрывать все адреса электронной почты всем членам списка.">
 <!ENTITY sendtocategory.pref.generaltab.toaddr.desc2 "Therefore, all category members wil be inserted into the 'bcc:' field. However, such an email will not have a visible receipient; depending on the email client, it will display something like 'undisclosed-recipients:;' instead. It is common to include an additional recipient - for all to see - into the 'to:' field (your own address or a no-reply address), which has the name of the list as its display name. It is mostly not possible to use a non-existing email address, because most mail servers will reject those emails.">
 <!ENTITY sendtocategory.pref.generaltab.toaddr.desc3 "If this field remains empty, the name of the list (inside brackets) will be added to the subject of the email, to identify the email as part of a list.">
 <!ENTITY sendtocategory.pref.generaltab.toaddr.label "optional 'to:' address (visible for everybody, the displayed name is the name of the list)">
 
-<!ENTITY sendtocategory.pref.addressbooktab.label "Addressbook">
+<!ENTITY sendtocategory.pref.addressbooktab.label "Адресная книга">
 <!ENTITY sendtocategory.pref.addressbooktab.rememberlastbook.label "Remember last used addressbook">
 <!ENTITY sendtocategory.pref.addressbooktab.rememberlastbook.desc "If the thunderbird addressbook is opened, usually the first found addressbook will be displayed. With this option set, the last used addressbook will be displayed.">
 
