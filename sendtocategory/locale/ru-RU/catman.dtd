@@ -43,7 +43,7 @@
 <!ENTITY sendtocategory.pref.label "Category Manager">
 <!ENTITY sendtocategory.pref.generaltab.label "Bulk-Mails">
 
-<!ENTITY sendtocategory.pref.generaltab.toaddr.desc1 "Due to german data protection laws, it is not allowed* to insert all members of a list into the 'to:' or 'cc:' field, because it will reveal all email addresses to all list members.">
+<!ENTITY sendtocategory.pref.generaltab.toaddr.desc1 "Из-за немецких законов защиты данных не разрешается * вставлять всех членов списка в поле «Кому:» или «cc:», поскольку это будет раскрывать все адреса электронной почты всем членам списка.">
 <!ENTITY sendtocategory.pref.generaltab.toaddr.desc2 "Therefore, all category members wil be inserted into the 'bcc:' field. However, such an email will not have a visible receipient; depending on the email client, it will display something like 'undisclosed-recipients:;' instead. It is common to include an additional recipient - for all to see - into the 'to:' field (your own address or a no-reply address), which has the name of the list as its display name. It is mostly not possible to use a non-existing email address, because most mail servers will reject those emails.">
 <!ENTITY sendtocategory.pref.generaltab.toaddr.desc3 "If this field remains empty, the name of the list (inside brackets) will be added to the subject of the email, to identify the email as part of a list.">
 <!ENTITY sendtocategory.pref.generaltab.toaddr.label "optional 'to:' address (visible for everybody, the displayed name is the name of the list)">
@@ -65,9 +65,9 @@
 <!ENTITY sendtocategory.bulkedit.save.button "save category">
 <!ENTITY sendtocategory.bulkedit.close.button "close change log">
 
-<!ENTITY sendtocategory.bulkedit.header.email "e-mail address">
+<!ENTITY sendtocategory.bulkedit.header.email "e-mail адрес">
 <!ENTITY sendtocategory.bulkedit.header.contact "assigned contact">
-<!ENTITY sendtocategory.bulkedit.header.status "status">
+<!ENTITY sendtocategory.bulkedit.header.status "статус">
 
 <!ENTITY sendtocategory.bulkedit.legend.caption "legend">
 <!ENTITY sendtocategory.bulkedit.legend.ok "E-mail address could be unambiguously assigned to a contact, and this contact will be added to the category.">
@@ -75,10 +75,10 @@
 <!ENTITY sendtocategory.bulkedit.legend.double "E-mail address was found in multiple contacts. Please select the which of these contacts should be added to the category.">
 <!ENTITY sendtocategory.bulkedit.legend.okdouble "E-mail address was found in multiple contacts. However, one of these contacts is already assigned to this category and has been automatically selected.">
 
-<!ENTITY sendtocategory.bulkedit.firstname "first name">
-<!ENTITY sendtocategory.bulkedit.lastname "last name">
-<!ENTITY sendtocategory.bulkedit.choose "Please select contact ...">
-<!ENTITY sendtocategory.bulkedit.noname "Unknown Name">
+<!ENTITY sendtocategory.bulkedit.firstname "имя">
+<!ENTITY sendtocategory.bulkedit.lastname "фамилия">
+<!ENTITY sendtocategory.bulkedit.choose "Выберите контакт ...">
+<!ENTITY sendtocategory.bulkedit.noname "Неизвестное Имя">
 
 <!ENTITY sendtocategory.catsedit.title "Edit category membership of selected contacts">
 <!ENTITY sendtocategory.catsedit.label.in "Subset of the selected contatcs which should be part of category ##name##:">
