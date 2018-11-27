@@ -8,25 +8,25 @@
 <!ENTITY sendtocategory.categoryfilter.label "Категории ...">
 <!ENTITY sendtocategory.categoriescontext.label "Категории">
 
-<!ENTITY sendtocategory.catogorybox.label "Found categories">
-<!ENTITY sendtocategory.catogorybox.MFFAB.tooltip "Switch between standard category mode and MFFAB category mode">
+<!ENTITY sendtocategory.catogorybox.label "Найденные категории">
+<!ENTITY sendtocategory.catogorybox.MFFAB.tooltip "Переключение между режимом стандартной категории и MFFAB режимом категории">
 
 <!ENTITY sendtocategory.helpButton.label "?">
 <!ENTITY sendtocategory.hideCategoryPaneButton.label "&#9660;">
 <!ENTITY sendtocategory.showCategoryPaneButton.label "&#9650;">
 
-<!ENTITY sendtocategory.add.title "add category">
-<!ENTITY sendtocategory.addButton.label "add category">
+<!ENTITY sendtocategory.add.title "добавить категорию">
+<!ENTITY sendtocategory.addButton.label "добавить категорию">
 <!ENTITY sendtocategory.addButton.accesskey "A">
 
-<!ENTITY sendtocategory.edit.title "rename category">
-<!ENTITY sendtocategory.editMenu.label "rename category ##name##">
+<!ENTITY sendtocategory.edit.title "переименовать категорию">
+<!ENTITY sendtocategory.editMenu.label "переименовать категорию ##name##">
 
-<!ENTITY sendtocategory.remove.title "delete category">
-<!ENTITY sendtocategory.removeMenu.label "remove category ##name##">
+<!ENTITY sendtocategory.remove.title "удалить категорию">
+<!ENTITY sendtocategory.removeMenu.label "удалить категорию ##name##">
 
-<!ENTITY sendtocategory.send.title "send e-mail to category">
-<!ENTITY sendtocategory.sendMenu.label "send e-mail to category ##name##">
+<!ENTITY sendtocategory.send.title "послать e-mail в категорию">
+<!ENTITY sendtocategory.sendMenu.label "послать e-mail в категорию ##name##">
 
 <!ENTITY sendtocategory.export.title "import/export category">
 <!ENTITY sendtocategory.exportAll.title "import/export address book">
