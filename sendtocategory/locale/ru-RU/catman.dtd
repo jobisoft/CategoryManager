@@ -28,11 +28,11 @@
 <!ENTITY sendtocategory.send.title "послать e-mail в категорию">
 <!ENTITY sendtocategory.sendMenu.label "послать e-mail в категорию ##name##">
 
-<!ENTITY sendtocategory.export.title "import/export category">
-<!ENTITY sendtocategory.exportAll.title "import/export address book">
+<!ENTITY sendtocategory.export.title "импорт/экспорт категории">
+<!ENTITY sendtocategory.exportAll.title "импорт/экспорт адресной книги">
 
-<!ENTITY sendtocategory.catbox.header.catname "category name">
-<!ENTITY sendtocategory.catbox.header.catsize "members">
+<!ENTITY sendtocategory.catbox.header.catname "имя категории">
+<!ENTITY sendtocategory.catbox.header.catsize "члены">
 
 <!ENTITY sendtocategory.error.rename "The category [##oldname##] cannot be renamed to [##newname##], cause a category with that name already exists.">
 <!ENTITY sendtocategory.error.add "The category [##newname##] cannot be added], cause a category with that name already exists.">
