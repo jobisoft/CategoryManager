@@ -1,1 +1,10 @@
+switch_to_standard_mode=перейти в стандартный режим категории
+switch_to_MFFAB_mode=switch to MFFAB category mode
+found_categories=Найдены категории ####:
+convert_to_MFFAB_category=convert to MFFAB category
+convert_to_standard_category=convert to standard category
+convert_all_to_MFFAB_category=convert all categories to MFFAB categories
+convert_all_to_standard_category=convert all categories to standard categories
+category_description=Внимание: эти категории "#### categories" не зависят от "MFFAB categories", которые хранятся в другом свойстве контакта и могут управляться на вкладке «Другие данные».
 
+viewWithoutCategories=Не категоризировано
