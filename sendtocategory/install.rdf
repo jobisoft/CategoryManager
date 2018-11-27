@@ -33,7 +33,9 @@
             <Description>
                 <em:locale>fr-FR</em:locale>
                 <em:description>Category Manager pour contacts, permet aussi d'envoyer un email à tous les membres d'une catégorie (category based contact groups).</em:description>
-            </Description>
+                <em:translator>Alexey Sinitsyn</em:translator>
+                <em:homepageURL>https://github.com/sinya13/CategoryManager/</em:homepageURL>            
+             </Description>
         </em:localized>
 
         <em:localized>
