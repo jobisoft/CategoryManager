@@ -43,5 +43,13 @@
             </Description>
         </em:localized>
 
+         <em:localized>
+            <Description>
+                <em:locale>ru-RU</em:locale>
+                <em:description>Administrador de categorias para contactos, que permite enviar un correo a todos los miembros de una categoria. (category based contact groups)</em:description>
+            </Description>
+         </em:localized>
+
+         
     </Description>
 </RDF>
