@@ -66,10 +66,10 @@
 <!ENTITY sendtocategory.bulkedit.close.button "close change log">
 
 <!ENTITY sendtocategory.bulkedit.header.email "e-mail адрес">
-<!ENTITY sendtocategory.bulkedit.header.contact "assigned contact">
+<!ENTITY sendtocategory.bulkedit.header.contact "назначенный контакт">
 <!ENTITY sendtocategory.bulkedit.header.status "статус">
 
-<!ENTITY sendtocategory.bulkedit.legend.caption "legend">
+<!ENTITY sendtocategory.bulkedit.legend.caption "легенда">
 <!ENTITY sendtocategory.bulkedit.legend.ok "E-mail address could be unambiguously assigned to a contact, and this contact will be added to the category.">
 <!ENTITY sendtocategory.bulkedit.legend.notok "E-mail address was not found in the address book. A new contact needs to be created and will be added to the category.">
 <!ENTITY sendtocategory.bulkedit.legend.double "E-mail address was found in multiple contacts. Please select the which of these contacts should be added to the category.">
@@ -80,6 +80,6 @@
 <!ENTITY sendtocategory.bulkedit.choose "Выберите контакт ...">
 <!ENTITY sendtocategory.bulkedit.noname "Неизвестное Имя">
 
-<!ENTITY sendtocategory.catsedit.title "Edit category membership of selected contacts">
+<!ENTITY sendtocategory.catsedit.title "Редактировать членство в категории для выбранных контактов">
 <!ENTITY sendtocategory.catsedit.label.in "Subset of the selected contatcs which should be part of category ##name##:">
 <!ENTITY sendtocategory.catsedit.desc "Please define, if all, none or a subset of the selected contacts should be part of category ##name##.">
