@@ -37,7 +37,7 @@
 <!ENTITY sendtocategory.error.rename "Категория [##oldname##] не может быть переименована в [##newname##], так как категория с таким именем уже существует.">
 <!ENTITY sendtocategory.error.add "Категория [##newname##] не может быть добавлена, так как категория с таким именем уже существует.">
 <!ENTITY sendtocategory.info.add "Новая категория [##newname##] еще не подключена к контакту. Если вы закроете адресную книгу без назначения контакта, новая категория будет удалена.">
-<!ENTITY sendtocategory.confirm.rename "This action will change the category-property of ##number## contacts, the membership to category [##oldname##] will be replaced by a membership to category [##newname##]. Это действие нельзя отменить, вы хотите продолжить?">
+<!ENTITY sendtocategory.confirm.rename "Это действие изменит свойство категории для ##number## контактов. Членство в категории [##oldname##] будет заменено на членство в категории [##newname##]. Это действие нельзя отменить, вы хотите продолжить?">
 <!ENTITY sendtocategory.confirm.delete "This action will change the category-property of ##number## contacts, the membership to category [##oldname##] will be removed. Это действие нельзя отменить, вы хотите продолжить?">
 
 <!ENTITY sendtocategory.pref.label "Менеджер категорий">
