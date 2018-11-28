@@ -31,7 +31,7 @@
 <!ENTITY sendtocategory.wizard.import.mapping.thunderbirdfield "Поле данных Thunderbird">
 <!ENTITY sendtocategory.wizard.import.mapping.import "импорт">
 
-<!ENTITY sendtocategory.wizard.import.control.desc "The following contacts and data fields will be imported (empty columns are not shown):">
+<!ENTITY sendtocategory.wizard.import.control.desc "Будут импортированы следующие контакты и поля данных (пустые столбцы не показаны):">
 <!ENTITY sendtocategory.wizard.import.control.title "Проверка импорта">
 
 <!ENTITY sendtocategory.wizard.export.options.csv.title "Параметры экспорта для CSV файлов">
