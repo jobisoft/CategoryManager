@@ -40,8 +40,8 @@
 <!ENTITY sendtocategory.wizard.export.options.export "экспорт">
 <!ENTITY sendtocategory.wizard.export.options.categorie "If the 'Categories' field is not selected for export, still export the membership of category '##CAT##'.">
 
-<!ENTITY sendtocategory.wizard.import.options.vcf.title "Import settings for VCF files">
-<!ENTITY sendtocategory.wizard.export.options.vcf.title "Export settings for VCF files">
+<!ENTITY sendtocategory.wizard.import.options.vcf.title "Параметры импорта для файлов VCF">
+<!ENTITY sendtocategory.wizard.export.options.vcf.title "Параметры экспорта для файлов VCF">
 
 <!ENTITY sendtocategory.wizard.import.title "Импорт завершен">
 <!ENTITY sendtocategory.wizard.import.desc "Import has finished, ##IMPORTNUM## contacts have been imported into address book '##BOOK##'{{ and also added to category '##CAT##' }}. Furthermore, the imported contacts have been added to the category '##TIMECAT##'  for easy identification.">
