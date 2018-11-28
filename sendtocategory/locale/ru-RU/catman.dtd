@@ -70,8 +70,8 @@
 <!ENTITY sendtocategory.bulkedit.header.status "статус">
 
 <!ENTITY sendtocategory.bulkedit.legend.caption "легенда">
-<!ENTITY sendtocategory.bulkedit.legend.ok "E-mail address could be unambiguously assigned to a contact, and this contact will be added to the category.">
-<!ENTITY sendtocategory.bulkedit.legend.notok "E-mail address was not found in the address book. A new contact needs to be created and will be added to the category.">
+<!ENTITY sendtocategory.bulkedit.legend.ok "E-mail адрес может быть однозначно назначен контакту и этот контакт будет добавлен в категорию.">
+<!ENTITY sendtocategory.bulkedit.legend.notok "E-mail адрес не был найден в адресной книге. Новый контакт должен быть создан и будет добавлен в категорию.">
 <!ENTITY sendtocategory.bulkedit.legend.double "Адрес электронной почты был найден в нескольких контактах. Выберите, какой из этих контактов следует добавить в категорию.">
 <!ENTITY sendtocategory.bulkedit.legend.okdouble "Адрес электронной почты был найден в нескольких контактах. Однако один из этих контактов уже назначен этой категории и был автоматически выбран.">
 
@@ -81,5 +81,5 @@
 <!ENTITY sendtocategory.bulkedit.noname "Неизвестное Имя">
 
 <!ENTITY sendtocategory.catsedit.title "Редактировать членство в категории для выбранных контактов">
-<!ENTITY sendtocategory.catsedit.label.in "Subset of the selected contatcs which should be part of category ##name##:">
-<!ENTITY sendtocategory.catsedit.desc "Please define, if all, none or a subset of the selected contacts should be part of category ##name##.">
+<!ENTITY sendtocategory.catsedit.label.in "Подмножество выбранных контактов, которые должны быть частью категории ##name##:">
+<!ENTITY sendtocategory.catsedit.desc "Укажите, если все, ни один или подмножество выбранных контактов должны быть частью категории ##name##.">
