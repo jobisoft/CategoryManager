@@ -53,7 +53,7 @@
 <!ENTITY sendtocategory.pref.addressbooktab.rememberlastbook.desc "Если открывается адресная книга thunderbird, обычно отображается первая найденная адресная книга. С помощью этой опции отобразится последняя используемая адресная книга.">
 
 <!ENTITY sendtocategory.bulkedit.note "Заметка">
-<!ENTITY sendtocategory.bulkedit.membersWithoutPrimaryEmail "This category contains ##counts## contacts without an associated email address. The category information of these contacts cannot be edited with this dialog. They are not shown in the list above.">
+<!ENTITY sendtocategory.bulkedit.membersWithoutPrimaryEmail "Эта категория содержит ##counts## контакты без привязанного адреса электронной почты. Информация о категории этих контактов не может быть отредактирована в этом диалоговом окне. Они не показаны в списке выше.">
 
 <!ENTITY sendtocategory.bulkedit.title "Редактировать категорию непосредственно">
 <!ENTITY sendtocategory.bulkeditMenu.label "редактировать категорию ##name## непосредственно">
