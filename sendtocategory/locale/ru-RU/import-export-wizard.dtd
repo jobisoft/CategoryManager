@@ -3,7 +3,7 @@
 <!ENTITY sendtocategory.wizard.types.csv "Значения разделенные запятыми">
 <!ENTITY sendtocategory.wizard.types.vcf "vCard">
 
-<!ENTITY sendtocategory.wizard.mode.title "Желанное">
+<!ENTITY sendtocategory.wizard.mode.title "Добро пожаловать!">
 <!ENTITY sendtocategory.wizard.mode.desc "Этот мастер проведет вас через процесс импорта/экспорта ваших контактов.">
 <!ENTITY sendtocategory.wizard.mode.import "Импорт контактов {{в категорию '##CAT##' }}в адресную книгу '##BOOK##'. Все импортированные контакты также будут добавлены в категорию '##TIMECAT##'.">
 <!ENTITY sendtocategory.wizard.mode.export "Экспорт ##NUM## контактов {{из категории '##CAT##' }}из адресной книги '##BOOK##'.">
