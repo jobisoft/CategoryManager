@@ -32,8 +32,8 @@
         <em:localized>
             <Description>
                 <em:locale>fr-FR</em:locale>
-                <em:description>Category Manager pour contacts, permet aussi d'envoyer un email à tous les membres d'une catégorie (category based contact groups).</em:description>
-            </Description>
+                <em:description>Category Manager pour contacts, permet aussi d'envoyer un email à tous les membres d'une catégorie (category based contact groups).</em:description>           
+             </Description>
         </em:localized>
 
         <em:localized>
@@ -43,5 +43,14 @@
             </Description>
         </em:localized>
 
+         <em:localized>
+            <Description>
+                <em:locale>ru-RU</em:locale>
+                <em:description>Менеджер категорий для контактов, также позволяет отправлять электронную почту всем членам категории. (групп контактов, основанных на категории)</em:description>
+                <em:translator>Alexey Sinitsyn</em:translator> 
+            </Description>
+         </em:localized>
+
+         
     </Description>
 </RDF>

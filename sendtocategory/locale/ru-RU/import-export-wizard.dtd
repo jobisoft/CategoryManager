@@ -1,0 +1,50 @@
+<!ENTITY sendtocategory.wizard.title "Мастер импорта/экспорта менеджера категорий">
+
+<!ENTITY sendtocategory.wizard.types.csv "Значения разделенные запятыми">
+<!ENTITY sendtocategory.wizard.types.vcf "vCard">
+
+<!ENTITY sendtocategory.wizard.mode.title "Добро пожаловать!">
+<!ENTITY sendtocategory.wizard.mode.desc "Этот мастер проведет вас через процесс импорта/экспорта ваших контактов.">
+<!ENTITY sendtocategory.wizard.mode.import "Импорт контактов {{в категорию '##CAT##' }}в адресную книгу '##BOOK##'. Все импортированные контакты также будут добавлены в категорию '##TIMECAT##'.">
+<!ENTITY sendtocategory.wizard.mode.export "Экспорт ##NUM## контактов {{из категории '##CAT##' }}из адресной книги '##BOOK##'.">
+<!ENTITY sendtocategory.wizard.mode.import.selectfile "Выбрать файл для импорта">
+<!ENTITY sendtocategory.wizard.mode.export.selectfile "Выбрать файл для экспорта">
+
+<!ENTITY sendtocategory.wizard.import.error.empty "Выбранный файл пуст. Отмена импорта.">
+<!ENTITY sendtocategory.wizard.import.error.csv "Выбранный CSV файл не может быть импортирован, поскольку его строки не содержат одинакового количества полей.">
+<!ENTITY sendtocategory.wizard.import.error.reserved "Поле с именем '##fieldname##' зарезервировано и не может быть использовано. Переименуйте поле или отключите его импорт.">
+
+<!ENTITY sendtocategory.wizard.import.options.setting "Настройка">
+<!ENTITY sendtocategory.wizard.import.options.value "Значение">
+
+<!ENTITY sendtocategory.wizard.import.options.csv.title "Параметры импорта для CSV файлов">
+<!ENTITY sendtocategory.wizard.import.options.csv.desc "Следующие свойства CSV файла были признаны:">
+<!ENTITY sendtocategory.wizard.import.options.csv.delimiter "разделитель полей">
+<!ENTITY sendtocategory.wizard.import.options.csv.delimiter.tab "табулятор">
+<!ENTITY sendtocategory.wizard.import.options.csv.textident "текстовый классификатор">
+<!ENTITY sendtocategory.wizard.import.options.csv.linebreak "разрыв строки">
+<!ENTITY sendtocategory.wizard.import.options.csv.charset "набор символов">
+
+<!ENTITY sendtocategory.wizard.import.mapping.csv.title "Дополнительные параметры импорта для файлов CSV">
+<!ENTITY sendtocategory.wizard.import.mapping.csv.desc "В следующей таблице перечислены все найденные поля данных. Каждое поле данных может быть выбрано для импорта и может быть отображено в стандартное поле thunderbird или в пользовательское поле. Для сложного преобразования часто требуется отредактировать CSV-файл перед импортом.">
+<!ENTITY sendtocategory.wizard.import.mapping.csvdatafield "Поле данных CSV">
+<!ENTITY sendtocategory.wizard.import.mapping.thunderbirdfield "Поле данных Thunderbird">
+<!ENTITY sendtocategory.wizard.import.mapping.import "импорт">
+
+<!ENTITY sendtocategory.wizard.import.control.desc "Будут импортированы следующие контакты и поля данных (пустые столбцы не показаны):">
+<!ENTITY sendtocategory.wizard.import.control.title "Проверка импорта">
+
+<!ENTITY sendtocategory.wizard.export.options.csv.title "Параметры экспорта для CSV файлов">
+<!ENTITY sendtocategory.wizard.export.options.csv.desc1 "Укажите свойства CSV файла.">
+<!ENTITY sendtocategory.wizard.export.options.csv.desc2 "Выберите поля данных для экспорта. ">
+<!ENTITY sendtocategory.wizard.export.options.export "экспорт">
+<!ENTITY sendtocategory.wizard.export.options.categorie "Если 'Categories' поле не выбрано для экспорта, все еще экспортирует членство в категории '##CAT##'.">
+
+<!ENTITY sendtocategory.wizard.import.options.vcf.title "Параметры импорта для файлов VCF">
+<!ENTITY sendtocategory.wizard.export.options.vcf.title "Параметры экспорта для файлов VCF">
+
+<!ENTITY sendtocategory.wizard.import.title "Импорт завершен">
+<!ENTITY sendtocategory.wizard.import.desc "Импорт завершен, ##IMPORTNUM## контактов было импортировано в адресную книгу '##BOOK##'{{ а также добавлены в категорию '##CAT##' }}. Кроме того, импортированные контакты были добавлены в категорию '##TIMECAT##' для удобной идентификации.">
+
+<!ENTITY sendtocategory.wizard.export.title "Экспорт завершен">
+<!ENTITY sendtocategory.wizard.export.desc "Экспорт завершен, ##EXPORTNUM## контактов {{ из категории '##CAT##'}} из адресной книги '##BOOK##' было экспортировано.">
