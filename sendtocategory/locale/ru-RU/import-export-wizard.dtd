@@ -18,17 +18,17 @@
 <!ENTITY sendtocategory.wizard.import.options.value "Значение">
 
 <!ENTITY sendtocategory.wizard.import.options.csv.title "Параметры импорта для CSV файлов">
-<!ENTITY sendtocategory.wizard.import.options.csv.desc "The following properties of the CSV file have been recognized:">
+<!ENTITY sendtocategory.wizard.import.options.csv.desc "Следующие свойства CSV файла были признаны:">
 <!ENTITY sendtocategory.wizard.import.options.csv.delimiter "разделитель полей">
 <!ENTITY sendtocategory.wizard.import.options.csv.delimiter.tab "табулятор">
 <!ENTITY sendtocategory.wizard.import.options.csv.textident "текстовый классификатор">
 <!ENTITY sendtocategory.wizard.import.options.csv.linebreak "разрыв строки">
 <!ENTITY sendtocategory.wizard.import.options.csv.charset "набор символов">
 
-<!ENTITY sendtocategory.wizard.import.mapping.csv.title "Additional import settings for CSV files">
-<!ENTITY sendtocategory.wizard.import.mapping.csv.desc "The following table lists all found data fields. Each data field can be selected for import and can be mapped onto a standard thunderbird field or onto a custom field. For complex mapping it is often faster to edit the CSV file before import.">
-<!ENTITY sendtocategory.wizard.import.mapping.csvdatafield "CSV data field">
-<!ENTITY sendtocategory.wizard.import.mapping.thunderbirdfield "Thunderbird data field">
+<!ENTITY sendtocategory.wizard.import.mapping.csv.title "Дополнительные параметры импорта для файлов CSV">
+<!ENTITY sendtocategory.wizard.import.mapping.csv.desc "В следующей таблице перечислены все найденные поля данных. Каждое поле данных может быть выбрано для импорта и может быть отображено в стандартное поле thunderbird или в пользовательское поле. Для сложного преобразования часто требуется отредактировать CSV-файл перед импортом.">
+<!ENTITY sendtocategory.wizard.import.mapping.csvdatafield "Поле данных CSV">
+<!ENTITY sendtocategory.wizard.import.mapping.thunderbirdfield "Поле данных Thunderbird">
 <!ENTITY sendtocategory.wizard.import.mapping.import "импорт">
 
 <!ENTITY sendtocategory.wizard.import.control.desc "The following contacts and data fields will be imported (empty columns are not shown):">
