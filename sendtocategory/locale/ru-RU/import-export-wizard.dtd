@@ -44,7 +44,7 @@
 <!ENTITY sendtocategory.wizard.export.options.vcf.title "Параметры экспорта для файлов VCF">
 
 <!ENTITY sendtocategory.wizard.import.title "Импорт завершен">
-<!ENTITY sendtocategory.wizard.import.desc "Import has finished, ##IMPORTNUM## contacts have been imported into address book '##BOOK##'{{ and also added to category '##CAT##' }}. Furthermore, the imported contacts have been added to the category '##TIMECAT##'  for easy identification.">
+<!ENTITY sendtocategory.wizard.import.desc "Импорт завершен, ##IMPORTNUM## контактов было импортировано в адресную книгу '##BOOK##'{{ а также добавлены в категорию '##CAT##' }}. Кроме того, импортированные контакты были добавлены в категорию '##TIMECAT##' для удобной идентификации.">
 
 <!ENTITY sendtocategory.wizard.export.title "Экспорт завершен">
 <!ENTITY sendtocategory.wizard.export.desc "Export has finished, ##EXPORTNUM## contacts{{ of category '##CAT##'}} from address book '##BOOK##' have been exported.">
