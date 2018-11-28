@@ -1,21 +1,21 @@
-<!ENTITY sendtocategory.wizard.title "Category Manager Import/Export Wizard">
+<!ENTITY sendtocategory.wizard.title "Мастер импорта/экспорта менеджера категорий">
 
-<!ENTITY sendtocategory.wizard.types.csv "Comma Seperated Values">
+<!ENTITY sendtocategory.wizard.types.csv "Значения разделенные запятыми">
 <!ENTITY sendtocategory.wizard.types.vcf "vCard">
 
-<!ENTITY sendtocategory.wizard.mode.title "Welcome">
-<!ENTITY sendtocategory.wizard.mode.desc "This wizard will guide you through the import/export process of your contacts.">
-<!ENTITY sendtocategory.wizard.mode.import "Import contacts {{into category '##CAT##' }}into address book '##BOOK##'. All imported contacts will also be addedto the category '##TIMECAT##'.">
-<!ENTITY sendtocategory.wizard.mode.export "Export ##NUM## contacts {{of category '##CAT##' }}from address book '##BOOK##'.">
-<!ENTITY sendtocategory.wizard.mode.import.selectfile "Select file for import">
-<!ENTITY sendtocategory.wizard.mode.export.selectfile "Select file for export">
+<!ENTITY sendtocategory.wizard.mode.title "Желанный">
+<!ENTITY sendtocategory.wizard.mode.desc "Этот мастер проведет вас через процесс импорта/экспорта ваших контактов.">
+<!ENTITY sendtocategory.wizard.mode.import "Импорт контактов {{в категорию '##CAT##' }}в адресную книгу '##BOOK##'. Все импортированные контакты также будут добавлены в категорию '##TIMECAT##'.">
+<!ENTITY sendtocategory.wizard.mode.export "Экспорт ##NUM## контактов {{из категории '##CAT##' }}от адресной книги '##BOOK##'.">
+<!ENTITY sendtocategory.wizard.mode.import.selectfile "Выбрать файл для импорта">
+<!ENTITY sendtocategory.wizard.mode.export.selectfile "Выбрать файл для экспорта">
 
-<!ENTITY sendtocategory.wizard.import.error.empty "The selected file is empty. Aborting import.">
+<!ENTITY sendtocategory.wizard.import.error.empty "Выбранный файл пуст. Отмена импорта.">
 <!ENTITY sendtocategory.wizard.import.error.csv "The selected CSV file could not be imported, because its lines do not contain the same number of fields.">
 <!ENTITY sendtocategory.wizard.import.error.reserved "The field name '##fieldname##' is reserved and cannot be used. Please rename the field or disable its import.">
 
-<!ENTITY sendtocategory.wizard.import.options.setting "Setting">
-<!ENTITY sendtocategory.wizard.import.options.value "Value">
+<!ENTITY sendtocategory.wizard.import.options.setting "Настройка">
+<!ENTITY sendtocategory.wizard.import.options.value "Значение">
 
 <!ENTITY sendtocategory.wizard.import.options.csv.title "Import settings for CSV files">
 <!ENTITY sendtocategory.wizard.import.options.csv.desc "The following properties of the CSV file have been recognized:">
