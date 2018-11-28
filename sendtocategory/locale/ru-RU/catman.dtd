@@ -61,9 +61,9 @@
 <!ENTITY sendtocategory.bulkedit.edit.title "Редактировать участников категории ##name## непосредственно:">
 <!ENTITY sendtocategory.bulkedit.save.title "Следующие изменения были применены к категории ##name##:">
 
-<!ENTITY sendtocategory.bulkedit.validate.button "validate e-mail addresses">
-<!ENTITY sendtocategory.bulkedit.save.button "save category">
-<!ENTITY sendtocategory.bulkedit.close.button "close change log">
+<!ENTITY sendtocategory.bulkedit.validate.button "утвердить e-mail адреса">
+<!ENTITY sendtocategory.bulkedit.save.button "сохранить категорию">
+<!ENTITY sendtocategory.bulkedit.close.button "закрыть журнал изменений">
 
 <!ENTITY sendtocategory.bulkedit.header.email "e-mail адрес">
 <!ENTITY sendtocategory.bulkedit.header.contact "назначенный контакт">
