@@ -47,4 +47,4 @@
 <!ENTITY sendtocategory.wizard.import.desc "Импорт завершен, ##IMPORTNUM## контактов было импортировано в адресную книгу '##BOOK##'{{ а также добавлены в категорию '##CAT##' }}. Кроме того, импортированные контакты были добавлены в категорию '##TIMECAT##' для удобной идентификации.">
 
 <!ENTITY sendtocategory.wizard.export.title "Экспорт завершен">
-<!ENTITY sendtocategory.wizard.export.desc "Export has finished, ##EXPORTNUM## contacts{{ of category '##CAT##'}} from address book '##BOOK##' have been exported.">
+<!ENTITY sendtocategory.wizard.export.desc "Экспорт завершен, ##EXPORTNUM## контактов {{ из категории '##CAT##'}} из адресной книги '##BOOK##' были экспортированы.">
