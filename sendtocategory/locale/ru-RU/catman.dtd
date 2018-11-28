@@ -38,7 +38,7 @@
 <!ENTITY sendtocategory.error.add "Категория [##newname##] не может быть добавлена, так как категория с таким именем уже существует.">
 <!ENTITY sendtocategory.info.add "Новая категория [##newname##] еще не подключена к контакту. Если вы закроете адресную книгу без назначения контакта, новая категория будет удалена.">
 <!ENTITY sendtocategory.confirm.rename "Это действие изменит свойство категории для ##number## контактов. Членство в категории [##oldname##] будет заменено на членство в категории [##newname##]. Это действие нельзя отменить, вы хотите продолжить?">
-<!ENTITY sendtocategory.confirm.delete "Это действие изменит свойство категории для  ##number## contacts. Членство в категории [##oldname##] будет удалено. Это действие нельзя отменить, вы хотите продолжить?">
+<!ENTITY sendtocategory.confirm.delete "Это действие изменит свойство категории для  ##number## контактов. Членство в категории [##oldname##] будет удалено. Это действие нельзя отменить, вы хотите продолжить?">
 
 <!ENTITY sendtocategory.pref.label "Менеджер категорий">
 <!ENTITY sendtocategory.pref.generaltab.label "Большие письма">
@@ -50,7 +50,7 @@
 
 <!ENTITY sendtocategory.pref.addressbooktab.label "Адресная книга">
 <!ENTITY sendtocategory.pref.addressbooktab.rememberlastbook.label "Запомнить последнюю использованную адресную книгу">
-<!ENTITY sendtocategory.pref.addressbooktab.rememberlastbook.desc "If the thunderbird addressbook is opened, usually the first found addressbook will be displayed. With this option set, the last used addressbook will be displayed.">
+<!ENTITY sendtocategory.pref.addressbooktab.rememberlastbook.desc "Если открывается адресная книга thunderbird, обычно отображается первая найденная адресная книга. С помощью этой опции отобразится последняя используемая адресная книга.">
 
 <!ENTITY sendtocategory.bulkedit.note "Заметка">
 <!ENTITY sendtocategory.bulkedit.membersWithoutPrimaryEmail "This category contains ##counts## contacts without an associated email address. The category information of these contacts cannot be edited with this dialog. They are not shown in the list above.">
