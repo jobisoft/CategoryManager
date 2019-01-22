@@ -7,11 +7,12 @@
         <em:version>2.09</em:version>
         <em:description>Category manager for contacts, also allows to send an email to all members of a category. (category based contact groups)</em:description>
         <em:creator>John Bieling</em:creator>
-                <em:translator>John Bieling (de)</em:translator>
-                <em:translator>John Bieling (en-US)</em:translator>
-                <em:translator>Pierrick Brun (fr)</em:translator>
-                <em:translator>Lisandro Gallo (es-AR)</em:translator>
-                <em:translator>Alexey Sinitsyn (ru)</em:translator>                
+        <em:translator>John Bieling (de)</em:translator>
+        <em:translator>John Bieling (en-US)</em:translator>
+        <em:translator>Pierrick Brun (fr)</em:translator>
+        <em:translator>Lisandro Gallo (es-AR)</em:translator>
+        <em:translator>Alexey Sinitsyn (ru)</em:translator>
+        <em:translator>Wanderlei Hüttel (pt-BR)</em:translator>
         <em:homepageURL>https://github.com/jobisoft/CategoryManager/</em:homepageURL>
         <em:iconURL>chrome://sendtocategory/skin/icon.png</em:iconURL>
         <em:type>2</em:type>
@@ -36,6 +37,7 @@
                 <em:translator>Pierrick Brun (fr)</em:translator>
                 <em:translator>Lisandro Gallo (es-AR)</em:translator>
                 <em:translator>Alexey Sinitsyn (ru)</em:translator>
+                <em:translator>Wanderlei Hüttel (pt-BR)</em:translator>
             </Description>
         </em:localized>
 
@@ -48,6 +50,7 @@
                 <em:translator>Pierrick Brun (fr)</em:translator>
                 <em:translator>Lisandro Gallo (es-AR)</em:translator>
                 <em:translator>Alexey Sinitsyn (ru)</em:translator>
+                <em:translator>Wanderlei Hüttel (pt-BR)</em:translator>
              </Description>
         </em:localized>
 
@@ -60,6 +63,7 @@
                 <em:translator>Pierrick Brun (fr)</em:translator>
                 <em:translator>Lisandro Gallo (es-AR)</em:translator>
                 <em:translator>Alexey Sinitsyn (ru)</em:translator>
+                <em:translator>Wanderlei Hüttel (pt-BR)</em:translator>
             </Description>
         </em:localized>
 
@@ -72,8 +76,21 @@
                 <em:translator>Pierrick Brun (fr)</em:translator>
                 <em:translator>Lisandro Gallo (es-AR)</em:translator>
                 <em:translator>Alexey Sinitsyn (ru)</em:translator>
+                <em:translator>Wanderlei Hüttel (pt-BR)</em:translator>
             </Description>
          </em:localized>
 
+         <em:localized>
+            <Description>
+                <em:locale>pt-BR</em:locale>
+                <em:description>O Gerenciador de categorias para contatos também permite que você envie um email para todos os membros de uma categoria. (grupos de contatos baseados em categorias)</em:description>
+                <em:translator>John Bieling (de)</em:translator>
+                <em:translator>John Bieling (en-US)</em:translator>
+                <em:translator>Pierrick Brun (fr)</em:translator>
+                <em:translator>Lisandro Gallo (es-AR)</em:translator>
+                <em:translator>Alexey Sinitsyn (ru)</em:translator>
+                <em:translator>Wanderlei Hüttel (pt-BR)</em:translator>
+            </Description>
+         </em:localized>
     </Description>
 </RDF>
