@@ -1,0 +1,50 @@
+﻿<!ENTITY sendtocategory.wizard.title "Assistente de Importação/Exportação do Gerenciador de Categorias">
+
+<!ENTITY sendtocategory.wizard.types.csv "Valores Separados Por Virgula">
+<!ENTITY sendtocategory.wizard.types.vcf "vCard">
+
+<!ENTITY sendtocategory.wizard.mode.title "Bem vindo">
+<!ENTITY sendtocategory.wizard.mode.desc "Este assistente irá guiá-lo através do processo de importação/exportação dos seus contatos.">
+<!ENTITY sendtocategory.wizard.mode.import "Importar contatos {{na categoria '##CAT##'}} no catálogo de endereços '##BOOK##'. Todos os contatos importados também serão adicionados à categoria '##TIMECAT##'.">
+<!ENTITY sendtocategory.wizard.mode.export "Exportar ##NUM## contatos {{da categoria '##CAT##'}} do catálogo de endereços '##BOOK##'.">
+<!ENTITY sendtocategory.wizard.mode.import.selectfile "Selecione o arquivo para importação">
+<!ENTITY sendtocategory.wizard.mode.export.selectfile "Selecione o arquivo para exportação">
+
+<!ENTITY sendtocategory.wizard.import.error.empty "O arquivo selecionado está vazio. Abortando a importação.">
+<!ENTITY sendtocategory.wizard.import.error.csv "O arquivo CSV selecionado não pôde ser importado porque suas linhas não contêm o mesmo número de campos.">
+<!ENTITY sendtocategory.wizard.import.error.reserved "O nome do campo '##fieldname##' é reservado e não pode ser usado. Por favor, renomeie o campo ou desative sua importação.">
+
+<!ENTITY sendtocategory.wizard.import.options.setting "Configuração">
+<!ENTITY sendtocategory.wizard.import.options.value "Valor">
+
+<!ENTITY sendtocategory.wizard.import.options.csv.title "Importar configurações de arquivos CSV">
+<!ENTITY sendtocategory.wizard.import.options.csv.desc "As seguintes propriedades do arquivo CSV foram encontradas:">
+<!ENTITY sendtocategory.wizard.import.options.csv.delimiter "separador de campo">
+<!ENTITY sendtocategory.wizard.import.options.csv.delimiter.tab "tabulação">
+<!ENTITY sendtocategory.wizard.import.options.csv.textident "qualificador de texto">
+<!ENTITY sendtocategory.wizard.import.options.csv.linebreak "quebra de linha">
+<!ENTITY sendtocategory.wizard.import.options.csv.charset "conjunto de caracteres">
+
+<!ENTITY sendtocategory.wizard.import.mapping.csv.title "Configurações adicionais de importação para arquivos CSV">
+<!ENTITY sendtocategory.wizard.import.mapping.csv.desc "A tabela a seguir lista todos os campos de dados encontrados. Cada campo de dados pode ser selecionado para importação e pode ser mapeado em um campo padrão do Thunderbird ou em um campo personalizado. Para o mapeamento complexo, geralmente é mais rápido editar o arquivo CSV antes da importação.">
+<!ENTITY sendtocategory.wizard.import.mapping.csvdatafield "Campo CSV">
+<!ENTITY sendtocategory.wizard.import.mapping.thunderbirdfield "Campo Thunderbird">
+<!ENTITY sendtocategory.wizard.import.mapping.import "importar">
+
+<!ENTITY sendtocategory.wizard.import.control.desc "Os seguintes contatos e campos de dados serão importados (colunas vazias não serão mostradas):">
+<!ENTITY sendtocategory.wizard.import.control.title "Verificação de importação">
+
+<!ENTITY sendtocategory.wizard.export.options.csv.title "Exportar configurações para um arquivo CSV">
+<!ENTITY sendtocategory.wizard.export.options.csv.desc1 "Por favor, defina as propriedades do arquivo CSV.">
+<!ENTITY sendtocategory.wizard.export.options.csv.desc2 "Por favor, selecione os campos para exportação.">
+<!ENTITY sendtocategory.wizard.export.options.export "exportar">
+<!ENTITY sendtocategory.wizard.export.options.categorie "Se o campo 'Categorias' não estiver selecionado para exportação, ainda será exportado a associação da categoria '##CAT##'.">
+
+<!ENTITY sendtocategory.wizard.import.options.vcf.title "Importar configurações de arquivos VCF">
+<!ENTITY sendtocategory.wizard.export.options.vcf.title "Exportar configurações para arquivos VCF">
+
+<!ENTITY sendtocategory.wizard.import.title "Importação terminada">
+<!ENTITY sendtocategory.wizard.import.desc "A importação terminou, ##IMPORTNUM## contatos foram importados para o catálogo de endereços '##BOOK##'{{ e também adicionado à categoria '##CAT##' }}. Além disso, os contatos importados foram adicionados à categoria '##TIMECAT##' para facilitar a identificação.">
+
+<!ENTITY sendtocategory.wizard.export.title "Exportação terminada">
+<!ENTITY sendtocategory.wizard.export.desc "Exportação terminou, ##EXPORTNUM## contatos{{ da categoria '##CAT##'}} do catálogo de endereços '##BOOK##' foram exportados.">
