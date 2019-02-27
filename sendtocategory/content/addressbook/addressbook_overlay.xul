@@ -51,7 +51,7 @@
 	
         <vbox id="CatManBox" persist="height top">
                     <hbox align="center" style="padding:1ex 5px 1ex 0"><label id ="CatManBoxLabel" value="" flex="1" /><label hidden="true" value="MFFAB" pack="end" /><image hidden="true" id="CatManModeSlider" src='chrome://sendtocategory/skin/slider-off.png'  onclick="jbCatMan.onSwitchCategoryMode()" tooltiptext="&sendtocategory.catogorybox.MFFAB.tooltip;" pack="end"/></hbox>
-                    <listbox 
+                    <richlistbox 
                     id="CatManCategoriesList"
                     flex="1"
                     seltype="single"
@@ -59,14 +59,10 @@
                     ondblclick="jbCatMan.writeToCategory()"
                     context="CatManContextMenu">
                         <listhead>
-                            <listheader label="&sendtocategory.catbox.header.catname;" />
-                            <listheader label="&sendtocategory.catbox.header.catsize;" />
+                            <label class="header" flex="1" value="&sendtocategory.catbox.header.catname;" />
+                            <label class="header" flex="0" value="&sendtocategory.catbox.header.catsize;" />
                         </listhead>
-                        <listcols id="CatManCategoriesListColumns">
-                            <listcol flex="1"/>
-                            <listcol pack="end"/>
-                        </listcols>
-                    </listbox>
+                    </richlistbox>
                     <hbox pack="end">
                         <button 
                         id="CatManAddContactCategoryButton"

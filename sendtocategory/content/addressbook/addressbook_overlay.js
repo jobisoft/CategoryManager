@@ -73,15 +73,17 @@ jbCatMan.updateCategoryList = function () {
 
   //disable "all" element if global book and global book empty or if remote book
   if (!(abManager.getDirectory(GetSelectedDirectory()).isRemote || (GetSelectedDirectory() == "moz-abdirectory://?" && jbCatMan.data.abSize == 0))) {
-    let newListItem = document.createElement("listitem");
+    let newListItem = document.createElement("richlistitem");
     newListItem.setAttribute("id", "");
     newListItem.setAttribute("type", "all");
-    let categoryName = document.createElement("listcell");
-    categoryName.setAttribute("label", jbCatMan.locale.viewAllCategories);
+    let categoryName = document.createElement("label");
+    categoryName.setAttribute("flex", "1");
+    categoryName.setAttribute("value", jbCatMan.locale.viewAllCategories);
     categoryName.setAttribute("style", "font-style:italic;");
     newListItem.appendChild(categoryName);
-    let categorySize = document.createElement("listcell");
-    categorySize.setAttribute("label", jbCatMan.data.abSize);
+    let categorySize = document.createElement("label");
+    categorySize.setAttribute("flex", "0");
+    categorySize.setAttribute("value", jbCatMan.data.abSize);
     categorySize.setAttribute("style", "font-style:italic;");
     newListItem.appendChild(categorySize);
     categoriesList.appendChild(newListItem);
@@ -89,15 +91,17 @@ jbCatMan.updateCategoryList = function () {
     
   //disable cardsWithoutCategories for  global and remote book 
   if (!(abManager.getDirectory(GetSelectedDirectory()).isRemote || GetSelectedDirectory() == "moz-abdirectory://?" )) {
-    let newListItem = document.createElement("listitem");
+    let newListItem = document.createElement("richlistitem");
     newListItem.setAttribute("id", "");
     newListItem.setAttribute("type", "uncategorized");
-    let categoryName = document.createElement("listcell");
-    categoryName.setAttribute("label", jbCatMan.getLocalizedMessage("viewWithoutCategories"));
+    let categoryName = document.createElement("label");
+    categoryName.setAttribute("flex", "1");
+    categoryName.setAttribute("value", jbCatMan.getLocalizedMessage("viewWithoutCategories"));
     categoryName.setAttribute("style", "font-style:italic;");
     newListItem.appendChild(categoryName);
-    let categorySize = document.createElement("listcell");
-    categorySize.setAttribute("label", jbCatMan.data.cardsWithoutCategories.length);
+    let categorySize = document.createElement("label");
+    categorySize.setAttribute("flex", "0");
+    categorySize.setAttribute("value", jbCatMan.data.cardsWithoutCategories.length);
     categorySize.setAttribute("style", "font-style:italic;");
     newListItem.appendChild(categorySize);
     categoriesList.appendChild(newListItem);
@@ -105,19 +109,21 @@ jbCatMan.updateCategoryList = function () {
   
   //add all categories from the updated/merged array to the category listbox
   for (let i = 0; i < jbCatMan.data.categoryList.length; i++) {
-    let newListItem = document.createElement("listitem");
+    let newListItem = document.createElement("richlistitem");
     newListItem.setAttribute("id", jbCatMan.data.categoryList[i]);
     newListItem.setAttribute("type", "category");
 
-    let categoryName = document.createElement("listcell");
-    categoryName.setAttribute("label", jbCatMan.data.categoryList[i]);
+    let categoryName = document.createElement("label");
+    categoryName.setAttribute("flex", "1");
+    categoryName.setAttribute("value", jbCatMan.data.categoryList[i]);
     newListItem.appendChild(categoryName);
-    let categorySize = document.createElement("listcell");
+    let categorySize = document.createElement("label");
+    categorySize.setAttribute("flex", "0");
     if (jbCatMan.data.categoryList[i] in jbCatMan.data.foundCategories) {
-      categorySize.setAttribute("label", jbCatMan.data.foundCategories[jbCatMan.data.categoryList[i]].length);
+      categorySize.setAttribute("value", jbCatMan.data.foundCategories[jbCatMan.data.categoryList[i]].length);
     }
     else {
-      categorySize.setAttribute("label", 0);
+      categorySize.setAttribute("value", "0");
     }
     newListItem.appendChild(categorySize);
     categoriesList.appendChild(newListItem);
