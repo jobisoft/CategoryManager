@@ -68,7 +68,7 @@ jbCatMan.updateCategoryList = function () {
   let categoriesList = document.getElementById("CatManCategoriesList");
   categoriesList.clearSelection();
   for (let i=categoriesList.getRowCount(); i>0; i--) {
-    categoriesList.removeItemAt(i-1);
+    categoriesList.getItemAtIndex(i-1).remove();
   }
 
   //disable "all" element if global book and global book empty or if remote book
