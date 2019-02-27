@@ -1,0 +1,16 @@
+{
+  "applications": {
+    "gecko": {
+      "id": "sendtocategory@jobisoft.de",
+      "strict_min_version": "60.0"
+    }
+  },
+  "manifest_version": 2,
+  "name": "Category Manager",
+  "version": "2.10",
+  "author": "John Bieling",
+  "icons": {
+    "32": "skin/icon.png"
+  },
+  "legacy": true
+}
