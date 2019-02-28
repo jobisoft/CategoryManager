@@ -110,8 +110,6 @@ jbCatManCatsEdit.onClickAdd = function () {
     let item = this.outbox.selectedItems[0];
     let newitem = this.inbox.appendChild(item);
     this.inbox.ensureElementIsVisible(newitem); //workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=250123#c16
-
-    this.outbox.removeItemAt(this.outbox.getIndexOfItem(item));
   }
   // update buttons after manipulating lists
   jbCatManCatsEdit.onSelect()
@@ -124,8 +122,6 @@ jbCatManCatsEdit.onClickRemove = function () {
     let item = this.inbox.selectedItems[0];
     let newitem = this.outbox.appendChild(item);
     this.outbox.ensureElementIsVisible(newitem); //workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=250123#c16
-
-    this.inbox.removeItemAt(this.inbox.getIndexOfItem(item));
   }
   // update buttons after manipulating lists
   jbCatManCatsEdit.onSelect()
