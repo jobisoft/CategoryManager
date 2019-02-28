@@ -107,21 +107,21 @@ jbCatManWizard.Init = function () {
   this.replaceCustomStrings(document.getElementById('CatManWizardExport_Categories_CSV'));
 
   // Get all options from CatManWizardImportCsvDelimiter Popup.
-  elements = document.getElementById('CatManWizardImportCsvDelimiter').children[0].children;
+  elements = document.getElementById('CatManWizardImportCsvDelimiter').getElementsByTagName("menupopup")[0].children;
   jbCatManWizard.csvDelimiter = [];
   for (let x=0; x<elements.length ;x++) {
     jbCatManWizard.csvDelimiter.push(elements[x].value);
   }
 
   // Get all options from CatManWizardImportCsvTextIdentifier Popup.
-  elements = document.getElementById('CatManWizardImportCsvTextIdentifier').children[0].children;
+  elements = document.getElementById('CatManWizardImportCsvTextIdentifier').getElementsByTagName("menupopup")[0].children;
   jbCatManWizard.csvTextIdentifier = [];
   for (let x=0; x<elements.length ;x++) {
     jbCatManWizard.csvTextIdentifier.push(elements[x].value);
   }
   
   // Get all options from CatManWizardImportCsvCharset Popup.
-  elements = document.getElementById('CatManWizardImportCsvCharset').children[0].children;
+  elements = document.getElementById('CatManWizardImportCsvCharset').getElementsByTagName("menupopup")[0].children;
   jbCatManWizard.csvCharset = [];
   for (let x=0; x<elements.length ;x++) {
     jbCatManWizard.csvCharset.push(elements[x].value);
