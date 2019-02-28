@@ -8,6 +8,7 @@
 ]>
 
 <dialog id="CatManCatsEditor"
+    xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     buttons="accept,cancel"
     buttonlabelaccept="&sendtocategory.ok.button;"
@@ -34,7 +35,8 @@
             </vbox>
         </hbox>
         
-        <progressmeter
+        <html:progress
+        max="100"
         id="CatsEditProgressBar"
         style="visibility:hidden"
         mode="determined"
