@@ -57,7 +57,7 @@ jbCatMan.contactPanelCategoryMenuInit = function () {
     let menulist = document.getElementById("CatManCategoryFilterList");
     menulist.selectedItem = null;
     let itemCount = menulist.itemCount;
-    for(let i = (itemCount-1); i >= 0; i-- ) menulist.removeItemAt(i);
+    for(let i = (itemCount-1); i >= 0; i-- ) menulist.getItemAtIndex(i).remove();
     
     let menupopup = document.getElementById("CatManCategoryFilterListPopup");
     let newItem = document.createElement("menuitem");
