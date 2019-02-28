@@ -365,6 +365,7 @@ jbCatManWizard.ProgressBefore_Import_Mapping_CSV = function (dialog, step = 0) {
           //append standardFields
           for (let i=0; i <  jbCatManWizard.standardFields.length; i++) {
             let menuitem = document.createElement("menuitem");
+            menuitem.setAttribute("value",  jbCatManWizard.standardFields[i]);
             menuitem.setAttribute("label",  jbCatManWizard.standardFields[i]);
             menupopup.appendChild(menuitem);
           }          
@@ -372,6 +373,7 @@ jbCatManWizard.ProgressBefore_Import_Mapping_CSV = function (dialog, step = 0) {
           let itemIndex = jbCatManWizard.standardFields.indexOf(jbCatManWizard.datafields[x]);
           if (itemIndex == -1){
             let menuitem = document.createElement("menuitem");
+            menuitem.setAttribute("value", jbCatManWizard.datafields[x]);
             menuitem.setAttribute("label", jbCatManWizard.datafields[x]);
             menuitem.setAttribute("selected", "true");
             menuitem.setAttribute("style", "font-weight:bold;")
@@ -383,7 +385,8 @@ jbCatManWizard.ProgressBefore_Import_Mapping_CSV = function (dialog, step = 0) {
           
           let menulistBox = document.createElement("hbox");
           menulistBox.setAttribute("style", "width:210px");
-            let menulist = document.createElement("menulist");
+            let menulist = document.createElement("menulist", { is : "menulist-editable"});
+            menulist.setAttribute("editable", "true");
             menulist.setAttribute("flex", "1");
             menulist.appendChild(menupopup);
             menulistBox.appendChild(menulist);
