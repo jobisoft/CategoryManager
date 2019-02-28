@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
-<?xul-overlay href="chrome://global/content/dialogOverlay.xul"?>
 
 <!-- DTD File with all strings specific to the file -->
 <!DOCTYPE dialog
@@ -9,11 +8,17 @@
 ]>
 
 <window id="CatManWizardProgress"
+  xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   onload="jbCatManWizardProgress.init()"
   onclose="return jbCatManWizardProgress.onClose()">
   <script type="application/javascript" src="chrome://sendtocategory/content/addressbook/import-export/progress.js"/>
   <vbox flex="1">
-      <progressmeter id="CatManWizardProgressBar" mode="determined" value="0" flex="1" />
+        <html:progress
+            max="100"
+            id="CatManWizardProgressBar" 
+            mode="determined" 
+            value="0" 
+            flex="1" />
   </vbox>
 </window>
