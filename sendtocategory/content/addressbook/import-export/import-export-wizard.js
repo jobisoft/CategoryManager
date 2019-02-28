@@ -24,7 +24,60 @@ jbCatManWizard.Init = function () {
 
   // Define all fields, which are not allowed to be imported/exported, because they are managed by TB itself.
   jbCatManWizard.forbiddenFields = ["DbRowID","RecordKey","LastRecordKey"];
-  
+  jbCatManWizard.standardFields = [
+    "FirstName",
+    "LastName",
+    "DisplayName",
+    "NickName",
+    "SpouseName",
+    "FamilyName",
+    "PrimaryEmail",
+    "SecondEmail",
+    "Categories",
+    "HomeAddress",
+    "HomeAddress2",
+    "HomeCity",
+    "HomeState",
+    "HomeZipCode",
+    "HomeCountry",
+    "HomePhone",
+    "HomePhoneType",
+    "WorkAddress",
+    "WorkAddress2",
+    "WorkCity",
+    "WorkState",
+    "WorkZipCode",
+    "WorkCountry",
+    "WorkPhone",
+    "WorkPhoneType",
+    "FaxNumber",
+    "FaxNumberType",
+    "PagerNumber",
+    "PagerNumberType",
+    "CellularNumber",
+    "CellularNumberType",
+    "JobTitle",
+    "Department",
+    "Company",
+    "AnniversaryYear",
+    "AnniversaryMonth",
+    "AnniversaryDay",
+    "BirthYear",
+    "BirthMonth",
+    "BirthDay",
+    "WebPage1",
+    "WebPage2",
+    "Custom1",
+    "Custom2",
+    "Custom3",
+    "Custom4",
+    "Notes",
+    "LastModifiedDate",
+    "PopularityIndex",
+    "PreferMailFormat",
+    ];
+    
+    
   let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
   jbCatManWizard.currentAddressBook = abManager.getDirectory(window.opener.GetSelectedDirectory()); //GetSelectedDirectory() returns an URI, but we need the directory itself
   jbCatManWizard.timestamp = "Import_" + (new Date()).toISOString().substring(0, 19);
@@ -278,12 +331,7 @@ jbCatManWizard.ProgressBefore_Import_Mapping_CSV = function (dialog, step = 0) {
 
     case 3:
       // Get  standard thunderbird fields defined in XUL  - https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Reference/nsIAbCard_(Tb3)
-      jbCatManWizard.standardFields = [];
-      for (let c=0; c<document.getElementById('CatManImportDataFieldListTemplate').childNodes[1].childNodes[0].itemCount; c++)
-      {
-        let item = document.getElementById('CatManImportDataFieldListTemplate').childNodes[1].childNodes[0].getItemAtIndex(c).label;
-        jbCatManWizard.standardFields.push(item);
-      }
+      //we no longer do that, but define them in JS
     break;
       
     case 4:
@@ -416,13 +464,8 @@ jbCatManWizard.ProgressBefore_Export_CSV = function (dialog, step = 0) {
     let searchstring =  jbCatMan.getCategorySearchString(jbCatManWizard.currentAddressBook.URI, jbCatMan.data.selectedCategory, jbCatMan.data.selectedCategoryType);
     jbCatManWizard.exportCards = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager).getDirectory(searchstring).childCards;
 
-    //get all standard thunderbird fields (defined at csv inport wizard page)
-    jbCatManWizard.standardFields = [];
-    for (let c=0; c<document.getElementById('CatManImportDataFieldListTemplate').childNodes[1].childNodes[0].itemCount; c++)
-    {
-      let item = document.getElementById('CatManImportDataFieldListTemplate').childNodes[1].childNodes[0].getItemAtIndex(c).label;
-      jbCatManWizard.standardFields.push(item);
-    }
+    //get all standard thunderbird fields (defined at csv import wizard page)
+    //we no longer do that, but define them in JS
 
     //reset list of found props with standard fields
     jbCatManWizard.resetThunderbirdProperties("CatManWizardExport_CSV", jbCatManWizard.standardFields);
