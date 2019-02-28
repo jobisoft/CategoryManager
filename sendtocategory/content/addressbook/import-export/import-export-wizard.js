@@ -294,7 +294,7 @@ jbCatManWizard.ProgressBefore_Import_Mapping_CSV = function (dialog, step = 0) {
       {
         let mappingList = document.getElementById("CatManWizardImport_Mapping_CSV");
         for (var i=mappingList.getRowCount() -1; i>=0; i--) {
-          mappingList.removeItemAt(i);
+          mappingList.getItemAtIndex(i).remove();
         }
       }
       break;
@@ -673,7 +673,7 @@ jbCatManWizard.resetThunderbirdProperties = function (listname, defaults) {
   //reset XUL list as well 
   let exportList = document.getElementById(listname);
   for (var i=exportList.getRowCount() -1; i>=0; i--) {
-    exportList.removeItemAt(i);
+    exportList.getItemAtIndex(i).remove();
   }
 }
 
