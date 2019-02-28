@@ -351,24 +351,49 @@ jbCatManWizard.ProgressBefore_Import_Mapping_CSV = function (dialog, step = 0) {
       {
         let mappingList = document.getElementById("CatManWizardImport_Mapping_CSV");
         for (let x=0; x<jbCatManWizard.datafields.length; x++) {
-          //copy from template
-          let newListEntry = document.getElementById("CatManImportDataFieldListTemplate").cloneNode(true);
-          newListEntry.removeAttribute("id");
-          newListEntry.removeAttribute("current");
-          newListEntry.removeAttribute("selected");
-
+          let newListEntry = document.createElement("richlistitem");
+          
+          let labelBox = document.createElement("hbox");
+          labelBox.setAttribute("style", "width:210px");
+            let label = document.createElement("label");
+            label.setAttribute("crop", "end");
+            label.setAttribute("value", jbCatManWizard.datafields[x]);
+            labelBox.appendChild(label);
+          newListEntry.appendChild(labelBox);
+          
+          let menupopup = document.createElement("menupopup");
+          //append standardFields
+          for (let i=0; i <  jbCatManWizard.standardFields.length; i++) {
+            let menuitem = document.createElement("menuitem");
+            menuitem.setAttribute("label",  jbCatManWizard.standardFields[i]);
+            menupopup.appendChild(menuitem);
+          }          
           //append selected field, if not in standardFields
           let itemIndex = jbCatManWizard.standardFields.indexOf(jbCatManWizard.datafields[x]);
-          if (itemIndex == -1)
-          {
-            let menuItem = document.createElement("menuitem");
-            menuItem.setAttribute("label", jbCatManWizard.datafields[x]);
-            newListEntry.childNodes[1].childNodes[0].childNodes[0].appendChild(menuItem);
-            itemIndex = jbCatManWizard.standardFields.length;
+          if (itemIndex == -1){
+            let menuitem = document.createElement("menuitem");
+            menuitem.setAttribute("label", jbCatManWizard.datafields[x]);
+            menuitem.setAttribute("selected", "true");
+            menuitem.setAttribute("style", "font-weight:bold;")
+            menupopup.appendChild(menuitem);
+          } else {          
+            menupopup.childNodes[itemIndex].setAttribute("selected", "true");
+            menupopup.childNodes[itemIndex].setAttribute("style", "font-weight:bold;");
           }
-          newListEntry.childNodes[1].childNodes[0].childNodes[0].childNodes[itemIndex].setAttribute("selected", "true");
-          newListEntry.childNodes[1].childNodes[0].childNodes[0].childNodes[itemIndex].setAttribute("style", "font-weight:bold;")
-          newListEntry.childNodes[0].childNodes[0].setAttribute("value",jbCatManWizard.datafields[x]);
+          
+          let menulistBox = document.createElement("hbox");
+          menulistBox.setAttribute("style", "width:210px");
+            let menulist = document.createElement("menulist");
+            menulist.setAttribute("flex", "1");
+            menulist.appendChild(menupopup);
+            menulistBox.appendChild(menulist);
+          newListEntry.appendChild(menulistBox);
+
+          let checkbox = document.createElement("checkbox");
+          checkbox.setAttribute("pack", "end");
+          checkbox.setAttribute("checked", "true");
+          newListEntry.appendChild(checkbox);
+
           mappingList.appendChild(newListEntry);
         }
       }
