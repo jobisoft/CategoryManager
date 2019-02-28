@@ -15,7 +15,7 @@
       onload="jbCatManWizard.Init();"
       xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <script type="application/x-javascript" src="chrome://sendtocategory/content/addressbook/import-export/import-export-wizard.js"/>
+  <script type="application/javascript" src="chrome://sendtocategory/content/addressbook/import-export/import-export-wizard.js"/>
 
 
 
