@@ -105,9 +105,8 @@ jbCatManCatsEdit.onSelect = function () {
 
 /* Move contact from the OUT box to the IN box */
 jbCatManCatsEdit.onClickAdd = function () {
-  let count = this.outbox.selectedCount;
-  while (count--) {
-    let item = this.outbox.selectedItems[0];
+  for (let i=this.outbox.selectedItems.length; i > 0; i--) {
+    let item = this.outbox.selectedItems[i-1];
     let newitem = this.inbox.appendChild(item);
     this.inbox.ensureElementIsVisible(newitem); //workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=250123#c16
   }
@@ -117,9 +116,8 @@ jbCatManCatsEdit.onClickAdd = function () {
 
 /* Move contact from the IN box to the OUT box */
 jbCatManCatsEdit.onClickRemove = function () {
-  let count = this.inbox.selectedCount;
-  while (count--) {
-    let item = this.inbox.selectedItems[0];
+  for (let i=this.inbox.selectedItems.length; i > 0; i--) {
+    let item = this.inbox.selectedItems[i-1];
     let newitem = this.outbox.appendChild(item);
     this.outbox.ensureElementIsVisible(newitem); //workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=250123#c16
   }
