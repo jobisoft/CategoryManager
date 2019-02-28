@@ -22,7 +22,7 @@
     <vbox>
         <hbox>
             <vbox width="250" pack="end">
-                <listbox id="CatsEditOutBox" width="100%" height="350" seltype="multiple" onclick="jbCatManCatsEdit.onSelect()" />
+                <richlistbox id="CatsEditOutBox" width="100%" height="350" seltype="multiple" onclick="jbCatManCatsEdit.onSelect()" />
             </vbox>
             <vbox pack="center">
                 <button id ="CatsEditAddButton" disabled="true" label="&gt;" onclick="jbCatManCatsEdit.onClickAdd()" />
@@ -30,7 +30,7 @@
             </vbox>
             <vbox width="250" pack="end">
                 <description id="CatsEditLabel">&sendtocategory.catsedit.label.in;</description>
-                <listbox id="CatsEditInBox" width="100%" height="350" seltype="multiple" onclick="jbCatManCatsEdit.onSelect()" />
+                <richlistbox id="CatsEditInBox" width="100%" height="350" seltype="multiple" onclick="jbCatManCatsEdit.onSelect()" />
             </vbox>
         </hbox>
         
