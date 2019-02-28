@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
 <?xml-stylesheet href="chrome://sendtocategory/skin/richlist.css" type="text/css"?>
-<?xul-overlay href="chrome://global/content/dialogOverlay.xul"?>
 
 <!DOCTYPE dialog
 [
@@ -9,6 +8,7 @@
 ]>
 
 <dialog id="CatManCategorySaver"
+    xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     buttons="accept"
     buttonlabelaccept="&sendtocategory.bulkedit.close.button;"
@@ -22,24 +22,22 @@
         jbCatMan.locale.bulkEditNoName = "&sendtocategory.bulkedit.noname;";
     </script>
     
-    <vbox id="CatManDialogBox" flex="1">
-        <vbox flex="1">
+    <vbox id="CatManDialogBox">
+        <vbox>
               <label id="CatManBulkTextBoxLabel" value="&sendtocategory.bulkedit.save.title;"/>
 
-                <progressmeter
-                    flex="1"
+                <html:progress
+                    max="100"
                     id="CatManSaverProgressBar"
                     mode="determined"
                     value="0"/>                
 
-                <listbox 
+                <richlistbox 
                     id="CatManSaverList" 
-                    flex="1"
-                    seltype="single" rows="20" width="500">                   
-                    <listcols>
-                        <listcol flex="1" />
-                    </listcols>
-                </listbox>
+                    seltype="single" 
+                    height="300" 
+                    width="500">                   
+                </richlistbox>
                     
         </vbox>
     </vbox>

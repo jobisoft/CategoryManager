@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
 <?xml-stylesheet href="chrome://sendtocategory/skin/richlist.css" type="text/css"?>
-<?xul-overlay href="chrome://global/content/dialogOverlay.xul"?>
 
 <!DOCTYPE dialog
 [
@@ -9,6 +8,7 @@
 ]>
 
 <dialog id="CatManCategoryValidator"
+    xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     buttons="accept,cancel"
     buttonlabelaccept="&sendtocategory.bulkedit.save.button;"
@@ -25,7 +25,8 @@
     <vbox id="CatManDialogBox" flex="1">
         <vbox flex="1">
 
-                <progressmeter
+                <html:progress
+                    max="100"
                     id="CatManValidatorProgressBar"
                     mode="determined"
                     value="0"/>
@@ -35,34 +36,34 @@
                 flex="1"
                 seltype="single">                   
 
-                    <listheader style="border: 0; padding: 0; -moz-appearance:none;">
-                        <treecol style="width:256px" label="&sendtocategory.bulkedit.header.email;" oncommand="jbCatManBulkEdit.stopme(event);" onclick="jbCatManBulkEdit.stopme(event);" />
-                        <treecol style="width:256px" label="&sendtocategory.bulkedit.header.contact;" oncommand="jbCatManBulkEdit.stopme(event);" onclick="jbCatManBulkEdit.stopme(event);" />
-                        <treecol flex="1" label="&sendtocategory.bulkedit.header.status;" oncommand="jbCatManBulkEdit.stopme(event);" onclick="jbCatManBulkEdit.stopme(event);" />    
+                    <listheader style="border: 0; padding: 0; border-bottom: 1px solid lightgrey;">
+                        <treecol class="header" style="width:256px" label="&sendtocategory.bulkedit.header.email;" oncommand="jbCatManBulkEdit.stopme(event);" onclick="jbCatManBulkEdit.stopme(event);" />
+                        <treecol class="header" style="width:256px" label="&sendtocategory.bulkedit.header.contact;" oncommand="jbCatManBulkEdit.stopme(event);" onclick="jbCatManBulkEdit.stopme(event);" />
+                        <treecol class="header" flex="1" label="&sendtocategory.bulkedit.header.status;" oncommand="jbCatManBulkEdit.stopme(event);" onclick="jbCatManBulkEdit.stopme(event);" />    
                     </listheader>
   
                     <richlistitem id ="CatManListTemplate_OK" hidden="true">
-                        <listcell class="label"><label crop="end" value=""/></listcell>
-                        <listcell class="label"><label crop="end" value=""/></listcell>
-                        <listcell class="img"><image src="chrome://sendtocategory/skin/ok.gif"/></listcell>
+                        <hbox align="center" style="width:256px"><label crop="end" value=""/></hbox>
+                        <hbox align="center"  style="width:256px"><label crop="end" value=""/></hbox>
+                        <hbox pack="center"><image src="chrome://sendtocategory/skin/ok.gif"/></hbox>
                     </richlistitem>
 
                     <richlistitem id ="CatManListTemplate_NOTOK" hidden="true">
-                        <listcell class="label"><label crop="end" value=""/></listcell>
-                        <listcell class="text"><textbox placeholder="&sendtocategory.bulkedit.firstname;" value=""/><textbox placeholder="&sendtocategory.bulkedit.lastname;" value=""/></listcell>
-                        <listcell class="img"><image src="chrome://sendtocategory/skin/notok.gif"/></listcell>
+                        <hbox align="center" style="width:256px"><label crop="end" value=""/></hbox>
+                        <hbox align="center" style="width:256px"><textbox flex="2" placeholder="&sendtocategory.bulkedit.firstname;" value=""/><textbox flex="1" placeholder="&sendtocategory.bulkedit.lastname;" value=""/></hbox>
+                        <hbox pack="center"><image src="chrome://sendtocategory/skin/notok.gif"/></hbox>
                     </richlistitem>
 
                     <richlistitem id ="CatManListTemplate_DOUBLE" hidden="true">
-                        <listcell class="label"><label crop="end" value=""/></listcell>
-                        <listcell class="menu"><menulist><menupopup></menupopup></menulist></listcell>
-                        <listcell class="img"><image src="chrome://sendtocategory/skin/double.gif"/></listcell>
+                        <hbox align="center" style="width:256px"><label crop="end" value=""/></hbox>
+                        <hbox align="center" style="width:256px"></hbox>
+                        <hbox pack="center"><image src="chrome://sendtocategory/skin/double.gif"/></hbox>
                     </richlistitem>
 
                     <richlistitem id ="CatManListTemplate_DOUBLEOK" hidden="true">
-                        <listcell class="label"><label crop="end" value=""/></listcell>
-                        <listcell class="menu"><menulist><menupopup></menupopup></menulist></listcell>
-                        <listcell class="img"><image src="chrome://sendtocategory/skin/ok-double.gif"/></listcell>
+                        <hbox align="center" style="width:256px"><label crop="end" value=""/></hbox>
+                        <hbox align="center" style="width:256px"></hbox>
+                        <hbox pack="center"><image src="chrome://sendtocategory/skin/ok-double.gif"/></hbox>
                     </richlistitem>
 
             </richlistbox>
