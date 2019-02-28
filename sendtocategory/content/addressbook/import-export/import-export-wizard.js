@@ -424,8 +424,8 @@ jbCatManWizard.SilentAfter_Import_Mapping_CSV = function () {
   let foundCategoriesField = false;
     
   for (var i=mappingList.getRowCount() -1; i>=0; i--) {
-    let v = mappingList.getItemAtIndex(i).childNodes[1].childNodes[0].label;
-    let c = mappingList.getItemAtIndex(i).childNodes[2].childNodes[0].checked;
+    let v = mappingList.getItemAtIndex(i).getElementsByTagName("menulist")[0].value;
+    let c = mappingList.getItemAtIndex(i).getElementsByTagName("checkbox")[0].checked;
     if (c && jbCatManWizard.forbiddenFields.indexOf(v) != -1)
     {
       alert(document.getElementById('sendtocategory.wizard.import.error.reserved').value.replace("##fieldname##",v));
