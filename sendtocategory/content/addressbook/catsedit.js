@@ -1,6 +1,16 @@
 var jbCatMan = window.opener.jbCatMan;
 var jbCatManCatsEdit = {}
 
+jbCatManCatsEdit.createItem = function (label, value) {
+    let newListItem = document.createElement("richlistitem");
+    newListItem.setAttribute("value", value);
+    let item = document.createElement("label");
+    item.setAttribute("value", label);
+    newListItem.appendChild(item);
+    return newListItem;
+},
+
+
 jbCatManCatsEdit.init = function () {
   this.cards = [];
   this.category = window.arguments[0] ;
@@ -43,10 +53,10 @@ jbCatManCatsEdit.init = function () {
     let catsArray = jbCatMan.getCategoriesfromCard(card);
     let catIdx = catsArray.indexOf(this.category);
     if (catIdx == -1) {
-      let newitem = this.outbox.appendItem(userName, UID)
+      let newitem = this.outbox.appendChild(jbCatManCatsEdit.createItem(userName, UID));
       this.outbox.ensureElementIsVisible(newitem); //workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=250123#c16
     } else {
-      let newitem = this.inbox.appendItem(userName, UID);
+      let newitem = this.inbox.appendChild(jbCatManCatsEdit.createItem(userName, UID));
       this.inbox.ensureElementIsVisible(newitem); //workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=250123#c16
     }
 
