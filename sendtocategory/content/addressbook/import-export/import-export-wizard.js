@@ -386,6 +386,7 @@ jbCatManWizard.ProgressBefore_Import_Mapping_CSV = function (dialog, step = 0) {
           let menulistBox = document.createElement("hbox");
           menulistBox.setAttribute("style", "width:210px");
             let menulist = document.createElement("menulist", { is : "menulist-editable"});
+            menulist.setAttribute("is", "menulist-editable");
             menulist.setAttribute("editable", "true");
             menulist.setAttribute("flex", "1");
             menulist.appendChild(menupopup);
