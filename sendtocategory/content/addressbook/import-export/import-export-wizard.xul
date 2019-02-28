@@ -61,7 +61,7 @@
       &sendtocategory.wizard.import.options.csv.desc;
     </description>
     <richlistbox
-    flex="1"
+    flex="0"
     ondblclick="this.selectedIndex = -1;"
     seltype="multiple">
 
@@ -71,8 +71,8 @@
         </listheader>
 
         <richlistitem>
-            <listcell style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.delimiter;"/></listcell>
-            <listcell flex="1">
+            <hbox style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.delimiter;"/></hbox>
+            <hbox flex="1">
               <menulist flex="1" id="CatManWizardImportCsvDelimiter">
                 <menupopup>
                   <menuitem label="," value=","/>
@@ -80,24 +80,24 @@
                   <menuitem label="&sendtocategory.wizard.import.options.csv.delimiter.tab;" value="&#9;"/>
                 </menupopup>
               </menulist>
-            </listcell>
+            </hbox>
         </richlistitem>
         
         <richlistitem>
-            <listcell style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.textident;"/></listcell>
-            <listcell flex="1">
+            <hbox style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.textident;"/></hbox>
+            <hbox flex="1">
               <menulist flex="1"  id="CatManWizardImportCsvTextIdentifier">
                 <menupopup>
                   <menuitem label='"' value='"'/>
                   <menuitem label="'" value="'"/>
                 </menupopup>
               </menulist>
-            </listcell>
+            </hbox>
         </richlistitem>
 
         <richlistitem>
-            <listcell style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.charset;"/></listcell>
-            <listcell flex="1">
+            <hbox style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.charset;"/></hbox>
+            <hbox flex="1">
               <menulist flex="1" id="CatManWizardImportCsvCharset">
                 <menupopup>
                   <menuitem label="UTF-8" value="UTF-8"/>
@@ -105,7 +105,7 @@
                   <menuitem label="ISO-8859-1 (Latin1)" value="ISO-8859-1"/>
                 </menupopup>
               </menulist>
-            </listcell>
+            </hbox>
         </richlistitem>
 
     </richlistbox>
@@ -120,8 +120,8 @@
     hidden="true"
     seltype="single">
         <richlistitem id ="CatManImportDataFieldListTemplate" >
-            <listcell style="width:210px"><label crop="end" value=""/></listcell>
-            <listcell style="width:210px">
+            <hbox style="width:210px"><label crop="end" value=""/></hbox>
+            <hbox style="width:210px">
               <menulist editable="true">
                 <menupopup>
                   <menuitem label="FirstName"/>
@@ -176,8 +176,8 @@
                   <menuitem label="PreferMailFormat"/>
                 </menupopup>
               </menulist>
-            </listcell>
-            <listcell flex="1" align="right"><checkbox label="" checked="true" /></listcell>
+            </hbox>
+            <hbox flex="1" align="right"><checkbox label="" checked="true" /></hbox>
         </richlistitem>
     </richlistbox>
 
@@ -220,8 +220,8 @@
     hidden="true"
     seltype="single">
         <richlistitem id ="CatManExportDataFieldListTemplate" >
-            <listcell style="width:410px"><label crop="end" value=""/></listcell>
-            <listcell flex="1" align="right"><checkbox label="" checked="true" /></listcell>
+            <hbox style="width:410px"><label crop="end" value=""/></hbox>
+            <hbox flex="1" align="right"><checkbox label="" checked="true" /></hbox>
         </richlistitem>
     </richlistbox>
     
@@ -239,8 +239,8 @@
         </listheader>
 
         <richlistitem>
-            <listcell style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.delimiter;"/></listcell>
-            <listcell flex="1">
+            <hbox style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.delimiter;"/></hbox>
+            <hbox flex="1">
               <menulist flex="1" id="CatManWizardExportCsvDelimiter">
                 <menupopup>
                   <menuitem label="," value=","/>
@@ -248,24 +248,24 @@
                   <menuitem label="&sendtocategory.wizard.import.options.csv.delimiter.tab;" value="&#9;"/>
                 </menupopup>
               </menulist>
-            </listcell>
+            </hbox>
         </richlistitem>
 
         <richlistitem>
-            <listcell style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.textident;"/></listcell>
-            <listcell flex="1">
+            <hbox style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.textident;"/></hbox>
+            <hbox flex="1">
               <menulist flex="1"  id="CatManWizardExportCsvTextIdentifier">
                 <menupopup>
                   <menuitem label='"' value='"'/>
                   <menuitem label="'" value="'"/>
                 </menupopup>
               </menulist>
-            </listcell>
+            </hbox>
         </richlistitem>
 
         <richlistitem>
-            <listcell style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.charset;"/></listcell>
-            <listcell flex="1">
+            <hbox style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.charset;"/></hbox>
+            <hbox flex="1">
               <menulist flex="1" id="CatManWizardExportCsvCharset">
                 <menupopup>
                   <menuitem label="UTF-8" value="UTF-8"/>
@@ -273,12 +273,12 @@
                   <menuitem label="ISO-8859-1 (Latin1)" value="ISO-8859-1"/>
                 </menupopup>
               </menulist>
-            </listcell>
+            </hbox>
         </richlistitem>
 
         <richlistitem>
-            <listcell style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.linebreak;"/></listcell>
-            <listcell flex="1">
+            <hbox style="width:290px"><label crop="end" value="&sendtocategory.wizard.import.options.csv.linebreak;"/></hbox>
+            <hbox flex="1">
               <menulist flex="1" id="CatManWizardExportCsvLinebreak">
                 <menupopup>
                   <menuitem label="Standard (CR+LF)" value="CRLF"/>
@@ -286,7 +286,7 @@
                   <menuitem label="Other (CR)" value="CR"/>
                 </menupopup>
               </menulist>
-            </listcell>
+            </hbox>
         </richlistitem>
 
     </richlistbox>
