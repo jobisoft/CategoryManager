@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<?xml-stylesheet href="chrome://sendtocategory/skin/richlist.css" type="text/css"?>
 
 <!DOCTYPE overlay [
 <!ENTITY % abMainOverlayDTD SYSTEM "chrome://sendtocategory/locale/catman.dtd" >
@@ -58,19 +59,21 @@
                     onclick="jbCatMan.onSelectCategoryList()"
                     ondblclick="jbCatMan.writeToCategory()"
                     context="CatManContextMenu">
-                        <listhead>
-                            <label class="header" flex="1" value="&sendtocategory.catbox.header.catname;" />
-                            <label class="header" flex="0" value="&sendtocategory.catbox.header.catsize;" />
-                        </listhead>
+                        <listheader class="CatManHeader">
+                            <label class="CatManHeaderCell1 header" flex="1" value="&sendtocategory.catbox.header.catname;" />
+                            <label class="CatManHeaderCell2 header" flex="0" value="&sendtocategory.catbox.header.catsize;" />
+                        </listheader>
                     </richlistbox>
                     <hbox pack="end">
                         <button 
                         id="CatManAddContactCategoryButton"
+                        flex="1"
                         disabled="true"
                         label="&sendtocategory.addButton.label;"
                         accesskey="&sendtocategory.addButton.accesskey;"
                         oncommand="jbCatMan.onAddCategory()"/>
-                        <button style="width: 2em; min-width: 2em;"
+                        <button 
+                        class="ghostbutton"
                         id="CatManHelpButton"
                         disabled="false"
                         label="&sendtocategory.helpButton.label;"

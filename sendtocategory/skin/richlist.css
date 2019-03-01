@@ -29,3 +29,23 @@ grid image {
 grid description {
 	width: 535px;
 }
+
+.ghostbutton {
+	min-width:3em;
+	width: 3em;
+}
+
+.CatManHeader {
+	border-bottom: 1px solid lightgrey;
+	padding: 0px;
+	margin:0 px;
+}
+
+.CatManHeaderCell1 { 
+	border-right: 1px solid lightgrey;
+	padding: 2px 1px;
+}
+
+.CatManHeaderCell2 { 
+	padding: 2px 1px;
+}
