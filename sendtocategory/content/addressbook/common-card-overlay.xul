@@ -1,4 +1,6 @@
 <?xml version="1.0"?>
+<?xml-stylesheet href="chrome://messenger/content/menulist.css" type="text/css"?>
+
 
 <!-- 
  This file is more or less taken directly from the SOGo-Connector, to add a Category Tab. 
@@ -13,18 +15,27 @@
 
 <overlay id="CatManCommonCardOverlay"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  <script type="application/x-javascript"
-    src="chrome://sendtocategory/content/addressbook/common-card-overlay.js"/>
+  
+  <script type="application/javascript" src="chrome://sendtocategory/content/addressbook/common-card-overlay.js"/>
+  <script type="application/javascript" src="chrome://messenger/content/customElements.js"/>
 
   <tabs id="abTabs">
     <tab insertbefore="homeTabButton" id="abCatManCategoriesTabButton" label="&sendtocategory.categoriescontext.label;"/>
   </tabs>
+  
   <tabpanels id="abTabPanels">
-    <vbox id="abCatManCategoriesTab" flex="0" style="max-height: 200px; overflow-y: auto;" insertbefore="abHomeTab">
-      <vbox id="abCatManCategories">
-      </vbox>
-      <textbox id="abCatManEmptyCategory" readonly="true"/>
-      <description id="abCatManCategoriesDescription" hidden="true" style="margin-top:1em; width:400px"></description>
-    </vbox>
+    <tabpanel id="abCatManCategoriesTab" flex="0" insertbefore="abHomeTab">
+      <vbox flex="1">
+        <richlistbox
+        flex="1"
+        id="abCatManCategoriesList"
+        seltype="single">
+        </richlistbox>
+        <hbox>
+            <button flex="0" id="abCatManCategoriesAddButton" label="+" oncommand="jbCatManEditDialog.addCategoryEntry(document.getElementById('abCatManCategoriesAddBox').value)"/>
+        </hbox>
+        <description id="abCatManCategoriesDescription" hidden="true" style="margin-top:1em; width:400px"></description>
+        </vbox>
+    </tabpanel>
   </tabpanels>
 </overlay>
