@@ -582,6 +582,26 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
 jbCatMan.initAddressbook = function() {
   jbCatMan.dump("Begin with initAddressbook()",1);
 
+  //add categories field to details view
+  let CatManCategoriesHeader = document.createElement("description");
+  CatManCategoriesHeader.id = "CatManCategoriesHeader";
+  CatManCategoriesHeader.setAttribute("class", "CardViewHeading");
+  CatManCategoriesHeader.textContent = jbCatMan.locale.categories;
+
+  let CatManCategoriesLabel = document.createElement("description");
+  CatManCategoriesLabel.id= "CatManCategoriesLabel";
+  CatManCategoriesLabel.setAttribute("class", "CardViewText");
+  CatManCategoriesLabel.CatManCategoriesLabelText = "";
+  
+  let cvbCategories = document.createElement("vbox");
+  cvbCategories.id = "cvbCategories";
+  cvbCategories.setAttribute("class", "cardViewGroup");
+  cvbCategories.appendChild(CatManCategoriesHeader);
+  cvbCategories.appendChild(CatManCategoriesLabel);
+
+  let cvbPhone = document.getElementById("cvbPhone");
+  cvbPhone.parentNode.insertBefore(cvbCategories, cvbPhone);
+  
   // Add listener for card changes to update CategoryList
   jbCatMan.AbListenerToUpdateCategoryList.add();
   window.addEventListener("unload", function unloadListener(e) {
@@ -620,6 +640,9 @@ jbCatMan.initAddressbook = function() {
 
   //hide SOGo categories field in CardViewPane
   if (document.getElementById("SCCvCategories")) document.getElementById("SCCvCategories").hidden = true;
+
+  
+
   
   jbCatMan.dump("Done with initAddressbook()",-1);
 }
@@ -631,9 +654,9 @@ jbCatMan.onAbResultsPaneSelectionChanged = function () {
   if (cards.length == 1) {
     let cats = jbCatMan.getCategoriesfromCard(cards[0]).sort().join(", ");
     let CatManCategoriesLabel = document.getElementById("CatManCategoriesLabel");    
-    document.getElementById("CatManCategoriesHeader").hidden = !cvSetNodeWithLabel(CatManCategoriesLabel, CatManCategoriesLabel.getAttribute("CatManCategoriesLabelText"), cats);
+    document.getElementById("cvbCategories").collapsed = !cvSetNodeWithLabel(CatManCategoriesLabel, CatManCategoriesLabel.getAttribute("CatManCategoriesLabelText"), cats);
   } else {
-    document.getElementById("CatManCategoriesHeader").hidden = true;
+    document.getElementById("cvbCategories").collapsed = true;
   }
 
 }

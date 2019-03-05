@@ -15,6 +15,7 @@
 
     <script type="text/javascript" src="chrome://sendtocategory/content/addressbook/addressbook_overlay.js"/>
     <script type="text/javascript">
+        jbCatMan.locale.categories = "&sendtocategory.categoriescontext.label;";
         jbCatMan.locale.addTitle = "&sendtocategory.add.title;";
         jbCatMan.locale.editTitle = "&sendtocategory.edit.title;";
         jbCatMan.locale.bulkTitle = "&sendtocategory.bulkedit.title;";
@@ -88,10 +89,5 @@
       </menupopup>
     </menu>
   </popup>
-
-  <vbox id="cvbContact">
-    <description id="CatManCategoriesHeader" style="margin-top:8px;" class="CardViewHeading">&sendtocategory.categoriescontext.label;</description>
-    <description id="CatManCategoriesLabel" class="CardViewText" CatManCategoriesLabelText="" />
-  </vbox>
   
 </overlay>
