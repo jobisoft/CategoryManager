@@ -60,7 +60,6 @@ jbCatManEditDialog.updateCategoriesDropDown = function () {
   menulist.setAttribute("flex", "1");
   menulist.setAttribute("editable", "true");
   menulist.addEventListener("keydown",  function (e) { jbCatManEditDialog.keydown(e); }, false);
-  menulist.addEventListener("command", function (e) { jbCatManEditDialog.addCategoryEntry(e.target.value); }, false);
   
   let popup = window.document.createElement("menupopup");
   for (let i = 0; i < allCatsArray.length; i++) {    
