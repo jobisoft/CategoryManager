@@ -354,6 +354,7 @@ jbCatManWizard.ProgressBefore_Import_Mapping_CSV = function (dialog, step = 0) {
           let newListEntry = document.createElement("richlistitem");
           
           let labelBox = document.createElement("hbox");
+          labelBox.setAttribute("align", "center");
           labelBox.setAttribute("style", "width:210px");
             let label = document.createElement("label");
             label.setAttribute("crop", "end");

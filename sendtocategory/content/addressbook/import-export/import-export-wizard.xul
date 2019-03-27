@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="chrome://messenger/content/menulist.css" type="text/css"?>
+<?xml-stylesheet type="text/css" href="chrome://global/skin/global.css"?>
+<?xml-stylesheet type="text/css" href="chrome://messenger/skin/menulist.css"?>
 
 <!DOCTYPE overlay [
 <!ENTITY % abMainOverlayDTD SYSTEM "chrome://sendtocategory/locale/import-export-wizard.dtd" >
 %abMainOverlayDTD;
 ]>
 
-<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
 <wizard 
       width="600"
@@ -16,8 +16,8 @@
       onload="jbCatManWizard.Init();"
       xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <script type="application/javascript" src="chrome://sendtocategory/content/addressbook/import-export/import-export-wizard.js"/>
   <script type="application/javascript" src="chrome://messenger/content/customElements.js"/>
+  <script type="application/javascript" src="chrome://sendtocategory/content/addressbook/import-export/import-export-wizard.js"/>
 
 
 
