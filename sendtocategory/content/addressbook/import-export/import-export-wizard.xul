@@ -22,7 +22,7 @@
 
 
 
-  <wizardpage pageid="CatManWizardMode" label="&sendtocategory.wizard.mode.title;" onpageshow="jbCatManWizard.reset();" onpageadvanced="return jbCatManWizard.onpageadvanced(this);" next="CatManWizardImport">
+  <wizardpage pageid="CatManWizardMode" label="&sendtocategory.wizard.mode.title;" next="CatManWizardImport">
 
   <!-- locales used in javascript -->
   <label id="sendtocategory.wizard.types.csv" hidden="true" value="&sendtocategory.wizard.types.csv;" />
@@ -46,11 +46,11 @@
 
 
 
-  <wizardpage pageid="CatManWizardImport_VCF" label="&sendtocategory.wizard.import.options.vcf.title;" onpageadvanced="return jbCatManWizard.onpageadvanced(this);" next="CatManWizardImport">
+  <wizardpage pageid="CatManWizardImport_VCF" label="&sendtocategory.wizard.import.options.vcf.title;" next="CatManWizardImport">
       <label value="VCF Import Options" />
   </wizardpage>
   
-  <wizardpage pageid="CatManWizardExport_VCF" label="&sendtocategory.wizard.export.options.vcf.title;" onpageadvanced="return jbCatManWizard.onpageadvanced(this);" next="CatManWizardExport">
+  <wizardpage pageid="CatManWizardExport_VCF" label="&sendtocategory.wizard.export.options.vcf.title;" next="CatManWizardExport">
       <label value="VCF Export Options" />
   </wizardpage>
 
@@ -58,7 +58,7 @@
 
 
 
-  <wizardpage pageid="CatManWizardImport_CSV" label="&sendtocategory.wizard.import.options.csv.title;" onpageadvanced="return jbCatManWizard.onpageadvanced(this);" next="CatManWizardImport_Mapping_CSV"> 
+  <wizardpage pageid="CatManWizardImport_CSV" label="&sendtocategory.wizard.import.options.csv.title;" next="CatManWizardImport_Mapping_CSV"> 
      <description style='padding-bottom:1ex;'>
       &sendtocategory.wizard.import.options.csv.desc;
     </description>
@@ -113,7 +113,7 @@
     </richlistbox>
   </wizardpage>
 
-  <wizardpage pageid="CatManWizardImport_Mapping_CSV" label="&sendtocategory.wizard.import.mapping.csv.title;" onpageadvanced="return jbCatManWizard.onpageadvanced(this);" next="CatManWizardImport_Control_CSV"> 
+  <wizardpage pageid="CatManWizardImport_Mapping_CSV" label="&sendtocategory.wizard.import.mapping.csv.title;" next="CatManWizardImport_Control_CSV"> 
      <description style='padding-bottom:1ex;'>
       &sendtocategory.wizard.import.mapping.csv.desc;
     </description>
@@ -133,7 +133,7 @@
     </richlistbox>
 </wizardpage>
 
-  <wizardpage pageid="CatManWizardImport_Control_CSV" label="&sendtocategory.wizard.import.control.title;" onpageadvanced="return jbCatManWizard.onpageadvanced(this);"  next="CatManWizardImport">
+  <wizardpage pageid="CatManWizardImport_Control_CSV" label="&sendtocategory.wizard.import.control.title;"  next="CatManWizardImport">
     <description style='padding-bottom:1ex;'  id='CatManWizardImportControlDesc'>
       &sendtocategory.wizard.import.control.desc;
     </description>  
@@ -151,7 +151,7 @@
 
 
 
-  <wizardpage pageid="CatManWizardExport_CSV" label="&sendtocategory.wizard.export.options.csv.title;" onpageadvanced="return jbCatManWizard.onpageadvanced(this);" next="CatManWizardExport">
+  <wizardpage pageid="CatManWizardExport_CSV" label="&sendtocategory.wizard.export.options.csv.title;" next="CatManWizardExport">
 
     <richlistbox
     hidden="true"
@@ -255,13 +255,13 @@
 
 
 
-  <wizardpage pageid="CatManWizardImport" label="&sendtocategory.wizard.import.title;" onpageshow="jbCatManWizard.finishWizard();" next="">
+  <wizardpage pageid="CatManWizardImport" label="&sendtocategory.wizard.import.title;" next="">
     <description style='padding-bottom:1ex;'  id='CatManWizardImportDesc'>
       &sendtocategory.wizard.import.desc;
     </description>  
   </wizardpage>
   
-  <wizardpage pageid="CatManWizardExport" label="&sendtocategory.wizard.export.title;" onpageshow="jbCatManWizard.finishWizard();" next="">
+  <wizardpage pageid="CatManWizardExport" label="&sendtocategory.wizard.export.title;" next="">
     <description style='padding-bottom:1ex;'  id='CatManWizardExportDesc'>
       &sendtocategory.wizard.export.desc;
     </description>  

@@ -126,6 +126,42 @@ jbCatManWizard.Init = function () {
   for (let x=0; x<elements.length ;x++) {
     jbCatManWizard.csvCharset.push(elements[x].value);
   }
+
+  let advance = [
+    "CatManWizardMode", 
+    "CatManWizardImport_VCF", 
+    "CatManWizardExport_VCF", 
+    "CatManWizardImport_CSV", 
+    "CatManWizardImport_Mapping_CSV", 
+    "CatManWizardImport_Control_CSV",
+    "CatManWizardExport_CSV"
+  ];
+  
+  let wizardpages = document.getElementsByTagName("wizardpage");
+  for (let wizardpage of wizardpages) {
+    if (advance.includes(wizardpage.pageid)) {
+      wizardpage.addEventListener("pageadvanced", function(event) {
+        if (!jbCatManWizard.onpageadvanced(event.target)) {
+          event.preventDefault(); 
+        }
+      });
+    }
+    
+    if (["CatManWizardMode"].includes(wizardpage.pageid)) {
+      wizardpage.addEventListener("pageshow", function(event) {
+        jbCatManWizard.reset();
+      });
+    }
+
+    if (["CatManWizardImport", "CatManWizardExport"].includes(wizardpage.pageid)) {
+      wizardpage.addEventListener("pageshow", function(event) {
+        jbCatManWizard.finishWizard();
+      });
+    }
+    
+  }
+
+  jbCatManWizard.reset();
 }
 
 
