@@ -51,6 +51,12 @@ jbCatManBulkEdit.loadBulkList = function () {
   } else {
     document.getElementById("CatManInfoBox").style.display = "none";
   }
+  
+  document.addEventListener("dialogaccept", function(event) {
+    jbCatMan.bulk.bulkList=document.getElementById('CatManBulkTextBox').value; 
+    jbCatMan.bulk.needToValidateBulkList=true;
+    //event.preventDefault(); 
+  });
 
 }
 
@@ -106,6 +112,12 @@ jbCatManBulkEdit.loadValidateList = function() {
 
   document.documentElement.getButton("accept").disabled = true;
   window.setTimeout(function() { jbCatManBulkEdit.validateEmailList(0); }, 20);
+
+  document.addEventListener("dialogaccept", function(event) {
+    window.opener.jbCatMan.bulk.saveList=document.getElementById('CatManValidatorList'); 
+    window.opener.jbCatMan.bulk.needToSaveBulkList=true;
+    //event.preventDefault(); // Prevent the dialog closing.
+  });  
 }
 
 

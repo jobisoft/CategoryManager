@@ -13,7 +13,6 @@
     buttons="accept,cancel"
     buttonlabelaccept="&sendtocategory.bulkedit.save.button;"
     buttonlabelcancel="&sendtocategory.cancel.button;"
-    ondialogaccept="window.opener.jbCatMan.bulk.saveList=document.getElementById('CatManValidatorList'); window.opener.jbCatMan.bulk.needToSaveBulkList=true;"
     onload="jbCatManBulkEdit.loadValidateList()">
 
     <script type="text/javascript" src="chrome://sendtocategory/content/addressbook/bulkedit.js"/>

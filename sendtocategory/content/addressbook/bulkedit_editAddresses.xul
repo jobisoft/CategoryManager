@@ -9,10 +9,10 @@
 
 <dialog id="CatManCategoryEditor"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:html="http://www.w3.org/1999/xhtml"
     buttons="accept,cancel"
     buttonlabelaccept="&sendtocategory.bulkedit.validate.button;"
     buttonlabelcancel="&sendtocategory.cancel.button;"
-    ondialogaccept="jbCatMan.bulk.bulkList=document.getElementById('CatManBulkTextBox').value; jbCatMan.bulk.needToValidateBulkList=true;"
     onload="jbCatManBulkEdit.loadBulkList()">
 
     <script type="text/javascript" src="chrome://sendtocategory/content/addressbook/bulkedit.js"/>
@@ -25,7 +25,7 @@
     <vbox id="CatManDialogBox">
         <vbox>
               <label id="CatManBulkTextBoxLabel" value="&sendtocategory.bulkedit.edit.title;"/>
-              <textbox id="CatManBulkTextBox" multiline="true" rows="30" cols="50"/>
+              <html:textarea id="CatManBulkTextBox" rows="30" cols="50"/>
         </vbox>
     </vbox>
     

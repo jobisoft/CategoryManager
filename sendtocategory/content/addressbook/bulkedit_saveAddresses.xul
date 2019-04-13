@@ -12,7 +12,6 @@
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     buttons="accept"
     buttonlabelaccept="&sendtocategory.bulkedit.close.button;"
-    ondialogaccept=""
     onload="jbCatManBulkEdit.saveList()">
 
     <script type="text/javascript" src="chrome://sendtocategory/content/addressbook/bulkedit.js"/>
