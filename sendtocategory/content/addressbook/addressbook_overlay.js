@@ -90,8 +90,8 @@ jbCatMan.updateCategoryList = function () {
     categoriesList.appendChild(newListItem);
   }
     
-  //disable cardsWithoutCategories for  global and remote book 
-  if (!(abManager.getDirectory(GetSelectedDirectory()).isRemote || GetSelectedDirectory() == "moz-abdirectory://?" )) {
+  //disable "cardsWithoutCategories" element if global book and global book empty or if remote book
+  if (!(abManager.getDirectory(GetSelectedDirectory()).isRemote || (GetSelectedDirectory() == "moz-abdirectory://?" && jbCatMan.data.cardsWithoutCategories.length == 0))) {
     let newListItem = document.createElement("richlistitem");
     newListItem.setAttribute("id", "");
     newListItem.setAttribute("type", "uncategorized");

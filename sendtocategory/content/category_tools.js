@@ -193,9 +193,7 @@ jbCatMan.getCategorySearchString = function(abURI, category, type = "category") 
 
     } else if (type == "uncategorized") {
 
-      for (let i=0; i < jbCatMan.data.cardsWithoutCategories.length; i++) {
-         searchKeys += "(DbRowID,=,"+ jbCatMan.data.cardsWithoutCategories[i].split("\u001A")[0] +")";
-      }
+      searchKeys = "("+jbCatMan.getCategoryField()+",!ex,'')";        
       searchstring =  abURI + "?" + "(or" + searchKeys + ")";
 
     } else {
