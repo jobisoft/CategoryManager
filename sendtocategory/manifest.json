@@ -2,7 +2,7 @@
   "applications": {
     "gecko": {
       "id": "sendtocategory@jobisoft.de",
-      "strict_min_version": "66.0"
+      "strict_min_version": "68.0a1"
     }
   },
   "manifest_version": 2,
