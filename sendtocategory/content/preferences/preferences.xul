@@ -1,45 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
-<?xml-stylesheet href="chrome://sendtocategory/skin/preferences.css"?>
-
-<!DOCTYPE dialog [
-    <!ENTITY % SCPreferencesDTD SYSTEM "chrome://sendtocategory/locale/catman.dtd">
-    %SCPreferencesDTD;
-]>
+<?xml-stylesheet type="text/css" href="chrome://global/skin/"?>
+<?xml-stylesheet type="text/css" href="chrome://messenger/skin/preferences/preferences.css"?>
+<!DOCTYPE dialog SYSTEM "chrome://sendtocategory/locale/catman.dtd">
 
 <dialog 
     id="CatManPreferences"
+    type="child"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     title="CategoryManager"
     width="500"
     height="600"
-    onload="jbCatManPref.load()"
-    ondialogaccept="jbCatManPref.save()"
     buttons="accept,cancel">
 
-            <script type="application/javascript" src="chrome://sendtocategory/content/preferences/preferences.js" />
+    <tabbox id="CatManPreferencesTabbox" flex="1" >
+        <tabs>
+            <tab id="CatManPreferencesTabCategories" label="&sendtocategory.pref.generaltab.label;"/>
+        </tabs>
 
-            <tabbox id="CatManPreferencesTabbox" flex="1" >
-                <tabs>
-                    <tab id="CatManPreferencesTabCategories" label="&sendtocategory.pref.generaltab.label;"/>
-                </tabs>
+        <tabpanels flex="1">
 
-                <tabpanels flex="1">
+            <tabpanel orient="vertical">
+                <vbox id="CatManPreferencesBoxCategories">
 
-                    <tabpanel orient="vertical">
-                        <vbox id="CatManPreferencesBoxCategories">
+                  <description style="padding:1ex 0 0 0">&sendtocategory.pref.generaltab.toaddr.desc1;</description>
+                  <label  style="font-size:xx-small" value="* http://www.lda.bayern.de/lda/datenschutzaufsicht/p_archiv/2013/pm004.html"/>
+                  <description  style="padding:1em 0">&sendtocategory.pref.generaltab.toaddr.desc2;</description>
+                  <label value="&sendtocategory.pref.generaltab.toaddr.label;"/>
+                  <textbox id="sendtocategory.to_address" preference="extensions.sendtocategory.to_address" style="width:100%"/>
+                  <description>&sendtocategory.pref.generaltab.toaddr.desc3;</description>
 
-                          <description style="padding:1ex 0 0 0">&sendtocategory.pref.generaltab.toaddr.desc1;</description>
-                          <label  style="font-size:xx-small" value="* http://www.lda.bayern.de/lda/datenschutzaufsicht/p_archiv/2013/pm004.html"/>
-                          <description  style="padding:1em 0">&sendtocategory.pref.generaltab.toaddr.desc2;</description>
-                          <label value="&sendtocategory.pref.generaltab.toaddr.label;"/>
-                          <textbox id="sendtocategory.to_address" style="width:100%"/>
-                          <description>&sendtocategory.pref.generaltab.toaddr.desc3;</description>
+                </vbox>
+            </tabpanel>
 
-                        </vbox>
-                    </tabpanel>
-
-                </tabpanels>
-            </tabbox>
-
+        </tabpanels>
+    </tabbox>
+            
+    <script src="chrome://global/content/preferencesBindings.js" type="application/javascript"/>            
+    <script src="chrome://sendtocategory/content/preferences/preferences.js" type="application/javascript"/>
 </dialog>
