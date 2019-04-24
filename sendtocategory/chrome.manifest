@@ -9,6 +9,5 @@ locale sendtocategory pt-BR locale/pt-BR/
 
 overlay chrome://messenger/content/addressbook/addressbook.xul chrome://sendtocategory/content/addressbook/addressbook_overlay.xul
 overlay chrome://messenger/content/addressbook/abContactsPanel.xul chrome://sendtocategory/content/contactpanel/abContactsPanel_overlay.xul
-overlay chrome://messenger/content/preferences/preferences.xul chrome://sendtocategory/content/preferences/preferences_overlay.xul
 overlay chrome://messenger/content/addressbook/abEditCardDialog.xul chrome://sendtocategory/content/addressbook/common-card-overlay.xul
 overlay chrome://messenger/content/addressbook/abNewCardDialog.xul chrome://sendtocategory/content/addressbook/common-card-overlay.xul
