@@ -14,7 +14,6 @@
     buttons="accept,cancel"
     buttonlabelaccept="&sendtocategory.ok.button;"
     buttonlabelcancel="&sendtocategory.cancel.button;"
-    ondialogaccept="return jbCatManCatsEdit.onAccept()"
     title="&sendtocategory.catsedit.title;"
     onload="jbCatManCatsEdit.init()"
     onclose="return jbCatManCatsEdit.closeCheck()">

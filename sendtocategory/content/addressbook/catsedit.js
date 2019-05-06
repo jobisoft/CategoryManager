@@ -94,6 +94,12 @@ jbCatManCatsEdit.init = function () {
     //outbox to inbox = add
     jbCatManCatsEdit.onClickAdd();
   }, false);
+
+    
+  document.addEventListener("dialogaccept", function(event) {
+    jbCatManCatsEdit.onAccept();
+    event.preventDefault(); // Prevent the dialog closing.
+  });
   
 }
 
@@ -132,9 +138,6 @@ jbCatManCatsEdit.onAccept = function () {
   document.documentElement.getButton("accept").disabled = true;
   document.getElementById('CatsEditProgressBar').style.visibility = "visible";
   this.localTimeout = window.setTimeout(function() { jbCatManCatsEdit.updateCard(0); }, 1);
-
-  // do not close dialog
-  return false;
 }
 
 
