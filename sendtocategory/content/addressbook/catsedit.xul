@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/messenger.css"  type="text/css"?>
 <?xml-stylesheet href="chrome://sendtocategory/skin/richlist.css" type="text/css"?>
 
 <!DOCTYPE dialog
@@ -43,7 +44,7 @@
         value="0"/>
         
         <groupbox>
-            <caption label="&sendtocategory.bulkedit.note;"/>
+            <caption>&sendtocategory.bulkedit.note;</caption>
             <grid>
                 <columns>
                     <column/>
