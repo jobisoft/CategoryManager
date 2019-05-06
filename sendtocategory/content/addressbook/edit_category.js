@@ -6,6 +6,11 @@ function editCategoryLoad()
     document.getElementById("categoryName").value = window.arguments[0];
     document.title = window.arguments[1];
     dialogType = window.arguments[2];
+    
+    document.addEventListener("dialogaccept", function(event) {
+        let rv = doOK();
+        if (!rv) event.preventDefault(); // Prevent the dialog closing.
+    });
 }
 
 function doOK()

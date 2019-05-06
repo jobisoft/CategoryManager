@@ -10,8 +10,8 @@
 <dialog id="CatManCategoryEditor"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   buttons="accept,cancel"
-  onload="editCategoryLoad();"
-  ondialogaccept="return doOK();">
+  onload="editCategoryLoad();">
+  
   <script type="application/javascript" src="chrome://sendtocategory/content/addressbook/edit_category.js" />
   <vbox id="CatManDialogBox">
     <hbox>
