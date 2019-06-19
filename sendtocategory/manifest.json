@@ -2,17 +2,21 @@
   "applications": {
     "gecko": {
       "id": "sendtocategory@jobisoft.de",
-      "strict_min_version": "68.0a1"
+      "strict_min_version": "68.0"
     }
   },
   "manifest_version": 2,
   "name": "Category Manager",
-  "version": "2.10",
+  "version": "3.0",
   "author": "John Bieling",
+  "homepage_url": "https://github.com/jobisoft/CategoryManager/",
+  "default_locale": "en",
+  "description": "__MSG_extensionDescription__",
   "icons": {
     "32": "skin/icon.png"
   },
   "legacy": {
+    "type": "xul",
     "options": {
       "page": "chrome://sendtocategory/content/preferences/preferences.xul",
       "open_in_tab": false
