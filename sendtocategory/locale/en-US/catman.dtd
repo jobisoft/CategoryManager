@@ -81,5 +81,5 @@
 <!ENTITY sendtocategory.bulkedit.noname "Unknown Name">
 
 <!ENTITY sendtocategory.catsedit.title "Edit category membership of selected contacts">
-<!ENTITY sendtocategory.catsedit.label.in "Subset of the selected contatcs which should be part of category ##name##:">
+<!ENTITY sendtocategory.catsedit.label.in "Subset of the selected contacts which should be part of category ##name##:">
 <!ENTITY sendtocategory.catsedit.desc "Please define, if all, none or a subset of the selected contacts should be part of category ##name##.">
