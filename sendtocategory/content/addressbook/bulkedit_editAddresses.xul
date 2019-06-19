@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/messenger.css" type="text/css"?>
 <?xml-stylesheet href="chrome://sendtocategory/skin/richlist.css" type="text/css"?>
 
 <!DOCTYPE dialog
@@ -20,7 +21,7 @@
         jbCatMan.locale.bulkTextBoxLabel = "&sendtocategory.bulkedit.edit.title;";
         jbCatMan.locale.descriptionNoPrimaryEmail = "&sendtocategory.bulkedit.membersWithoutPrimaryEmail;";
         jbCatMan.locale.bulkEditNoName = "&sendtocategory.bulkedit.noname;";
- </script>
+    </script>
     
     <vbox id="CatManDialogBox">
         <vbox>
@@ -30,7 +31,7 @@
     </vbox>
     
     <groupbox id="CatManInfoBox">
-        <caption label="&sendtocategory.bulkedit.note;"/>
+        <hbox><caption>&sendtocategory.bulkedit.note;</caption></hbox>
         <grid>
             <columns>
                 <column/>

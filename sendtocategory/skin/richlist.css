@@ -49,3 +49,18 @@ grid description {
 .CatManHeaderCell2 { 
 	padding: 2px 1px;
 }
+
+groupbox {
+  margin-top: 1em;
+}
+
+groupbox > hbox:first-child {
+  margin-top: -1em;
+  margin-bottom: -5px;
+}
+
+caption {
+  padding: 3px;
+  font-weight: normal;
+  background-color: -moz-Dialog;
+}
