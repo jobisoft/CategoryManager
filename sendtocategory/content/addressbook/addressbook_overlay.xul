@@ -49,7 +49,7 @@
     
     <vbox id="dirTreeBox">
 
-        <splitter id="CatManSplitter" collapse="after" resizebefore="closest" resizeafter="closest" state="open" orient="vertical"><grippy /></splitter>
+        <splitter id="CatManSplitter" collapse="after" resizebefore="closest" resizeafter="closest" state="open" orient="vertical"></splitter>
 	
         <vbox id="CatManBox" persist="height top">
                     <hbox align="center" style="padding:1ex 5px 1ex 0"><label id ="CatManBoxLabel" value="" flex="1" /><label hidden="true" value="MFFAB" pack="end" /><image hidden="true" id="CatManModeSlider" src='chrome://sendtocategory/skin/slider-off.png'  onclick="jbCatMan.onSwitchCategoryMode()" tooltiptext="&sendtocategory.catogorybox.MFFAB.tooltip;" pack="end"/></hbox>
@@ -75,14 +75,35 @@
                         oncommand="jbCatMan.onAddCategory()"/>
                         <button 
                         class="ghostbutton"
-                        id="CatManHelpButton"
                         disabled="false"
                         label="&sendtocategory.helpButton.label;"
                         oncommand="jbCatMan.onHelpButton()"/>
+                        <button
+                        class="ghostbutton"
+                        id="CatManHideCategoryPaneButton"
+                        disabled="false"
+                        label="&#9660;"
+                        oncommand="jbCatMan.onToggleDisplay(false)"/>                        
                     </hbox>
+        </vbox>
+        <vbox id="CatManShowBox" hidden="true" pack="end" >
+                <hbox pack="end" style="border-top: 1px solid grey; padding-top:2px;">
+                    <button 
+                    class="ghostbutton"
+                    disabled="false"
+                    label="&sendtocategory.helpButton.label;"
+                    oncommand="jbCatMan.onHelpButton()"/>
+                    <button
+                    class="ghostbutton"
+                    id="CatManShowCategoryPaneButton"
+                    disabled="false"
+                    label="&#9650;"
+                    oncommand="jbCatMan.onToggleDisplay(true)"/>                        
+                </hbox>
         </vbox>
     </vbox>
 
+        
   <popup id="abResultsTreeContext">
     <menu id="CatManCategoriesContextMenu" label="&sendtocategory.categoriescontext.label;" insertafter="abResultsTreeContext-properties">
       <menupopup id="CatManCategoriesContextMenu-popup">

@@ -265,7 +265,19 @@ jbCatMan.onHelpButton = function () {
   jbCatMan.dump("Done with onHelpButton()",-1);
 }
 
-
+jbCatMan.onToggleDisplay = function (show) {
+  jbCatMan.dump("Begin with onToggleDisplay("+show+")",1);
+  if (show) {
+    document.getElementById('CatManBox').collapsed = false;
+    document.getElementById('CatManSplitter').hidden = false;
+    document.getElementById('CatManShowBox').hidden = true;
+  } else {
+    document.getElementById('CatManBox').collapsed = true;
+    document.getElementById('CatManSplitter').hidden = true;
+    document.getElementById('CatManShowBox').hidden = false;
+  }
+  jbCatMan.dump("End with onToggleDisplay()",-1);
+}
 
 
 jbCatMan.booksHaveContactsWithProperty = function (field) {
