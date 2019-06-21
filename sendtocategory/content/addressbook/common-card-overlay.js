@@ -86,8 +86,7 @@ jbCatManEditDialog.getSelectedAbFromArgument = function (arg) {
     }
     
     if (abURI) {
-        let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
-        jbCatManEditDialog.addressbook = abManager.getDirectory(abURI);
+        jbCatManEditDialog.addressbook = MailServices.ab.getDirectory(abURI);
         if (jbCatManEditDialog.addressbook.isMailList) {
             let parts = abURI.split("/");
             parts.pop();

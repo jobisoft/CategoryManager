@@ -2,16 +2,12 @@
 var jbCatMan = window.opener.jbCatMan;
 var jbCatManBulkEdit = {}
 
-
-
-
-
+// BulkEdit will must only be called for a single selected category.
 
 jbCatManBulkEdit.getCardsFromEmail = function (email) {
   jbCatMan.dump("Begin with getCardsFromEmail("+email+")",1);
 
-  let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);        
-  let abURI = jbCatMan.getWorkAbUri(abManager.getDirectory(jbCatMan.bulk.selectedDirectory));
+  let abURI = jbCatMan.getWorkAbUri(MailServices.ab.getDirectory(jbCatMan.bulk.selectedDirectory));
   
   let EmailQuery = "(PrimaryEmail,bw,@V)(SecondEmail,bw,@V)";
   let searchQuery = EmailQuery.replace(/@V/g, encodeURIComponent(email));
@@ -24,30 +20,31 @@ jbCatManBulkEdit.getCardsFromEmail = function (email) {
   }
   
   jbCatMan.dump("Done with getCardsFromEmail()",-1);
-  return abManager.getDirectory(abURI + "?" + "(or" + searchQuery + ")").childCards;
+  return MailServices.ab.getDirectory(abURI + "?" + "(or" + searchQuery + ")").childCards;
 }
 
 
 
 jbCatManBulkEdit.loadBulkList = function () {
   document.title = window.arguments[1];
-
+  let category = jbCatMan.data.selectedCategoryFilter[0];
+  
   //Update Label
-  document.getElementById("CatManBulkTextBoxLabel").value = jbCatMan.locale.bulkTextBoxLabel.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
+  document.getElementById("CatManBulkTextBoxLabel").value = jbCatMan.locale.bulkTextBoxLabel.replace("##name##","["+ category +"]");
 
   let bulkbox = document.getElementById("CatManBulkTextBox");
   let value = "";
-  if (jbCatMan.data.selectedCategory in jbCatMan.data.emails) {
-    for (let i=0; i<jbCatMan.data.emails[jbCatMan.data.selectedCategory].length; i++) {
-      value = value + jbCatMan.data.emails[jbCatMan.data.selectedCategory][i] + "\n";
+  if (category in jbCatMan.data.emails) {
+    for (let i=0; i<jbCatMan.data.emails[category].length; i++) {
+      value = value + jbCatMan.data.emails[category][i] + "\n";
     }
   }
   bulkbox.value=value;
   
   //give feedback to users about possible category members without any email address, 
   //which will not be altered
-  if (jbCatMan.data.selectedCategory in jbCatMan.data.membersWithoutAnyEmail && jbCatMan.data.membersWithoutAnyEmail[jbCatMan.data.selectedCategory] > 0) {
-    document.getElementById("CatManDescriptionNoPrimaryEmail").textContent = jbCatMan.locale.descriptionNoPrimaryEmail.replace("##counts##",jbCatMan.data.membersWithoutAnyEmail[jbCatMan.data.selectedCategory]);
+  if (category in jbCatMan.data.membersWithoutAnyEmail && jbCatMan.data.membersWithoutAnyEmail[category] > 0) {
+    document.getElementById("CatManDescriptionNoPrimaryEmail").textContent = jbCatMan.locale.descriptionNoPrimaryEmail.replace("##counts##",jbCatMan.data.membersWithoutAnyEmail[category]);
   } else {
     document.getElementById("CatManInfoBox").style.display = "none";
   }
@@ -126,6 +123,7 @@ jbCatManBulkEdit.validateEmailList = function (i) {
   if (i < jbCatMan.bulk.toBeValidated.length) {
     let validatorList = document.getElementById("CatManValidatorList");
     let email = jbCatMan.bulk.toBeValidated[i];
+    let category = jbCatMan.data.selectedCategoryFilter[0];
 
     document.getElementById("CatManValidatorProgressBar").value = (i+1)*100/jbCatMan.bulk.toBeValidated.length;
 
@@ -182,7 +180,7 @@ jbCatManBulkEdit.validateEmailList = function (i) {
           //is one of the doubles already in this category?? We grab the first one!
           for (let j=0;j<cards.length && memberIdx == -1 ;j++) {
             let cats = jbCatMan.getCategoriesfromCard(cards[j]);
-            if (cats.indexOf(jbCatMan.data.selectedCategory) != -1) {
+            if (cats.indexOf(category) != -1) {
               memberIdx = j;
             }
           }
@@ -257,17 +255,18 @@ jbCatManBulkEdit.validateEmailList = function (i) {
 
 jbCatManBulkEdit.saveList = function (){
   document.title = window.arguments[1];
+  let category = jbCatMan.data.selectedCategoryFilter[0];
 
   //Update Label
-  document.getElementById("CatManBulkTextBoxLabel").value = jbCatMan.locale.bulkTextBoxLabel.replace("##name##","["+jbCatMan.data.selectedCategory+"]");
+  document.getElementById("CatManBulkTextBoxLabel").value = jbCatMan.locale.bulkTextBoxLabel.replace("##name##","["+ category +"]");
 
   //walk recursively through the saveList (DOM richlist) and process item by item
   jbCatMan.bulk.cardsToBeRemovedFromCategory = [];
   jbCatMan.bulk.processedUIDs = [];
-  if (jbCatMan.data.selectedCategory in jbCatMan.data.foundCategories) {
-    //copy the array of members of the selectedCategory, every member found in the validatorList will be removed from this copy
+  if (category in jbCatMan.data.foundCategories) {
+    //copy the array of members of the selected category, every member found in the validatorList will be removed from this copy
     //so in the end, the copy will contain those members, which are no longer part of this category
-    jbCatMan.bulk.cardsToBeRemovedFromCategory = jbCatMan.data.foundCategories[jbCatMan.data.selectedCategory].slice();
+    jbCatMan.bulk.cardsToBeRemovedFromCategory = jbCatMan.data.foundCategories[category].slice();
   }
   window.setTimeout(function() { jbCatManBulkEdit.saveList_AddCards(0); }, 20);
 }
@@ -276,7 +275,7 @@ jbCatManBulkEdit.saveList = function (){
 
 jbCatManBulkEdit.saveList_AddCards = function (i) {
   let CatManSaverList = document.getElementById("CatManSaverList");
-  let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);        
+  let category = jbCatMan.data.selectedCategoryFilter[0];
 
   if (i < jbCatMan.bulk.saveList.childNodes.length) {
 
@@ -289,7 +288,7 @@ jbCatManBulkEdit.saveList_AddCards = function (i) {
 
         //OK, DOUBLE, or DOUBLEOK
         let name = UID;
-        let card = jbCatMan.getCardFromUID(UID, jbCatMan.getWorkAbUri(abManager.getDirectory(jbCatMan.bulk.selectedDirectory)));
+        let card = jbCatMan.getCardFromUID(UID, jbCatMan.getWorkAbUri(MailServices.ab.getDirectory(jbCatMan.bulk.selectedDirectory)));
         let idx = jbCatMan.bulk.cardsToBeRemovedFromCategory.indexOf(UID);
 
         //Has this UID been processed already? Do not add the same contact twice
@@ -298,7 +297,7 @@ jbCatManBulkEdit.saveList_AddCards = function (i) {
           name  = jbCatMan.getUserNamefromCard(card);
           let row = document.createElement('richlistitem');
           let cell = document.createElement('label');
-          cell.setAttribute('value',  "skipping contact [" + name + "], because he is already part of ["+jbCatMan.data.selectedCategory+"]" );
+          cell.setAttribute('value',  "skipping contact [" + name + "], because he is already part of ["+ category +"]" );
           row.appendChild(cell);
           CatManSaverList.appendChild(row);
         } else {
@@ -315,13 +314,13 @@ jbCatManBulkEdit.saveList_AddCards = function (i) {
             if(idx < 0) {
               //Selected card is not part of this category, ADD IT
               let cats = jbCatMan.getCategoriesfromCard(card);
-              cats.push(jbCatMan.data.selectedCategory);
+              cats.push(category);
               jbCatMan.setCategoriesforCard(card, cats);
               jbCatMan.modifyCard(card);
               //Log
               let row = document.createElement('richlistitem');
               let cell = document.createElement('label');
-              cell.setAttribute('value',  "add contact [" + name+ "] to ["+jbCatMan.data.selectedCategory+"]" );
+              cell.setAttribute('value',  "add contact [" + name+ "] to ["+ category +"]" );
               row.appendChild(cell);
               CatManSaverList.appendChild(row);
             } else {
@@ -330,7 +329,7 @@ jbCatManBulkEdit.saveList_AddCards = function (i) {
               //Log
               let row = document.createElement('richlistitem');
               let cell = document.createElement('label');
-              cell.setAttribute('value',  "keep contact [" + name + "] in ["+jbCatMan.data.selectedCategory+"]" );
+              cell.setAttribute('value',  "keep contact [" + name + "] in ["+ category +"]" );
               row.appendChild(cell);
               CatManSaverList.appendChild(row);
             }
@@ -339,7 +338,7 @@ jbCatManBulkEdit.saveList_AddCards = function (i) {
         
       } else { 
 
-        //NOTOK - add new contact to addressbook, also add him to category jbCatMan.selectedCategory
+        //NOTOK - add new contact to addressbook, also add him to category
         let card = Components.classes["@mozilla.org/addressbook/cardproperty;1"].createInstance(Components.interfaces.nsIAbCard);
         card.setProperty("FirstName", jbCatMan.bulk.saveList.childNodes[i].childNodes[1].childNodes[0].getAttribute("value")); 
         card.setProperty("LastName", jbCatMan.bulk.saveList.childNodes[i].childNodes[1].childNodes[1].getAttribute("value"));
@@ -347,7 +346,7 @@ jbCatManBulkEdit.saveList_AddCards = function (i) {
 
         card.primaryEmail = jbCatMan.bulk.saveList.childNodes[i].childNodes[0].childNodes[0].getAttribute("value");
         let cats = [];
-        cats.push(jbCatMan.data.selectedCategory);
+        cats.push(category);
         jbCatMan.setCategoriesforCard(card, cats);
 
         //add the new card to the book and then call modify, which inits sysnc
@@ -356,7 +355,7 @@ jbCatManBulkEdit.saveList_AddCards = function (i) {
         //Log
         let row = document.createElement('richlistitem');
         let cell = document.createElement('label');
-        cell.setAttribute('value',  "create new contact [" + jbCatMan.bulk.saveList.childNodes[i].childNodes[1].childNodes[0].getAttribute("value") + " " + jbCatMan.bulk.saveList.childNodes[i].childNodes[1].childNodes[1].getAttribute("value") + " <" + jbCatMan.bulk.saveList.childNodes[i].childNodes[0].childNodes[0].getAttribute("value") +">] and add it to ["+jbCatMan.data.selectedCategory+"]" );
+        cell.setAttribute('value',  "create new contact [" + jbCatMan.bulk.saveList.childNodes[i].childNodes[1].childNodes[0].getAttribute("value") + " " + jbCatMan.bulk.saveList.childNodes[i].childNodes[1].childNodes[1].getAttribute("value") + " <" + jbCatMan.bulk.saveList.childNodes[i].childNodes[0].childNodes[0].getAttribute("value") +">] and add it to ["+ category +"]" );
         row.appendChild(cell);
         CatManSaverList.appendChild(row);
 
@@ -376,6 +375,7 @@ jbCatManBulkEdit.saveList_AddCards = function (i) {
 
 jbCatManBulkEdit.saveList_RemoveCards = function (i) {    
   let CatManSaverList = document.getElementById("CatManSaverList");
+  let category = jbCatMan.data.selectedCategoryFilter[0];
   
   if (i <  jbCatMan.bulk.cardsToBeRemovedFromCategory.length) {
     document.getElementById("CatManSaverProgressBar").value = 80 + 20*(i+1/jbCatMan.bulk.cardsToBeRemovedFromCategory.length); // will reach 100%
@@ -395,14 +395,14 @@ jbCatManBulkEdit.saveList_RemoveCards = function (i) {
       name  = jbCatMan.getUserNamefromCard(card);
       let row = document.createElement('richlistitem');
       let cell = document.createElement('label');
-      cell.setAttribute('value',  "keep contact [" + name  + "] in [" + jbCatMan.data.selectedCategory + "]" );
+      cell.setAttribute('value',  "keep contact [" + name  + "] in [" + category + "]" );
       row.appendChild(cell);
       CatManSaverList.appendChild(row);
     } else {
       name  = jbCatMan.getUserNamefromCard(card);
       //Contact is no longer part of this category - REMOVE IT
       let cats = jbCatMan.getCategoriesfromCard(card);
-      let idx = cats.indexOf(jbCatMan.data.selectedCategory);
+      let idx = cats.indexOf(category);
       if (idx<0) {
         //It looks like, this contact is not part of this category
       } else {
@@ -412,7 +412,7 @@ jbCatManBulkEdit.saveList_RemoveCards = function (i) {
         //Log
         let row = document.createElement('richlistitem');
         let cell = document.createElement('label');
-        cell.setAttribute('value',  "remove contact [" + name  + "] from [" + jbCatMan.data.selectedCategory + "]" );
+        cell.setAttribute('value',  "remove contact [" + name  + "] from [" + category + "]" );
         row.appendChild(cell);
         CatManSaverList.appendChild(row);
       }

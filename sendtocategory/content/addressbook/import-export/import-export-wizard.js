@@ -78,24 +78,21 @@ jbCatManWizard.Init = function () {
     ];
     
     
-  let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
-  jbCatManWizard.currentAddressBook = abManager.getDirectory(window.opener.GetSelectedDirectory()); //GetSelectedDirectory() returns an URI, but we need the directory itself
+  jbCatManWizard.currentAddressBook = MailServices.ab.getDirectory(window.opener.GetSelectedDirectory()); //GetSelectedDirectory() returns an URI, but we need the directory itself
   jbCatManWizard.timestamp = "Import_" + (new Date()).toISOString().substring(0, 19);
     
-  document.getElementById('CatManWizardExport_Categories_CSV').hidden = (jbCatMan.data.selectedCategory == "");
+  let hasSelectedCategories = (Array.isArray(jbCatMan.data.selectedCategoryFilter) && jbCatMan.data.selectedCategoryFilter.length > 0);
+  document.getElementById('CatManWizardExport_Categories_CSV').hidden = !hasSelectedCategories;
 
-  if (jbCatMan.data.selectedCategoryType == "category") {
+  if (hasSelectedCategories) {
     //user selected a category
-    if (jbCatMan.data.foundCategories[jbCatMan.data.selectedCategory]) jbCatManWizard.exportsize = jbCatMan.data.foundCategories[jbCatMan.data.selectedCategory].length;
-    else {
-      jbCatManWizard.exportsize = 0;
-      document.getElementById('CatManWizardMode').children[1].disabled = true;
-    }
-  } else if (jbCatMan.data.selectedCategoryType == "uncategorized") {
+    jbCatManWizard.exportsize = jbCatMan.getNumberOfFilteredCards(jbCatManWizard.currentAddressBook.URI, jbCatMan.data.selectedCategoryFilter);
+  } else if (jbCatMan.data.selectedCategoryFilter == "uncategorized") {
     jbCatManWizard.exportsize = jbCatMan.data.cardsWithoutCategories.length;    
   } else { //all
     jbCatManWizard.exportsize = jbCatMan.data.abSize;
   }
+  document.getElementById('CatManWizardMode').children[1].disabled = (jbCatManWizard.exportsize == 0);
 
 
   // Update custom placeholders in locale strings.
@@ -527,8 +524,8 @@ jbCatManWizard.ProgressBefore_Export_CSV = function (dialog, step = 0) {
 
   if (step == 0) {
     //get all to-be-exported contatcs
-    let searchstring =  jbCatMan.getCategorySearchString(jbCatManWizard.currentAddressBook.URI, jbCatMan.data.selectedCategory, jbCatMan.data.selectedCategoryType);
-    jbCatManWizard.exportCards = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager).getDirectory(searchstring).childCards;
+    let searchstring =  jbCatMan.getCategorySearchString(jbCatManWizard.currentAddressBook.URI, jbCatMan.data.selectedCategoryFilter);
+    jbCatManWizard.exportCards = MailServices.ab.getDirectory(searchstring).childCards;
 
     //get all standard thunderbird fields (defined at csv import wizard page)
     //we no longer do that, but define them in JS
@@ -562,8 +559,8 @@ jbCatManWizard.ProgressAfter_Export_CSV = function (dialog, step = 0) {
     //init export file
     jbCatManWizard.initFile(jbCatManWizard.fileObj);
     //get cards to be exported
-    let searchstring = jbCatMan.getCategorySearchString(jbCatManWizard.currentAddressBook.URI, jbCatMan.data.selectedCategory, jbCatMan.data.selectedCategoryType);
-    jbCatManWizard.exportCards = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager).getDirectory(searchstring).childCards;
+    let searchstring = jbCatMan.getCategorySearchString(jbCatManWizard.currentAddressBook.URI, jbCatMan.data.selectedCategoryFilter);
+    jbCatManWizard.exportCards = MailServices.ab.getDirectory(searchstring).childCards;
     //escape header of all fields which need to be exported
     let header = [];
     jbCatManWizard.props2export = [];
@@ -574,8 +571,8 @@ jbCatManWizard.ProgressAfter_Export_CSV = function (dialog, step = 0) {
       let c = exportList.getItemAtIndex(i).childNodes[1].childNodes[0].checked;
 
       //special treatment for Categories, if unchecked but CatManWizardExport_Categories_CSV is checked, do export Categories, but just the selected one
-      if (v==jbCatMan.getCategoryField() && !c && jbCatMan.data.selectedCategory !="" && document.getElementById("CatManWizardExport_Categories_CSV").checked) {
-        jbCatManWizard.props4export[v] = jbCatMan.data.selectedCategory;
+      if (v==jbCatMan.getCategoryField() && !c && Array.isArray(jbCatMan.data.selectedCategoryFilter) && jbCatMan.data.selectedCategoryFilter.length > 0 && document.getElementById("CatManWizardExport_Categories_CSV").checked) {
+        jbCatManWizard.props4export[v] = jbCatMan.getStringFromCategories(jbCatMan.data.selectedCategoryFilter);
       }
       
       //export property if checked or if a custom export value for that property has been defined
@@ -665,7 +662,9 @@ jbCatManWizard.replaceCustomStrings = function (element) {
 
   desc = desc.replace("##NUM##", jbCatManWizard.exportsize);
   desc = desc.replace("##BOOK##", jbCatManWizard.currentAddressBook.dirName);
-  desc = desc.replace("##CAT##", jbCatMan.data.selectedCategory);
+  if (Array.isArray(jbCatMan.data.selectedCategoryFilter)) {
+    desc = desc.replace("##CAT##", jbCatMan.data.selectedCategoryFilter.join(" & "));
+  }
   desc = desc.replace("##TIMECAT##", jbCatManWizard.timestamp);
   
   //find category substring
@@ -676,10 +675,10 @@ jbCatManWizard.replaceCustomStrings = function (element) {
   let s3 = desc.substring(p2+2);
 
   let newvalue = "";
-  if (jbCatMan.data.selectedCategory == "") 
-    newvalue = s1 + s3;
-  else
+  if (Array.isArray(jbCatMan.data.selectedCategoryFilter) &&  jbCatMan.data.selectedCategoryFilter.length > 0) 
     newvalue = s1 + s2 + s3;
+  else
+    newvalue = s1 + s3;
   
   if (element.tagName.toLowerCase() == "description") element.textContent = newvalue;
   else element.label = newvalue;
@@ -837,7 +836,14 @@ jbCatManWizard.csvEscape = function (value, delim, textident) {
 
 jbCatManWizard.addSelectedCategoryToCategories = function(catstring) {
   let cats = jbCatMan.getCategoriesFromString(catstring);
-  if (cats.indexOf(jbCatMan.data.selectedCategory) == -1 && jbCatMan.data.selectedCategory != "") cats.push(jbCatMan.data.selectedCategory);
+
+  if (Array.isArray(jbCatMan.data.selectedCategoryFilter)) {
+    for (let category of jbCatMan.data.selectedCategoryFilter) {
+      if (!cats.includes(category)) cats.push(category);
+    }
+  }
+  
+  // add special cat of import
   cats.push(jbCatManWizard.timestamp);
   return jbCatMan.getStringFromCategories(cats);
 }

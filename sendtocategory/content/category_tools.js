@@ -1,7 +1,8 @@
+var { MailServices } = ChromeUtils.import("resource:///modules/MailServices.jsm");
+var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
+
 //create jbCatMan namespace
 var jbCatMan = {};
-
-
 
 jbCatMan.quickdump = function (str) {
     Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService).logStringMessage("[CatMan] " + str);
@@ -69,16 +70,12 @@ jbCatMan.init = function () {
   //mainly managed by jbCatMan.scanCategories()
   jbCatMan.data.foundCategories = [];
   jbCatMan.data.categoryList = [];
-  jbCatMan.data.bcc = [];
+  //used by bulk edit
   jbCatMan.data.membersWithoutAnyEmail = [];
   jbCatMan.data.emails = [];
   jbCatMan.data.abSize = 0;
   //create a map between directoryIds und abURI, so we can get the abURI for each card even if its directory is not known when using the global address book
   jbCatMan.data.abURI = [];
-
-  //managed by addressbook_overlay.js
-  jbCatMan.data.selectedCategory = "";
-  jbCatMan.data.selectedCategoryType = "";
 
   jbCatMan.data.emptyCategories = [];
 
@@ -112,13 +109,12 @@ jbCatMan.updateMailinglist = function(abUri, selectedBook, card) {
       return;
     
     //find this mailinglist card (nsIAbCard) in the parent directory (selectedBook.URI == mailListCard.mailListURI)
-    let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
-    let result = abManager.getDirectory(abUri + "?(or(IsMailList,=,TRUE))").childCards;
+    let result = MailServices.ab.getDirectory(abUri + "?(or(IsMailList,=,TRUE))").childCards;
     while (result.hasMoreElements()) {
       let mailListCard = result.getNext().QueryInterface(Components.interfaces.nsIAbCard);
       if (mailListCard.mailListURI == selectedBook.URI) {
         //mailListCard is the card representing the selected mailinglist in the parent directory - add card to mailinglist directory
-        let mailListDirectory = abManager.getDirectory(mailListCard.mailListURI);
+        let mailListDirectory = MailServices.ab.getDirectory(mailListCard.mailListURI);
         mailListDirectory.addressLists.appendElement(card, false);
         mailListDirectory.editMailListToDatabase(mailListCard);
         return;
@@ -134,9 +130,7 @@ jbCatMan.updateMailinglist = function(abUri, selectedBook, card) {
   and directoryURI, so all cards can be modified, even if the directoryURI is not known. 
 */
 jbCatMan.modifyCard = function (card) {
-  let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
-
-  let selectedBook = abManager.getDirectory(GetSelectedDirectory());
+  let selectedBook = MailServices.ab.getDirectory(GetSelectedDirectory());
   let abUri;
 
   //Get abUri, if the global book is selected, get the true card owner from directory.Id
@@ -146,7 +140,7 @@ jbCatMan.modifyCard = function (card) {
   } else abUri = jbCatMan.getWorkAbUri(selectedBook);
   
   //Get the working directory
-  let ab = abManager.getDirectory(abUri);
+  let ab = MailServices.ab.getDirectory(abUri);
 
   //Check, if the card needs to be added  to the working directory - not allowed for global addressbook (we would have thrown already in that case)
   if (card.directoryId == "") {
@@ -171,48 +165,55 @@ jbCatMan.modifyCard = function (card) {
 // UI related functions
 //##############################################
 
-jbCatMan.updatePeopleSearchInput = function (name) {
+jbCatMan.updatePeopleSearchInput = function (categoryFilter) {
   jbCatMan.dump("Begin with updatePeopleSearchInput()",1);
-  if (name == "") {
-    document.getElementById("peopleSearchInput").value = "";
+  if (Array.isArray(categoryFilter) && categoryFilter.length > 0) {
+    document.getElementById("peopleSearchInput").value = jbCatMan.locale.prefixForPeopleSearch + ": " + categoryFilter.join(" & ");
+    
+  } else if (categoryFilter == "uncategorized") {
+    document.getElementById("peopleSearchInput").value = jbCatMan.locale.prefixForPeopleSearch + ": " + jbCatMan.getLocalizedMessage("viewWithoutCategories");
+    
   } else {
-    document.getElementById("peopleSearchInput").value = jbCatMan.locale.prefixForPeopleSearch + ": " + name
+    document.getElementById("peopleSearchInput").value = categoryFilter; //"";
+    
   }
   jbCatMan.dump("Done with updatePeopleSearchInput()",-1);
 }
 
 
-jbCatMan.getCategorySearchString = function(abURI, category, type = "category") {
+jbCatMan.getCategorySearchString = function(abURI, categoryFilter) {
     //Filter by categories - http://mxr.mozilla.org/comm-central/source/mailnews/addrbook/src/nsAbQueryStringToExpression.cpp#278
     let searchstring = "";
-    let searchKeys = "";
 
-    if (type == "all") {
-
-      searchstring = abURI;
-
-    } else if (type == "uncategorized") {
-
-      searchKeys = "("+jbCatMan.getCategoryField()+",!ex,'')";        
-      searchstring =  abURI + "?" + "(or" + searchKeys + ")";
-
-    } else {
+    if (Array.isArray(categoryFilter)) {
 
       // encodeURIComponent does NOT encode brackets "(" and ")" - need to do that by hand
       let sep = jbCatMan.getCategorySeperator();
       let field = jbCatMan.getCategoryField();
-      searchKeys = searchKeys + "("+field+",bw,"+encodeURIComponent( category + sep ).replace("(","%28").replace(")","%29") +")";
-      searchKeys = searchKeys + "("+field+",ew,"+encodeURIComponent( sep + category ).replace("(","%28").replace(")","%29") +")";
-      searchKeys = searchKeys + "("+field+",c,"+encodeURIComponent( sep + category + sep ).replace("(","%28").replace(")","%29") +")";
-      searchKeys = searchKeys + "("+field+",=,"+encodeURIComponent( category ).replace("(","%28").replace(")","%29") +")";
+      let searchCats = [];
+      
+      for (let category of categoryFilter) {
+        let searchFields = [];
+        searchFields.push("("+field+",bw,"+encodeURIComponent( category + sep ).replace("(","%28").replace(")","%29") +")");
+        searchFields.push("("+field+",ew,"+encodeURIComponent( sep + category ).replace("(","%28").replace(")","%29") +")");
+        searchFields.push("("+field+",c,"+encodeURIComponent( sep + category + sep ).replace("(","%28").replace(")","%29") +")");
+        searchFields.push("("+field+",=,"+encodeURIComponent( category ).replace("(","%28").replace(")","%29") +")");
+        searchCats.push("(or" + searchFields.join("") + ")");
+      }
+      searchstring =  abURI + "?" + "(and" + searchCats.join("") + ")";
 
-      searchstring =  abURI + "?" + "(or" + searchKeys + ")";
+    } else if (categoryFilter == "uncategorized") {
+      searchstring =  abURI + "?" + "(or("+jbCatMan.getCategoryField()+",!ex,''))";
+      
+    } else {
+      searchstring = abURI;
+      
     }
     
     return searchstring;
 }
 
-jbCatMan.doCategorySearch = function () {
+jbCatMan.doCategorySearch = function (categoryFilter) {
   jbCatMan.dump("Begin with doCategorySearch()",1);
   let abURI = GetSelectedDirectory();
 
@@ -221,14 +222,14 @@ jbCatMan.doCategorySearch = function () {
   }
 
   //update results pane based on selected category 
-  let searchString = jbCatMan.getCategorySearchString(abURI, jbCatMan.data.selectedCategory, jbCatMan.data.selectedCategoryType);
+  let searchString = jbCatMan.getCategorySearchString(abURI, categoryFilter);
   SetAbView(searchString);
 
   if (document.getElementById("CardViewBox") != null) {
     SelectFirstCard();  
   }
   
-  jbCatMan.updatePeopleSearchInput(jbCatMan.data.selectedCategory);
+  jbCatMan.updatePeopleSearchInput(categoryFilter);
   jbCatMan.dump("Done with doCategorySearch()",-1);  
 }
 
@@ -261,7 +262,6 @@ jbCatMan.getUIDFromCard = function (card) {
 // this function expects to be run on a single book only (so DbRowID is unique enough), otherwise the full UID needs to be used to get the card 
 jbCatMan.getCardFromUID = function (UID, abURI) {
   jbCatMan.dump("Begin with getCardFromUID("+UID+")",1);
-  let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
 
   let UIDS = UID.split("\u001A");
   let DbRowID = UIDS[0];
@@ -269,7 +269,7 @@ jbCatMan.getCardFromUID = function (UID, abURI) {
   let UUIDQuery = "(DbRowID,=,@V)";
   let searchQuery = UUIDQuery.replace(/@V/g, encodeURIComponent(DbRowID));
 
-  let result = abManager.getDirectory(abURI + "?" + "(or" + searchQuery + ")").childCards;
+  let result = MailServices.ab.getDirectory(abURI + "?" + "(or" + searchQuery + ")").childCards;
   if (result.hasMoreElements()) {
     jbCatMan.dump("Done with getCardFromUID()",-1);
     return result.getNext().QueryInterface(Components.interfaces.nsIAbCard);
@@ -301,8 +301,8 @@ jbCatMan.moveCategoryBetweenArrays = function (category, srcArray, dstArray) {
 //MFFAB integration stuff
 jbCatMan.convertCategory = function (abURI, category) {
     //get all cards, which are part of the category we want to convert (is empty if all cats get converted)
-    let searchstring = jbCatMan.getCategorySearchString(abURI, category);
-    let cards = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager).getDirectory(searchstring).childCards;
+    let searchstring = jbCatMan.getCategorySearchString(abURI, [category]);
+    let cards = MailServices.ab.getDirectory(searchstring).childCards;
 
     while (cards.hasMoreElements()) {
         let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
@@ -364,6 +364,16 @@ jbCatMan.getCategoryField = function (mode = jbCatMan.isMFFABCategoryMode()) {
 
 
 
+jbCatMan.getNumberOfFilteredCards = function (abURI, categoryFilter) {
+  let searchstring = jbCatMan.getCategorySearchString(abURI, categoryFilter);
+  let cards = MailServices.ab.getDirectory(searchstring).childCards;
+  let length = 0;
+  while (cards.hasMoreElements()) {
+    let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
+    length++;
+  }
+  return length;    
+}
 
 
 jbCatMan.getCategoriesFromString = function(catString, seperator = jbCatMan.getCategorySeperator()) {
@@ -453,8 +463,7 @@ jbCatMan.getUserNamefromCard = function (card) {
 jbCatMan.updateCategories = function (mode,oldName,newName) {
   jbCatMan.dump("Begin with updateCategories("+mode+","+oldName+","+newName+")",1);
   //get address book manager
-  let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
-  let addressBook = abManager.getDirectory(GetSelectedDirectory()); //GetSelectedDirectory() returns an URI, but we need the directory itself
+  let addressBook = MailServices.ab.getDirectory(GetSelectedDirectory()); //GetSelectedDirectory() returns an URI, but we need the directory itself
 
   let cards = addressBook.childCards;
 
@@ -498,9 +507,6 @@ jbCatMan.updateCategories = function (mode,oldName,newName) {
 jbCatMan.scanCategories = function (abURI, field = jbCatMan.getCategoryField(), quickscan = false) {
   jbCatMan.dump("Begin with scanCategories()",1);
 
-  //get address book manager
-  let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);        
-
   //concept decision: we remove empty categories on addressbook switch (select) 
   //-> the category array is constantly cleared and build from scan results
   let data = {};
@@ -508,7 +514,6 @@ jbCatMan.scanCategories = function (abURI, field = jbCatMan.getCategoryField(), 
 
   data.foundCategories = [];
   data.categoryList = [];
-  data.bcc = [];
   data.membersWithoutAnyEmail = [];
   data.emails = [];
   data.abSize = 0;
@@ -521,7 +526,7 @@ jbCatMan.scanCategories = function (abURI, field = jbCatMan.getCategoryField(), 
   let addressBooks = [];
 
   if (abURI == "moz-abdirectory://?") {
-    let allAddressBooks = abManager.directories;
+    let allAddressBooks = MailServices.ab.directories;
     while (allAddressBooks.hasMoreElements()) {
        let abook = allAddressBooks.getNext().QueryInterface(Components.interfaces.nsIAbDirectory);
        if (abook instanceof Components.interfaces.nsIAbDirectory) { // or nsIAbItem or nsIAbCollection
@@ -534,7 +539,7 @@ jbCatMan.scanCategories = function (abURI, field = jbCatMan.getCategoryField(), 
 
   for (var l = 0; l < addressBooks.length; l++) {
     let addressBook = null;
-    if (addressBooks[l]) addressBook = abManager.getDirectory(addressBooks[l]); //addressBooks contains URIs, but we need the directory itself
+    if (addressBooks[l]) addressBook = MailServices.ab.getDirectory(addressBooks[l]); //addressBooks contains URIs, but we need the directory itself
     else continue;
 
     /* Skip LDAP directories: They are never loaded completely, but just those contacts matching a search result.
@@ -566,7 +571,6 @@ jbCatMan.scanCategories = function (abURI, field = jbCatMan.getCategoryField(), 
           //-> foundCategories is using Strings as Keys
           if (catArray[i] in data.foundCategories == false) {
             data.foundCategories[catArray[i]] = [];
-            data.bcc[catArray[i]] = [];
             data.membersWithoutAnyEmail[catArray[i]] = 0;
             data.emails[catArray[i]] = [];
             data.categoryList.push(catArray[i]);
@@ -575,17 +579,10 @@ jbCatMan.scanCategories = function (abURI, field = jbCatMan.getCategoryField(), 
           //add card to category
           data.foundCategories[catArray[i]].push(CardID);
           
-          //add card to emails-list and bcc-list (if an email is defined)
+          //add card to emails-list
           let email = jbCatMan.getEmailFromCard(card);
           if (email) {
             data.emails[catArray[i]].push(email);
-            let bccfield = "";
-            if (card.displayName != "") {
-              bccfield = "\"" + card.displayName + "\"" + " <" + email + ">";
-            } else {
-              bccfield = email;
-            }
-            data.bcc[catArray[i]].push(bccfield);
           } else {
             data.membersWithoutAnyEmail[catArray[i]]++;
           }

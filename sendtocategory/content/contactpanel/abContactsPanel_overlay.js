@@ -87,14 +87,14 @@ jbCatMan.contactPanelCategoryMenuChanged = function () {
   jbCatMan.dump("Begin with contactPanelCategoryMenuChanged()",1);
   if (document.getElementById("CatManCategoryFilterList").value != "") {
     //get selected category
-    jbCatMan.data.selectedCategory = document.getElementById("CatManCategoryFilterList").value; 
+    let category = document.getElementById("CatManCategoryFilterList").value; 
 
     //revert selection to placeholdertext (topmost entry)
     let menulist = document.getElementById("CatManCategoryFilterList");
     menulist.selectedItem = menulist.getItemAtIndex(0);
 
     //apply filter
-    jbCatMan.doCategorySearch();
+    jbCatMan.doCategorySearch([category]);
 
     //select all members of the selected category to save mouse clicks (if only
     //one member is to be selected, the user still has to click once as before)
