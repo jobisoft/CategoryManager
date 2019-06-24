@@ -174,7 +174,7 @@ jbCatMan.updatePeopleSearchInput = function (categoryFilter) {
     document.getElementById("peopleSearchInput").value = jbCatMan.locale.prefixForPeopleSearch + ": " + jbCatMan.getLocalizedMessage("viewWithoutCategories");
     
   } else {
-    document.getElementById("peopleSearchInput").value = categoryFilter; //"";
+    document.getElementById("peopleSearchInput").value = "";
     
   }
   jbCatMan.dump("Done with updatePeopleSearchInput()",-1);
@@ -458,13 +458,26 @@ jbCatMan.getUserNamefromCard = function (card) {
   return userName;
 }
 
+jbCatMan.getSubCategories = function (abURI, categoryFilter) {
+    let searchstring = jbCatMan.getCategorySearchString(abURI, categoryFilter);
+    let cards = MailServices.ab.getDirectory(searchstring).childCards;
+    let subCategories = [];
+  
+    while (cards.hasMoreElements()) {
+      let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
 
+      let cats = jbCatMan.getCategoriesfromCard(card);
+      for (let cat of cats) {
+        if (!categoryFilter.includes(cat) && !subCategories.includes(cat)) subCategories.push(cat);
+      }
+    }
+    return subCategories;
+}
 
-jbCatMan.updateCategories = function (mode,oldName,newName) {
+jbCatMan.updateCategories = function (mode, oldName, newName) {
   jbCatMan.dump("Begin with updateCategories("+mode+","+oldName+","+newName+")",1);
   //get address book manager
   let addressBook = MailServices.ab.getDirectory(GetSelectedDirectory()); //GetSelectedDirectory() returns an URI, but we need the directory itself
-
   let cards = addressBook.childCards;
 
   while (true) {
@@ -478,7 +491,7 @@ jbCatMan.updateCategories = function (mode,oldName,newName) {
     if (catArray.length > 0) {  
       let writeCategoriesToCard = false;
       for (let i=0; i < catArray.length; i++) {
-        //Before we process this card, we check for a category delete or category rename request and do the manipulation on the fly, writeback is done later
+        // Check for a category delete or category rename request.
         if (mode == "rename" && catArray[i] == oldName) {
           catArray[i] = newName;
           writeCategoriesToCard = true;
@@ -487,18 +500,17 @@ jbCatMan.updateCategories = function (mode,oldName,newName) {
           writeCategoriesToCard = true;
           continue;
         }
-        //It is easier to build a new array, instead of deleting an entry out of an array, which is being looped
+        // It is easier to build a new array, instead of deleting an entry out of an array, which is being looped.
         rebuildCatArray.push(catArray[i]);
       }
       
-      //was there a manipulation of the card due to rename or delete request? If so, write that into the card
+      // Was there a manipulation of the card due to rename or delete request?
       if (writeCategoriesToCard) {
         jbCatMan.setCategoriesforCard(card, rebuildCatArray)
         jbCatMan.modifyCard(card);
       }
     }
   }
-
   jbCatMan.dump("Done with updateCategories()",-1);
 }
 
