@@ -1,4 +1,3 @@
-//using mailservices to open message window
 var { MailServices } = ChromeUtils.import("resource:///modules/MailServices.jsm");
 var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
 
@@ -46,37 +45,109 @@ TODO
 // adding additional functions to the local jbCatMan Object
 //###################################################
 
+jbCatMan.addCategoryListEntry = function (abURI, newCategoryName, currentCategoryFilter = []) {
+  // Clone the array, do not mod the original array.
+  let categoryFilter = currentCategoryFilter.slice();
+  categoryFilter.push(newCategoryName);
+
+  let newListItem = document.createElement("richlistitem");
+  newListItem.id = btoa(JSON.stringify(categoryFilter)).split("=").join("");
+  newListItem.categoryName = newCategoryName;
+  newListItem.categoryFilter = categoryFilter;  
+  newListItem.categorySize = jbCatMan.getNumberOfFilteredCards(abURI, categoryFilter);
+  newListItem.subCategories = jbCatMan.getSubCategories(abURI, categoryFilter);
+
+  let classes = [];
+  for (let i = 0; i < categoryFilter.length; i++) classes.push("level" + i);
+  newListItem.setAttribute("class", classes.join(" "));
+  newListItem.setAttribute("isOpen", "false");
+
+  let categoryMore = document.createElement("hbox");
+  if (newListItem.subCategories.length > 0) {
+    categoryMore.setAttribute("class", "twisty");
+    categoryMore.addEventListener("click", function(e) { jbCatMan.onClickCategoryList(e); }, false);
+  }
+  categoryMore.setAttribute("flex", "0");
+  categoryMore.style["margin-left"] = (currentCategoryFilter.length * 16) + "px";
+  newListItem.appendChild(categoryMore);
+
+  let categoryName = document.createElement("label");
+  categoryName.setAttribute("flex", "1");
+  categoryName.setAttribute("value", newCategoryName);
+  newListItem.appendChild(categoryName);
+  
+  let categorySize = document.createElement("label");
+  categorySize.setAttribute("flex", "0");
+  categorySize.setAttribute("value", newListItem.categorySize);
+  newListItem.appendChild(categorySize);
+  return newListItem;
+}
+
+jbCatMan.toggleCategoryListEntry = function (abURI, element) {
+  let categoriesList = document.getElementById("CatManCategoriesList");
+  let isOpen = (element.getAttribute("isOpen") == "true");
+
+  if (isOpen) {
+    // toggle to closed
+    element.setAttribute("isOpen", "false");
+    // remove all entries up to the next element with the same level
+    while (
+      element.nextSibling && 
+      element.nextSibling.categoryFilter && 
+      Array.isArray(element.nextSibling.categoryFilter) && 
+      element.nextSibling.categoryFilter.length > element.categoryFilter.length) {
+        element.nextSibling.remove();
+    }
+  } else {
+    // toggle to open
+    element.setAttribute("isOpen", "true");
+    // add entries
+    for (let subCat of element.subCategories) {
+      categoriesList.insertBefore(jbCatMan.addCategoryListEntry(abURI, subCat, element.categoryFilter),  element.nextSibling);    
+    }
+  }
+}
+
 jbCatMan.updateCategoryList = function () {
   jbCatMan.dump("Begin with updateCategoryList()",1);
   jbCatMan.scanCategories(GetSelectedDirectory());
-  let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
+  let abURI = GetSelectedDirectory();
   
-  //it could be, that a category from emptyCategories is no longer empty (it was scanned) -> remove it from empty
+  // It could be, that a category from emptyCategories is no longer empty (it was scanned) -> remove it from empty.
   for (let i = 0; i < jbCatMan.data.categoryList.length; i++) {
     if (jbCatMan.data.emptyCategories.indexOf(jbCatMan.data.categoryList[i]) != -1) {
       jbCatMan.data.emptyCategories.splice(jbCatMan.data.emptyCategories.indexOf(jbCatMan.data.categoryList[i]),1);
     }
   }
   
-  //any other category in the empty category list needs to be added now to the category list
+  // Any other category in the empty category list needs to be added now to the category list.
   for (let i = 0; i < jbCatMan.data.emptyCategories.length; i++) {
     if (jbCatMan.data.categoryList.indexOf(jbCatMan.data.emptyCategories[i]) < 0) {
       jbCatMan.data.categoryList.push(jbCatMan.data.emptyCategories[i]);
     }
   }
   
-  //clear category listbox
+  // Save current open-states.
   let categoriesList = document.getElementById("CatManCategoriesList");
+  let openNodes = categoriesList.querySelectorAll('richlistitem[isOpen=true]');  
+  let openFilters = [];
+  for (let openNode of openNodes) {
+    openFilters.push(JSON.stringify(openNode.categoryFilter));
+  }
+  // Sort order must be reversed, otherwise child elements are before parent elements (which will skip the childs).
+  openFilters.sort().reverse();
+   
+  // Clear current  list.
   categoriesList.clearSelection();
   for (let i=categoriesList.getRowCount(); i>0; i--) {
     categoriesList.getItemAtIndex(i-1).remove();
   }
 
-  //disable "all" element if global book and global book empty or if remote book
-  if (!(abManager.getDirectory(GetSelectedDirectory()).isRemote || (GetSelectedDirectory() == "moz-abdirectory://?" && jbCatMan.data.abSize == 0))) {
+  // Disable "all" element if global book and global book empty or if remote book.
+  if (!(MailServices.ab.getDirectory(abURI).isRemote)) {// || (abURI == "moz-abdirectory://?" && jbCatMan.data.abSize == 0))) {
     let newListItem = document.createElement("richlistitem");
-    newListItem.setAttribute("id", "");
-    newListItem.setAttribute("type", "all");
+    newListItem.categoryFilter = "none";
+    newListItem.id = btoa(JSON.stringify(newListItem.categoryFilter)).split("=").join("");
     let categoryName = document.createElement("label");
     categoryName.setAttribute("flex", "1");
     categoryName.setAttribute("value", jbCatMan.locale.viewAllCategories);
@@ -89,12 +160,29 @@ jbCatMan.updateCategoryList = function () {
     newListItem.appendChild(categorySize);
     categoriesList.appendChild(newListItem);
   }
-    
-  //disable "cardsWithoutCategories" element if global book and global book empty or if remote book
-  if (!(abManager.getDirectory(GetSelectedDirectory()).isRemote || (GetSelectedDirectory() == "moz-abdirectory://?" && jbCatMan.data.cardsWithoutCategories.length == 0))) {
+  
+  // Add all categories from the updated/merged array to the category listbox.
+  for (let i = 0; i < jbCatMan.data.categoryList.length; i++) {
+    let newItem = jbCatMan.addCategoryListEntry(abURI, jbCatMan.data.categoryList[i]);
+    categoriesList.appendChild(newItem);
+  }
+
+  // Restore open states.
+  for (let openFilter of openFilters) {
+    let node = categoriesList.querySelector("#" + btoa(openFilter).split("=").join(""));  
+    if (node) jbCatMan.toggleCategoryListEntry(abURI, node);
+  }
+  
+  // Disable "cardsWithoutCategories" element if global book and global book empty or if remote book
+  if (!(MailServices.ab.getDirectory(abURI).isRemote)) {// || (abURI == "moz-abdirectory://?" && jbCatMan.data.cardsWithoutCategories.length == 0))) {
     let newListItem = document.createElement("richlistitem");
-    newListItem.setAttribute("id", "");
-    newListItem.setAttribute("type", "uncategorized");
+    newListItem.categoryFilter = "uncategorized";
+    newListItem.id = btoa(JSON.stringify(newListItem.categoryFilter)).split("=").join("");
+
+    let categoryMore = document.createElement("hbox");
+    categoryMore.setAttribute("flex", "0");
+    newListItem.appendChild(categoryMore);
+
     let categoryName = document.createElement("label");
     categoryName.setAttribute("flex", "1");
     categoryName.setAttribute("value", jbCatMan.getLocalizedMessage("viewWithoutCategories"));
@@ -108,48 +196,24 @@ jbCatMan.updateCategoryList = function () {
     categoriesList.appendChild(newListItem);
   }
   
-  //add all categories from the updated/merged array to the category listbox
-  for (let i = 0; i < jbCatMan.data.categoryList.length; i++) {
-    let newListItem = document.createElement("richlistitem");
-    newListItem.setAttribute("id", jbCatMan.data.categoryList[i]);
-    newListItem.setAttribute("type", "category");
-
-    let categoryName = document.createElement("label");
-    categoryName.setAttribute("flex", "1");
-    categoryName.setAttribute("value", jbCatMan.data.categoryList[i]);
-    newListItem.appendChild(categoryName);
-    let categorySize = document.createElement("label");
-    categorySize.setAttribute("flex", "0");
-    if (jbCatMan.data.categoryList[i] in jbCatMan.data.foundCategories) {
-      categorySize.setAttribute("value", jbCatMan.data.foundCategories[jbCatMan.data.categoryList[i]].length);
-    }
-    else {
-      categorySize.setAttribute("value", "0");
-    }
-    newListItem.appendChild(categorySize);
-    categoriesList.appendChild(newListItem);
-  }
-
-  //Does the displayed result still match the selected category? If not, update SearchResults - WE NEED A BETTER BUT FAST WAYS TO DO THIS
-  if (jbCatMan.data.selectedCategory != "") {
-    if (jbCatMan.data.selectedCategory in jbCatMan.data.foundCategories) {
-      if (document.getElementById('abResultsTree').view.rowCount != jbCatMan.data.foundCategories[jbCatMan.data.selectedCategory].length) {
-        jbCatMan.doCategorySearch();
+  // Check, if the former selected element still exists and select it again.
+  if (jbCatMan.data.selectedCategoryFilter) {
+    let node = categoriesList.querySelector("#" + btoa(JSON.stringify(jbCatMan.data.selectedCategoryFilter)).split("=").join(""));  
+    if (node) {
+      categoriesList.selectedItem = node;
+      
+      // Final check: Is the result view pane up to date? This is still not the best way to do it ...
+      if (document.getElementById('abResultsTree').view.rowCount != node.categorySize) {
+        jbCatMan.doCategorySearch(jbCatMan.data.selectedCategoryFilter);
       }
+      
     } else {
-      //Selected Category does not exist, fallback 
+      jbCatMan.data.selectedCategoryFilter = "";
       ClearCardViewPane();
-      jbCatMan.data.selectedCategory = "";
-      jbCatMan.updatePeopleSearchInput("");
-      SetAbView(GetSelectedDirectory());
+      jbCatMan.updatePeopleSearchInput();
+      SetAbView(abURI);
       SelectFirstCard();
     }
-  } else {
-    /* 
-        There should not be any action here, since there is no category selected.
-        The result pane could be anything (for example a search result) and we
-        should not modify it.
-      */
   }
   
   jbCatMan.updateButtons();
@@ -157,35 +221,34 @@ jbCatMan.updateCategoryList = function () {
 }
 
 jbCatMan.updateContextMenu = function () {
-    let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
     let isRemote = true;
     let isGlobal = false;
-    let isAll = (jbCatMan.data.selectedCategory == "");
-    let isUncategorized = (jbCatMan.data.selectedCategoryType == "uncategorized");
+    let isAll = (jbCatMan.data.selectedCategoryFilter == "none");
+    let isUncategorized = (jbCatMan.data.selectedCategoryFilter == "uncategorized");
+    let isDeeperLevel = (Array.isArray(jbCatMan.data.selectedCategoryFilter) &&  jbCatMan.data.selectedCategoryFilter.length > 1);
     let selectedBook = GetSelectedDirectory();
 
-    if (selectedBook) isRemote = abManager.getDirectory(selectedBook).isRemote;
+    if (selectedBook) isRemote = MailServices.ab.getDirectory(selectedBook).isRemote;
     if (selectedBook == "moz-abdirectory://?") isGlobal = true;
 
-    document.getElementById("CatManContextMenuRemove").disabled = (isAll || isRemote || isGlobal);
-    document.getElementById("CatManContextMenuEdit").disabled = (isAll || isRemote || isGlobal);
-    document.getElementById("CatManContextMenuBulk").disabled = (isAll || isRemote || isGlobal);
-    document.getElementById("CatManContextMenuMFFABConvert").disabled = (isUncategorized || isRemote || isGlobal || jbCatMan.data.categoryList.length == 0);
+    document.getElementById("CatManContextMenuRemove").disabled = (isAll || isRemote || isGlobal || isUncategorized);
+    document.getElementById("CatManContextMenuRename").disabled = (isAll || isRemote || isGlobal || isUncategorized);
+    document.getElementById("CatManContextMenuBulk").disabled = (isAll || isRemote || isGlobal || isDeeperLevel || isUncategorized);
+    document.getElementById("CatManContextMenuMFFABConvert").disabled = (isUncategorized || isRemote || isGlobal || isDeeperLevel || jbCatMan.data.categoryList.length == 0);
 
-    document.getElementById("CatManContextMenuSend").disabled = (isAll || isRemote); 
+    document.getElementById("CatManContextMenuSend").disabled = (isAll || isRemote || isDeeperLevel || isUncategorized); 
 
     //Import and export for all address books, regardless of category (if no category selected, export entire abook or import without category tagging)
     document.getElementById("CatManContextMenuImportExport").disabled = isRemote || isGlobal;
 
-    if (jbCatMan.data.selectedCategoryType == "all") {
+    if (isAll) {
         document.getElementById("CatManContextMenuImportExport").label = jbCatMan.locale.menuAllExport;
     } else {
         document.getElementById("CatManContextMenuImportExport").label = jbCatMan.locale.menuExport;
     }
   
     //Special MFFAB entries
-    let all = "_";
-    if (jbCatMan.data.selectedCategoryType == "all") all = "_all_";
+    let all = isAll ? "_all_" : "_";
     
     if (jbCatMan.isMFFABCategoryMode()) {
         document.getElementById("CatManContextMenuMFFABConvert").label = jbCatMan.getLocalizedMessage("convert"+all+"to_standard_category");
@@ -196,12 +259,11 @@ jbCatMan.updateContextMenu = function () {
 }
 
 jbCatMan.updateButtons = function () {
-    let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
     let isRemote = true;
     let isGlobal = false;
-    let isAll = (jbCatMan.data.selectedCategoryType == "all");
+    let isAll = (jbCatMan.data.selectedCategoryFilter == "none");
     let selectedBook = GetSelectedDirectory();
-    if (selectedBook) isRemote = abManager.getDirectory(selectedBook).isRemote;
+    if (selectedBook) isRemote = MailServices.ab.getDirectory(selectedBook).isRemote;
     if (selectedBook == "moz-abdirectory://?") isGlobal = true;
 
     document.getElementById("CatManAddContactCategoryButton").disabled = isRemote || isGlobal;
@@ -219,20 +281,39 @@ jbCatMan.updateButtons = function () {
 
 jbCatMan.writeToCategory = function () {
   jbCatMan.dump("Begin with writeToCategory()",1);
-  let currentCategory = jbCatMan.data.selectedCategory;
+
+  let searchstring = jbCatMan.getCategorySearchString(GetSelectedDirectory(), jbCatMan.data.selectedCategoryFilter);
+  let searches = jbCatMan.getSearchesFromSearchString(searchstring);
+
+  let bcc = [];
+  for (let search of searches) {
+    let cards = MailServices.ab.getDirectory(search).childCards;
+    
+    while (cards.hasMoreElements()) {
+      let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
+      let email = jbCatMan.getEmailFromCard(card);
+      if (email) {
+        let entry = card.displayName 
+                        ?  "\"" + card.displayName + "\"" + " <" + email + ">"
+                        : email;
+        bcc.push(entry);
+      }
+    }
+  }
+  
   let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
   let setting = prefs.getCharPref("to_address"); 
 
-  if (currentCategory!="" && (currentCategory in jbCatMan.data.foundCategories)) {
+  if (bcc.length > 0) {
     let sURL="mailto:";
     //Add envelope addr if specified - or add [ListName] to Subject
     if (setting != "") {
       sURL = sURL + "?to=" + encodeURIComponent(currentCategory) + "<" + encodeURIComponent(setting) + ">";
     } else {
-      sURL = sURL + "?subject=" + encodeURIComponent("["+currentCategory+"] ");	    
+      sURL = sURL + "?subject=" + encodeURIComponent("["+ jbCatMan.data.selectedCategoryFilter.join(" & ") +"] ");	    
     }
     //Add BCC
-    sURL = sURL + "&bcc=" + encodeURIComponent(jbCatMan.data.bcc[currentCategory].join(", "));
+    sURL = sURL + "&bcc=" + encodeURIComponent(bcc.join(", "));
 
     //create the service, the URI and open the new message window via mailServices
     let ioService =  Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);  
@@ -281,13 +362,12 @@ jbCatMan.onToggleDisplay = function (show) {
 
 
 jbCatMan.booksHaveContactsWithProperty = function (field) {
-    let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
-    let allAddressBooks = abManager.directories;
+    let allAddressBooks = MailServices.ab.directories;
     while (allAddressBooks.hasMoreElements()) {
         let abook = allAddressBooks.getNext().QueryInterface(Components.interfaces.nsIAbDirectory);
         if (abook instanceof Components.interfaces.nsIAbDirectory) { // or nsIAbItem or nsIAbCollection
             let searchstring = abook.URI + "?(or("+field+",!=,))";
-            let cards = abManager.getDirectory(searchstring).childCards;
+            let cards = MailServices.ab.getDirectory(searchstring).childCards;
             if (cards && cards.hasMoreElements()) return true;
         }
     }
@@ -297,12 +377,11 @@ jbCatMan.booksHaveContactsWithProperty = function (field) {
 jbCatMan.onSelectAddressbook = function () {
   let selectedBook = GetSelectedDirectory();
   jbCatMan.dump("Begin with onSelectAddressbook("+gDirTree.view.selection.currentIndex+","+selectedBook+")",1);
-  let abManager = Components.classes["@mozilla.org/abmanager;1"].getService(Components.interfaces.nsIAbManager);
   
   if (selectedBook) {
     let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
     jbCatMan.data.emptyCategories = [];
-    jbCatMan.data.selectedCategory = "";
+    jbCatMan.data.selectedCategoryFilter = "";
     jbCatMan.updateCategoryList();
   } else {
     //if for some reason no address book is selected, select the first one
@@ -313,15 +392,22 @@ jbCatMan.onSelectAddressbook = function () {
 }
 
 
+jbCatMan.onClickCategoryList = function (event) {
+  jbCatMan.dump("Begin with onSelectCategoryList()",1);
+  let categoriesList = document.getElementById("CatManCategoriesList");
+  let abURI = GetSelectedDirectory();
+
+  if (categoriesList.selectedIndex != -1 && categoriesList.selectedItem.subCategories.length > 0) {
+    jbCatMan.toggleCategoryListEntry(abURI, categoriesList.selectedItem);
+  }
+}
 
 jbCatMan.onSelectCategoryList = function () {
   jbCatMan.dump("Begin with onSelectCategoryList()",1);
   let categoriesList = document.getElementById("CatManCategoriesList");
   if (categoriesList.selectedIndex != -1) {
-    jbCatMan.data.selectedCategory = categoriesList.selectedItem.id;
-    jbCatMan.data.selectedCategoryType = categoriesList.selectedItem.getAttribute("type");
-    categoriesList.clearSelection();
-    jbCatMan.doCategorySearch();
+    jbCatMan.data.selectedCategoryFilter = categoriesList.selectedItem.categoryFilter;
+    jbCatMan.doCategorySearch(jbCatMan.data.selectedCategoryFilter);
   }
   jbCatMan.updateButtons();
   jbCatMan.dump("Done with onSelectCategoryList()",-1);
@@ -331,13 +417,21 @@ jbCatMan.onSelectCategoryList = function () {
 
 jbCatMan.onPeopleSearchClick = function () {
   jbCatMan.dump("Begin with onPeopleSearchClick()",1);
-  jbCatMan.data.selectedCategory = "";
+  jbCatMan.data.selectedCategoryFilter = "none";
+  document.getElementById("CatManCategoriesList").clearSelection();
   jbCatMan.dump("Done with onPeopleSearchClick()",-1);
 }
 
 jbCatMan.onConvertCategory = function () {
-    jbCatMan.convertCategory(GetSelectedDirectory(), jbCatMan.data.selectedCategory);
-    jbCatMan.updateCategoryList();
+    let categoriesList = document.getElementById("CatManCategoriesList");
+    let category = categoriesList.selectedItem.categoryName;
+    if (category) {
+      jbCatMan.convertCategory(GetSelectedDirectory(), category);
+      // Remove the deleted category from the list
+      jbCatMan.data.selectedCategoryFilter = jbCatMan.data.selectedCategoryFilter.filter( x => x != category)
+      if ( jbCatMan.data.selectedCategoryFilter.length == 0)  jbCatMan.data.selectedCategoryFilter = "";
+      jbCatMan.updateCategoryList();
+    }
 }
 
 jbCatMan.onSwitchCategoryMode = function () {
@@ -345,6 +439,7 @@ jbCatMan.onSwitchCategoryMode = function () {
     prefs.setBoolPref("extensions.sendtocategory.mffab_mode",!prefs.getBoolPref("extensions.sendtocategory.mffab_mode"));
 
     //updateList
+    jbCatMan.data.selectedCategoryFilter = "";
     jbCatMan.updateCategoryList();
     
     //check selected card after update
@@ -386,8 +481,9 @@ jbCatMan.onAddCategory = function () {
 
 jbCatMan.onRenameCategory = function () {
   jbCatMan.dump("Begin with onRenameCategory()",1);
-  if (jbCatMan.data.selectedCategory != "") {
-    window.openDialog("chrome://sendtocategory/content/addressbook/edit_category.xul", "editCategory", "modal,centerscreen,chrome,resizable=no", jbCatMan.data.selectedCategory, jbCatMan.locale.editTitle, "rename");
+  let categoriesList = document.getElementById("CatManCategoriesList");
+  if (categoriesList.selectedItem.categoryName) {
+    window.openDialog("chrome://sendtocategory/content/addressbook/edit_category.xul", "editCategory", "modal,centerscreen,chrome,resizable=no", categoriesList.selectedItem.categoryName, jbCatMan.locale.editTitle, "rename");
   }
   jbCatMan.dump("Done with onRenameCategory()",-1);
 }
@@ -396,21 +492,24 @@ jbCatMan.onRenameCategory = function () {
 
 jbCatMan.onDeleteCategory = function () {
   jbCatMan.dump("Begin with onDeleteCategory()",1);
-  if (jbCatMan.data.selectedCategory != "") {
-    //is it an empty category? If so, we have to check, if it is on the empty category list and remove it
-    //if its not an empty category go through all contacts and remove that category.
-    if (jbCatMan.data.selectedCategory in jbCatMan.data.foundCategories) {
-      if (confirm(jbCatMan.locale.confirmDelete.replace("##oldname##",jbCatMan.data.selectedCategory).replace("##number##",jbCatMan.data.foundCategories[jbCatMan.data.selectedCategory].length))) {
-        jbCatMan.updateCategories("remove",jbCatMan.data.selectedCategory);
-        //no longer set category to nothing - updateCategoryList checks, if the current "category filter" is valid, if not it is cleared
-        jbCatMan.updateCategoryList();
+  let categoriesList = document.getElementById("CatManCategoriesList");
+  let category = categoriesList.selectedItem.categoryName;
+  if (category) {
+    // Is it an empty category? If so, we have to check, if it is on the empty category list and remove it.
+    // If its not an empty category go through all contacts and remove that category.
+    if (category in jbCatMan.data.foundCategories) {
+      if (confirm(jbCatMan.locale.confirmDelete.replace("##oldname##", category).replace("##number##", jbCatMan.data.foundCategories[category].length))) {
+        jbCatMan.updateCategories("remove", category);
       }
     }
     else {
-      //is it in the empty category list?
-      let idx = jbCatMan.data.emptyCategories.indexOf(jbCatMan.data.selectedCategory);
+      // Is it in the empty category list?
+      let idx = jbCatMan.data.emptyCategories.indexOf(category);
       if (idx != -1) {
         jbCatMan.data.emptyCategories.splice(idx,1);
+        // Remove the deleted category from the list.
+        jbCatMan.data.selectedCategoryFilter = jbCatMan.data.selectedCategoryFilter.filter( x => x != category)
+        if ( jbCatMan.data.selectedCategoryFilter.length == 0)  jbCatMan.data.selectedCategoryFilter = "";
         jbCatMan.updateCategoryList();
       }
     }
@@ -552,31 +651,11 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
   },
 
   add: function AbListenerToUpdateCategoryList_add() {
-    if (Components.classes["@mozilla.org/abmanager;1"]) {
-      // Thunderbird 3+
-      Components.classes["@mozilla.org/abmanager;1"]
-                .getService(Components.interfaces.nsIAbManager)
-                .addAddressBookListener(jbCatMan.AbListenerToUpdateCategoryList, Components.interfaces.nsIAbListener.all);
-    } else {
-      // Thunderbird 2
-      Components.classes["@mozilla.org/addressbook/services/session;1"]
-                .getService(Components.interfaces.nsIAddrBookSession)
-                .addAddressBookListener(jbCatMan.AbListenerToUpdateCategoryList, Components.interfaces.nsIAbListener.all);
-    }
+    MailServices.ab.addAddressBookListener(jbCatMan.AbListenerToUpdateCategoryList, Components.interfaces.nsIAbListener.all);
   },
 
   remove: function AbListenerToUpdateCategoryList_remove() {
-    if (Components.classes["@mozilla.org/abmanager;1"]) {
-      // Thunderbird 3+
-      Components.classes["@mozilla.org/abmanager;1"]
-                .getService(Components.interfaces.nsIAbManager)
-                .removeAddressBookListener(jbCatMan.AbListenerToUpdateCategoryList);
-    } else {
-      // Thunderbird 2
-      Components.classes["@mozilla.org/addressbook/services/session;1"]
-                .getService(Components.interfaces.nsIAddrBookSession)
-                .removeAddressBookListener(jbCatMan.AbListenerToUpdateCategoryList);
-    }
+    MailServices.ab.removeAddressBookListener(jbCatMan.AbListenerToUpdateCategoryList);
   }
 };
 
@@ -653,8 +732,8 @@ jbCatMan.initAddressbook = function() {
   //hide SOGo categories field in CardViewPane
   if (document.getElementById("SCCvCategories")) document.getElementById("SCCvCategories").hidden = true;
 
-  
-
+  document.getElementById("CatManCategoriesList").addEventListener("dblclick", function() { jbCatMan.writeToCategory(); }, false);
+  document.getElementById("CatManCategoriesList").addEventListener("select", function() { jbCatMan.onSelectCategoryList(); }, false);
   
   jbCatMan.dump("Done with initAddressbook()",-1);
 }
