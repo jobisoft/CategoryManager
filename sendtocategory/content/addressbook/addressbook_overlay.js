@@ -57,20 +57,34 @@ jbCatMan.addCategoryListEntry = function (abURI, newCategoryName, currentCategor
   newListItem.categorySize = jbCatMan.getNumberOfFilteredCards(abURI, categoryFilter);
   newListItem.subCategories = jbCatMan.getSubCategories(abURI, categoryFilter);
 
+  if (jbCatMan.hierarchyMode) {
+    // If ALL the subCategories are actually larger than this category, return null
+    let allSubsLarger = true
+    for (let subCat of newListItem.subCategories) {
+      if (jbCatMan.data.foundCategories[subCat].length <= newListItem.categorySize)
+        allSubsLarger = false;
+        break;
+    }
+    if (newListItem.subCategories.length > 0 && allSubsLarger) 
+      return null;
+  }
+  
   let classes = [];
   for (let i = 0; i < categoryFilter.length; i++) classes.push("level" + i);
   newListItem.setAttribute("class", classes.join(" "));
   newListItem.setAttribute("isOpen", "false");
 
-  let categoryMore = document.createElement("hbox");
-  if (newListItem.subCategories.length > 0) {
-    categoryMore.setAttribute("class", "twisty");
-    categoryMore.addEventListener("click", function(e) { jbCatMan.onClickCategoryList(e); }, false);
+  if (jbCatMan.hierarchyMode) {
+    let categoryMore = document.createElement("hbox");
+    if (newListItem.subCategories.length > 0) {
+      categoryMore.setAttribute("class", "twisty");
+      categoryMore.addEventListener("click", function(e) { jbCatMan.onClickCategoryList(e); }, false);
+    }
+    categoryMore.setAttribute("flex", "0");
+    categoryMore.style["margin-left"] = (currentCategoryFilter.length * 16) + "px";
+    newListItem.appendChild(categoryMore);
   }
-  categoryMore.setAttribute("flex", "0");
-  categoryMore.style["margin-left"] = (currentCategoryFilter.length * 16) + "px";
-  newListItem.appendChild(categoryMore);
-
+  
   let categoryName = document.createElement("label");
   categoryName.setAttribute("flex", "1");
   categoryName.setAttribute("value", newCategoryName);
@@ -103,7 +117,8 @@ jbCatMan.toggleCategoryListEntry = function (abURI, element) {
     element.setAttribute("isOpen", "true");
     // add entries
     for (let subCat of element.subCategories) {
-      categoriesList.insertBefore(jbCatMan.addCategoryListEntry(abURI, subCat, element.categoryFilter),  element.nextSibling);    
+      let newItem = jbCatMan.addCategoryListEntry(abURI, subCat, element.categoryFilter);
+      if (newItem) categoriesList.insertBefore(newItem, element.nextSibling);    
     }
   }
 }
@@ -164,7 +179,7 @@ jbCatMan.updateCategoryList = function () {
   // Add all categories from the updated/merged array to the category listbox.
   for (let i = 0; i < jbCatMan.data.categoryList.length; i++) {
     let newItem = jbCatMan.addCategoryListEntry(abURI, jbCatMan.data.categoryList[i]);
-    categoriesList.appendChild(newItem);
+    if (newItem) categoriesList.appendChild(newItem);
   }
 
   // Restore open states.
@@ -179,10 +194,12 @@ jbCatMan.updateCategoryList = function () {
     newListItem.categoryFilter = "uncategorized";
     newListItem.id = btoa(JSON.stringify(newListItem.categoryFilter)).split("=").join("");
 
-    let categoryMore = document.createElement("hbox");
-    categoryMore.setAttribute("flex", "0");
-    newListItem.appendChild(categoryMore);
-
+    if (jbCatMan.hierarchyMode) {
+      let categoryMore = document.createElement("hbox");
+      categoryMore.setAttribute("flex", "0");
+      newListItem.appendChild(categoryMore);
+    }
+    
     let categoryName = document.createElement("label");
     categoryName.setAttribute("flex", "1");
     categoryName.setAttribute("value", jbCatMan.getLocalizedMessage("viewWithoutCategories"));

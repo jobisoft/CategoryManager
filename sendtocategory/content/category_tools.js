@@ -4,6 +4,8 @@ var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
 //create jbCatMan namespace
 var jbCatMan = {};
 
+jbCatMan.hierarchyMode = true;
+
 jbCatMan.quickdump = function (str) {
     Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService).logStringMessage("[CatMan] " + str);
 }
@@ -168,7 +170,7 @@ jbCatMan.modifyCard = function (card) {
 jbCatMan.updatePeopleSearchInput = function (categoryFilter) {
   jbCatMan.dump("Begin with updatePeopleSearchInput()",1);
   if (Array.isArray(categoryFilter) && categoryFilter.length > 0) {
-    document.getElementById("peopleSearchInput").value = jbCatMan.locale.prefixForPeopleSearch + ": " + categoryFilter.join(" & ");
+    document.getElementById("peopleSearchInput").value = jbCatMan.locale.prefixForPeopleSearch + ": " + categoryFilter.join(jbCatMan.hierarchyMode ? " / " : " & ");
     
   } else if (categoryFilter == "uncategorized") {
     document.getElementById("peopleSearchInput").value = jbCatMan.locale.prefixForPeopleSearch + ": " + jbCatMan.getLocalizedMessage("viewWithoutCategories");
