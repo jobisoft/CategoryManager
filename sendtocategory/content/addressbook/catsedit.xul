@@ -43,7 +43,7 @@
         value="0"/>
         
         <groupbox>
-            <hbox><caption>&sendtocategory.bulkedit.note;</caption></hbox>
+            <hbox class="groupbox-title"><label class="header">&sendtocategory.bulkedit.note;</label></hbox>
             <grid>
                 <columns>
                     <column/>

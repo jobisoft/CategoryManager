@@ -69,7 +69,7 @@
             </richlistbox>
             
             <groupbox>
-                <hbox><caption>&sendtocategory.bulkedit.legend.caption;</caption></hbox>
+                <hbox class="groupbox-title"><label class="header">&sendtocategory.bulkedit.legend.caption;</label></hbox>
                     <grid>
                         <columns>
                             <column/>

@@ -1,8 +1,9 @@
+var { MailServices } = ChromeUtils.import("resource:///modules/MailServices.jsm");
 
 var jbCatMan = window.opener.jbCatMan;
 var jbCatManBulkEdit = {}
 
-// BulkEdit will must only be called for a single selected category.
+// BulkEdit  must only be called for a single selected category.
 
 jbCatManBulkEdit.getCardsFromEmail = function (email) {
   jbCatMan.dump("Begin with getCardsFromEmail("+email+")",1);
