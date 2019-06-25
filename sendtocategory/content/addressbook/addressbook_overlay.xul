@@ -37,7 +37,7 @@
         <menupopup id="CatManContextMenu">
             <menuitem id="CatManContextMenuSend" disabled="true" label="&sendtocategory.send.title;" oncommand="jbCatMan.writeToCategory();"/>
             <menuseparator/>
-            <menuitem id="CatManContextMenuEdit" disabled="true" label="&sendtocategory.edit.title;" oncommand="jbCatMan.onRenameCategory()"/>
+            <menuitem id="CatManContextMenuRename" disabled="true" label="&sendtocategory.edit.title;" oncommand="jbCatMan.onRenameCategory()"/>
             <menuitem id="CatManContextMenuRemove" disabled="true" label="&sendtocategory.remove.title;" oncommand="jbCatMan.onDeleteCategory()"/>
             <menuitem id="CatManContextMenuBulk" disabled="true" label="&sendtocategory.bulkedit.title;" oncommand="jbCatMan.onBulkEdit()"/>
             <menuseparator />
@@ -57,13 +57,11 @@
                     id="CatManCategoriesList"
                     flex="1"
                     seltype="single"
-                    onclick="jbCatMan.onSelectCategoryList()"
-                    ondblclick="jbCatMan.writeToCategory()"
                     context="CatManContextMenu">
-                        <listheader class="CatManHeader">
+                        <!-- listheader class="CatManHeader">
                             <label class="CatManHeaderCell1 header" flex="1" value="&sendtocategory.catbox.header.catname;" />
                             <label class="CatManHeaderCell2 header" flex="0" value="&sendtocategory.catbox.header.catsize;" />
-                        </listheader>
+                        </listheader -->
                     </richlistbox>
                     <hbox pack="end">
                         <button 
@@ -82,12 +80,18 @@
                         class="ghostbutton"
                         id="CatManHideCategoryPaneButton"
                         disabled="false"
-                        label="&#9660;"
+                        label="&sendtocategory.hideCategoryPaneButton.label;"
                         oncommand="jbCatMan.onToggleDisplay(false)"/>                        
                     </hbox>
         </vbox>
         <vbox id="CatManShowBox" hidden="true" pack="end" >
                 <hbox pack="end" style="border-top: 1px solid grey; padding-top:2px;">
+                    <button 
+                    flex="1"
+                    disabled="true"
+                    label="&sendtocategory.addButton.label;"
+                    accesskey="&sendtocategory.addButton.accesskey;"
+                    style="visibility: hidden;" />
                     <button 
                     class="ghostbutton"
                     disabled="false"
@@ -97,7 +101,7 @@
                     class="ghostbutton"
                     id="CatManShowCategoryPaneButton"
                     disabled="false"
-                    label="&#9650;"
+                    label="&sendtocategory.showCategoryPaneButton.label;"
                     oncommand="jbCatMan.onToggleDisplay(true)"/>                        
                 </hbox>
         </vbox>
