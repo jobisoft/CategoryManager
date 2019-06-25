@@ -6,8 +6,6 @@ var jbCatManBulkEdit = {}
 // BulkEdit  must only be called for a single selected category.
 
 jbCatManBulkEdit.getCardsFromEmail = function (email) {
-  jbCatMan.dump("Begin with getCardsFromEmail("+email+")",1);
-
   let abURI = jbCatMan.getWorkAbUri(MailServices.ab.getDirectory(jbCatMan.bulk.selectedDirectory));
   
   let EmailQuery = "(PrimaryEmail,bw,@V)(SecondEmail,bw,@V)";
@@ -19,8 +17,6 @@ jbCatManBulkEdit.getCardsFromEmail = function (email) {
   } else if (email.indexOf("googlemail.com")>0) {
     searchQuery = searchQuery + EmailQuery.replace(/@V/g, encodeURIComponent(email.replace("googlemail.com","gmail.com")));
   }
-  
-  jbCatMan.dump("Done with getCardsFromEmail()",-1);
   return MailServices.ab.getDirectory(abURI + "?" + "(or" + searchQuery + ")").childCards;
 }
 

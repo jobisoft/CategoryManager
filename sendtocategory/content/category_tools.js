@@ -10,25 +10,6 @@ jbCatMan.quickdump = function (str) {
     Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService).logStringMessage("[CatMan] " + str);
 }
 
-jbCatMan.dump = function (str,lvl) {
-/*  if (jbCatMan.printDumps) {
-    //to see dump messages, follow instructions here: https://wiki.mozilla.org/Thunderbird:Debugging_Gloda
-    //also enable "javascript.options.showInConsole" and "javascript.options.strict"
-    let d = new Date();
-    let n = d.getTime();
-    if (lvl<0) {
-      let debugs =  jbCatMan.printDebugCounts[jbCatMan.printDumpsIndent];
-      if (debugs > 0) dump("[CategoryManager @ " + n + "] " + jbCatMan.printDumpsIndent + "Supressed debug messages: " +debugs + "\n");
-      jbCatMan.printDebugCounts[jbCatMan.printDumpsIndent] = 0;
-      jbCatMan.printDumpsIndent = jbCatMan.printDumpsIndent.slice(0, -2);
-    }
-    dump("[CategoryManager @ " + n + "] " + jbCatMan.printDumpsIndent + str + "\n");
-    if (lvl>0) {
-      jbCatMan.printDumpsIndent = jbCatMan.printDumpsIndent + "  ";
-      jbCatMan.printDebugCounts[jbCatMan.printDumpsIndent] = 0;
-    }
-  }*/
-}
 
 
 
@@ -56,8 +37,6 @@ jbCatMan.init = function () {
   jbCatMan.printDebugCounts = Array();
   jbCatMan.printDebugCounts[jbCatMan.printDumpsIndent] = 0;
   
-  jbCatMan.dump("Begin with init()",1);
-  
   jbCatMan.eventUpdateTimeout = null;
 
   //locale object to store names from locale file
@@ -80,8 +59,6 @@ jbCatMan.init = function () {
   jbCatMan.data.abURI = [];
 
   jbCatMan.data.emptyCategories = [];
-
-  jbCatMan.dump("Done with init()",-1);
 }
 
 
@@ -168,7 +145,6 @@ jbCatMan.modifyCard = function (card) {
 //##############################################
 
 jbCatMan.updatePeopleSearchInput = function (categoryFilter) {
-  jbCatMan.dump("Begin with updatePeopleSearchInput()",1);
   if (Array.isArray(categoryFilter) && categoryFilter.length > 0) {
     document.getElementById("peopleSearchInput").value = jbCatMan.locale.prefixForPeopleSearch + ": " + categoryFilter.join(jbCatMan.hierarchyMode ? " / " : " & ");
     
@@ -179,7 +155,6 @@ jbCatMan.updatePeopleSearchInput = function (categoryFilter) {
     document.getElementById("peopleSearchInput").value = "";
     
   }
-  jbCatMan.dump("Done with updatePeopleSearchInput()",-1);
 }
 
 jbCatMan.getCategorySearchString = function(abURI, categoryFilter) {
@@ -232,7 +207,6 @@ jbCatMan.getSearchesFromSearchString = function(searchstring) {
 }
 
 jbCatMan.doCategorySearch = function (categoryFilter) {
-  jbCatMan.dump("Begin with doCategorySearch()",1);
   let abURI = GetSelectedDirectory();
 
   if (document.getElementById("CardViewBox") != null) {
@@ -248,7 +222,6 @@ jbCatMan.doCategorySearch = function (categoryFilter) {
   }
   
   jbCatMan.updatePeopleSearchInput(categoryFilter);
-  jbCatMan.dump("Done with doCategorySearch()",-1);  
 }
 
 
@@ -262,7 +235,6 @@ jbCatMan.doCategorySearch = function (categoryFilter) {
 // each local card has a unique property DbRowID, which can be used to get (search) this card (not working with LDAP)
 // however, it is not unique across different abooks -> append directoryId
 jbCatMan.getUIDFromCard = function (card) {
-  jbCatMan.dump("Begin with getUIDFromCard()",1);
   
   let DbRowID = "";
   
@@ -270,7 +242,6 @@ jbCatMan.getUIDFromCard = function (card) {
     DbRowID = card.getPropertyAsAString("DbRowID"); //DbRowID is not avail on LDAP directories, but since we cannot modify LDAP directories, CatMan is not working at all on LDAP (isRemote)
   } catch (ex) {}
 
-  jbCatMan.dump("Done with getUIDFromCard()",-1);
   return DbRowID + "\u001A" + card.directoryId
 }
 
@@ -279,8 +250,6 @@ jbCatMan.getUIDFromCard = function (card) {
 
 // this function expects to be run on a single book only (so DbRowID is unique enough), otherwise the full UID needs to be used to get the card 
 jbCatMan.getCardFromUID = function (UID, abURI) {
-  jbCatMan.dump("Begin with getCardFromUID("+UID+")",1);
-
   let UIDS = UID.split("\u001A");
   let DbRowID = UIDS[0];
   
@@ -289,10 +258,8 @@ jbCatMan.getCardFromUID = function (UID, abURI) {
 
   let result = MailServices.ab.getDirectory(abURI + "?" + "(or" + searchQuery + ")").childCards;
   if (result.hasMoreElements()) {
-    jbCatMan.dump("Done with getCardFromUID()",-1);
     return result.getNext().QueryInterface(Components.interfaces.nsIAbCard);
   } else {
-    jbCatMan.dump("Done with getCardFromUID()",-1);
     return null;
   }
 }
@@ -427,7 +394,6 @@ jbCatMan.getCategoriesfromCard = function (card, field = jbCatMan.getCategoryFie
 }
 
 jbCatMan.setCategoriesforCard = function (card, catsArray,  field = jbCatMan.getCategoryField()) {
-  jbCatMan.dump("Begin with setCategoriesforCard()",1);
   let retval = true;
 
   // sanity check
@@ -439,10 +405,8 @@ jbCatMan.setCategoriesforCard = function (card, catsArray,  field = jbCatMan.get
   try {
      card.setPropertyAsAString(field, catsString);
   } catch (ex) {
-    jbCatMan.dump("Could not set Categories.\n");
     retval = false;
   }
-  jbCatMan.dump("Done with setCategoriesforCard()",-1);
   return retval;
 }
 
@@ -462,7 +426,6 @@ jbCatMan.getEmailFromCard = function (card) {
 
 
 jbCatMan.getUserNamefromCard = function (card) {
-  jbCatMan.dump("Begin with getUserNamefromCard()",1);
   let userName = "";
   let fallback = jbCatMan.locale.bulkEditNoName;
   // if no name is present, but an email, use the first part of the email as fallback for name - this is how TB is doing it as well
@@ -476,7 +439,6 @@ jbCatMan.getUserNamefromCard = function (card) {
   } catch (ex) {}
   if (userName == "") userName = fallback;
 
-  jbCatMan.dump("Done with getUserNamefromCard()",-1);
   return userName;
 }
 
@@ -502,7 +464,6 @@ jbCatMan.getSubCategories = function (abURI, categoryFilter) {
 }
 
 jbCatMan.updateCategories = function (mode, oldName, newName) {
-  jbCatMan.dump("Begin with updateCategories("+mode+","+oldName+","+newName+")",1);
   //get address book manager
   let addressBook = MailServices.ab.getDirectory(GetSelectedDirectory()); //GetSelectedDirectory() returns an URI, but we need the directory itself
   let cards = addressBook.childCards;
@@ -538,14 +499,11 @@ jbCatMan.updateCategories = function (mode, oldName, newName) {
       }
     }
   }
-  jbCatMan.dump("Done with updateCategories()",-1);
 }
 
 
 
 jbCatMan.scanCategories = function (abURI, field = jbCatMan.getCategoryField(), quickscan = false) {
-  jbCatMan.dump("Begin with scanCategories()",1);
-
   //concept decision: we remove empty categories on addressbook switch (select) 
   //-> the category array is constantly cleared and build from scan results
   let data = {};
@@ -574,7 +532,6 @@ jbCatMan.scanCategories = function (abURI, field = jbCatMan.getCategoryField(), 
        The function "send email to category" is rendered useless. */
     if (addressBook.isRemote) continue;
 
-    jbCatMan.dump("Scanning <"+addressBook.URI+">");
     let cards = addressBook.childCards;
     while (true) {
       let more = false;
@@ -621,7 +578,6 @@ jbCatMan.scanCategories = function (abURI, field = jbCatMan.getCategoryField(), 
   }
   data.categoryList.sort();
   
-  jbCatMan.dump("Done with scanCategories()",-1);
   return data.categoryList;
 }
 

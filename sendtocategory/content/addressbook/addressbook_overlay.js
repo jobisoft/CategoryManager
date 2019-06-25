@@ -124,7 +124,6 @@ jbCatMan.toggleCategoryListEntry = function (abURI, element) {
 }
 
 jbCatMan.updateCategoryList = function () {
-  jbCatMan.dump("Begin with updateCategoryList()",1);
   jbCatMan.scanCategories(GetSelectedDirectory());
   let abURI = GetSelectedDirectory();
   
@@ -234,7 +233,6 @@ jbCatMan.updateCategoryList = function () {
   }
   
   jbCatMan.updateButtons();
-  jbCatMan.dump("Done with updateCategoryList()",-1);
 }
 
 jbCatMan.updateContextMenu = function () {
@@ -297,8 +295,6 @@ jbCatMan.updateButtons = function () {
 
 
 jbCatMan.writeToCategory = function () {
-  jbCatMan.dump("Begin with writeToCategory()",1);
-
   let searchstring = jbCatMan.getCategorySearchString(GetSelectedDirectory(), jbCatMan.data.selectedCategoryFilter);
   let searches = jbCatMan.getSearchesFromSearchString(searchstring);
 
@@ -337,7 +333,6 @@ jbCatMan.writeToCategory = function () {
     let aURI = ioService.newURI(sURL, null, null);  
     MailServices.compose.OpenComposeWindowWithURI (null, aURI); 
   }
-  jbCatMan.dump("Done with writeToCategory()",-1);
 }
 
 
@@ -355,16 +350,13 @@ jbCatMan.onImportExport = function () {
 
 
 jbCatMan.onHelpButton = function () {
-  jbCatMan.dump("Begin with onHelpButton()",1);
   let ioservice = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
   let uriToOpen = ioservice.newURI("https://github.com/jobisoft/CategoryManager/wiki/F.A.Q.", null, null);
   let extps = Components.classes["@mozilla.org/uriloader/external-protocol-service;1"].getService(Components.interfaces.nsIExternalProtocolService);
   extps.loadURI(uriToOpen, null);
-  jbCatMan.dump("Done with onHelpButton()",-1);
 }
 
 jbCatMan.onToggleDisplay = function (show) {
-  jbCatMan.dump("Begin with onToggleDisplay("+show+")",1);
   if (show) {
     document.getElementById('CatManBox').collapsed = false;
     document.getElementById('CatManSplitter').hidden = false;
@@ -374,7 +366,6 @@ jbCatMan.onToggleDisplay = function (show) {
     document.getElementById('CatManSplitter').hidden = true;
     document.getElementById('CatManShowBox').hidden = false;
   }
-  jbCatMan.dump("End with onToggleDisplay()",-1);
 }
 
 
@@ -393,7 +384,6 @@ jbCatMan.booksHaveContactsWithProperty = function (field) {
 
 jbCatMan.onSelectAddressbook = function () {
   let selectedBook = GetSelectedDirectory();
-  jbCatMan.dump("Begin with onSelectAddressbook("+gDirTree.view.selection.currentIndex+","+selectedBook+")",1);
   
   if (selectedBook) {
     let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
@@ -405,12 +395,10 @@ jbCatMan.onSelectAddressbook = function () {
     gDirTree.view.selection.select(0);
     ChangeDirectoryByURI(GetSelectedDirectory());
   }
-  jbCatMan.dump("Done with onSelectAddressbook()",-1);
 }
 
 
 jbCatMan.onClickCategoryList = function (event) {
-  jbCatMan.dump("Begin with onSelectCategoryList()",1);
   let categoriesList = document.getElementById("CatManCategoriesList");
   let abURI = GetSelectedDirectory();
 
@@ -420,23 +408,19 @@ jbCatMan.onClickCategoryList = function (event) {
 }
 
 jbCatMan.onSelectCategoryList = function () {
-  jbCatMan.dump("Begin with onSelectCategoryList()",1);
   let categoriesList = document.getElementById("CatManCategoriesList");
   if (categoriesList.selectedIndex != -1) {
     jbCatMan.data.selectedCategoryFilter = categoriesList.selectedItem.categoryFilter;
     jbCatMan.doCategorySearch(jbCatMan.data.selectedCategoryFilter);
   }
   jbCatMan.updateButtons();
-  jbCatMan.dump("Done with onSelectCategoryList()",-1);
 }
 
 
 
 jbCatMan.onPeopleSearchClick = function () {
-  jbCatMan.dump("Begin with onPeopleSearchClick()",1);
   jbCatMan.data.selectedCategoryFilter = "none";
   document.getElementById("CatManCategoriesList").clearSelection();
-  jbCatMan.dump("Done with onPeopleSearchClick()",-1);
 }
 
 jbCatMan.onConvertCategory = function () {
@@ -466,7 +450,6 @@ jbCatMan.onSwitchCategoryMode = function () {
 
 
 jbCatMan.onBulkEdit = function () {
-  jbCatMan.dump("Begin with onBulkEdit()",1);
   //initializing bulkedit-members
   jbCatMan.bulk.needToValidateBulkList = false;
   jbCatMan.bulk.needToSaveBulkList = false;
@@ -483,32 +466,26 @@ jbCatMan.onBulkEdit = function () {
   if (jbCatMan.bulk.needToSaveBulkList) {
     window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_saveAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,resizable=yes", "", jbCatMan.locale.bulkTitle);
   }
-  jbCatMan.dump("Done with onBulkEdit()",-1);
 }
 
 
 
 jbCatMan.onAddCategory = function () {
-  jbCatMan.dump("Begin with onAddCategory()",1);
   window.openDialog("chrome://sendtocategory/content/addressbook/edit_category.xul", "addCategory", "modal,centerscreen,chrome,resizable=no", "", jbCatMan.locale.addTitle, "add");
-  jbCatMan.dump("Done with onAddCategory()",-1);
 }
 
 
 
 jbCatMan.onRenameCategory = function () {
-  jbCatMan.dump("Begin with onRenameCategory()",1);
   let categoriesList = document.getElementById("CatManCategoriesList");
   if (categoriesList.selectedItem.categoryName) {
     window.openDialog("chrome://sendtocategory/content/addressbook/edit_category.xul", "editCategory", "modal,centerscreen,chrome,resizable=no", categoriesList.selectedItem.categoryName, jbCatMan.locale.editTitle, "rename");
   }
-  jbCatMan.dump("Done with onRenameCategory()",-1);
 }
 
 
 
 jbCatMan.onDeleteCategory = function () {
-  jbCatMan.dump("Begin with onDeleteCategory()",1);
   let categoriesList = document.getElementById("CatManCategoriesList");
   let category = categoriesList.selectedItem.categoryName;
   if (category) {
@@ -531,14 +508,12 @@ jbCatMan.onDeleteCategory = function () {
       }
     }
   }
-  jbCatMan.dump("Done with onDeleteCategory()",-1);
 }
 
 
 
 // disable context menu if no card has been selected, or fill context menu with found categories
 jbCatMan.onResultsTreeContextMenuPopup = function () {
-  jbCatMan.dump("Begin with onResultsTreeContextMenuPopup()",1);
 
   let cards = GetSelectedAbCards();
   let rootEntry = document.getElementById("CatManCategoriesContextMenu");
@@ -589,7 +564,6 @@ jbCatMan.onResultsTreeContextMenuPopup = function () {
       popup.appendChild(newItem);
     }
   }
-  jbCatMan.dump("Done with onResultsTreeContextMenuPopup()",-1);
 }
 
 
@@ -603,7 +577,6 @@ jbCatMan.onMultiselectCategoriesContextMenuItemCommand = function (event) {
 
 // a category has been clicked on in the context menu while a single contact has been selected ->  invert current category property
 jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
-  jbCatMan.dump("Begin with onCategoriesContextMenuItemCommand()",1);
   let cards = GetSelectedAbCards();
   let category = this.value;
   let enabled = (event.target.getAttribute("checked") == "false");
@@ -628,7 +601,6 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
     }
   }
 
-  jbCatMan.dump("Done with onCategoriesContextMenuItemCommand()",-1);
 }
 
 
@@ -649,21 +621,21 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
   onItemAdded: function AbListenerToUpdateCategoryList_onItemAdded(aParentDir, aItem) {
     if (aItem instanceof Components.interfaces.nsIAbCard) {
       window.clearTimeout(jbCatMan.eventUpdateTimeout);
-      jbCatMan.eventUpdateTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemAdded(UpdateList)",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemAdded(UpdateList)",-1);}, 1000);
+      jbCatMan.eventUpdateTimeout = window.setTimeout(function() { jbCatMan.updateCategoryList(); }, 1000);
     }
   },
 
   onItemPropertyChanged: function AbListenerToUpdateCategoryList_onItemPropertyChanged(aItem, aProperty, aOldValue, aNewValue) {
     if (aItem instanceof Components.interfaces.nsIAbCard) {
       window.clearTimeout(jbCatMan.eventUpdateTimeout);
-      jbCatMan.eventUpdateTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemPropertyChanged(UpdateList)",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemPropertyChanged(UpdateList)",-1);}, 1000);
+      jbCatMan.eventUpdateTimeout = window.setTimeout(function() { jbCatMan.updateCategoryList(); }, 1000);
     }
   },
 
   onItemRemoved: function AbListenerToUpdateCategoryList_onItemRemoved(aParentDir, aItem) {
     if (aItem instanceof Components.interfaces.nsIAbCard) {
       window.clearTimeout(jbCatMan.eventUpdateTimeout);
-      jbCatMan.eventUpdateTimeout = window.setTimeout(function() { jbCatMan.dump("Begin trigger by onItemRemoved(UpdateList)",1); jbCatMan.updateCategoryList(); jbCatMan.dump("Done trigger by onItemRemoved(UpdateList)",-1);}, 1000);
+      jbCatMan.eventUpdateTimeout = window.setTimeout(function() { jbCatMan.updateCategoryList(); }, 1000);
     }
   },
 
@@ -688,8 +660,6 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
 //###################################################
 
 jbCatMan.initAddressbook = function() {
-  jbCatMan.dump("Begin with initAddressbook()",1);
-
   //add categories field to details view
   let CatManCategoriesHeader = document.createElement("description");
   CatManCategoriesHeader.id = "CatManCategoriesHeader";
@@ -718,13 +688,13 @@ jbCatMan.initAddressbook = function() {
       }, false);
 
   // Add listener for action in search input field
-  document.getElementById("peopleSearchInput").addEventListener('command', function () { jbCatMan.dump("Begin trigger by event onPeopleSearchClick()",1); jbCatMan.onPeopleSearchClick(); jbCatMan.dump("Done trigger by event onPeopleSearchClick()",-1); } , true);
+  document.getElementById("peopleSearchInput").addEventListener('command', jbCatMan.onPeopleSearchClick , true);
 
   // Add listener for action in addressbook pane
-  document.getElementById("dirTree").addEventListener('select', function () { jbCatMan.dump("Begin trigger by event onSelectAddressbook()",1); jbCatMan.onSelectAddressbook(); jbCatMan.dump("Done trigger by event onSelectAddressbook()",-1); }, true);
+  document.getElementById("dirTree").addEventListener('select', jbCatMan.onSelectAddressbook, true);
 
   //Add listener for category context menu in results pane
-  document.getElementById("CatManCategoriesContextMenu-popup").addEventListener("popupshowing", function () { jbCatMan.dump("Begin trigger by event onResultsTreeContextMenuPopup()",1); jbCatMan.onResultsTreeContextMenuPopup(); jbCatMan.dump("Done trigger by event onResultsTreeContextMenuPopup()",-1); } , false);
+  document.getElementById("CatManCategoriesContextMenu-popup").addEventListener("popupshowing", jbCatMan.onResultsTreeContextMenuPopup, false);
 
   //Add listener for category context menu in category pane
   document.getElementById("CatManContextMenu").addEventListener("popupshowing", jbCatMan.updateContextMenu , false);
@@ -749,10 +719,8 @@ jbCatMan.initAddressbook = function() {
   //hide SOGo categories field in CardViewPane
   if (document.getElementById("SCCvCategories")) document.getElementById("SCCvCategories").hidden = true;
 
-  document.getElementById("CatManCategoriesList").addEventListener("dblclick", function() { jbCatMan.writeToCategory(); }, false);
-  document.getElementById("CatManCategoriesList").addEventListener("select", function() { jbCatMan.onSelectCategoryList(); }, false);
-  
-  jbCatMan.dump("Done with initAddressbook()",-1);
+  document.getElementById("CatManCategoriesList").addEventListener("dblclick", jbCatMan.writeToCategory, false);
+  document.getElementById("CatManCategoriesList").addEventListener("select", jbCatMan.onSelectCategoryList, false);
 }
 
 

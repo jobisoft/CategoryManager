@@ -46,8 +46,6 @@ function GenerateAddressFromCard(card)
 */
 
 jbCatMan.contactPanelCategoryMenuInit = function () {
-  jbCatMan.dump("Begin with contactPanelCategoryMenuInit()",1);
-
   //contactPanelCategoryMenuInit is called onSelect, which is triggered once without a book selected
   let currentlySelectedAddressbook = document.getElementById('addressbookList').value;
   if (currentlySelectedAddressbook != "") {
@@ -79,12 +77,10 @@ jbCatMan.contactPanelCategoryMenuInit = function () {
       menulist.disabled = false;
     }
   }
-  jbCatMan.dump("Done with contactPanelCategoryMenuInit()",-1);
 }
 
 
 jbCatMan.contactPanelCategoryMenuChanged = function () {
-  jbCatMan.dump("Begin with contactPanelCategoryMenuChanged()",1);
   if (document.getElementById("CatManCategoryFilterList").value != "") {
     //get selected category
     let category = document.getElementById("CatManCategoryFilterList").value; 
@@ -101,5 +97,4 @@ jbCatMan.contactPanelCategoryMenuChanged = function () {
     let abResultsTree = document.getElementById("abResultsTree");
     abResultsTree.view.selection.selectAll();
   }
-  jbCatMan.dump("Done with contactPanelCategoryMenuChanged()",-1);
 }
