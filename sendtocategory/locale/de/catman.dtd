@@ -2,18 +2,17 @@
 <!ENTITY sendtocategory.cancel.button "Abbrechen">
 
 <!ENTITY sendtocategory.category.label "Kategorie">
-<!ENTITY sendtocategory.category.all "Alle">
+<!ENTITY sendtocategory.category.all "Alle Kontakte">
 <!ENTITY sendtocategory.name.label "Name">
 
 <!ENTITY sendtocategory.categoryfilter.label "Kategoriefilter ...">
 <!ENTITY sendtocategory.categoriescontext.label "Kategorien">
 
+<!ENTITY sendtocategory.catogorybox.MFFAB.tooltip "Zwischen dem Standard Kategorie-Modus und dem MFFAB Kategorie-Modus wechseln">
+
 <!ENTITY sendtocategory.helpButton.label "?">
 <!ENTITY sendtocategory.hideCategoryPaneButton.label "&#9660;">
 <!ENTITY sendtocategory.showCategoryPaneButton.label "&#9650;">
-
-<!ENTITY sendtocategory.catogorybox.label "Gefundene Kategorien">
-<!ENTITY sendtocategory.catogorybox.MFFAB.tooltip "Zwischen dem Standard Kategorie-Modus und dem MFFAB Kategorie-Modus wechseln">
 
 <!ENTITY sendtocategory.add.title "Neue Kategorie erstellen">
 <!ENTITY sendtocategory.addButton.label "Neue Kategorie erstellen">

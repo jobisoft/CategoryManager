@@ -2,13 +2,12 @@
 <!ENTITY sendtocategory.cancel.button "Cancelar">
 
 <!ENTITY sendtocategory.category.label "categoria">
-<!ENTITY sendtocategory.category.all "Todas">
+<!ENTITY sendtocategory.category.all "Todos os contatos">
 <!ENTITY sendtocategory.name.label "nome">
 
 <!ENTITY sendtocategory.categoryfilter.label "Categorias ...">
 <!ENTITY sendtocategory.categoriescontext.label "Categorias">
 
-<!ENTITY sendtocategory.catogorybox.label "Categorias encontradas">
 <!ENTITY sendtocategory.catogorybox.MFFAB.tooltip "Alternar entre o modo de categoria padrão e o modo de categoria MFFAB">
 
 <!ENTITY sendtocategory.helpButton.label "?">

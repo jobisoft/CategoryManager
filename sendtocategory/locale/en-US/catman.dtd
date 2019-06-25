@@ -2,13 +2,12 @@
 <!ENTITY sendtocategory.cancel.button "Cancel">
 
 <!ENTITY sendtocategory.category.label "category">
-<!ENTITY sendtocategory.category.all "All">
+<!ENTITY sendtocategory.category.all "All contacts">
 <!ENTITY sendtocategory.name.label "name">
 
 <!ENTITY sendtocategory.categoryfilter.label "Categories ...">
 <!ENTITY sendtocategory.categoriescontext.label "Categories">
 
-<!ENTITY sendtocategory.catogorybox.label "Found categories">
 <!ENTITY sendtocategory.catogorybox.MFFAB.tooltip "Switch between standard category mode and MFFAB category mode">
 
 <!ENTITY sendtocategory.helpButton.label "?">

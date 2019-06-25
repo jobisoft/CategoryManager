@@ -1,19 +1,18 @@
-﻿<!ENTITY sendtocategory.ok.button "Ok">
+<!ENTITY sendtocategory.ok.button "Ok">
 <!ENTITY sendtocategory.cancel.button "Annuler">
 
 <!ENTITY sendtocategory.category.label "Catégorie">
-<!ENTITY sendtocategory.category.all "Tous">
+<!ENTITY sendtocategory.category.all "Tous les contacts">
 <!ENTITY sendtocategory.name.label "nom">
 
 <!ENTITY sendtocategory.categoryfilter.label "Catégories ...">
 <!ENTITY sendtocategory.categoriescontext.label "Catégories">
 
+<!ENTITY sendtocategory.catogorybox.MFFAB.tooltip "Switch between standard category mode and MFFAB category mode">
+
 <!ENTITY sendtocategory.helpButton.label "?">
 <!ENTITY sendtocategory.hideCategoryPaneButton.label "&#9660;">
 <!ENTITY sendtocategory.showCategoryPaneButton.label "&#9650;">
-
-<!ENTITY sendtocategory.catogorybox.label "Catégories trouvées">
-<!ENTITY sendtocategory.catogorybox.MFFAB.tooltip "Switch between standard category mode and MFFAB category mode">
 
 <!ENTITY sendtocategory.add.title "ajouter une catégorie">
 <!ENTITY sendtocategory.addButton.label "ajouter une catégorie">

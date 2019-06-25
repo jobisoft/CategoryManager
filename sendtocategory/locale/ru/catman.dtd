@@ -2,13 +2,12 @@
 <!ENTITY sendtocategory.cancel.button "Отмена">
 
 <!ENTITY sendtocategory.category.label "категория">
-<!ENTITY sendtocategory.category.all "Все">
+<!ENTITY sendtocategory.category.all "Все контакты">
 <!ENTITY sendtocategory.name.label "имя">
 
 <!ENTITY sendtocategory.categoryfilter.label "Категории ...">
 <!ENTITY sendtocategory.categoriescontext.label "Категории">
 
-<!ENTITY sendtocategory.catogorybox.label "Найденные категории">
 <!ENTITY sendtocategory.catogorybox.MFFAB.tooltip "Переключение между режимом стандартной категории и MFFAB режимом категории">
 
 <!ENTITY sendtocategory.helpButton.label "?">
