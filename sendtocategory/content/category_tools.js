@@ -460,7 +460,7 @@ jbCatMan.getSubCategories = function (abURI, categoryFilter) {
     }
   }
   
-  return subCategories;
+  return subCategories.sort();
 }
 
 jbCatMan.updateCategories = function (mode, oldName, newName) {

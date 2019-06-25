@@ -61,9 +61,10 @@ jbCatMan.addCategoryListEntry = function (abURI, newCategoryName, currentCategor
     // If ALL the subCategories are actually larger than this category, return null
     let allSubsLarger = true
     for (let subCat of newListItem.subCategories) {
-      if (jbCatMan.data.foundCategories[subCat].length <= newListItem.categorySize)
+      if (jbCatMan.data.foundCategories[subCat].length <= newListItem.categorySize) {
         allSubsLarger = false;
         break;
+      }
     }
     if (newListItem.subCategories.length > 0 && allSubsLarger) 
       return null;
@@ -116,9 +117,10 @@ jbCatMan.toggleCategoryListEntry = function (abURI, element) {
     // toggle to open
     element.setAttribute("isOpen", "true");
     // add entries
+    let hook =  element.nextSibling;
     for (let subCat of element.subCategories) {
       let newItem = jbCatMan.addCategoryListEntry(abURI, subCat, element.categoryFilter);
-      if (newItem) categoriesList.insertBefore(newItem, element.nextSibling);    
+      if (newItem) categoriesList.insertBefore(newItem, hook);    
     }
   }
 }
@@ -176,6 +178,7 @@ jbCatMan.updateCategoryList = function () {
   }
   
   // Add all categories from the updated/merged array to the category listbox.
+  jbCatMan.data.categoryList.sort();
   for (let i = 0; i < jbCatMan.data.categoryList.length; i++) {
     let newItem = jbCatMan.addCategoryListEntry(abURI, jbCatMan.data.categoryList[i]);
     if (newItem) categoriesList.appendChild(newItem);
