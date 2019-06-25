@@ -1,66 +1,73 @@
 richlistitem .label label {
-	width:250px;
-	padding:5px 0 5px 5px;
-	margin:0 6px 0 0;
+    width:250px;
+    padding:5px 0 5px 5px;
+    margin:0 6px 0 0;
 }
 
 richlistitem .text textbox {
-	width:122px; /* width/2 - 3*/
-	padding:3px;
-	margin:2px 6px 2px 0;
+    width:122px; /* width/2 - 3*/
+    padding:3px;
+    margin:2px 6px 2px 0;
 }
 
 richlistitem .menu menulist {
-	width:250px;
-	padding:0;
-	margin:0 6px 0 0;
+    width:250px;
+    padding:0;
+    margin:0 6px 0 0;
 }
 
 richlistitem .img  image {
-	width: 25px;
-	padding:2px;
-	margin:0 0 0 10px;
+    width: 25px;
+    padding:2px;
+    margin:0 0 0 10px;
 }
 
 grid image {
-	padding:2px;
+    padding:2px;
 }
 
 grid description {
-	width: 535px;
+    width: 535px;
 }
 
 .ghostbutton {
-	min-width:3em;
-	width: 3em;
+    min-width:3em;
+    width: 3em;
 }
 
 .CatManHeader {
-	border-bottom: 1px solid lightgrey;
-	padding: 0px;
-	margin:0 px;
+    border-bottom: 1px solid lightgrey;
+    padding: 0px;
+    margin: 0px;
 }
 
 .CatManHeaderCell1 { 
-	border-right: 1px solid lightgrey;
-	padding: 2px 1px;
+    border-right: 1px solid lightgrey;
+    padding: 2px 1px;
 }
 
 .CatManHeaderCell2 { 
-	padding: 2px 1px;
+    padding: 2px 1px;
 }
 
-groupbox {
-  margin-top: 1em;
+groupbox > hbox.groupbox-title > label {
+    /* background-color: -moz-Dialog; */
 }
 
-groupbox > hbox:first-child {
-  margin-top: -1em;
-  margin-bottom: -5px;
+richlistitem hbox{ 
+    width: 16px;
 }
 
-caption {
-  padding: 3px;
-  font-weight: normal;
-  background-color: -moz-Dialog;
+richlistitem hbox.twisty:hover{ 
+    background-color: lightblue;
+}
+
+richlistitem[isOpen=false] hbox.twisty{ 
+    background-color: lightgrey;
+    mask: url("chrome://sendtocategory/skin/arrow-right.svg") no-repeat right center;
+}
+
+richlistitem[isOpen=true] hbox.twisty{ 
+    background-color: grey;
+    mask: url("chrome://sendtocategory/skin/arrow-down.svg") no-repeat right center;
 }

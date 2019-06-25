@@ -180,7 +180,6 @@ jbCatMan.updatePeopleSearchInput = function (categoryFilter) {
   jbCatMan.dump("Done with updatePeopleSearchInput()",-1);
 }
 
-
 jbCatMan.getCategorySearchString = function(abURI, categoryFilter) {
     //Filter by categories - http://mxr.mozilla.org/comm-central/source/mailnews/addrbook/src/nsAbQueryStringToExpression.cpp#278
     let searchstring = "";
@@ -211,6 +210,23 @@ jbCatMan.getCategorySearchString = function(abURI, categoryFilter) {
     }
     
     return searchstring;
+}
+
+jbCatMan.getSearchesFromSearchString = function(searchstring) {
+  let searches = [];
+  if (searchstring.startsWith("moz-abdirectory://?")) {
+    searchstring = searchstring.substring(19);
+    let allAddressBooks = MailServices.ab.directories;
+    while (allAddressBooks.hasMoreElements()) {
+       let abook = allAddressBooks.getNext().QueryInterface(Components.interfaces.nsIAbDirectory);
+       if (abook instanceof Components.interfaces.nsIAbDirectory) { // or nsIAbItem or nsIAbCollection
+        searches.push(abook.URI + searchstring);
+       }
+    }
+  } else {
+      searches.push(searchstring);
+  }
+  return searches;
 }
 
 jbCatMan.doCategorySearch = function (categoryFilter) {
@@ -366,11 +382,15 @@ jbCatMan.getCategoryField = function (mode = jbCatMan.isMFFABCategoryMode()) {
 
 jbCatMan.getNumberOfFilteredCards = function (abURI, categoryFilter) {
   let searchstring = jbCatMan.getCategorySearchString(abURI, categoryFilter);
-  let cards = MailServices.ab.getDirectory(searchstring).childCards;
+  let searches = jbCatMan.getSearchesFromSearchString(searchstring);
+
   let length = 0;
-  while (cards.hasMoreElements()) {
-    let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
-    length++;
+  for (let search of searches) {
+    let cards = MailServices.ab.getDirectory(search).childCards;
+    while (cards.hasMoreElements()) {
+      let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
+      length++;
+    }
   }
   return length;    
 }
@@ -459,9 +479,12 @@ jbCatMan.getUserNamefromCard = function (card) {
 }
 
 jbCatMan.getSubCategories = function (abURI, categoryFilter) {
-    let searchstring = jbCatMan.getCategorySearchString(abURI, categoryFilter);
-    let cards = MailServices.ab.getDirectory(searchstring).childCards;
-    let subCategories = [];
+  let searchstring = jbCatMan.getCategorySearchString(abURI, categoryFilter);
+  let searches = jbCatMan.getSearchesFromSearchString(searchstring);
+
+  let subCategories = [];
+  for (let search of searches) {
+    let cards = MailServices.ab.getDirectory(search).childCards;
   
     while (cards.hasMoreElements()) {
       let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
@@ -471,7 +494,9 @@ jbCatMan.getSubCategories = function (abURI, categoryFilter) {
         if (!categoryFilter.includes(cat) && !subCategories.includes(cat)) subCategories.push(cat);
       }
     }
-    return subCategories;
+  }
+  
+  return subCategories;
 }
 
 jbCatMan.updateCategories = function (mode, oldName, newName) {
@@ -535,19 +560,7 @@ jbCatMan.scanCategories = function (abURI, field = jbCatMan.getCategoryField(), 
   // scan all addressbooks, if this is the new root addressbook (introduced in TB38)
   // otherwise just scan the selected one
   let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
-  let addressBooks = [];
-
-  if (abURI == "moz-abdirectory://?") {
-    let allAddressBooks = MailServices.ab.directories;
-    while (allAddressBooks.hasMoreElements()) {
-       let abook = allAddressBooks.getNext().QueryInterface(Components.interfaces.nsIAbDirectory);
-       if (abook instanceof Components.interfaces.nsIAbDirectory) { // or nsIAbItem or nsIAbCollection
-        addressBooks.push(abook.URI);
-       }
-    }
-  } else {
-      addressBooks.push(abURI); //GetSelectedDirectory() returns the URI
-  }
+  let addressBooks = jbCatMan.getSearchesFromSearchString(abURI);
 
   for (var l = 0; l < addressBooks.length; l++) {
     let addressBook = null;
