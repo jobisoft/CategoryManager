@@ -462,7 +462,9 @@ jbCatMan.getSubCategories = function (abURI, categoryFilter, requireFullyContain
 
   subCategories.sort();
   if (requireFullyContained) {
-    return subCategories.filter(cat => jbCatMan.getNumberOfFilteredCards(abURI, categoryFilter.concat([cat])) == jbCatMan.data.foundCategories[cat].length);
+    let parentSize = jbCatMan.getNumberOfFilteredCards(abURI, categoryFilter);
+    // The raw size of the category must be equal to the filtered size but smaller than the parent size
+    return subCategories.filter(cat => (jbCatMan.getNumberOfFilteredCards(abURI, categoryFilter.concat([cat])) == jbCatMan.data.foundCategories[cat].length && parentSize > jbCatMan.data.foundCategories[cat].length));
   } else {
     return subCategories;
   }
