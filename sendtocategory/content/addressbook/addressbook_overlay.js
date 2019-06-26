@@ -55,21 +55,8 @@ jbCatMan.addCategoryListEntry = function (abURI, newCategoryName, currentCategor
   newListItem.categoryName = newCategoryName;
   newListItem.categoryFilter = categoryFilter;  
   newListItem.categorySize = jbCatMan.getNumberOfFilteredCards(abURI, categoryFilter);
-  newListItem.subCategories = jbCatMan.getSubCategories(abURI, categoryFilter);
-
-  if (jbCatMan.hierarchyMode) {
-    // If ALL the subCategories are actually larger than this category, return null
-    let allSubsLarger = true
-    for (let subCat of newListItem.subCategories) {
-      if (jbCatMan.data.foundCategories[subCat].length <= newListItem.categorySize) {
-        allSubsLarger = false;
-        break;
-      }
-    }
-    if (newListItem.subCategories.length > 0 && allSubsLarger) 
-      return null;
-  }
-  
+  newListItem.subCategories = jbCatMan.getSubCategories(abURI, categoryFilter, false);
+    
   let classes = [];
   for (let i = 0; i < categoryFilter.length; i++) classes.push("level" + i);
   newListItem.setAttribute("class", classes.join(" "));
@@ -118,7 +105,18 @@ jbCatMan.toggleCategoryListEntry = function (abURI, element) {
     element.setAttribute("isOpen", "true");
     // add entries
     let hook =  element.nextSibling;
-    for (let subCat of element.subCategories) {
+
+    let currentCategories = element.subCategories.slice();
+    if (jbCatMan.hierarchyMode) {
+      // Remove all categories, which are fully contained within other categories
+      // and thus do not need to be added in *this* level.
+      for (let subCat of element.subCategories) {
+        let subs = jbCatMan.getSubCategories(abURI, element.categoryFilter.concat([subCat]), true);
+        currentCategories = currentCategories.filter(e => !subs.includes(e));
+      }
+    }
+    
+    for (let subCat of currentCategories) {
       let newItem = jbCatMan.addCategoryListEntry(abURI, subCat, element.categoryFilter);
       if (newItem) categoriesList.insertBefore(newItem, hook);    
     }
@@ -142,6 +140,7 @@ jbCatMan.updateCategoryList = function () {
       jbCatMan.data.categoryList.push(jbCatMan.data.emptyCategories[i]);
     }
   }
+  jbCatMan.data.categoryList.sort();
   
   // Save current open-states.
   let categoriesList = document.getElementById("CatManCategoriesList");
@@ -178,9 +177,18 @@ jbCatMan.updateCategoryList = function () {
   }
   
   // Add all categories from the updated/merged array to the category listbox.
-  jbCatMan.data.categoryList.sort();
-  for (let i = 0; i < jbCatMan.data.categoryList.length; i++) {
-    let newItem = jbCatMan.addCategoryListEntry(abURI, jbCatMan.data.categoryList[i]);
+  let currentCategories = jbCatMan.data.categoryList.slice();
+  if (jbCatMan.hierarchyMode) {
+    // Remove all categories, which are fully contained within other categories
+    // and thus do not need to be added in *this* level.
+    for (let subCat of jbCatMan.data.categoryList) {
+      let subs = jbCatMan.getSubCategories(abURI, [subCat], true);
+      currentCategories = currentCategories.filter(e => !subs.includes(e));
+    }
+  }
+  
+  for (let subCat of currentCategories) {
+    let newItem = jbCatMan.addCategoryListEntry(abURI, subCat);
     if (newItem) categoriesList.appendChild(newItem);
   }
 
@@ -513,59 +521,88 @@ jbCatMan.onDeleteCategory = function () {
   }
 }
 
+jbCatMan.addCategoryPopupEntry = function (newCategoryName, cards) {
+  let abURI = GetSelectedDirectory();
+  let categoryFilter = [];
+  categoryFilter.push(newCategoryName);
+  
+  let newItem = document.createElement("menuitem");
+  newItem.setAttribute("class", "menuitem-iconic");
+  newItem.setAttribute("label", newCategoryName);
+  newItem.categoryName = newCategoryName;
+  newItem.categoryFilter = categoryFilter;  
+  newItem.categorySize = jbCatMan.getNumberOfFilteredCards(abURI, categoryFilter);
+  newItem.subCategories = jbCatMan.getSubCategories(abURI, categoryFilter, true);
+  
+  let countIn = 0;
+  let countOut = 0;  
+  for (let i = 0; i < cards.length; i++) {
+    if (cards[i].isMailList)
+      continue;
 
+    let thisCatsArray = jbCatMan.getCategoriesfromCard(cards[i]);
+    if (thisCatsArray.indexOf(newCategoryName) != -1) {
+      //this card is in this category
+      countIn++;
+    } else {
+      //this card is not in this category
+      countOut++;
+    }
+  }
+  
+  if (countIn + countOut == 0) {
+    // no valid card
+    newItem.setAttribute("disabled","true")
+  } else if (countIn == 0 ) {
+    // all in
+    newItem.setAttribute("image", "chrome://sendtocategory/skin/notok.gif");
+    newItem.addEventListener("click", function () { jbCatMan.onCategoriesContextMenuItemCommand(false) }, false);
+  } else if (countOut == 0) {
+    // all out
+    newItem.setAttribute("image", "chrome://sendtocategory/skin/ok.gif");
+    newItem.addEventListener("click", function () { jbCatMan.onCategoriesContextMenuItemCommand(true) }, false);
+  } else {
+    // mixed
+    newItem.setAttribute("image", "chrome://sendtocategory/skin/ok-double.gif");
+    newItem.addEventListener("click", jbCatMan.onMultiselectCategoriesContextMenuItemCommand, false);    
+  }
+  
+  return newItem;
+},
 
 // disable context menu if no card has been selected, or fill context menu with found categories
-jbCatMan.onResultsTreeContextMenuPopup = function () {
+jbCatMan.onResultsTreeContextMenuPopup = function (event) {
+  // Only act upon event notifications of the original assigned event handler, not bubbled ones.
+  if (event.target.id != event.currentTarget.id) {
+    return;
+  }
+  
+  let cards = GetSelectedAbCards();  
+  let abURI = GetSelectedDirectory();
+  let menu = document.getElementById("CatManCategoriesContextMenu");
+  menu.disabled = (cards.length == 0);
+  if (menu.disabled) {
+    return;
+  }
+  
+  let popup = document.getElementById("CatManCategoriesContextPopup");
+  while (popup.lastChild) {
+      popup.removeChild(popup.lastChild);
+  }
 
-  let cards = GetSelectedAbCards();
-  let rootEntry = document.getElementById("CatManCategoriesContextMenu");
-  rootEntry.disabled = (cards.length == 0);
-  if (!rootEntry.disabled) {
-
-    let popup = document.getElementById("CatManCategoriesContextMenu-popup");
-    while (popup.lastChild) {
-        popup.removeChild(popup.lastChild);
+  let currentCategories = jbCatMan.data.categoryList.slice();
+  if (jbCatMan.hierarchyMode) {
+    // Remove all categories, which are fully contained within other categories
+    // and thus do not need to be added in *this* level.
+    for (let subCat of jbCatMan.data.categoryList) {
+      let subs = jbCatMan.getSubCategories(abURI, [subCat], true);
+      currentCategories = currentCategories.filter(e => !subs.includes(e));
     }
-
-    let allCatsArray = jbCatMan.data.categoryList;
-    for (let k = 0; k < allCatsArray.length; k++) {
-      let countIn = 0;
-      let countOut = 0;
-
-      for (let i = 0; i < cards.length; i++) {
-        if (cards[i].isMailList)
-          continue;
-
-        let thisCatsArray = jbCatMan.getCategoriesfromCard(cards[i]);
-        if (thisCatsArray.indexOf(allCatsArray[k]) != -1) {
-          //this card is in this category
-          countIn++;
-        } else {
-          //this card is not in this category
-          countOut++;
-        }
-      }
-      
-      let newItem = document.createElement("menuitem");
-      //newItem.setAttribute("autocheck", "false");
-      newItem.setAttribute("type", "checkbox");
-      newItem.setAttribute("value", allCatsArray[k]);
-      if (countIn != 0 && countOut == 0) newItem.setAttribute("checked", "true");
-      else newItem.setAttribute("checked", "false");        
-
-      //if it is a multiselection, add counts to label and open special popup on click
-      if (cards.length > 1) {
-        newItem.setAttribute("label", allCatsArray[k] + " ("+countIn + "/" + (countIn + countOut) + ")");
-        newItem.addEventListener("click", jbCatMan.onMultiselectCategoriesContextMenuItemCommand, false);
-      } else {
-        newItem.setAttribute("label", allCatsArray[k]);
-        if (cards[0].isMailList) newItem.setAttribute("disabled","true")
-        else newItem.addEventListener("click", jbCatMan.onCategoriesContextMenuItemCommand, false);
-      }
-      
-      popup.appendChild(newItem);
-    }
+  }
+  
+  for (let subCat of currentCategories) {
+    let newItem = jbCatMan.addCategoryPopupEntry(subCat, cards);
+    if (newItem) popup.appendChild(newItem);
   }
 }
 
@@ -624,21 +661,21 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
   onItemAdded: function AbListenerToUpdateCategoryList_onItemAdded(aParentDir, aItem) {
     if (aItem instanceof Components.interfaces.nsIAbCard) {
       window.clearTimeout(jbCatMan.eventUpdateTimeout);
-      jbCatMan.eventUpdateTimeout = window.setTimeout(function() { jbCatMan.updateCategoryList(); }, 1000);
+      jbCatMan.eventUpdateTimeout = window.setTimeout(function() { jbCatMan.updateCategoryList(); }, 500);
     }
   },
 
   onItemPropertyChanged: function AbListenerToUpdateCategoryList_onItemPropertyChanged(aItem, aProperty, aOldValue, aNewValue) {
     if (aItem instanceof Components.interfaces.nsIAbCard) {
       window.clearTimeout(jbCatMan.eventUpdateTimeout);
-      jbCatMan.eventUpdateTimeout = window.setTimeout(function() { jbCatMan.updateCategoryList(); }, 1000);
+      jbCatMan.eventUpdateTimeout = window.setTimeout(function() { jbCatMan.updateCategoryList(); }, 500);
     }
   },
 
   onItemRemoved: function AbListenerToUpdateCategoryList_onItemRemoved(aParentDir, aItem) {
     if (aItem instanceof Components.interfaces.nsIAbCard) {
       window.clearTimeout(jbCatMan.eventUpdateTimeout);
-      jbCatMan.eventUpdateTimeout = window.setTimeout(function() { jbCatMan.updateCategoryList(); }, 1000);
+      jbCatMan.eventUpdateTimeout = window.setTimeout(function() { jbCatMan.updateCategoryList(); }, 500);
     }
   },
 
@@ -697,7 +734,7 @@ jbCatMan.initAddressbook = function() {
   document.getElementById("dirTree").addEventListener('select', jbCatMan.onSelectAddressbook, true);
 
   //Add listener for category context menu in results pane
-  document.getElementById("CatManCategoriesContextMenu-popup").addEventListener("popupshowing", jbCatMan.onResultsTreeContextMenuPopup, false);
+  document.getElementById("abResultsTreeContext").addEventListener("popupshowing", jbCatMan.onResultsTreeContextMenuPopup, false);
 
   //Add listener for category context menu in category pane
   document.getElementById("CatManContextMenu").addEventListener("popupshowing", jbCatMan.updateContextMenu , false);

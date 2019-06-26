@@ -442,7 +442,7 @@ jbCatMan.getUserNamefromCard = function (card) {
   return userName;
 }
 
-jbCatMan.getSubCategories = function (abURI, categoryFilter) {
+jbCatMan.getSubCategories = function (abURI, categoryFilter, requireFullyContained) {
   let searchstring = jbCatMan.getCategorySearchString(abURI, categoryFilter);
   let searches = jbCatMan.getSearchesFromSearchString(searchstring);
 
@@ -459,8 +459,13 @@ jbCatMan.getSubCategories = function (abURI, categoryFilter) {
       }
     }
   }
-  
-  return subCategories.sort();
+
+  subCategories.sort();
+  if (requireFullyContained) {
+    return subCategories.filter(cat => jbCatMan.getNumberOfFilteredCards(abURI, categoryFilter.concat([cat])) == jbCatMan.data.foundCategories[cat].length);
+  } else {
+    return subCategories;
+  }
 }
 
 jbCatMan.updateCategories = function (mode, oldName, newName) {

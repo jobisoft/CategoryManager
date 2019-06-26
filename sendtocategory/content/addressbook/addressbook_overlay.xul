@@ -108,11 +108,11 @@
     </vbox>
 
         
-  <popup id="abResultsTreeContext">
+  <menupopup id="abResultsTreeContext">
     <menu id="CatManCategoriesContextMenu" label="&sendtocategory.categoriescontext.label;" insertafter="abResultsTreeContext-properties">
-      <menupopup id="CatManCategoriesContextMenu-popup">
+      <menupopup id="CatManCategoriesContextPopup">
       </menupopup>
     </menu>
-  </popup>
+  </menupopup>
   
 </overlay>
