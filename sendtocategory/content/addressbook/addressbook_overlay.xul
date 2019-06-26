@@ -110,7 +110,7 @@
         
   <menupopup id="abResultsTreeContext">
     <menu id="CatManCategoriesContextMenu" label="&sendtocategory.categoriescontext.label;" insertafter="abResultsTreeContext-properties">
-      <menupopup id="CatManCategoriesContextPopup">
+      <menupopup>
       </menupopup>
     </menu>
   </menupopup>

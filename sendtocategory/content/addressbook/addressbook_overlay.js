@@ -45,6 +45,21 @@ TODO
 // adding additional functions to the local jbCatMan Object
 //###################################################
 
+
+jbCatMan.getReducedCategoriesForHierarchyMode = function (abURI, categories, categoryFilter) {
+  if (jbCatMan.hierarchyMode) {
+    let reducedCategories = categories.slice();
+    // Remove all categories, which are fully contained within other categories
+    // and thus do not need to be added in *this* level.
+    for (let subCat of categories) {
+      let subs = jbCatMan.getSubCategories(abURI, categoryFilter.concat([subCat]), true);
+      reducedCategories = reducedCategories.filter(e => !subs.includes(e));
+    }
+    return reducedCategories;
+  }
+  return categories;
+}
+
 jbCatMan.addCategoryListEntry = function (abURI, newCategoryName, currentCategoryFilter = []) {
   // Clone the array, do not mod the original array.
   let categoryFilter = currentCategoryFilter.slice();
@@ -106,17 +121,8 @@ jbCatMan.toggleCategoryListEntry = function (abURI, element) {
     // add entries
     let hook =  element.nextSibling;
 
-    let currentCategories = element.subCategories.slice();
-    if (jbCatMan.hierarchyMode) {
-      // Remove all categories, which are fully contained within other categories
-      // and thus do not need to be added in *this* level.
-      for (let subCat of element.subCategories) {
-        let subs = jbCatMan.getSubCategories(abURI, element.categoryFilter.concat([subCat]), true);
-        currentCategories = currentCategories.filter(e => !subs.includes(e));
-      }
-    }
-    
-    for (let subCat of currentCategories) {
+    let reducedCategories = jbCatMan.getReducedCategoriesForHierarchyMode(abURI, element.subCategories, element.categoryFilter);    
+    for (let subCat of reducedCategories) {
       let newItem = jbCatMan.addCategoryListEntry(abURI, subCat, element.categoryFilter);
       if (newItem) categoriesList.insertBefore(newItem, hook);    
     }
@@ -177,17 +183,8 @@ jbCatMan.updateCategoryList = function () {
   }
   
   // Add all categories from the updated/merged array to the category listbox.
-  let currentCategories = jbCatMan.data.categoryList.slice();
-  if (jbCatMan.hierarchyMode) {
-    // Remove all categories, which are fully contained within other categories
-    // and thus do not need to be added in *this* level.
-    for (let subCat of jbCatMan.data.categoryList) {
-      let subs = jbCatMan.getSubCategories(abURI, [subCat], true);
-      currentCategories = currentCategories.filter(e => !subs.includes(e));
-    }
-  }
-  
-  for (let subCat of currentCategories) {
+  let reducedCategories = jbCatMan.getReducedCategoriesForHierarchyMode(abURI, jbCatMan.data.categoryList, []);    
+  for (let subCat of reducedCategories) {
     let newItem = jbCatMan.addCategoryListEntry(abURI, subCat);
     if (newItem) categoriesList.appendChild(newItem);
   }
@@ -521,18 +518,20 @@ jbCatMan.onDeleteCategory = function () {
   }
 }
 
-jbCatMan.addCategoryPopupEntry = function (newCategoryName, cards) {
+jbCatMan.addCategoryPopupEntry = function (newCategoryName, cards, currentCategoryFilter = []) {
   let abURI = GetSelectedDirectory();
-  let categoryFilter = [];
+  // Clone the array, do not mod the original array.
+  let categoryFilter = currentCategoryFilter.slice();
   categoryFilter.push(newCategoryName);
   
-  let newItem = document.createElement("menuitem");
-  newItem.setAttribute("class", "menuitem-iconic");
+  // in hierarchy mode we always add submenu for the "new" entry
+  let itemType = (jbCatMan.hierarchyMode) ? "menu" : "menuitem";
+  let newItem = document.createElement(itemType);
+  newItem.setAttribute("class", itemType + "-iconic");
   newItem.setAttribute("label", newCategoryName);
   newItem.categoryName = newCategoryName;
   newItem.categoryFilter = categoryFilter;  
   newItem.categorySize = jbCatMan.getNumberOfFilteredCards(abURI, categoryFilter);
-  newItem.subCategories = jbCatMan.getSubCategories(abURI, categoryFilter, true);
   
   let countIn = 0;
   let countOut = 0;  
@@ -567,45 +566,42 @@ jbCatMan.addCategoryPopupEntry = function (newCategoryName, cards) {
     newItem.addEventListener("click", jbCatMan.onMultiselectCategoriesContextMenuItemCommand, false);    
   }
   
+  if (itemType == "menu") {
+      let newPopup = document.createElement("menupopup");
+      newPopup.subCategories = jbCatMan.getSubCategories(abURI, categoryFilter, false);
+      newPopup.categoryFilter = categoryFilter;
+      newItem.appendChild(newPopup);
+  }
+  
   return newItem;
 },
 
 // disable context menu if no card has been selected, or fill context menu with found categories
 jbCatMan.onResultsTreeContextMenuPopup = function (event) {
-  // Only act upon event notifications of the original assigned event handler, not bubbled ones.
-  if (event.target.id != event.currentTarget.id) {
-    return;
-  }
-  
   let cards = GetSelectedAbCards();  
   let abURI = GetSelectedDirectory();
-  let menu = document.getElementById("CatManCategoriesContextMenu");
-  menu.disabled = (cards.length == 0);
-  if (menu.disabled) {
-    return;
-  }
-  
-  let popup = document.getElementById("CatManCategoriesContextPopup");
-  while (popup.lastChild) {
-      popup.removeChild(popup.lastChild);
-  }
 
-  let currentCategories = jbCatMan.data.categoryList.slice();
-  if (jbCatMan.hierarchyMode) {
-    // Remove all categories, which are fully contained within other categories
-    // and thus do not need to be added in *this* level.
-    for (let subCat of jbCatMan.data.categoryList) {
-      let subs = jbCatMan.getSubCategories(abURI, [subCat], true);
-      currentCategories = currentCategories.filter(e => !subs.includes(e));
+  if (event.target.id == "abResultsTreeContext") {
+
+    let menu = document.getElementById("CatManCategoriesContextMenu");
+    menu.disabled = (cards.length == 0);
+
+  } else {
+
+    while (event.target.lastChild) {
+      event.target.removeChild(event.target.lastChild);
     }
-  }
-  
-  for (let subCat of currentCategories) {
-    let newItem = jbCatMan.addCategoryPopupEntry(subCat, cards);
-    if (newItem) popup.appendChild(newItem);
+
+    let subCategories = event.target.subCategories ? event.target.subCategories : jbCatMan.data.categoryList;
+    let categoryFilter = event.target.categoryFilter ? event.target.categoryFilter : [];
+    let reducedCategories = jbCatMan.getReducedCategoriesForHierarchyMode(abURI, subCategories, categoryFilter);    
+    for (let subCat of reducedCategories) {
+      let newItem = jbCatMan.addCategoryPopupEntry(subCat, cards, categoryFilter);
+      if (newItem) event.target.appendChild(newItem);
+    }
+    
   }
 }
-
 
 
 // a category has been clicked on in the context menu while multiple contacts have been selected -> open special edit dialog to make changes
