@@ -14,8 +14,9 @@
   
   <script type="application/javascript" src="chrome://sendtocategory/content/addressbook/edit_category.js" />
   <vbox id="CatManDialogBox">
-    <hbox>
-      <label value="&sendtocategory.name.label;" control="categoryName"/>
+    <hbox align="center">
+      <label value="&sendtocategory.name.label;:" control="categoryName"/>
+      <label style="font-style: italic" id="parentCategory" control="categoryName"/>
       <textbox id="categoryName"/>
     </hbox>
   </vbox>
