@@ -15,8 +15,6 @@
 <!ENTITY sendtocategory.showCategoryPaneButton.label "&#9650;">
 
 <!ENTITY sendtocategory.add.title "Agregar Categoría">
-<!ENTITY sendtocategory.addButton.label "Agregar Categoría">
-<!ENTITY sendtocategory.addButton.accesskey "A">
 
 <!ENTITY sendtocategory.edit.title "Renombrar Categoría">
 <!ENTITY sendtocategory.editMenu.label "Renombrar Categoría ##name##">

@@ -15,8 +15,6 @@
 <!ENTITY sendtocategory.showCategoryPaneButton.label "&#9650;">
 
 <!ENTITY sendtocategory.add.title "Neue Kategorie erstellen">
-<!ENTITY sendtocategory.addButton.label "Neue Kategorie erstellen">
-<!ENTITY sendtocategory.addButton.accesskey "N">
 
 <!ENTITY sendtocategory.edit.title "Kategorie umbenennen">
 <!ENTITY sendtocategory.editMenu.label "Kategorie ##name## umbenennen">

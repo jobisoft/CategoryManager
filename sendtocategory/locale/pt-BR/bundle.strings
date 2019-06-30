@@ -8,3 +8,4 @@ convert_all_to_standard_category=converter todas as categorias em categorias pad
 category_description=Caution: Essas categorias são "#### categorias" e são independentes das "categorias MFFAB", que são armazenadas em uma propriedade de contato diferente e podem ser gerenciadas na guia "Outros dados".
 
 viewWithoutCategories=Sem categoria
+createNewCategory=Criar nova categoria aqui

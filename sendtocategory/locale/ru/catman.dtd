@@ -15,8 +15,6 @@
 <!ENTITY sendtocategory.showCategoryPaneButton.label "&#9650;">
 
 <!ENTITY sendtocategory.add.title "добавить категорию">
-<!ENTITY sendtocategory.addButton.label "добавить категорию">
-<!ENTITY sendtocategory.addButton.accesskey "A">
 
 <!ENTITY sendtocategory.edit.title "переименовать категорию">
 <!ENTITY sendtocategory.editMenu.label "переименовать категорию ##name##">

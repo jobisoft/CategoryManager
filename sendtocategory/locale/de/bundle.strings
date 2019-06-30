@@ -8,3 +8,4 @@ convert_all_to_standard_category=konvertiere alle Kategorien zu Standard Kategor
 category_description=Achtung: Bei diesen Kategorien handelt es sich um "#### Kategorien", diese sind unabhängig von den "MFFAB Kategorien", die in einer anderen Kontakt-Eigenschaft gespeichert und unter dem Reiter 'Other data' bearbeitet werden können.
 
 viewWithoutCategories=Unkategorisiert
+createNewCategory=hier neue Kategorie anlegen

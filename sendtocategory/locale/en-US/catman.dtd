@@ -14,9 +14,7 @@
 <!ENTITY sendtocategory.hideCategoryPaneButton.label "&#9660;">
 <!ENTITY sendtocategory.showCategoryPaneButton.label "&#9650;">
 
-<!ENTITY sendtocategory.add.title "add category">
-<!ENTITY sendtocategory.addButton.label "add category">
-<!ENTITY sendtocategory.addButton.accesskey "A">
+<!ENTITY sendtocategory.add.title "create new category">
 
 <!ENTITY sendtocategory.edit.title "rename category">
 <!ENTITY sendtocategory.editMenu.label "rename category ##name##">
