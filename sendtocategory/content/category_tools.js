@@ -4,8 +4,6 @@ var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
 //create jbCatMan namespace
 var jbCatMan = {};
 
-jbCatMan.hierarchyMode = true;
-
 jbCatMan.quickdump = function (str) {
     Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService).logStringMessage("[CatMan] " + str);
 }
@@ -57,8 +55,6 @@ jbCatMan.init = function () {
   jbCatMan.data.abSize = 0;
   //create a map between directoryIds und abURI, so we can get the abURI for each card even if its directory is not known when using the global address book
   jbCatMan.data.abURI = [];
-
-  jbCatMan.data.emptyCategories = [];
 }
 
 
@@ -144,9 +140,12 @@ jbCatMan.modifyCard = function (card) {
 // UI related functions
 //##############################################
 
+// Using categoryFilter to be able to distinguish between "none", "all" and
+// any other value and to be able to actually display multiple categories,
+// if that gets implemented.
 jbCatMan.updatePeopleSearchInput = function (categoryFilter) {
   if (Array.isArray(categoryFilter) && categoryFilter.length > 0) {
-    document.getElementById("peopleSearchInput").value = jbCatMan.locale.prefixForPeopleSearch + ": " + categoryFilter.join(jbCatMan.hierarchyMode ? " / " : " & ");
+    document.getElementById("peopleSearchInput").value = jbCatMan.locale.prefixForPeopleSearch + ": " + categoryFilter[categoryFilter.length-1];
     
   } else if (categoryFilter == "uncategorized") {
     document.getElementById("peopleSearchInput").value = jbCatMan.locale.prefixForPeopleSearch + ": " + jbCatMan.getLocalizedMessage("viewWithoutCategories");
@@ -176,7 +175,7 @@ jbCatMan.getCategorySearchString = function(abURI, categoryFilter) {
         searchFields.push("("+field+",=,"+encodeURIComponent( category ).replace("(","%28").replace(")","%29") +")");
         searchCats.push("(or" + searchFields.join("") + ")");
       }
-      searchstring =  abURI + "?" + "(and" + searchCats.join("") + ")";
+      searchstring =  abURI + "?" + "(or" + searchCats.join("") + ")";
 
     } else if (categoryFilter == "uncategorized") {
       searchstring =  abURI + "?" + "(or("+jbCatMan.getCategoryField()+",!ex,''))";
@@ -348,23 +347,6 @@ jbCatMan.getCategoryField = function (mode = jbCatMan.isMFFABCategoryMode()) {
 }
 
 
-
-jbCatMan.getNumberOfFilteredCards = function (abURI, categoryFilter) {
-  let searchstring = jbCatMan.getCategorySearchString(abURI, categoryFilter);
-  let searches = jbCatMan.getSearchesFromSearchString(searchstring);
-
-  let length = 0;
-  for (let search of searches) {
-    let cards = MailServices.ab.getDirectory(search).childCards;
-    while (cards.hasMoreElements()) {
-      let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
-      length++;
-    }
-  }
-  return length;    
-}
-
-
 jbCatMan.getCategoriesFromString = function(catString, seperator = jbCatMan.getCategorySeperator()) {
   let catsArray = [];
   if (catString.trim().length>0) catsArray = catString.split(seperator).filter(String);
@@ -442,34 +424,6 @@ jbCatMan.getUserNamefromCard = function (card) {
   return userName;
 }
 
-jbCatMan.getSubCategories = function (abURI, categoryFilter, requireFullyContained) {
-  let searchstring = jbCatMan.getCategorySearchString(abURI, categoryFilter);
-  let searches = jbCatMan.getSearchesFromSearchString(searchstring);
-
-  let subCategories = [];
-  for (let search of searches) {
-    let cards = MailServices.ab.getDirectory(search).childCards;
-  
-    while (cards.hasMoreElements()) {
-      let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
-
-      let cats = jbCatMan.getCategoriesfromCard(card);
-      for (let cat of cats) {
-        if (!categoryFilter.includes(cat) && !subCategories.includes(cat)) subCategories.push(cat);
-      }
-    }
-  }
-
-  subCategories.sort();
-  if (requireFullyContained) {
-    let parentSize = jbCatMan.getNumberOfFilteredCards(abURI, categoryFilter);
-    // The raw size of the category must be equal to the filtered size but smaller than the parent size
-    return subCategories.filter(cat => (jbCatMan.getNumberOfFilteredCards(abURI, categoryFilter.concat([cat])) == jbCatMan.data.foundCategories[cat].length && parentSize > jbCatMan.data.foundCategories[cat].length));
-  } else {
-    return subCategories;
-  }
-}
-
 jbCatMan.updateCategories = function (mode, oldName, newName) {
   //get address book manager
   let addressBook = MailServices.ab.getDirectory(GetSelectedDirectory()); //GetSelectedDirectory() returns an URI, but we need the directory itself
@@ -485,19 +439,35 @@ jbCatMan.updateCategories = function (mode, oldName, newName) {
         
     if (catArray.length > 0) {  
       let writeCategoriesToCard = false;
-      for (let i=0; i < catArray.length; i++) {
-        // Check for a category delete or category rename request.
-        if (mode == "rename" && catArray[i] == oldName) {
-          catArray[i] = newName;
-          writeCategoriesToCard = true;
+      for (let i=0; i < catArray.length; i++) {        
+        if (catArray[i] == oldName || catArray[i].startsWith(oldName + " / ")) {
+
+          // Sanity check: If this was a hierachy cat, make sure it is part of all parents
+          let levels = oldName.split(" / ");
+          while (levels.length > 1) {
+            levels.pop();
+            let parentCat = levels.join(" / ");
+            if (!rebuildCatArray.includes(parentCat)) {
+              rebuildCatArray.push(parentCat);
+              writeCategoriesToCard = true;
+            }
+          }
+
+          // Perform remove or rename action.
+          if (mode == "rename") {
+            // oldName and newName include the full hierarchy
+            catArray[i] = catArray[i].replace(oldName, newName);
+            writeCategoriesToCard = true;
+          } else if (mode == "remove") {
+            writeCategoriesToCard = true;
+            continue;
+          }
         }
-        if (mode == "remove" && catArray[i] == oldName) {
-          writeCategoriesToCard = true;
-          continue;
-        }
+        
         // It is easier to build a new array, instead of deleting an entry out of an array, which is being looped.
         rebuildCatArray.push(catArray[i]);
       }
+      
       
       // Was there a manipulation of the card due to rename or delete request?
       if (writeCategoriesToCard) {
