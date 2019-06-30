@@ -1,38 +1,34 @@
 var jbCatMan = window.opener.jbCatMan;
 var jbCatManCatsEdit = {}
 
-jbCatManCatsEdit.createItem = function (label, value) {
+jbCatManCatsEdit.createItem = function (label, UID) {
     let newListItem = document.createElement("richlistitem");
-    newListItem.setAttribute("value", value);
+    newListItem.setAttribute("value", UID);
     let item = document.createElement("label");
     item.setAttribute("value", label);
     newListItem.appendChild(item);
     return newListItem;
 },
 
-
 jbCatManCatsEdit.init = function () {
   this.cards = [];
-  this.category = window.arguments[0] ;
+  this.categoryName = window.arguments[0];
   this.localTimeout = null;
   this.locked = false;
-
-
+  
   // update label and description
   let xulLabel = document.getElementById("CatsEditLabel").textContent;
-  document.getElementById("CatsEditLabel").textContent = xulLabel.replace("##name##","["+ this.category + "]");
+  document.getElementById("CatsEditLabel").textContent = xulLabel.replace("##name##","["+ this.categoryName.split(" / ").pop() + "]");
 
   let xulDesc = document.getElementById("CatsEditDescription").textContent;
-  document.getElementById("CatsEditDescription").textContent = xulDesc.replace("##name##","["+ this.category + "]");
+  document.getElementById("CatsEditDescription").textContent = xulDesc.replace("##name##","[ "+ this.categoryName + " ]");
 
   // fill listboxes
   this.inbox = document.getElementById('CatsEditInBox');
   this.outbox = document.getElementById('CatsEditOutBox');
   let UID = -1;
   
-  for (let i = 0; i < window.opener.GetSelectedAbCards().length; i++) {
-    let card =window.opener.GetSelectedAbCards()[i];
-
+  for (let card of window.opener.GetSelectedAbCards()) {
     if (card.isMailList)
       continue;
     
@@ -40,7 +36,6 @@ jbCatManCatsEdit.init = function () {
     this.cards[UID] = card;
     
     let userName = jbCatMan.getUserNamefromCard(card);
-    
     if (card.primaryEmail != "") userName = userName + " (" + card.primaryEmail + ")";
     else {
       let secondEmail = "";
@@ -51,15 +46,13 @@ jbCatManCatsEdit.init = function () {
     }
     
     let catsArray = jbCatMan.getCategoriesfromCard(card);
-    let catIdx = catsArray.indexOf(this.category);
-    if (catIdx == -1) {
+    if (catsArray.filter(cat => cat.startsWith(this.categoryName)).length == 0) {
       let newitem = this.outbox.appendChild(jbCatManCatsEdit.createItem(userName, UID));
       this.outbox.ensureElementIsVisible(newitem); //workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=250123#c16
     } else {
       let newitem = this.inbox.appendChild(jbCatManCatsEdit.createItem(userName, UID));
       this.inbox.ensureElementIsVisible(newitem); //workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=250123#c16
     }
-
   }
   
   // scroll to top 
@@ -101,12 +94,18 @@ jbCatManCatsEdit.init = function () {
     event.preventDefault(); // Prevent the dialog closing.
   });
   
+  this.inbox.selectedIndex = 0;
+  this.outbox.selectedIndex = 0;
+  jbCatManCatsEdit.onSelect();
 }
 
 /* Enable Add/Remove buttons, if at least one contact has been selected */
 jbCatManCatsEdit.onSelect = function () {
   document.getElementById("CatsEditAddButton").disabled = (this.outbox.selectedCount == 0);
   document.getElementById("CatsEditRemoveButton").disabled = (this.inbox.selectedCount == 0);
+  
+  document.getElementById("CatsEditAddAllButton").disabled = (this.outbox.getRowCount() == 0);
+  document.getElementById("CatsEditRemoveAllButton").disabled = (this.inbox.getRowCount() == 0);
 }
 
 /* Move contact from the OUT box to the IN box */
@@ -117,7 +116,20 @@ jbCatManCatsEdit.onClickAdd = function () {
     this.inbox.ensureElementIsVisible(newitem); //workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=250123#c16
   }
   // update buttons after manipulating lists
-  jbCatManCatsEdit.onSelect()
+  this.outbox.clearSelection();
+  jbCatManCatsEdit.onSelect();
+}
+
+/* Move ALL contact from the OUT box to the IN box */
+jbCatManCatsEdit.onClickAddAll = function () {
+  for (let i=this.outbox.getRowCount(); i>0; i--) {
+    let item = this.outbox.getItemAtIndex(i-1);
+    let newitem = this.inbox.appendChild(item);
+    this.inbox.ensureElementIsVisible(newitem); //workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=250123#c16
+  }
+  // update buttons after manipulating lists
+  this.outbox.clearSelection();
+  jbCatManCatsEdit.onSelect();
 }
 
 /* Move contact from the IN box to the OUT box */
@@ -128,8 +140,23 @@ jbCatManCatsEdit.onClickRemove = function () {
     this.outbox.ensureElementIsVisible(newitem); //workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=250123#c16
   }
   // update buttons after manipulating lists
-  jbCatManCatsEdit.onSelect()
+  this.inbox.clearSelection();
+  jbCatManCatsEdit.onSelect();
 }
+
+/* Move ALL contact from the IN box to the OUT box */
+jbCatManCatsEdit.onClickRemoveAll = function () {
+  for (let i=this.inbox.getRowCount(); i>0; i--) {
+    let item = this.inbox.getItemAtIndex(i-1);
+    let newitem = this.outbox.appendChild(item);
+    this.outbox.ensureElementIsVisible(newitem); //workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=250123#c16
+  }
+  // update buttons after manipulating lists
+  this.inbox.clearSelection();
+  jbCatManCatsEdit.onSelect();
+}
+
+
 
 /* Initiate final actions: lock dialog and call updateCard for first card */
 jbCatManCatsEdit.onAccept = function () {
@@ -161,23 +188,26 @@ jbCatManCatsEdit.onAccept = function () {
     
     let card = this.cards[item.value];
     let catsArray = jbCatMan.getCategoriesfromCard(card);
-    let idx = catsArray.indexOf(this.category);
+    let origsize = catsArray.length;
     
     // update card if needed
     if (progress < this.outbox.itemCount) {
-      // we are processing the outbox - check if card is in category, if yes -> remove it
-      if (idx > -1) {
-        catsArray.splice(idx, 1);
-        jbCatMan.setCategoriesforCard(card, catsArray);
-        jbCatMan.modifyCard(card);
-      }
+      // processing the outbox - remove card and all its children
+      catsArray = catsArray.filter(e => !e.startsWith(this.categoryName));
     } else {
-      // we are processing the inbox - check if card is in category, if not -> add it
-      if (idx == -1) {
-        catsArray.push(this.category);
-        jbCatMan.setCategoriesforCard(card, catsArray);
-        jbCatMan.modifyCard(card);
+      // processing the inbox - add card and all its parents
+      let levels = this.categoryName.split(" / ");
+      while (levels.length > 0) {
+        let parentCat = levels.join(" / ");
+        if (!catsArray.includes(parentCat)) catsArray.push(parentCat);
+        levels.pop();
       }
+    }
+    
+    // any changes?
+    if (origsize != catsArray.length) {
+      jbCatMan.setCategoriesforCard(card, catsArray);
+      jbCatMan.modifyCard(card);
     }
     
     // continue with next contact

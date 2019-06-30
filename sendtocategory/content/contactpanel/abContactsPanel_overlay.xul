@@ -5,7 +5,9 @@
 %abMainOverlayDTD;
 ]>
 
-<overlay id="CatManContactPanelOverlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<overlay 
+    id="CatManContactPanelOverlay"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
     
     <script type="text/javascript" src="chrome://sendtocategory/content/contactpanel/abContactsPanel_overlay.js"/>
     <script type="text/javascript">

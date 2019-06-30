@@ -28,6 +28,8 @@
             <vbox pack="center">
                 <button id ="CatsEditAddButton" disabled="true" label="&gt;" onclick="jbCatManCatsEdit.onClickAdd()" />
                 <button id ="CatsEditRemoveButton" disabled="true" label="&lt;" onclick="jbCatManCatsEdit.onClickRemove()" />
+                <button id ="CatsEditAddAllButton" disabled="true" label="&gt;&gt;" onclick="jbCatManCatsEdit.onClickAddAll()" style="margin-top:3em;" />
+                <button id ="CatsEditRemoveAllButton" disabled="true" label="&lt;&lt;" onclick="jbCatManCatsEdit.onClickRemoveAll()" />
             </vbox>
             <vbox width="250" pack="end">
                 <description id="CatsEditLabel">&sendtocategory.catsedit.label.in;</description>
