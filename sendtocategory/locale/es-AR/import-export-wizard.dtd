@@ -38,7 +38,7 @@
 <!ENTITY sendtocategory.wizard.export.options.csv.desc1 "Please set the properties of the CSV file.">
 <!ENTITY sendtocategory.wizard.export.options.csv.desc2 "Please select data fields for export. ">
 <!ENTITY sendtocategory.wizard.export.options.export "export">
-<!ENTITY sendtocategory.wizard.export.options.categorie "If the 'Categories' field is not selected for export, still export the membership of category '##CAT##'.">
+<!ENTITY sendtocategory.wizard.export.options.categorie "Exporte solo la afiliación a la categoría '## CAT ##' o una de sus subcategorías.">
 
 <!ENTITY sendtocategory.wizard.import.options.vcf.title "Import settings for VCF files">
 <!ENTITY sendtocategory.wizard.export.options.vcf.title "Export settings for VCF files">
