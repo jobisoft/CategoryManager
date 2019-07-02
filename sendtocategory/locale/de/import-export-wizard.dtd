@@ -38,7 +38,7 @@
 <!ENTITY sendtocategory.wizard.export.options.csv.desc1 "In der folgenden Übersicht können die Eigenschaften der CSV Datei festgelegt werden.">
 <!ENTITY sendtocategory.wizard.export.options.csv.desc2 "In der folgenden Übersicht können Sie festlegen, welche Felder der ausgewählten Kontakte exportiert werden sollen. ">
 <!ENTITY sendtocategory.wizard.export.options.export "exportieren">
-<!ENTITY sendtocategory.wizard.export.options.categorie "Exportiere nur die Zugehörigkeit zu Kategorie '##CAT##' oder einer ihrer Unterkategorien.">
+<!ENTITY sendtocategory.wizard.export.options.categorie "Exportiere die Zugehörigkeit zur Kategorie '##CAT##' und ihrer Unterkategorien. Ignoriere alle anderen Kategorien und die oben gesetzte Exporteinstellung für das Kategoriefeld.">
 
 <!ENTITY sendtocategory.wizard.import.options.vcf.title "Einstellungen für den Import einer VCF Datei">
 <!ENTITY sendtocategory.wizard.export.options.vcf.title "Einstellungen für den Export einer VCF Datei">
