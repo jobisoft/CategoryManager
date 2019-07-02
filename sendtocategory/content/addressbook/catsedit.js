@@ -1,9 +1,10 @@
 var jbCatMan = window.opener.jbCatMan;
 var jbCatManCatsEdit = {}
 
-jbCatManCatsEdit.createItem = function (label, UID) {
+jbCatManCatsEdit.createItem = function (label, UID, isMember) {
     let newListItem = document.createElement("richlistitem");
     newListItem.setAttribute("value", UID);
+    newListItem.wasMember = isMember;
     let item = document.createElement("label");
     item.setAttribute("value", label);
     newListItem.appendChild(item);
@@ -47,10 +48,10 @@ jbCatManCatsEdit.init = function () {
     
     let catsArray = jbCatMan.getCategoriesfromCard(card);
     if (catsArray.filter(cat => cat.startsWith(this.categoryName)).length == 0) {
-      let newitem = this.outbox.appendChild(jbCatManCatsEdit.createItem(userName, UID));
+      let newitem = this.outbox.appendChild(jbCatManCatsEdit.createItem(userName, UID, false));
       this.outbox.ensureElementIsVisible(newitem); //workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=250123#c16
     } else {
-      let newitem = this.inbox.appendChild(jbCatManCatsEdit.createItem(userName, UID));
+      let newitem = this.inbox.appendChild(jbCatManCatsEdit.createItem(userName, UID, true));
       this.inbox.ensureElementIsVisible(newitem); //workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=250123#c16
     }
   }
@@ -181,33 +182,32 @@ jbCatManCatsEdit.onAccept = function () {
 
   } else {
 
-    let item;
+    let item = {};
     // are we processing an outbox card or an inbox card?
-    if (progress < this.outbox.itemCount) item = this.outbox.getItemAtIndex(progress)
-    else item = this.inbox.getItemAtIndex(progress-this.outbox.itemCount);
+    if (progress < this.outbox.itemCount) item.remove = this.outbox.getItemAtIndex(progress)
+    else item.add = this.inbox.getItemAtIndex(progress-this.outbox.itemCount);
     
-    let card = this.cards[item.value];
-    let catsArray = jbCatMan.getCategoriesfromCard(card);
-    let origsize = catsArray.length;
-    
-    // update card if needed
-    if (progress < this.outbox.itemCount) {
-      // processing the outbox - remove card and all its children
-      catsArray = catsArray.filter(e => !e.startsWith(this.categoryName));
-    } else {
-      // processing the inbox - add card and all its parents
-      let levels = this.categoryName.split(" / ");
-      while (levels.length > 0) {
-        let parentCat = levels.join(" / ");
-        if (!catsArray.includes(parentCat)) catsArray.push(parentCat);
-        levels.pop();
+    if (item.remove && item.remove.wasMember) {
+      item.card = this.cards[item.remove.value];
+      // remove category and all its children
+      item.catsArray = jbCatMan.getCategoriesfromCard(item.card).filter(e => !e.startsWith(this.categoryName));
+      // add its parent (if needed)
+      let parent = this.categoryName.split(" / ").slice(0, -1).join(" / ");
+      if (item.catsArray.filter(e => e.startsWith(parent)).length == 0) {
+       item.catsArray.push(parent);
       }
     }
     
-    // any changes?
-    if (origsize != catsArray.length) {
-      jbCatMan.setCategoriesforCard(card, catsArray);
-      jbCatMan.modifyCard(card);
+    if (item.add && !item.add.wasMember) {
+      item.card = this.cards[item.add.value];
+      item.catsArray = jbCatMan.getCategoriesfromCard(item.card);
+      // add category
+      item.catsArray.push(this.categoryName);
+    }
+    
+    if (item.card) {
+      jbCatMan.setCategoriesforCard(item.card, item.catsArray);
+      jbCatMan.modifyCard(item.card);
     }
     
     // continue with next contact
