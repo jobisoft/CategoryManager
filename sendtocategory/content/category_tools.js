@@ -49,9 +49,6 @@ jbCatMan.init = function () {
   //mainly managed by jbCatMan.scanCategories()
   jbCatMan.data.foundCategories = [];
   jbCatMan.data.categoryList = [];
-  //used by bulk edit
-  jbCatMan.data.membersWithoutAnyEmail = [];
-  jbCatMan.data.emails = [];
   jbCatMan.data.abSize = 0;
   //create a map between directoryIds und abURI, so we can get the abURI for each card even if its directory is not known when using the global address book
   jbCatMan.data.abURI = [];
@@ -487,8 +484,6 @@ jbCatMan.scanCategories = function (abURI, field = jbCatMan.getCategoryField(), 
 
   data.foundCategories = [];
   data.categoryList = [];
-  data.membersWithoutAnyEmail = [];
-  data.emails = [];
   data.abSize = 0;
   data.abURI = [];
   data.cardsWithoutCategories = [];
@@ -531,21 +526,11 @@ jbCatMan.scanCategories = function (abURI, field = jbCatMan.getCategoryField(), 
           //-> foundCategories is using Strings as Keys
           if (catArray[i] in data.foundCategories == false) {
             data.foundCategories[catArray[i]] = [];
-            data.membersWithoutAnyEmail[catArray[i]] = 0;
-            data.emails[catArray[i]] = [];
             data.categoryList.push(catArray[i]);
           }
           
           //add card to category
           data.foundCategories[catArray[i]].push(CardID);
-          
-          //add card to emails-list
-          let email = jbCatMan.getEmailFromCard(card);
-          if (email) {
-            data.emails[catArray[i]].push(email);
-          } else {
-            data.membersWithoutAnyEmail[catArray[i]]++;
-          }
         }
       } else {
         data.cardsWithoutCategories.push(CardID);
