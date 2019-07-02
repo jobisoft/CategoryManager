@@ -52,7 +52,7 @@
 <!ENTITY sendtocategory.bulkedit.note "Note">
 <!ENTITY sendtocategory.bulkedit.membersWithoutPrimaryEmail "This category contains ##counts## contacts without an associated email address. The category information of these contacts cannot be edited with this dialog. They are not shown in the list above.">
 
-<!ENTITY sendtocategory.bulkedit.title "Edit category directly">
+<!ENTITY sendtocategory.bulkedit.title "edit category directly">
 <!ENTITY sendtocategory.bulkeditMenu.label "edit category ##name## directly">
 
 <!ENTITY sendtocategory.bulkedit.edit.title "Edit members of category ##name## directly:">
