@@ -45,17 +45,7 @@ function doOK()
               continue;
             }
             let catsArray = jbCatMan.getCategoriesfromCard(card);
-
-            // Add this and all parent categories
-            let addLevels = newName.split(" / ");
-            while (addLevels.length > 0) {
-              let addCat = addLevels.join(" / ");
-              if (!catsArray.includes(addCat)) {
-                catsArray.push(addCat);
-              }
-              addLevels.pop();
-            }            
-
+            catsArray.push(newName);
             jbCatMan.setCategoriesforCard(card, catsArray);
             jbCatMan.modifyCard(card);            
           }

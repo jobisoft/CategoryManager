@@ -350,7 +350,10 @@ jbCatMan.getCategoryField = function (mode = jbCatMan.isMFFABCategoryMode()) {
 jbCatMan.getCategoriesFromString = function(catString, seperator = jbCatMan.getCategorySeperator()) {
   let catsArray = [];
   if (catString.trim().length>0) catsArray = catString.split(seperator).filter(String);
-  return catsArray;
+  catsArray.sort();
+  
+  // Sanity check: Do not include parents.
+  return catsArray.filter((e, i, a) => (i == (a.length-1)) || !a[i+1].startsWith(e + " / "));
 }
 
 jbCatMan.getStringFromCategories = function(catsArray, seperator = jbCatMan.getCategorySeperator()) {
@@ -378,11 +381,12 @@ jbCatMan.getCategoriesfromCard = function (card, field = jbCatMan.getCategoryFie
 jbCatMan.setCategoriesforCard = function (card, catsArray,  field = jbCatMan.getCategoryField()) {
   let retval = true;
 
-  // sanity check
+  // Sanity check: Skip mailing lists.
   if (card.isMailList)
     return false;
   
-  let catsString = jbCatMan.getStringFromCategories(catsArray, jbCatMan.getCategorySeperator(field));
+  // Sanity check: Do not include parents.
+  let catsString = jbCatMan.getStringFromCategories(catsArray.filter((e, i, a) => (i == (a.length-1)) || !a[i+1].startsWith(e + " / ")), jbCatMan.getCategorySeperator(field));
 
   try {
      card.setPropertyAsAString(field, catsString);
@@ -440,27 +444,22 @@ jbCatMan.updateCategories = function (mode, oldName, newName) {
     if (catArray.length > 0) {  
       let writeCategoriesToCard = false;
       for (let i=0; i < catArray.length; i++) {        
-        if (catArray[i] == oldName || catArray[i].startsWith(oldName + " / ")) {
-
-          // Sanity check: If this was a hierachy cat, make sure it is part of all parents
-          let levels = oldName.split(" / ");
-          while (levels.length > 1) {
-            levels.pop();
-            let parentCat = levels.join(" / ");
-            if (!rebuildCatArray.includes(parentCat)) {
-              rebuildCatArray.push(parentCat);
-              writeCategoriesToCard = true;
-            }
-          }
+        if (catArray[i].startsWith(oldName)) { // Act upon this category and all sub categories.
 
           // Perform remove or rename action.
           if (mode == "rename") {
             // oldName and newName include the full hierarchy
+            writeCategoriesToCard = true;
             catArray[i] = catArray[i].replace(oldName, newName);
-            writeCategoriesToCard = true;
           } else if (mode == "remove") {
+            //put the card into the parent of oldname
             writeCategoriesToCard = true;
-            continue;
+            let parent = oldName.split(" / ").slice(0, -1).join(" / ");
+            if (parent) {
+              catArray[i] = parent;
+            } else {
+              continue;
+            }
           }
         }
         
