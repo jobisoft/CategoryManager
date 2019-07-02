@@ -31,50 +31,13 @@ jbCatManEditDialog.Init = function () {
   if (typeof SCSaveCategories != 'undefined') SCSaveCategories = function() {
   }
 
-  if (window.document.getElementById("abPopup")) {
-    window.document.getElementById("abPopup").addEventListener("command", jbCatManEditDialog.updateCategoriesDropDown, false);
-  }
-  
-  jbCatManEditDialog.updateCategoriesDropDown();
-}
-
-jbCatManEditDialog.updateCategoriesDropDown = function () {
-  //remove the list, if it exists
-  let oldmenulist =  window.document.getElementById("abCatManCategoriesAddBox");
-  if (oldmenulist) {
-    oldmenulist.parentNode.removeChild(oldmenulist);
-  }
-
-  let aParentDirURI= "";
+  window.document.getElementById('abCatManCategoriesAddBox').addEventListener("keydown",  function (e) { jbCatManEditDialog.keydown(e); }, false);
   if (window.location.href=="chrome://messenger/content/addressbook/abNewCardDialog.xul") {
-    aParentDirURI = window.document.getElementById("abPopup").value;
-  } else {
-    aParentDirURI = jbCatManEditDialog.getSelectedAbFromArgument(window.arguments[0]);
-  }  
-  let allCatsArray = jbCatMan.scanCategories(aParentDirURI, "Categories", true);
-  
-  //append all cats to the select dropdown
-  let menulist = window.document.createElement("menulist", { is : "menulist-editable"});
-  menulist.setAttribute("id", "abCatManCategoriesAddBox");
-  menulist.setAttribute("is", "menulist-editable");
-  menulist.setAttribute("flex", "1");
-  menulist.setAttribute("editable", "true");
-  menulist.addEventListener("keydown",  function (e) { jbCatManEditDialog.keydown(e); }, false);
-  
-  let popup = window.document.createElement("menupopup");
-  for (let i = 0; i < allCatsArray.length; i++) {    
-      let menuitem = window.document.createElement("menuitem");
-      menuitem.setAttribute("label", allCatsArray[i]);
-      menuitem.setAttribute("value", allCatsArray[i]);
-      popup.appendChild(menuitem);
+    if (window.document.getElementById("abPopup")) {
+      window.document.getElementById("abPopup").addEventListener("command", function() { jbCatManEditDialog.onLoadCard(null, window.document); }, false);
+    }
   }
-  menulist.appendChild(popup);
-  
-  //add menulist before add button
-  let desc = window.document.getElementById("abCatManCategoriesAddButton");
-  desc.parentNode.insertBefore(menulist, desc);	
 }
-
 
 
 jbCatManEditDialog.getSelectedAbFromArgument = function (arg) {
@@ -114,24 +77,42 @@ jbCatManEditDialog.addCategoryEntry = function (value) {
   if (value.trim() == "") {
     return;
   }
+  
   let list = window.document.getElementById("abCatManCategoriesList");
   //first check, if we have an entry of that name and just update the checkbox value
   for (let i=0; i < list.children.length; i++) {
-    if (list.children[i].children[0].children[1].value == value) {
-      list.children[i].children[0].children[0].setAttribute("checked", "true");
-      return;
-    }
+    let comp = value.localeCompare(list.children[i].children[0].children[1].value);
+    switch (comp) {
+      case -1: 
+        //insert here
+        list.insertBefore(jbCatManEditDialog.addItemToList(value), list.children[i]);    
+        return;
+      
+      case 0: 
+        // this is it
+        list.children[i].children[0].children[0].setAttribute("checked", "true");
+        return;
+      
+      case 1:
+      default:
+        // check next entry
+        break;
+    } 
   }
-  //if we reach this, value is new and must be added
+
+  // If we reach this, value is new larger then all existing entries and must be added last.
   list.appendChild(jbCatManEditDialog.addItemToList(value));
 }
-
-
-jbCatManEditDialog.addItemToList = function (label) {
+    
+jbCatManEditDialog.addItemToList = function (label, checked = true) {
+  let levels = label.split(" / ");
+  let level = levels.length-1;
+  let color = (255 - (level * 16)).toString(16);
+  
   let hbox = window.document.createElement("hbox");
-
+  
   let checkbox = window.document.createElement("checkbox");
-  checkbox.setAttribute("checked", "true");
+  checkbox.setAttribute("checked", checked ? "true" : "false");
   hbox.appendChild(checkbox);
 
   let categoryName = window.document.createElement("label");
@@ -140,17 +121,35 @@ jbCatManEditDialog.addItemToList = function (label) {
   hbox.appendChild(categoryName);
 
   let newListItem = window.document.createElement("richlistitem");
+  newListItem.style["background-color"] = "#" + color + color + color;
+  newListItem.style["color"] = "#000000";
   newListItem.appendChild(hbox);
   return newListItem
 }
 
 
 jbCatManEditDialog.onLoadCard = function (aCard, aDocument) {
-  let catsArray = jbCatMan.getCategoriesfromCard(aCard, "Categories"); 	
-  //append member cats to the listbox
+  let aParentDirURI= "";
+  if (aDocument.defaultView.location.href=="chrome://messenger/content/addressbook/abNewCardDialog.xul") {
+    aParentDirURI = aDocument.getElementById("abPopup").value;
+  } else {
+    aParentDirURI = jbCatManEditDialog.getSelectedAbFromArgument(aDocument.defaultView.arguments[0]);
+  }  
+  let allCatsArray = jbCatMan.scanCategories(aParentDirURI, "Categories", true);
+  
+  // Clear current list.
   let list = aDocument.getElementById("abCatManCategoriesList");
-  for (let i = 0; i < catsArray.length; i++) {    
-    list.appendChild(jbCatManEditDialog.addItemToList(catsArray[i]));
+  list.clearSelection();
+  for (let i=list.getRowCount(); i>0; i--) {
+    list.getItemAtIndex(i-1).remove();
+  }
+  
+  // Add all cats to the list.
+  let catsArray = aCard ? jbCatMan.getCategoriesfromCard(aCard, "Categories") : []; 	
+  //for (let c = allCatsArray.length-1; c >= 0; c--) {
+  for (let c = 0; c < allCatsArray.length; c++) {
+    let cat = allCatsArray[c];
+    list.appendChild(jbCatManEditDialog.addItemToList(cat, catsArray.includes(cat)));
   }
 }
 
@@ -168,19 +167,15 @@ jbCatManEditDialog.onSaveCard = function (aCard, aDocument) {
 }
 
 
-
-
-
 //Init on load
 window.addEventListener("load", function() { 
   jbCatManEditDialog.Init(); 
 }, false);
 
-
 //register load and save listeners
-  if (window.location.href=="chrome://messenger/content/addressbook/abNewCardDialog.xul") {
-      window.RegisterSaveListener(jbCatManEditDialog.onSaveCard);        
-  } else {            
-      window.RegisterLoadListener(jbCatManEditDialog.onLoadCard);
-      window.RegisterSaveListener(jbCatManEditDialog.onSaveCard);	
-  }
+if (window.location.href=="chrome://messenger/content/addressbook/abNewCardDialog.xul") {
+  window.RegisterSaveListener(jbCatManEditDialog.onSaveCard);        
+} else {            
+    window.RegisterLoadListener(jbCatManEditDialog.onLoadCard);
+    window.RegisterSaveListener(jbCatManEditDialog.onSaveCard);	
+}

@@ -46,51 +46,116 @@ TODO
 //###################################################
 
 
-jbCatMan.getReducedCategoriesForHierarchyMode = function (abURI, categories, categoryFilter) {
-  if (jbCatMan.hierarchyMode) {
-    let reducedCategories = categories.slice();
-    // Remove all categories, which are fully contained within other categories
-    // and thus do not need to be added in *this* level.
-    for (let subCat of categories) {
-      let subs = jbCatMan.getSubCategories(abURI, categoryFilter.concat([subCat]), true);
-      reducedCategories = reducedCategories.filter(e => !subs.includes(e));
+jbCatMan.getReducedCategoriesForHierarchyMode = function (parentCategory = null) {
+  let reducedCategories = [];
+  
+  let level = parentCategory ? parentCategory.split(" / ").length + 1 : 1;
+  for (let cat of jbCatMan.data.categoryList) {
+    let thisLevel = cat.split(" / ");      
+    thisLevel.splice(level);
+    thisLevel = thisLevel.join(" / "); 
+    
+    if ((!parentCategory || thisLevel.startsWith(parentCategory + " / ")) && !reducedCategories.includes(thisLevel)) {
+      reducedCategories.push(thisLevel);
     }
-    return reducedCategories;
   }
-  return categories;
+
+  return reducedCategories;
 }
 
-jbCatMan.addCategoryListEntry = function (abURI, newCategoryName, currentCategoryFilter = []) {
-  // Clone the array, do not mod the original array.
-  let categoryFilter = currentCategoryFilter.slice();
-  categoryFilter.push(newCategoryName);
+jbCatMan.getSubCategories = function (parentCategory) {
+  let subCategories = [];
+  for (let category of jbCatMan.data.categoryList) {
+    // Do not include parentCategory.
+    if (category.startsWith(parentCategory + " / ")) subCategories.push(category);
+  }
+  subCategories.sort();
+  return subCategories;
+}
 
+jbCatMan.getNumberOfFilteredCards = function (abURI, categoryFilter) {
+  let searchstring = jbCatMan.getCategorySearchString(abURI, categoryFilter);
+  let searches = jbCatMan.getSearchesFromSearchString(searchstring);
+
+  let length = 0;
+  for (let search of searches) {
+    let cards = MailServices.ab.getDirectory(search).childCards;
+    while (cards.hasMoreElements()) {
+      let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
+      length++;
+    }
+  }
+  return length;    
+}
+
+
+jbCatMan.dragdrop = {
+  handleEvent(event) {                  
+    switch (event.type) {
+      case "dragenter":
+      case "dragover":
+        event.preventDefault();
+        event.currentTarget.style["background-color"] = "#555555"; 
+        break;
+      case "dragleave":
+        event.currentTarget.style["background-color"] = ""; 
+        break;
+      
+
+      case "drop":
+        event.preventDefault();
+        let destination = event.currentTarget.categoryName;
+        let originalName = event.dataTransfer.getData("categoryName");
+        let newName = destination + " / " + originalName.split(" / ").slice(-1);
+        jbCatMan.updateCategories("rename", originalName, newName); 
+        break;
+
+      
+      case "dragstart": 
+        event.dataTransfer.setData("categoryName", event.currentTarget.categoryName);
+        break;
+          
+      case "dragend": 
+        break;
+      
+      default: 
+        return undefined;
+    }
+  },
+};
+
+jbCatMan.addCategoryListEntry = function (abURI, newCategoryName) {
   let newListItem = document.createElement("richlistitem");
-  newListItem.id = btoa(JSON.stringify(categoryFilter)).split("=").join("");
   newListItem.categoryName = newCategoryName;
-  newListItem.categoryFilter = categoryFilter;  
-  newListItem.categorySize = jbCatMan.getNumberOfFilteredCards(abURI, categoryFilter);
-  newListItem.subCategories = jbCatMan.getSubCategories(abURI, categoryFilter, false);
-    
-  let classes = [];
-  for (let i = 0; i < categoryFilter.length; i++) classes.push("level" + i);
-  newListItem.setAttribute("class", classes.join(" "));
+  newListItem.subCategories = jbCatMan.getSubCategories(newCategoryName);
+  newListItem.categoryFilter = newListItem.subCategories.concat(newCategoryName); // to filter the view
+  newListItem.categorySize = jbCatMan.getNumberOfFilteredCards(abURI, newListItem.categoryFilter);
+  newListItem.id = btoa("Category:" + newCategoryName).split("=").join("");
+  newListItem.addEventListener("dragenter", jbCatMan.dragdrop);
+  newListItem.addEventListener("dragover", jbCatMan.dragdrop);
+  newListItem.addEventListener("dragleave", jbCatMan.dragdrop);
+  newListItem.addEventListener("dragstart", jbCatMan.dragdrop);
+  newListItem.addEventListener("dragend", jbCatMan.dragdrop);
+  newListItem.addEventListener("drop", jbCatMan.dragdrop);
+  
+  let levels = [];
+  let categoryLevels = newCategoryName.split(" / ");
+  for (let i = 0; i < categoryLevels.length; i++) levels.push("level" + i);
+  newListItem.setAttribute("class", levels.join(" "));
   newListItem.setAttribute("isOpen", "false");
 
-  if (jbCatMan.hierarchyMode) {
-    let categoryMore = document.createElement("hbox");
-    if (newListItem.subCategories.length > 0) {
-      categoryMore.setAttribute("class", "twisty");
-      categoryMore.addEventListener("click", function(e) { jbCatMan.onClickCategoryList(e); }, false);
-    }
-    categoryMore.setAttribute("flex", "0");
-    categoryMore.style["margin-left"] = (currentCategoryFilter.length * 16) + "px";
-    newListItem.appendChild(categoryMore);
+  let categoryMore = document.createElement("hbox");
+  if (newListItem.subCategories.length > 0) {
+    categoryMore.setAttribute("class", "twisty");
+    categoryMore.addEventListener("click", function(e) { jbCatMan.onClickCategoryList(e); }, false);
   }
+  categoryMore.setAttribute("flex", "0");
+  categoryMore.style["margin-left"] = ((categoryLevels.length-1) * 16) + "px";
+  newListItem.appendChild(categoryMore);
   
   let categoryName = document.createElement("label");
   categoryName.setAttribute("flex", "1");
-  categoryName.setAttribute("value", newCategoryName);
+  categoryName.setAttribute("value", categoryLevels[categoryLevels.length-1]);
   newListItem.appendChild(categoryName);
   
   let categorySize = document.createElement("label");
@@ -110,20 +175,19 @@ jbCatMan.toggleCategoryListEntry = function (abURI, element) {
     // remove all entries up to the next element with the same level
     while (
       element.nextSibling && 
-      element.nextSibling.categoryFilter && 
-      Array.isArray(element.nextSibling.categoryFilter) && 
-      element.nextSibling.categoryFilter.length > element.categoryFilter.length) {
+      element.nextSibling.categoryName && 
+      element.nextSibling.categoryName.split(" / ").length > element.categoryName.split(" / ").length) {
         element.nextSibling.remove();
     }
   } else {
     // toggle to open
     element.setAttribute("isOpen", "true");
     // add entries
-    let hook =  element.nextSibling;
+    let hook = element.nextSibling;
 
-    let reducedCategories = jbCatMan.getReducedCategoriesForHierarchyMode(abURI, element.subCategories, element.categoryFilter);    
+    let reducedCategories = jbCatMan.getReducedCategoriesForHierarchyMode(element.categoryName);    
     for (let subCat of reducedCategories) {
-      let newItem = jbCatMan.addCategoryListEntry(abURI, subCat, element.categoryFilter);
+      let newItem = jbCatMan.addCategoryListEntry(abURI, subCat);
       if (newItem) categoriesList.insertBefore(newItem, hook);    
     }
   }
@@ -133,30 +197,13 @@ jbCatMan.updateCategoryList = function () {
   jbCatMan.scanCategories(GetSelectedDirectory());
   let abURI = GetSelectedDirectory();
   
-  // It could be, that a category from emptyCategories is no longer empty (it was scanned) -> remove it from empty.
-  for (let i = 0; i < jbCatMan.data.categoryList.length; i++) {
-    if (jbCatMan.data.emptyCategories.indexOf(jbCatMan.data.categoryList[i]) != -1) {
-      jbCatMan.data.emptyCategories.splice(jbCatMan.data.emptyCategories.indexOf(jbCatMan.data.categoryList[i]),1);
-    }
-  }
-  
-  // Any other category in the empty category list needs to be added now to the category list.
-  for (let i = 0; i < jbCatMan.data.emptyCategories.length; i++) {
-    if (jbCatMan.data.categoryList.indexOf(jbCatMan.data.emptyCategories[i]) < 0) {
-      jbCatMan.data.categoryList.push(jbCatMan.data.emptyCategories[i]);
-    }
-  }
-  jbCatMan.data.categoryList.sort();
-  
   // Save current open-states.
   let categoriesList = document.getElementById("CatManCategoriesList");
   let openNodes = categoriesList.querySelectorAll('richlistitem[isOpen=true]');  
   let openFilters = [];
   for (let openNode of openNodes) {
-    openFilters.push(JSON.stringify(openNode.categoryFilter));
+    openFilters.push(openNode.id);
   }
-  // Sort order must be reversed, otherwise child elements are before parent elements (which will skip the childs).
-  openFilters.sort().reverse();
    
   // Clear current  list.
   categoriesList.clearSelection();
@@ -168,7 +215,7 @@ jbCatMan.updateCategoryList = function () {
   if (!(MailServices.ab.getDirectory(abURI).isRemote)) {// || (abURI == "moz-abdirectory://?" && jbCatMan.data.abSize == 0))) {
     let newListItem = document.createElement("richlistitem");
     newListItem.categoryFilter = "none";
-    newListItem.id = btoa(JSON.stringify(newListItem.categoryFilter)).split("=").join("");
+    newListItem.id = btoa("Default:" + newListItem.categoryFilter).split("=").join("");
     let categoryName = document.createElement("label");
     categoryName.setAttribute("flex", "1");
     categoryName.setAttribute("value", jbCatMan.locale.viewAllCategories);
@@ -182,8 +229,8 @@ jbCatMan.updateCategoryList = function () {
     categoriesList.appendChild(newListItem);
   }
   
-  // Add all categories from the updated/merged array to the category listbox.
-  let reducedCategories = jbCatMan.getReducedCategoriesForHierarchyMode(abURI, jbCatMan.data.categoryList, []);    
+  // Add all first level categories.
+  let reducedCategories = jbCatMan.getReducedCategoriesForHierarchyMode();    
   for (let subCat of reducedCategories) {
     let newItem = jbCatMan.addCategoryListEntry(abURI, subCat);
     if (newItem) categoriesList.appendChild(newItem);
@@ -191,21 +238,21 @@ jbCatMan.updateCategoryList = function () {
 
   // Restore open states.
   for (let openFilter of openFilters) {
-    let node = categoriesList.querySelector("#" + btoa(openFilter).split("=").join(""));  
-    if (node) jbCatMan.toggleCategoryListEntry(abURI, node);
+    let node = categoriesList.querySelector("#" + openFilter);  
+    if (node) {
+      jbCatMan.toggleCategoryListEntry(abURI, node);
+    }
   }
   
   // Disable "cardsWithoutCategories" element if global book and global book empty or if remote book
   if (!(MailServices.ab.getDirectory(abURI).isRemote)) {// || (abURI == "moz-abdirectory://?" && jbCatMan.data.cardsWithoutCategories.length == 0))) {
     let newListItem = document.createElement("richlistitem");
     newListItem.categoryFilter = "uncategorized";
-    newListItem.id = btoa(JSON.stringify(newListItem.categoryFilter)).split("=").join("");
+    newListItem.id = btoa("Default:" + newListItem.categoryFilter).split("=").join("");
 
-    if (jbCatMan.hierarchyMode) {
-      let categoryMore = document.createElement("hbox");
-      categoryMore.setAttribute("flex", "0");
-      newListItem.appendChild(categoryMore);
-    }
+    let categoryMore = document.createElement("hbox");
+    categoryMore.setAttribute("flex", "0");
+    newListItem.appendChild(categoryMore);
     
     let categoryName = document.createElement("label");
     categoryName.setAttribute("flex", "1");
@@ -221,18 +268,18 @@ jbCatMan.updateCategoryList = function () {
   }
   
   // Check, if the former selected element still exists and select it again.
-  if (jbCatMan.data.selectedCategoryFilter) {
-    let node = categoriesList.querySelector("#" + btoa(JSON.stringify(jbCatMan.data.selectedCategoryFilter)).split("=").join(""));  
+  if (jbCatMan.data.selectedCategory) {
+    let node = categoriesList.querySelector("#" + jbCatMan.data.selectedCategory);  
     if (node) {
       categoriesList.selectedItem = node;
       
       // Final check: Is the result view pane up to date? This is still not the best way to do it ...
       if (document.getElementById('abResultsTree').view.rowCount != node.categorySize) {
-        jbCatMan.doCategorySearch(jbCatMan.data.selectedCategoryFilter);
+        jbCatMan.doCategorySearch(node.categoryFilter);
       }
       
     } else {
-      jbCatMan.data.selectedCategoryFilter = "";
+      jbCatMan.data.selectedCategory = null;
       ClearCardViewPane();
       jbCatMan.updatePeopleSearchInput();
       SetAbView(abURI);
@@ -244,11 +291,12 @@ jbCatMan.updateCategoryList = function () {
 }
 
 jbCatMan.updateContextMenu = function () {
+    let categoriesList = document.getElementById("CatManCategoriesList");
+
     let isRemote = true;
     let isGlobal = false;
-    let isAll = (jbCatMan.data.selectedCategoryFilter == "none");
-    let isUncategorized = (jbCatMan.data.selectedCategoryFilter == "uncategorized");
-    let isDeeperLevel = (Array.isArray(jbCatMan.data.selectedCategoryFilter) &&  jbCatMan.data.selectedCategoryFilter.length > 1);
+    let isAll = (categoriesList.querySelector("#" + jbCatMan.data.selectedCategory).categoryFilter == "none");
+    let isUncategorized = (categoriesList.querySelector("#" + jbCatMan.data.selectedCategory).categoryFilter == "uncategorized");
     let selectedBook = GetSelectedDirectory();
 
     if (selectedBook) isRemote = MailServices.ab.getDirectory(selectedBook).isRemote;
@@ -256,10 +304,10 @@ jbCatMan.updateContextMenu = function () {
 
     document.getElementById("CatManContextMenuRemove").disabled = (isAll || isRemote || isGlobal || isUncategorized);
     document.getElementById("CatManContextMenuRename").disabled = (isAll || isRemote || isGlobal || isUncategorized);
-    document.getElementById("CatManContextMenuBulk").disabled = (isAll || isRemote || isGlobal || isDeeperLevel || isUncategorized);
-    document.getElementById("CatManContextMenuMFFABConvert").disabled = (isUncategorized || isRemote || isGlobal || isDeeperLevel || jbCatMan.data.categoryList.length == 0);
+    document.getElementById("CatManContextMenuBulk").disabled = isAll || isRemote || isGlobal || isUncategorized;
+    document.getElementById("CatManContextMenuMFFABConvert").disabled = (isUncategorized || isRemote || isGlobal || jbCatMan.data.categoryList.length == 0);
 
-    document.getElementById("CatManContextMenuSend").disabled = (isAll || isRemote || isDeeperLevel || isUncategorized); 
+    document.getElementById("CatManContextMenuSend").disabled = (isAll || isRemote || isUncategorized); 
 
     //Import and export for all address books, regardless of category (if no category selected, export entire abook or import without category tagging)
     document.getElementById("CatManContextMenuImportExport").disabled = isRemote || isGlobal;
@@ -275,21 +323,18 @@ jbCatMan.updateContextMenu = function () {
     
     if (jbCatMan.isMFFABCategoryMode()) {
         document.getElementById("CatManContextMenuMFFABConvert").label = jbCatMan.getLocalizedMessage("convert"+all+"to_standard_category");
-  } else {
+    } else {
         document.getElementById("CatManContextMenuMFFABConvert").label = jbCatMan.getLocalizedMessage("convert"+all+"to_MFFAB_category");
     }
-  
 }
 
 jbCatMan.updateButtons = function () {
     let isRemote = true;
     let isGlobal = false;
-    let isAll = (jbCatMan.data.selectedCategoryFilter == "none");
+    let isAll = (jbCatMan.data.selectedCategory == null);
     let selectedBook = GetSelectedDirectory();
     if (selectedBook) isRemote = MailServices.ab.getDirectory(selectedBook).isRemote;
     if (selectedBook == "moz-abdirectory://?") isGlobal = true;
-
-    document.getElementById("CatManAddContactCategoryButton").disabled = isRemote || isGlobal;
 
     if (jbCatMan.isMFFABCategoryMode()) {
         document.getElementById("CatManBoxLabel").value = jbCatMan.getLocalizedMessage("found_categories", "(MFFAB) ");
@@ -303,7 +348,9 @@ jbCatMan.updateButtons = function () {
 
 
 jbCatMan.writeToCategory = function () {
-  let searchstring = jbCatMan.getCategorySearchString(GetSelectedDirectory(), jbCatMan.data.selectedCategoryFilter);
+  let categoriesList = document.getElementById("CatManCategoriesList");
+
+  let searchstring = jbCatMan.getCategorySearchString(GetSelectedDirectory(), categoriesList.querySelector("#" + jbCatMan.data.selectedCategory).categoryFilter);
   let searches = jbCatMan.getSearchesFromSearchString(searchstring);
 
   let bcc = [];
@@ -331,7 +378,7 @@ jbCatMan.writeToCategory = function () {
     if (setting != "") {
       sURL = sURL + "?to=" + encodeURIComponent(currentCategory) + "<" + encodeURIComponent(setting) + ">";
     } else {
-      sURL = sURL + "?subject=" + encodeURIComponent("["+ jbCatMan.data.selectedCategoryFilter.join(" & ") +"] ");	    
+      sURL = sURL + "?subject=" + encodeURIComponent("["+ categoriesList.querySelector("#" + jbCatMan.data.selectedCategory).categoryName +"] ");	    
     }
     //Add BCC
     sURL = sURL + "&bcc=" + encodeURIComponent(bcc.join(", "));
@@ -352,7 +399,9 @@ jbCatMan.writeToCategory = function () {
 //###################################################
 
 jbCatMan.onImportExport = function () {
-  window.openDialog("chrome://sendtocategory/content/addressbook/import-export/import-export-wizard.xul", "import-export-wizard", "modal,dialog,centerscreen,chrome,resizable=no");
+  let categoriesList = document.getElementById("CatManCategoriesList");
+  let categoryFilter = categoriesList.querySelector("#" + jbCatMan.data.selectedCategory).categoryFilter;
+  window.openDialog("chrome://sendtocategory/content/addressbook/import-export/import-export-wizard.xul", "import-export-wizard", "modal,dialog,centerscreen,chrome,resizable=no", categoryFilter);
 }
 
 
@@ -395,8 +444,7 @@ jbCatMan.onSelectAddressbook = function () {
   
   if (selectedBook) {
     let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
-    jbCatMan.data.emptyCategories = [];
-    jbCatMan.data.selectedCategoryFilter = "";
+    jbCatMan.data.selectedCategory = null;
     jbCatMan.updateCategoryList();
   } else {
     //if for some reason no address book is selected, select the first one
@@ -418,8 +466,8 @@ jbCatMan.onClickCategoryList = function (event) {
 jbCatMan.onSelectCategoryList = function () {
   let categoriesList = document.getElementById("CatManCategoriesList");
   if (categoriesList.selectedIndex != -1) {
-    jbCatMan.data.selectedCategoryFilter = categoriesList.selectedItem.categoryFilter;
-    jbCatMan.doCategorySearch(jbCatMan.data.selectedCategoryFilter);
+    jbCatMan.data.selectedCategory = categoriesList.selectedItem.id;
+    jbCatMan.doCategorySearch(categoriesList.selectedItem.categoryFilter);
   }
   jbCatMan.updateButtons();
 }
@@ -427,7 +475,7 @@ jbCatMan.onSelectCategoryList = function () {
 
 
 jbCatMan.onPeopleSearchClick = function () {
-  jbCatMan.data.selectedCategoryFilter = "none";
+  jbCatMan.data.selectedCategory = null;
   document.getElementById("CatManCategoriesList").clearSelection();
 }
 
@@ -437,8 +485,8 @@ jbCatMan.onConvertCategory = function () {
     if (category) {
       jbCatMan.convertCategory(GetSelectedDirectory(), category);
       // Remove the deleted category from the list
-      jbCatMan.data.selectedCategoryFilter = jbCatMan.data.selectedCategoryFilter.filter( x => x != category)
-      if ( jbCatMan.data.selectedCategoryFilter.length == 0)  jbCatMan.data.selectedCategoryFilter = "";
+      jbCatMan.data.selectedCategory = jbCatMan.data.selectedCategory.filter( x => x != category) //TODO
+      if ( jbCatMan.data.selectedCategory.length == 0)  jbCatMan.data.selectedCategory = "";
       jbCatMan.updateCategoryList();
     }
 }
@@ -448,7 +496,7 @@ jbCatMan.onSwitchCategoryMode = function () {
     prefs.setBoolPref("extensions.sendtocategory.mffab_mode",!prefs.getBoolPref("extensions.sendtocategory.mffab_mode"));
 
     //updateList
-    jbCatMan.data.selectedCategoryFilter = "";
+    jbCatMan.data.selectedCategory = null;
     jbCatMan.updateCategoryList();
     
     //check selected card after update
@@ -467,19 +515,23 @@ jbCatMan.onBulkEdit = function () {
   jbCatMan.bulk.selectedDirectory = GetSelectedDirectory();
   
   //all 3 dialogs are called in sequence. Skipped, if canceled.
-  window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_editAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,resizable=no", "", jbCatMan.locale.bulkTitle);
+  let categoriesList = document.getElementById("CatManCategoriesList");
+  let categoryFilter = categoriesList.querySelector("#" + jbCatMan.data.selectedCategory).categoryFilter;
+  window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_editAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,resizable=no", categoryFilter, jbCatMan.locale.bulkTitle);
   if (jbCatMan.bulk.needToValidateBulkList) {
-    window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_validateAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,width=595,height=600,resizable=yes", "", jbCatMan.locale.bulkTitle);
+    window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_validateAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,width=595,height=600,resizable=yes", categoryFilter, jbCatMan.locale.bulkTitle);
   }
   if (jbCatMan.bulk.needToSaveBulkList) {
-    window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_saveAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,resizable=yes", "", jbCatMan.locale.bulkTitle);
+    window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_saveAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,resizable=yes", categoryFilter, jbCatMan.locale.bulkTitle);
   }
 }
 
 
 
-jbCatMan.onAddCategory = function () {
-  window.openDialog("chrome://sendtocategory/content/addressbook/edit_category.xul", "addCategory", "modal,centerscreen,chrome,resizable=no", "", jbCatMan.locale.addTitle, "add");
+jbCatMan.onAddCategory = function (event) {
+  let parentCategory = event.target.categoryName;
+  event.stopPropagation(); 
+  window.openDialog("chrome://sendtocategory/content/addressbook/edit_category.xul", "addCategory", "modal,centerscreen,chrome,resizable=no", parentCategory, jbCatMan.locale.addTitle, "add");
 }
 
 
@@ -497,42 +549,22 @@ jbCatMan.onDeleteCategory = function () {
   let categoriesList = document.getElementById("CatManCategoriesList");
   let category = categoriesList.selectedItem.categoryName;
   if (category) {
-    // Is it an empty category? If so, we have to check, if it is on the empty category list and remove it.
-    // If its not an empty category go through all contacts and remove that category.
-    if (category in jbCatMan.data.foundCategories) {
-      if (confirm(jbCatMan.locale.confirmDelete.replace("##oldname##", category).replace("##number##", jbCatMan.data.foundCategories[category].length))) {
-        jbCatMan.updateCategories("remove", category);
-      }
-    }
-    else {
-      // Is it in the empty category list?
-      let idx = jbCatMan.data.emptyCategories.indexOf(category);
-      if (idx != -1) {
-        jbCatMan.data.emptyCategories.splice(idx,1);
-        // Remove the deleted category from the list.
-        jbCatMan.data.selectedCategoryFilter = jbCatMan.data.selectedCategoryFilter.filter( x => x != category)
-        if ( jbCatMan.data.selectedCategoryFilter.length == 0)  jbCatMan.data.selectedCategoryFilter = "";
-        jbCatMan.updateCategoryList();
-      }
-    }
+    // Go through all contacts and remove that category.
+    jbCatMan.updateCategories("remove", category);
   }
 }
 
-jbCatMan.addCategoryPopupEntry = function (newCategoryName, cards, currentCategoryFilter = []) {
+jbCatMan.addCategoryPopupEntry = function (newCategoryName, cards) {
   let abURI = GetSelectedDirectory();
-  // Clone the array, do not mod the original array.
-  let categoryFilter = currentCategoryFilter.slice();
-  categoryFilter.push(newCategoryName);
+  let categoryLevels = newCategoryName.split(" / ");
   
-  // in hierarchy mode we always add submenu for the "new" entry
-  let itemType = (jbCatMan.hierarchyMode) ? "menu" : "menuitem";
+  let itemType = "menu"
   let newItem = document.createElement(itemType);
   newItem.setAttribute("class", itemType + "-iconic");
-  newItem.setAttribute("label", newCategoryName);
+  newItem.setAttribute("label", categoryLevels[categoryLevels.length - 1]);
+  newItem.setAttribute("value", newCategoryName);
   newItem.categoryName = newCategoryName;
-  newItem.categoryFilter = categoryFilter;  
-  newItem.categorySize = jbCatMan.getNumberOfFilteredCards(abURI, categoryFilter);
-  
+
   let countIn = 0;
   let countOut = 0;  
   for (let i = 0; i < cards.length; i++) {
@@ -540,7 +572,7 @@ jbCatMan.addCategoryPopupEntry = function (newCategoryName, cards, currentCatego
       continue;
 
     let thisCatsArray = jbCatMan.getCategoriesfromCard(cards[i]);
-    if (thisCatsArray.indexOf(newCategoryName) != -1) {
+    if (thisCatsArray.filter(cat => cat.startsWith(newCategoryName)).length > 0) {
       //this card is in this category
       countIn++;
     } else {
@@ -553,25 +585,24 @@ jbCatMan.addCategoryPopupEntry = function (newCategoryName, cards, currentCatego
     // no valid card
     newItem.setAttribute("disabled","true")
   } else if (countIn == 0 ) {
-    // all in
-    newItem.setAttribute("image", "chrome://sendtocategory/skin/notok.gif");
-    newItem.addEventListener("click", function () { jbCatMan.onCategoriesContextMenuItemCommand(false) }, false);
-  } else if (countOut == 0) {
     // all out
-    newItem.setAttribute("image", "chrome://sendtocategory/skin/ok.gif");
-    newItem.addEventListener("click", function () { jbCatMan.onCategoriesContextMenuItemCommand(true) }, false);
+    newItem.setAttribute("image", "chrome://sendtocategory/skin/checkbox-none.png");
+    newItem.addEventListener("click", jbCatMan.onCategoriesContextMenuItemCommand, false);
+  } else if (countOut == 0) {
+    // all in
+    newItem.setAttribute("image", "chrome://sendtocategory/skin/checkbox-all.png");
+    newItem.addEventListener("click", jbCatMan.onCategoriesContextMenuItemCommand, false);
   } else {
     // mixed
-    newItem.setAttribute("image", "chrome://sendtocategory/skin/ok-double.gif");
-    newItem.addEventListener("click", jbCatMan.onMultiselectCategoriesContextMenuItemCommand, false);    
+    newItem.setAttribute("image", "chrome://sendtocategory/skin/checkbox-some.png");
+    newItem.addEventListener("click", jbCatMan.onCategoriesContextMenuItemCommand, false);
+    newItem.setAttribute("label", categoryLevels[categoryLevels.length - 1] + " (" + countIn + "/" + (countIn + countOut) + ")");    
   }
   
-  if (itemType == "menu") {
-      let newPopup = document.createElement("menupopup");
-      newPopup.subCategories = jbCatMan.getSubCategories(abURI, categoryFilter, false);
-      newPopup.categoryFilter = categoryFilter;
-      newItem.appendChild(newPopup);
-  }
+  // Add popup for subcategories
+  let newPopup = document.createElement("menupopup");
+  newPopup.categoryName = newCategoryName;
+  newItem.appendChild(newPopup);
   
   return newItem;
 },
@@ -592,53 +623,30 @@ jbCatMan.onResultsTreeContextMenuPopup = function (event) {
       event.target.removeChild(event.target.lastChild);
     }
 
-    let subCategories = event.target.subCategories ? event.target.subCategories : jbCatMan.data.categoryList;
-    let categoryFilter = event.target.categoryFilter ? event.target.categoryFilter : [];
-    let reducedCategories = jbCatMan.getReducedCategoriesForHierarchyMode(abURI, subCategories, categoryFilter);    
+    // Toplevel has no categoryName and will thus return the list for the first level.
+    let reducedCategories = jbCatMan.getReducedCategoriesForHierarchyMode(event.target.categoryName);    
     for (let subCat of reducedCategories) {
-      let newItem = jbCatMan.addCategoryPopupEntry(subCat, cards, categoryFilter);
+      let newItem = jbCatMan.addCategoryPopupEntry(subCat, cards);
       if (newItem) event.target.appendChild(newItem);
     }
+    
+    // Add "new" entry.
+    let newItem = document.createElement("menuitem");
+    newItem.setAttribute("label", jbCatMan.getLocalizedMessage("createNewCategory"));
+    newItem.style["font-style"] = "italic";
+    newItem.addEventListener("click", jbCatMan.onAddCategory, false);
+    newItem.categoryName = event.target.categoryName;
+    event.target.appendChild(newItem);
     
   }
 }
 
-
-// a category has been clicked on in the context menu while multiple contacts have been selected -> open special edit dialog to make changes
-jbCatMan.onMultiselectCategoriesContextMenuItemCommand = function (event) {
-  window.openDialog("chrome://sendtocategory/content/addressbook/catsedit.xul", "editCategory", "modal,centerscreen,chrome,resizable=no", this.value);
-}
-
-
-
-// a category has been clicked on in the context menu while a single contact has been selected ->  invert current category property
 jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
-  let cards = GetSelectedAbCards();
-  let category = this.value;
-  let enabled = (event.target.getAttribute("checked") == "false");
-  
-  for (let i = 0; i < cards.length; i++) {
-    let writeCategoriesToCard = false;
-    let card = cards[i];
-    let catsArray = jbCatMan.getCategoriesfromCard(card);
-    let catIdx = catsArray.indexOf(category);
-  
-    if (enabled && catIdx == -1) {
-      catsArray.push(category);
-      writeCategoriesToCard = true;
-    } else if (!enabled && catIdx != -1) {
-      catsArray.splice(catIdx, 1);
-      writeCategoriesToCard = true;
-    }
+  document.getElementById("abResultsTreeContext").hidePopup(); 
+  event.stopPropagation(); 
 
-    if (writeCategoriesToCard) {
-      jbCatMan.setCategoriesforCard(card, catsArray);
-      let abUri = jbCatMan.modifyCard(card);
-    }
-  }
-
+  window.openDialog("chrome://sendtocategory/content/addressbook/catsedit.xul", "editCategory", "modal,centerscreen,chrome,resizable=no",  event.target.getAttribute("value"));
 }
-
 
 
 
@@ -776,4 +784,4 @@ jbCatMan.onAbResultsPaneSelectionChanged = function () {
 
 
 // run init function after window has been loaded
-window.addEventListener("load", function() { jbCatMan.initAddressbook(); }, false);
+window.addEventListener("load", jbCatMan.initAddressbook, false);
