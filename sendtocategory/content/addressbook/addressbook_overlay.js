@@ -555,9 +555,7 @@ jbCatMan.onDeleteCategory = function () {
 }
 
 jbCatMan.addCategoryPopupEntry = function (newCategoryName, cards) {
-  let abURI = GetSelectedDirectory();
   let categoryLevels = newCategoryName.split(" / ");
-  
   let itemType = "menu"
   let newItem = document.createElement(itemType);
   newItem.setAttribute("class", itemType + "-iconic");
@@ -598,7 +596,7 @@ jbCatMan.addCategoryPopupEntry = function (newCategoryName, cards) {
     newItem.addEventListener("click", jbCatMan.onCategoriesContextMenuItemCommand, false);
     newItem.setAttribute("label", categoryLevels[categoryLevels.length - 1] + " (" + countIn + "/" + (countIn + countOut) + ")");    
   }
-  
+
   // Add popup for subcategories
   let newPopup = document.createElement("menupopup");
   newPopup.categoryName = newCategoryName;
