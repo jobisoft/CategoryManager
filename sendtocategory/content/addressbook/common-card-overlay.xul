@@ -30,7 +30,7 @@
         </vbox>
         <hbox pack="end">
             <textbox id="abCatManAddCategoryBox" flex="1" />
-            <button flex="0" id="abCatManAddCategoryButton" type="menu" label="+">
+            <button disabled="true" flex="0" id="abCatManAddCategoryButton" type="menu" label="+">
                 <menupopup id="abCatManAddCategoryButtonPopup">
                     <menuitem id="abCatManAddMainCategoryButton"
                             label="AddMainCat"/>

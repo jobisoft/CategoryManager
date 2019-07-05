@@ -9,3 +9,6 @@ category_description=Caution: Essas categorias são "#### categorias" e são ind
 
 viewWithoutCategories=Sem categoria
 createNewCategory=Criar nova categoria aqui
+
+button_addMainCat=Add top level category
+button_addSubCat=Add category below "##CAT##"

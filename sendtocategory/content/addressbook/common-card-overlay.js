@@ -32,8 +32,8 @@ jbCatManEditDialog.Init = function () {
   }
 
   window.document.getElementById('abCatManCategoriesList').addEventListener("select",  jbCatManEditDialog.onItemSelected, false);
-  window.document.getElementById('abCatManAddCategoryBox').addEventListener("keydown", jbCatManEditDialog.keydown, false);
-  window.document.getElementById('abCatManAddCategoryBox').addEventListener("keydown", jbCatManEditDialog.keydown, false);
+  window.document.getElementById('abCatManAddCategoryBox').addEventListener("input", jbCatManEditDialog.onInput, false);
+  window.document.getElementById('abCatManAddCategoryBox').addEventListener("keydown", jbCatManEditDialog.onKeydown, false);
   window.document.getElementById('abCatManAddCategoryButtonPopup').addEventListener("popupshowing", jbCatManEditDialog.onPopupShowing, false);
   window.document.getElementById('abCatManAddSubCategoryButton').addEventListener("command", jbCatManEditDialog.insertNewCategoryEntry, false);
 
@@ -64,7 +64,7 @@ jbCatManEditDialog.getSelectedAbFromArgument = function (arg) {
     return abURI;
 }
 
-jbCatManEditDialog.keydown = function (e) {
+jbCatManEditDialog.onKeydown = function (e) {
   if (e.type == "keydown" && e.key == "Enter") {    
     //prevent closing of dialog
     e.stopPropagation(); 
@@ -72,6 +72,9 @@ jbCatManEditDialog.keydown = function (e) {
   }
 }
 
+jbCatManEditDialog.onInput = function (e) {
+  window.document.getElementById('abCatManAddCategoryButton').disabled = (e.srcElement.value == "");
+}
 
 jbCatManEditDialog.onPopupShowing = function (event) {
   let list = window.document.getElementById('abCatManCategoriesList');
