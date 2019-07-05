@@ -11,9 +11,6 @@ if (window.opener.jbCatMan) {
 
 
 
-
-
-
 jbCatManEditDialog.Init = function () {
   //hide SOGo Category Tab
   if (window.document.getElementById("categoriesTabButton")) window.document.getElementById("categoriesTabButton").style.display = 'none';
@@ -35,6 +32,7 @@ jbCatManEditDialog.Init = function () {
   window.document.getElementById('abCatManAddCategoryBox').addEventListener("input", jbCatManEditDialog.onInput, false);
   window.document.getElementById('abCatManAddCategoryBox').addEventListener("keydown", jbCatManEditDialog.onKeydown, false);
   window.document.getElementById('abCatManAddCategoryButtonPopup').addEventListener("popupshowing", jbCatManEditDialog.onPopupShowing, false);
+  window.document.getElementById('abCatManAddMainCategoryButton').addEventListener("command", jbCatManEditDialog.insertNewCategoryEntry, false);
   window.document.getElementById('abCatManAddSubCategoryButton').addEventListener("command", jbCatManEditDialog.insertNewCategoryEntry, false);
 
   if (window.location.href=="chrome://messenger/content/addressbook/abNewCardDialog.xul") {
@@ -64,34 +62,8 @@ jbCatManEditDialog.getSelectedAbFromArgument = function (arg) {
     return abURI;
 }
 
-jbCatManEditDialog.onKeydown = function (e) {
-  if (e.type == "keydown" && e.key == "Enter") {    
-    //prevent closing of dialog
-    e.stopPropagation(); 
-    e.preventDefault();
-  }
-}
 
-jbCatManEditDialog.onInput = function (e) {
-  window.document.getElementById('abCatManAddCategoryButton').disabled = (e.srcElement.value == "");
-}
 
-jbCatManEditDialog.onPopupShowing = function (event) {
-  let list = window.document.getElementById('abCatManCategoriesList');
-  let mainCatBtn = window.document.getElementById('abCatManAddMainCategoryButton');
-  let subCatBtn = window.document.getElementById('abCatManAddSubCategoryButton');
-  mainCatBtn.label = jbCatMan.getLocalizedMessage("button_addMainCat");
-  subCatBtn.label = jbCatMan.getLocalizedMessage("button_addSubCat").replace("##CAT##", list.selectedItem.categoryName);
-}
-
-jbCatManEditDialog.onItemSelected = function (event) {
-  let list = window.document.getElementById('abCatManCategoriesList');
-  let elements = list.getElementsByClassName("isSelected");
-  for (element of elements) {
-    element.setAttribute("class", "");
-  }
-  list.selectedItem.setAttribute("class","isSelected");
-}
 
 // Insert a new single category entry into the category tree.
 jbCatManEditDialog.insertNewCategoryEntry = function (event) {
@@ -126,7 +98,11 @@ jbCatManEditDialog.insertNewCategoryEntry = function (event) {
       
       case 0: 
         // this is it
-        list.children[i].getElementsByTagName("checkbox")[0].setAttribute("checked", "true");
+        let checkbox = list.children[i].getElementsByTagName("checkbox")[0];
+        if (!checkbox.checked) {
+          checkbox.setAttribute("checked", "true");
+          jbCatManEditDialog.toggleBoxes(list.children[i], true);
+        }
         return;
       
       case 1:
@@ -159,12 +135,6 @@ jbCatManEditDialog.appendCategoryEntries = function (categoryName, checked = tru
   }
 }
 
-jbCatManEditDialog.checkBoxes = function(event) {
-  // get the state AFTER selection
-  let checked = event.target.checked;
-  let element = event.target.parentNode.parentNode;
-  jbCatManEditDialog.toggleBoxes(element, checked);
-}
 
 jbCatManEditDialog.toggleBoxes = function(element, checked) {
   let list = window.document.getElementById("abCatManCategoriesList");
@@ -198,7 +168,7 @@ jbCatManEditDialog.addItemToList = function (categoryName, checked = true) {
   let checkbox = window.document.createElement("checkbox");
   checkbox.setAttribute("checked", checked ? "true" : "false");
   checkbox.style["margin-left"] = (level*16) + "px";
-  checkbox.addEventListener("command", jbCatManEditDialog.checkBoxes); 
+  checkbox.addEventListener("command", jbCatManEditDialog.onCheckBoxes); 
   hbox.appendChild(checkbox);
 
   let categoryLabel = window.document.createElement("label");
@@ -213,6 +183,8 @@ jbCatManEditDialog.addItemToList = function (categoryName, checked = true) {
   newListItem.appendChild(hbox);
   return newListItem
 }
+
+
 
 
 jbCatManEditDialog.onLoadCard = function (aCard, aDocument) { 
@@ -244,6 +216,49 @@ jbCatManEditDialog.onSaveCard = function (aCard, aDocument) {
   }
   jbCatMan.setCategoriesforCard(aCard, catsArray, "Categories");	
 }
+
+
+jbCatManEditDialog.onCheckBoxes = function(event) {
+  // get the state AFTER selection
+  let checked = event.target.checked;
+  let element = event.target.parentNode.parentNode;
+  jbCatManEditDialog.toggleBoxes(element, checked);
+}
+
+
+jbCatManEditDialog.onKeydown = function (e) {
+  if (e.type == "keydown" && e.key == "Enter") {    
+    //prevent closing of dialog
+    e.stopPropagation(); 
+    e.preventDefault();
+  }
+}
+
+
+jbCatManEditDialog.onInput = function (e) {
+  window.document.getElementById('abCatManAddCategoryButton').disabled = (e.srcElement.value == "");
+}
+
+
+jbCatManEditDialog.onPopupShowing = function (event) {
+  let list = window.document.getElementById('abCatManCategoriesList');
+  let mainCatBtn = window.document.getElementById('abCatManAddMainCategoryButton');
+  let subCatBtn = window.document.getElementById('abCatManAddSubCategoryButton');
+  mainCatBtn.label = jbCatMan.getLocalizedMessage("button_addMainCat");
+  subCatBtn.label = jbCatMan.getLocalizedMessage("button_addSubCat").replace("##CAT##", list.selectedItem.categoryName);
+}
+
+
+jbCatManEditDialog.onItemSelected = function (event) {
+  let list = window.document.getElementById('abCatManCategoriesList');
+  let elements = list.getElementsByClassName("isSelected");
+  for (element of elements) {
+    element.setAttribute("class", "");
+  }
+  list.selectedItem.setAttribute("class","isSelected");
+}
+
+
 
 
 //Init on load
