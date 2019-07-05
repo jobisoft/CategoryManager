@@ -26,7 +26,7 @@ function GenerateAddressFromCard(card)
   }
 
   if (email) {
-    return MailServices.headerParser.makeMimeAddress(card.displayName, email);
+    return MailServices.headerParser.makeMimeAddress(card.displayName, email); //DEPRECATED - check how searchfox fixed it, after they fixed it.
   } else {
     return ""
   }
