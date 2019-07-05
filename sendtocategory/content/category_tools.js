@@ -441,7 +441,7 @@ jbCatMan.updateCategories = function (mode, oldName, newName) {
     if (catArray.length > 0) {  
       let writeCategoriesToCard = false;
       for (let i=0; i < catArray.length; i++) {        
-        if (catArray[i].startsWith(oldName)) { // Act upon this category and all sub categories.
+        if (catArray[i] == oldName || catArray[i].startsWith(oldName + " / ")) { // Act upon this category and all sub categories.
 
           // Perform remove or rename action.
           if (mode == "rename") {

@@ -412,11 +412,11 @@ jbCatManBulkEdit.saveList_RemoveCards = function (i) {
     } else {
       name  = jbCatMan.getUserNamefromCard(card);
       // Contact is no longer part of this category - REMOVE IT.
-      let cats = jbCatMan.getCategoriesfromCard(card).filter(cat => !cat.startsWith(category));
+      let cats = jbCatMan.getCategoriesfromCard(card).filter(cat => !(cat.startsWith(category + " / ") || cat == category));
       
       // Put the card into the parent of this category, if avail and needed.
       let parent = category.split(" / ").slice(0, -1).join(" / ");
-      if (parent && cats.filter(cat => cat.startsWith(parent)).length == 0) {
+      if (parent && cats.filter(cat => (cat.startsWith(parent + " / ") || cat == parent)).length == 0) {
         cats.push(parent);
       }
 

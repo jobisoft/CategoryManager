@@ -570,7 +570,7 @@ jbCatMan.addCategoryPopupEntry = function (newCategoryName, cards) {
       continue;
 
     let thisCatsArray = jbCatMan.getCategoriesfromCard(cards[i]);
-    if (thisCatsArray.filter(cat => cat.startsWith(newCategoryName)).length > 0) {
+    if (thisCatsArray.filter(cat => (cat == newCategoryName || cat.startsWith(newCategoryName + " / "))).length > 0) {
       //this card is in this category
       countIn++;
     } else {

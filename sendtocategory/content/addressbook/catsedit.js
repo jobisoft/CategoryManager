@@ -47,7 +47,7 @@ jbCatManCatsEdit.init = function () {
     }
     
     let catsArray = jbCatMan.getCategoriesfromCard(card);
-    if (catsArray.filter(cat => cat.startsWith(this.categoryName)).length == 0) {
+    if (catsArray.filter(cat => (cat.startsWith(this.categoryName + " / ") || cat == this.categoryName)).length == 0) {
       let newitem = this.outbox.appendChild(jbCatManCatsEdit.createItem(userName, UID, false));
       this.outbox.ensureElementIsVisible(newitem); //workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=250123#c16
     } else {
@@ -190,10 +190,10 @@ jbCatManCatsEdit.onAccept = function () {
     if (item.remove && item.remove.wasMember) {
       item.card = this.cards[item.remove.value];
       // remove category and all its children
-      item.catsArray = jbCatMan.getCategoriesfromCard(item.card).filter(e => !e.startsWith(this.categoryName));
+      item.catsArray = jbCatMan.getCategoriesfromCard(item.card).filter(e => !(e.startsWith(this.categoryName + " / ") || e == this.categoryName));
       // add its parent (if needed)
       let parent = this.categoryName.split(" / ").slice(0, -1).join(" / ");
-      if (item.catsArray.filter(e => e.startsWith(parent)).length == 0) {
+      if (item.catsArray.filter(e => e.startsWith(parent + " / ")).length == 0) {
        item.catsArray.push(parent);
       }
     }
