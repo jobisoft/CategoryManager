@@ -8,7 +8,8 @@
 ]>
 
 <overlay id="CatManCommonCardOverlay"
-  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   
   <script type="application/javascript" src="chrome://sendtocategory/content/addressbook/common-card-overlay.js"/>
   <script type="application/javascript" src="chrome://messenger/content/customElements.js"/>
@@ -20,17 +21,26 @@
   <tabpanels id="abTabPanels">
     <tabpanel id="abCatManCategoriesTab" flex="0" insertbefore="abHomeTab">
       <vbox flex="1">
-        <richlistbox
-        flex="0"
-        id="abCatManCategoriesList"
-        height="200"
-        seltype="single">
-        </richlistbox>
-        <hbox>
-            <textbox id="abCatManCategoriesAddBox" flex="1" /><button flex="0" id="abCatManCategoriesAddButton" label="+" oncommand="jbCatManEditDialog.addCategoryEntry(document.getElementById('abCatManCategoriesAddBox').value)"/>
-        </hbox>
-        <description id="abCatManCategoriesDescription" hidden="true" style="margin-top:1em; width:400px"></description>
+        <vbox style="height: 230px" flex="0">
+          <richlistbox
+          flex="1"
+          id="abCatManCategoriesList"
+          seltype="single">
+          </richlistbox>
         </vbox>
+        <hbox pack="end">
+            <textbox id="abCatManAddCategoryBox" flex="1" />
+            <button flex="0" id="abCatManAddCategoryButton" type="menu" label="+">
+                <menupopup id="abCatManAddCategoryButtonPopup">
+                    <menuitem id="abCatManAddMainCategoryButton"
+                            label="AddMainCat"/>
+                    <menuitem id="abCatManAddSubCategoryButton"
+                            label="AddSubCat"/>
+                </menupopup>
+            </button>
+        </hbox>
+        <description id="abCatManCategoriesDescription" hidden="true" style="margin-top:1em; width: 400px"></description>
+      </vbox>
     </tabpanel>
   </tabpanels>
 </overlay>

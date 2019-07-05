@@ -31,7 +31,12 @@ jbCatManEditDialog.Init = function () {
   if (typeof SCSaveCategories != 'undefined') SCSaveCategories = function() {
   }
 
-  window.document.getElementById('abCatManCategoriesAddBox').addEventListener("keydown",  function (e) { jbCatManEditDialog.keydown(e); }, false);
+  window.document.getElementById('abCatManCategoriesList').addEventListener("select",  jbCatManEditDialog.onItemSelected, false);
+  window.document.getElementById('abCatManAddCategoryBox').addEventListener("keydown", jbCatManEditDialog.keydown, false);
+  window.document.getElementById('abCatManAddCategoryBox').addEventListener("keydown", jbCatManEditDialog.keydown, false);
+  window.document.getElementById('abCatManAddCategoryButtonPopup').addEventListener("popupshowing", jbCatManEditDialog.onPopupShowing, false);
+  window.document.getElementById('abCatManAddSubCategoryButton').addEventListener("command", jbCatManEditDialog.insertNewCategoryEntry, false);
+
   if (window.location.href=="chrome://messenger/content/addressbook/abNewCardDialog.xul") {
     if (window.document.getElementById("abPopup")) {
       window.document.getElementById("abPopup").addEventListener("command", function() { jbCatManEditDialog.onLoadCard(null, window.document); }, false);
@@ -59,38 +64,66 @@ jbCatManEditDialog.getSelectedAbFromArgument = function (arg) {
     return abURI;
 }
 
-
 jbCatManEditDialog.keydown = function (e) {
-  if (e.type == "keydown" && e.key == "Enter") {
-    jbCatManEditDialog.addCategoryEntry(e.target.value);
-    
+  if (e.type == "keydown" && e.key == "Enter") {    
     //prevent closing of dialog
-    if (e.type == "keydown") {
-      e.stopPropagation(); 
-      e.preventDefault();
-    }
+    e.stopPropagation(); 
+    e.preventDefault();
   }
 }
 
 
-jbCatManEditDialog.addCategoryEntry = function (value) {
-  if (value.trim() == "") {
+jbCatManEditDialog.onPopupShowing = function (event) {
+  let list = window.document.getElementById('abCatManCategoriesList');
+  let mainCatBtn = window.document.getElementById('abCatManAddMainCategoryButton');
+  let subCatBtn = window.document.getElementById('abCatManAddSubCategoryButton');
+  mainCatBtn.label = jbCatMan.getLocalizedMessage("button_addMainCat");
+  subCatBtn.label = jbCatMan.getLocalizedMessage("button_addSubCat").replace("##CAT##", list.selectedItem.categoryName);
+}
+
+jbCatManEditDialog.onItemSelected = function (event) {
+  let list = window.document.getElementById('abCatManCategoriesList');
+  let elements = list.getElementsByClassName("isSelected");
+  for (element of elements) {
+    element.setAttribute("class", "");
+  }
+  list.selectedItem.setAttribute("class","isSelected");
+}
+
+// Insert a new single category entry into the category tree.
+jbCatManEditDialog.insertNewCategoryEntry = function (event) {
+  let categoryName = window.document.getElementById("abCatManAddCategoryBox").value;
+  if (categoryName.trim() == "") {
     return;
   }
   
-  let list = window.document.getElementById("abCatManCategoriesList");
+  let list = window.document.getElementById("abCatManCategoriesList");  
+  if (event.target.id == "abCatManAddSubCategoryButton") {
+    if (list.selectedItem) {
+      categoryName = list.selectedItem.categoryName + " / " + categoryName;
+      // toggle to open (if needed)
+      let checkbox = list.selectedItem.getElementsByTagName("checkbox")[0];
+      if (!checkbox.checked) {
+        checkbox.setAttribute("checked", "true");
+        jbCatManEditDialog.toggleBoxes(list.selectedItem, true);
+      }
+    } else {
+      return;
+    }
+  }
+
   //first check, if we have an entry of that name and just update the checkbox value
   for (let i=0; i < list.children.length; i++) {
-    let comp = value.localeCompare(list.children[i].children[0].children[1].value);
+    let comp = (categoryName < list.children[i].categoryName) ? -1 : ((categoryName == list.children[i].categoryName) ? 0 : 1);
     switch (comp) {
       case -1: 
         //insert here
-        list.insertBefore(jbCatManEditDialog.addItemToList(value), list.children[i]);    
+        list.insertBefore(jbCatManEditDialog.addItemToList(categoryName, true), list.children[i]);    
         return;
       
       case 0: 
         // this is it
-        list.children[i].children[0].children[0].setAttribute("checked", "true");
+        list.children[i].getElementsByTagName("checkbox")[0].setAttribute("checked", "true");
         return;
       
       case 1:
@@ -100,12 +133,60 @@ jbCatManEditDialog.addCategoryEntry = function (value) {
     } 
   }
 
-  // If we reach this, value is new larger then all existing entries and must be added last.
-  list.appendChild(jbCatManEditDialog.addItemToList(value));
+  // If we reach this, categoryName is larger then all existing entries and must be added last.
+  list.appendChild(jbCatManEditDialog.addItemToList(categoryName, true));
 }
-    
-jbCatManEditDialog.addItemToList = function (label, checked = true) {
-  let levels = label.split(" / ");
+
+
+// Append category and its sub categories (if checked).
+jbCatManEditDialog.appendCategoryEntries = function (categoryName, checked = true) {
+  if (categoryName.trim() == "") {
+    return;
+  }
+  
+  let list = window.document.getElementById("abCatManCategoriesList");
+  list.appendChild(jbCatManEditDialog.addItemToList(categoryName, checked));
+
+  // If this cat is checked, also append its sub categories
+  if (checked) {
+    let reducedCategories = jbCatMan.getReducedCategoriesForHierarchyMode(categoryName);    
+    for (let subCat of reducedCategories) {
+      jbCatManEditDialog.appendCategoryEntries(subCat, jbCatManEditDialog.catsArray.filter(cat => (cat == subCat || cat.startsWith(subCat + " / "))).length > 0);
+    }
+  }
+}
+
+jbCatManEditDialog.checkBoxes = function(event) {
+  // get the state AFTER selection
+  let checked = event.target.checked;
+  let element = event.target.parentNode.parentNode;
+  jbCatManEditDialog.toggleBoxes(element, checked);
+}
+
+jbCatManEditDialog.toggleBoxes = function(element, checked) {
+  let list = window.document.getElementById("abCatManCategoriesList");
+  
+  if (checked) {
+  // We just toggled to open
+    let hook = element.nextSibling;
+    let reducedCategories = jbCatMan.getReducedCategoriesForHierarchyMode(element.categoryName);    
+    for (let subCat of reducedCategories) {
+      list.insertBefore(jbCatManEditDialog.addItemToList(subCat, false), hook);    
+    }
+  } else {
+    // We just toggled to close - remove all entries up to the next element with the same level.
+    while (
+      element.nextSibling && 
+      element.nextSibling.categoryName && 
+      element.nextSibling.categoryName.split(" / ").length > element.categoryName.split(" / ").length) {
+        element.nextSibling.remove();
+    }
+  }
+}
+
+
+jbCatManEditDialog.addItemToList = function (categoryName, checked = true) {
+  let levels = categoryName.split(" / ");
   let level = levels.length-1;
   let color = (255 - (level * 16)).toString(16);
   
@@ -113,30 +194,27 @@ jbCatManEditDialog.addItemToList = function (label, checked = true) {
   
   let checkbox = window.document.createElement("checkbox");
   checkbox.setAttribute("checked", checked ? "true" : "false");
+  checkbox.style["margin-left"] = (level*16) + "px";
+  checkbox.addEventListener("command", jbCatManEditDialog.checkBoxes); 
   hbox.appendChild(checkbox);
 
-  let categoryName = window.document.createElement("label");
-  categoryName.setAttribute("flex", "1");
-  categoryName.setAttribute("value", label);
-  hbox.appendChild(categoryName);
+  let categoryLabel = window.document.createElement("label");
+  categoryLabel.setAttribute("flex", "1");
+  categoryLabel.setAttribute("value", levels[level]);
+  hbox.appendChild(categoryLabel);
 
   let newListItem = window.document.createElement("richlistitem");
-  newListItem.style["background-color"] = "#" + color + color + color;
-  newListItem.style["color"] = "#000000";
+  newListItem.setAttribute("custom-color", "true");
+  newListItem.style.setProperty("--custom-color", "#" + color + color + color);
+  newListItem.categoryName = categoryName;
   newListItem.appendChild(hbox);
   return newListItem
 }
 
 
-jbCatManEditDialog.onLoadCard = function (aCard, aDocument) {
-  let aParentDirURI= "";
-  if (aDocument.defaultView.location.href=="chrome://messenger/content/addressbook/abNewCardDialog.xul") {
-    aParentDirURI = aDocument.getElementById("abPopup").value;
-  } else {
-    aParentDirURI = jbCatManEditDialog.getSelectedAbFromArgument(aDocument.defaultView.arguments[0]);
-  }  
-  let allCatsArray = jbCatMan.scanCategories(aParentDirURI, "Categories", true);
-  
+jbCatManEditDialog.onLoadCard = function (aCard, aDocument) { 
+  jbCatManEditDialog.catsArray = aCard ? jbCatMan.getCategoriesfromCard(aCard, "Categories") : []; 	
+
   // Clear current list.
   let list = aDocument.getElementById("abCatManCategoriesList");
   list.clearSelection();
@@ -144,12 +222,10 @@ jbCatManEditDialog.onLoadCard = function (aCard, aDocument) {
     list.getItemAtIndex(i-1).remove();
   }
   
-  // Add all cats to the list.
-  let catsArray = aCard ? jbCatMan.getCategoriesfromCard(aCard, "Categories") : []; 	
-  //for (let c = allCatsArray.length-1; c >= 0; c--) {
-  for (let c = 0; c < allCatsArray.length; c++) {
-    let cat = allCatsArray[c];
-    list.appendChild(jbCatManEditDialog.addItemToList(cat, catsArray.includes(cat)));
+  // Add all first level categories.
+  let reducedCategories = jbCatMan.getReducedCategoriesForHierarchyMode();    
+  for (let subCat of reducedCategories) {
+    jbCatManEditDialog.appendCategoryEntries(subCat, jbCatManEditDialog.catsArray.filter(cat => (cat == subCat || cat.startsWith(subCat + " / "))).length > 0);
   }
 }
 
@@ -158,7 +234,7 @@ jbCatManEditDialog.onSaveCard = function (aCard, aDocument) {
   let list = aDocument.getElementById("abCatManCategoriesList");
   let catsArray = [];
   for (let i=0; i < list.children.length; i++) {
-    let value = list.children[i].children[0].children[1].value.replace(/(^[ ]+|[ ]+$)/, "", "g");
+    let value = list.children[i].categoryName.replace(/(^[ ]+|[ ]+$)/, "", "g");
     if (list.children[i].children[0].children[0].getAttribute("checked") == "true" && value.length > 0 && catsArray.indexOf(value) == -1) {
       catsArray.push(value);
     }
