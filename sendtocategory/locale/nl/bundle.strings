@@ -1,0 +1,14 @@
+switch_to_standard_mode=schakel over naar standaard categoriemodus
+switch_to_MFFAB_mode=schakel over naar MFFAB categoriemodus
+found_categories=Filter contacten per categorie ####:
+convert_to_MFFAB_category=converteer naar MFFAB categorie
+convert_to_standard_category=converteer naar standaard categorie
+convert_all_to_MFFAB_category=converteer alle categorieën naar MFFAB categorieën
+convert_all_to_standard_category=converteer alle categorieën naar standaard categorieën
+category_description=Caution: Deze categorieën zijn "#### categorieën" en zijn onafhankelijk van de "MFFAB categorieën", die opgeslagen zijn in een andere contactgroep en kunnen worden onderhouden in de 'Andere gegevens' tab.
+
+viewWithoutCategories=Niet Gecategoriseerd
+createNewCategory=Maak hier een nieuwe categorie
+
+button_addMainCat=Voeg hoogste categorie niveau toe
+button_addSubCat=Voeg categorie toe onder "##CAT##"

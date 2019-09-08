@@ -1,0 +1,82 @@
+﻿<!ENTITY sendtocategory.ok.button "Ok">
+<!ENTITY sendtocategory.cancel.button "Annuleer">
+
+<!ENTITY sendtocategory.category.label "categorie">
+<!ENTITY sendtocategory.category.all "Alle contacten">
+<!ENTITY sendtocategory.name.label "naam">
+
+<!ENTITY sendtocategory.categoryfilter.label "Categorieën ...">
+<!ENTITY sendtocategory.categoriescontext.label "Categorieën">
+
+<!ENTITY sendtocategory.catogorybox.MFFAB.tooltip "Schakel tussen standaard categorie modus en MFFAB categorie modus">
+
+<!ENTITY sendtocategory.helpButton.label "?">
+<!ENTITY sendtocategory.hideCategoryPaneButton.label "&#9660;">
+<!ENTITY sendtocategory.showCategoryPaneButton.label "&#9650;">
+
+<!ENTITY sendtocategory.add.title "maak een nieuwe categorie">
+
+<!ENTITY sendtocategory.edit.title "geef categorie een andere naam">
+<!ENTITY sendtocategory.editMenu.label "geef categorie ##name##" een andere naam>
+
+<!ENTITY sendtocategory.remove.title "verwijder categorie">
+<!ENTITY sendtocategory.removeMenu.label "verwijder categorie ##name##">
+
+<!ENTITY sendtocategory.send.title "stuur e-mail naar categorie">
+<!ENTITY sendtocategory.sendMenu.label "stuur e-mail naar categorie ##name##">
+
+<!ENTITY sendtocategory.export.title "importeer/exporteer categorie">
+<!ENTITY sendtocategory.exportAll.title "importeer/exporteer adresboek">
+
+<!ENTITY sendtocategory.catbox.header.catname "categorie naam">
+<!ENTITY sendtocategory.catbox.header.catsize "leden">
+
+<!ENTITY sendtocategory.error.rename "De categorie [##oldname##] kan niet hernoemd worden naar [##newname##], omdat een categorie met die naam reeds bestaat.">
+<!ENTITY sendtocategory.error.add "De categorie [##newname##] kan niet toegevoegd worden], omdat een categorie met die naam reeds bestaat.">
+<!ENTITY sendtocategory.info.add "De nieuwe categorie [##newname##] is nog niet aan een contact toegewezen. Als U het adresboek sluit zonder een contact toe te wijzen wordt de nieuw gecreëerde categorie verwijderd.">
+<!ENTITY sendtocategory.confirm.rename "Deze actie wijzigt de categorie van ##number## contacten, het lidmaatschap van categorie [##oldname##] wordt vervangen door het lidmaatschap van categorie [##newname##]. Dit kan niet ongedaan worden gemaakt, wilt U doorgaan?">
+<!ENTITY sendtocategory.confirm.delete "Deze actie wijzigt de categorie van ##number## contacten, het lidmaatschap van categorie [##oldname##] wordt verwijderd. Dit kan niet ongedaan worden gemaakt, wilt U doorgaan?">
+
+<!ENTITY sendtocategory.pref.label "Categorie Manager">
+<!ENTITY sendtocategory.pref.generaltab.label "Bulk-Mails">
+
+<!ENTITY sendtocategory.pref.generaltab.toaddr.desc1 "Vanwege Duitse wetgeving omtrent gegevens bescherming, is het niet toegestaan* alle leden van een categorie op te nemen in het 'to:' of 'cc:' veld, omdat dan alle email adressen zichtbaar zijn voor alle leden van de lijst.">
+<!ENTITY sendtocategory.pref.generaltab.toaddr.desc2 "Daarom worden alle e-mail adressen in het 'bcc:' veld geplaatst. Hoewel een dergelijke mail geen zichtbare ontvanger heeft; afhankelijk van het email programma, zal het in plaats daarvan iets als 'undisclosed-recipients:;' weergeven. Het is gebruikelijk om een extra ontvanger toe te voegen - voor iedereen zichtbaar - in het 'to:' veld (uw eigen adres of een no-reply adres), welke de naam van de categorie toont. Meestal is het niet mogelijk een niet-bestaand email adres te gebruiken omdat de meeste mail servers deze emails afwijzen.">
+<!ENTITY sendtocategory.pref.generaltab.toaddr.desc3 "Als dit veld leeg blijf, zal de naam van de categorie (tussen brackets) toegevoegd worden aan het onderwerp van de email, om de email te indentificeren als deel van een categorie.">
+<!ENTITY sendtocategory.pref.generaltab.toaddr.label "optioneel 'to:' adres (zichtbaar voor iedereen, de getoonde naam is de naam van de categorie)">
+
+<!ENTITY sendtocategory.pref.addressbooktab.label "Adresboek">
+<!ENTITY sendtocategory.pref.addressbooktab.rememberlastbook.label "Denk aan het laatst gebruikte adresboek">
+<!ENTITY sendtocategory.pref.addressbooktab.rememberlastbook.desc "Als het thunderbird adresboek geopend is, zal gewoonlijk het eerst gevonden adresboek getoond worden. Als deze optie wordt gebruikt wordt het laatst gebruikte adresboek getoond.">
+
+<!ENTITY sendtocategory.bulkedit.note "Notitie">
+<!ENTITY sendtocategory.bulkedit.membersWithoutPrimaryEmail "Deze categorie bevat ##counts## contacten zonder een toegewezen email adres. De categorie informatie van deze contacten kan niet met deze dialoog gewijzigd worden. Ze worden niet getoond in de lijst hierboven.">
+
+<!ENTITY sendtocategory.bulkedit.title "wijzig categorie rechtstreeks">
+<!ENTITY sendtocategory.bulkeditMenu.label "wijzig categorie ##name## rechtstreeks">
+
+<!ENTITY sendtocategory.bulkedit.edit.title "Wijzig leden van categorie ##name## rechtstreeks:">
+<!ENTITY sendtocategory.bulkedit.save.title "De volgende wijzigingen zijn uitgevoerd op categorie ##name##:">
+
+<!ENTITY sendtocategory.bulkedit.validate.button "bevestig e-mail adres">
+<!ENTITY sendtocategory.bulkedit.save.button "bewaar categorie">
+<!ENTITY sendtocategory.bulkedit.close.button "logboek sluiten">
+
+<!ENTITY sendtocategory.bulkedit.header.email "e-mail adres">
+<!ENTITY sendtocategory.bulkedit.header.contact "toegewezen contact">
+<!ENTITY sendtocategory.bulkedit.header.status "status">
+
+<!ENTITY sendtocategory.bulkedit.legend.caption "legenda">
+<!ENTITY sendtocategory.bulkedit.legend.ok "E-mail adres kan uniek toegewezen worden aan een contact, en dit contact zal toegewezen worden aan de categorie.">
+<!ENTITY sendtocategory.bulkedit.legend.notok "E-mail adres werd niet gevonden in het adresboek. Een nieuw contact moet gecreëerd worden en zal toegevoegd worden aan de categorie.">
+<!ENTITY sendtocategory.bulkedit.legend.double "E-mail adres werd gevonden in meerdere contacten. Selecteer a.u.b. welke van deze contacten toegevoegd moet worden aan de categorie.">
+<!ENTITY sendtocategory.bulkedit.legend.okdouble "E-mail adres werd gevonden in meerdere contacten. Hoewel een van deze contacten reeds is toegewezen aan deze categorie en automatisch geselecteerd is.">
+
+<!ENTITY sendtocategory.bulkedit.firstname "voornaam">
+<!ENTITY sendtocategory.bulkedit.lastname "achternaam">
+<!ENTITY sendtocategory.bulkedit.choose "Selecteer contact a.u.b. ...">
+<!ENTITY sendtocategory.bulkedit.noname "Naam Onbekend">
+
+<!ENTITY sendtocategory.catsedit.title "Wijzig categorie van de geselecteerde contacten">
+<!ENTITY sendtocategory.catsedit.label.in "Deelverzameling van de geselecteerde contacten welke deel moet zijn van categorie ##name##:">
+<!ENTITY sendtocategory.catsedit.desc "Definieer a.u.b. of alle, geen of een gedeelte van de geselecteerde contacten deel moet zijn van categorie ##name##.">
