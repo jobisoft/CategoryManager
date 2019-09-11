@@ -6,6 +6,7 @@ locale sendtocategory fr locale/fr/
 locale sendtocategory es-AR locale/es-AR/
 locale sendtocategory ru locale/ru/
 locale sendtocategory pt-BR locale/pt-BR/
+locale sendtocategory nl locale/nl/
 
 overlay chrome://messenger/content/addressbook/addressbook.xul chrome://sendtocategory/content/addressbook/addressbook_overlay.xul
 overlay chrome://messenger/content/addressbook/abContactsPanel.xul chrome://sendtocategory/content/contactpanel/abContactsPanel_overlay.xul
