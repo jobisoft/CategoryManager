@@ -1,6 +1,8 @@
 var jbCatMan = window.opener.jbCatMan;
 var jbCatManWizard = {};
-    
+
+var { MailServices } = ChromeUtils.import("resource:///modules/MailServices.jsm");
+
 let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
 loader.loadSubScript("chrome://sendtocategory/content/parser/csv/csv.js");
 //loader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcard.js");
