@@ -47,7 +47,7 @@ jbCatMan.init = function () {
   jbCatMan.data = {};
   
   //mainly managed by jbCatMan.scanCategories()
-  jbCatMan.data.foundCategories = [];
+  jbCatMan.data.categoryMembers = [];
   jbCatMan.data.categoryList = [];
   jbCatMan.data.abSize = 0;
   //create a map between directoryIds und abURI, so we can get the abURI for each card even if its directory is not known when using the global address book
@@ -482,7 +482,7 @@ jbCatMan.scanCategories = function (abURI, field = jbCatMan.getCategoryField(), 
   let data = {};
   if (quickscan === false) data = jbCatMan.data;
 
-  data.foundCategories = [];
+  data.categoryMembers = [];
   data.categoryList = [];
   data.abSize = 0;
   data.abURI = [];
@@ -522,15 +522,21 @@ jbCatMan.scanCategories = function (abURI, field = jbCatMan.getCategoryField(), 
       if (catArray.length > 0) {
         //add card to all categories it belongs to
         for (let i=0; i < catArray.length; i++) {
-          //is this category known already?
-          //-> foundCategories is using Strings as Keys
-          if (catArray[i] in data.foundCategories == false) {
-            data.foundCategories[catArray[i]] = [];
-            data.categoryList.push(catArray[i]);
+          let catParts = catArray[i].split(" / ");
+          
+          for (let i=0; i < catParts.length; i++) {
+            let cat = catParts.slice(0,i+1).join(" / ");
+            //is this category known already?
+            if (!data.categoryList.includes(cat)) {
+              data.categoryList.push(cat);
+              //categoryMembers is using Strings as Keys
+              data.categoryMembers[cat] = [];
+            }            
+            
+            //add card to category
+            data.categoryMembers[cat].push(CardID);
           }
           
-          //add card to category
-          data.foundCategories[catArray[i]].push(CardID);
         }
       } else {
         data.cardsWithoutCategories.push(CardID);
@@ -538,7 +544,6 @@ jbCatMan.scanCategories = function (abURI, field = jbCatMan.getCategoryField(), 
     }
   }
   data.categoryList.sort();
-  
   return data.categoryList;
 }
 

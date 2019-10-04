@@ -129,7 +129,7 @@ jbCatMan.addCategoryListEntry = function (abURI, newCategoryName) {
   newListItem.categoryName = newCategoryName;
   newListItem.subCategories = jbCatMan.getSubCategories(newCategoryName);
   newListItem.categoryFilter = newListItem.subCategories.concat(newCategoryName); // to filter the view
-  newListItem.categorySize = jbCatMan.getNumberOfFilteredCards(abURI, newListItem.categoryFilter);
+  newListItem.categorySize = jbCatMan.data.categoryMembers[newCategoryName].length;
   newListItem.id = btoa("Category:" + newCategoryName).split("=").join("");
   newListItem.addEventListener("dragenter", jbCatMan.dragdrop);
   newListItem.addEventListener("dragover", jbCatMan.dragdrop);
