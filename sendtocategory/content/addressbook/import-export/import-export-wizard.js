@@ -89,7 +89,8 @@ jbCatManWizard.Init = function () {
   // Show option to export only the categories of the passed categoryFilter, if that is provided.
   let hasSelectedCategories = (Array.isArray(jbCatManWizard.categoryFilter) && jbCatManWizard.categoryFilter.length > 0);
   document.getElementById('CatManWizardExport_Categories_CSV').hidden = !hasSelectedCategories;
-
+  document.getElementById("CatManWizardExport_Categories_CSV").checked = hasSelectedCategories;
+  
   if (hasSelectedCategories) {
     // user selected a category
     jbCatManWizard.exportsize = jbCatMan.getNumberOfFilteredCards(jbCatManWizard.currentAddressBook.URI, jbCatManWizard.categoryFilter);
