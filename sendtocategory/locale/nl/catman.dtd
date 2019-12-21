@@ -1,4 +1,4 @@
-﻿<!ENTITY sendtocategory.ok.button "Ok">
+<!ENTITY sendtocategory.ok.button "Ok">
 <!ENTITY sendtocategory.cancel.button "Annuleer">
 
 <!ENTITY sendtocategory.category.label "categorie">
@@ -17,7 +17,7 @@
 <!ENTITY sendtocategory.add.title "maak een nieuwe categorie">
 
 <!ENTITY sendtocategory.edit.title "geef categorie een andere naam">
-<!ENTITY sendtocategory.editMenu.label "geef categorie ##name##" een andere naam>
+<!ENTITY sendtocategory.editMenu.label "geef categorie ##name## een andere naam">
 
 <!ENTITY sendtocategory.remove.title "verwijder categorie">
 <!ENTITY sendtocategory.removeMenu.label "verwijder categorie ##name##">
