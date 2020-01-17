@@ -45,50 +45,6 @@ TODO
 // adding additional functions to the local jbCatMan Object
 //###################################################
 
-
-jbCatMan.getReducedCategoriesForHierarchyMode = function (parentCategory = null) {
-  let reducedCategories = [];
-  
-  let level = parentCategory ? parentCategory.split(" / ").length + 1 : 1;
-  for (let cat of jbCatMan.data.categoryList) {
-    let thisLevel = cat.split(" / ");      
-    thisLevel.splice(level);
-    thisLevel = thisLevel.join(" / "); 
-    
-    if ((!parentCategory || thisLevel.startsWith(parentCategory + " / ")) && !reducedCategories.includes(thisLevel)) {
-      reducedCategories.push(thisLevel);
-    }
-  }
-
-  return reducedCategories;
-}
-
-jbCatMan.getSubCategories = function (parentCategory) {
-  let subCategories = [];
-  for (let category of jbCatMan.data.categoryList) {
-    // Do not include parentCategory.
-    if (category.startsWith(parentCategory + " / ")) subCategories.push(category);
-  }
-  subCategories.sort();
-  return subCategories;
-}
-
-jbCatMan.getNumberOfFilteredCards = function (abURI, categoryFilter) {
-  let searchstring = jbCatMan.getCategorySearchString(abURI, categoryFilter);
-  let searches = jbCatMan.getSearchesFromSearchString(searchstring);
-
-  let length = 0;
-  for (let search of searches) {
-    let cards = MailServices.ab.getDirectory(search).childCards;
-    while (cards.hasMoreElements()) {
-      let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
-      length++;
-    }
-  }
-  return length;    
-}
-
-
 jbCatMan.dragdrop = {
   handleEvent(event) {                  
     switch (event.type) {
