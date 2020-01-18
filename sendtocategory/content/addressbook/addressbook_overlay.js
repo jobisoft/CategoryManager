@@ -332,7 +332,7 @@ jbCatMan.writeToCategory = function () {
     let sURL="mailto:";
     //Add envelope addr if specified - or add [ListName] to Subject
     if (setting != "") {
-      sURL = sURL + "?to=" + encodeURIComponent(currentCategory) + "<" + encodeURIComponent(setting) + ">";
+      sURL = sURL + "?to=" + encodeURIComponent(categoriesList.querySelector("#" + jbCatMan.data.selectedCategory).categoryName) + "<" + encodeURIComponent(setting) + ">";
     } else {
       sURL = sURL + "?subject=" + encodeURIComponent("["+ categoriesList.querySelector("#" + jbCatMan.data.selectedCategory).categoryName +"] ");	    
     }
