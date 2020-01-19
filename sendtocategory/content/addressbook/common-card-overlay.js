@@ -1,14 +1,9 @@
 
 var jbCatManEditDialog = {};
 
-if (window.opener.jbCatMan) {
-  var jbCatMan = window.opener.jbCatMan;
-} else {
-  let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-  loader.loadSubScript("chrome://sendtocategory/content/category_tools.js");
-}
-
-
+// we need to be independent from the main addressbook here
+let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+loader.loadSubScript("chrome://sendtocategory/content/category_tools.js");
 
 
 jbCatManEditDialog.Init = function () {
@@ -36,6 +31,8 @@ jbCatManEditDialog.Init = function () {
   window.document.getElementById('abCatManAddSubCategoryButton').addEventListener("command", jbCatManEditDialog.insertNewCategoryEntry, false);
 
   if (window.location.href=="chrome://messenger/content/addressbook/abNewCardDialog.xul") {
+    // if this is the new card dialog, manually trigger onLoadCard to init category tab
+    jbCatManEditDialog.onLoadCard(null, window.document);
     if (window.document.getElementById("abPopup")) {
       window.document.getElementById("abPopup").addEventListener("command", function() { jbCatManEditDialog.onLoadCard(null, window.document); }, false);
     }
@@ -43,23 +40,28 @@ jbCatManEditDialog.Init = function () {
 }
 
 
-jbCatManEditDialog.getSelectedAbFromArgument = function (arg) {
-    let abURI = "";
-    if (arg.hasOwnProperty("abURI")) {
-        abURI = arg.abURI;
-    } else if (arg.hasOwnProperty("selectedAB")) {
-        abURI = arg.selectedAB;
-    }
+jbCatManEditDialog.getSelectedAb = function (window) {
+  let abURI = "";
+
+  if (window.location.href=="chrome://messenger/content/addressbook/abNewCardDialog.xul") {
+    abURI = window.document.getElementById("abPopup").value;
+  } else if (window.arguments[0].hasOwnProperty("abURI")) {
+    abURI = window.arguments[0].abURI;
+  } else if (window.arguments[0].hasOwnProperty("selectedAB")) {
+    // should not happen, as this is only used in abNewCardDialog, which we caught in case 1
+    abURI = window.arguments[0].selectedAB;
+  }
     
-    if (abURI) {
-        jbCatManEditDialog.addressbook = MailServices.ab.getDirectory(abURI);
-        if (jbCatManEditDialog.addressbook.isMailList) {
-            let parts = abURI.split("/");
-            parts.pop();
-            return parts.join("/");
-        }
+  if (abURI) {
+    jbCatManEditDialog.addressbook = MailServices.ab.getDirectory(abURI);
+    if (jbCatManEditDialog.addressbook.isMailList) {
+      let parts = abURI.split("/");
+      parts.pop();
+      return parts.join("/");
     }
-    return abURI;
+  }
+  
+  return abURI;
 }
 
 
@@ -190,10 +192,8 @@ jbCatManEditDialog.addItemToList = function (categoryName, checked = true) {
 jbCatManEditDialog.onLoadCard = function (aCard, aDocument) { 
   jbCatManEditDialog.catsArray = aCard ? jbCatMan.getCategoriesfromCard(aCard, "Categories") : []; 	
 
-  if (!jbCatMan.data.scannedForCategories) {
-    let abURI = jbCatManEditDialog.getSelectedAbFromArgument(document.defaultView.arguments[0]);
-    jbCatMan.scanCategories(abURI);
-  }
+  let abURI = jbCatManEditDialog.getSelectedAb(aDocument.defaultView);
+  jbCatMan.scanCategories(abURI);
   
   // Clear current list.
   let list = aDocument.getElementById("abCatManCategoriesList");
@@ -250,7 +250,12 @@ jbCatManEditDialog.onPopupShowing = function (event) {
   let mainCatBtn = window.document.getElementById('abCatManAddMainCategoryButton');
   let subCatBtn = window.document.getElementById('abCatManAddSubCategoryButton');
   mainCatBtn.label = jbCatMan.getLocalizedMessage("button_addMainCat");
-  subCatBtn.label = jbCatMan.getLocalizedMessage("button_addSubCat").replace("##CAT##", list.selectedItem.categoryName);
+  if (list.selectedItem) {
+    subCatBtn.label = jbCatMan.getLocalizedMessage("button_addSubCat").replace("##CAT##", list.selectedItem.categoryName);
+    subCatBtn.hidden = false;
+  } else {
+    subCatBtn.hidden = true;
+  }
 }
 
 
@@ -260,7 +265,9 @@ jbCatManEditDialog.onItemSelected = function (event) {
   for (element of elements) {
     element.setAttribute("class", "");
   }
-  list.selectedItem.setAttribute("class","isSelected");
+  if (list.selectedItem) {
+    list.selectedItem.setAttribute("class","isSelected");
+  }
 }
 
 
