@@ -526,6 +526,7 @@ jbCatMan.scanCategories = function (abURI, field = jbCatMan.getCategoryField(), 
   let data = {};
   if (quickscan === false) data = jbCatMan.data;
 
+  data.scannedForCategories = true;
   data.categoryMembers = [];
   data.categoryList = [];
   data.abSize = 0;

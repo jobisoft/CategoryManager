@@ -190,6 +190,11 @@ jbCatManEditDialog.addItemToList = function (categoryName, checked = true) {
 jbCatManEditDialog.onLoadCard = function (aCard, aDocument) { 
   jbCatManEditDialog.catsArray = aCard ? jbCatMan.getCategoriesfromCard(aCard, "Categories") : []; 	
 
+  if (!jbCatMan.data.scannedForCategories) {
+    let abURI = jbCatManEditDialog.getSelectedAbFromArgument(document.defaultView.arguments[0]);
+    jbCatMan.scanCategories(abURI);
+  }
+  
   // Clear current list.
   let list = aDocument.getElementById("abCatManCategoriesList");
   list.clearSelection();
