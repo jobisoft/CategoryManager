@@ -1,20 +1,10 @@
 <?xml version="1.0"?>
 
-<!DOCTYPE overlay [
-<!ENTITY % abMainOverlayDTD SYSTEM "chrome://sendtocategory/locale/catman.dtd" >
-%abMainOverlayDTD;
-]>
-
 <overlay 
     id="CatManContactPanelOverlay"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
     
     <script type="text/javascript" src="chrome://sendtocategory/content/contactpanel/abContactsPanel_overlay.js"/>
-    <script type="text/javascript">
-        jbCatMan.locale.prefixForPeopleSearch = "&sendtocategory.category.label;";
-        jbCatMan.locale.placeholderText = "&sendtocategory.categoryfilter.label;";
-        document.getElementById("addressbookList").addEventListener("select", function() { jbCatMan.contactPanelCategoryMenuInit(); }, false);
-    </script>
    
     <vbox id="results_box" flex="1">
         <vbox id="categoryfilter-box" insertafter="panel-bar">

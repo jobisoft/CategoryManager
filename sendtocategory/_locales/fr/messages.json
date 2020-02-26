@@ -1,5 +1,318 @@
 {
-  "extensionDescription": {
-    "message": "Category Manager pour contacts, permet aussi d'envoyer un email à tous les membres d'une catégorie."
-  }
+    "extensionDescription": {
+        "message": "Category Manager pour contacts, permet aussi d'envoyer un email à tous les membres d'une catégorie."
+    },
+    "button_addMainCat": {
+        "message": "Add top level category"
+    }, 
+    "button_addSubCat": {
+        "message": "Add category below '####'"
+    }, 
+    "category_description": {
+        "message": "Caution: These categories are '#### categories' and are independent from the 'MFFAB categories', which are stored in a different contact property and can be managed in the 'Other data' tab."
+    }, 
+    "convert_all_to_MFFAB_category": {
+        "message": "convert all categories to MFFAB categories"
+    }, 
+    "convert_all_to_standard_category": {
+        "message": "convert all categories to standard categories"
+    }, 
+    "convert_to_MFFAB_category": {
+        "message": "convert to MFFAB category"
+    }, 
+    "convert_to_standard_category": {
+        "message": "convert to standard category"
+    }, 
+    "createNewCategory": {
+        "message": "créez nouvelle catégorie ici"
+    }, 
+    "found_categories": {
+        "message": "Filtrer les contacts par catégories ####:"
+    }, 
+    "sendtocategory.add.title": {
+        "message": "ajouter une catégorie"
+    }, 
+    "sendtocategory.bulkedit.choose": {
+        "message": "Veuillez séléctionner un contact ..."
+    }, 
+    "sendtocategory.bulkedit.close.button": {
+        "message": "fermer le change log"
+    }, 
+    "sendtocategory.bulkedit.edit.title": {
+        "message": "Éditer les membres de la catégorie #### directement:"
+    }, 
+    "sendtocategory.bulkedit.firstname": {
+        "message": "Prénom"
+    }, 
+    "sendtocategory.bulkedit.header.contact": {
+        "message": "contact assigné"
+    }, 
+    "sendtocategory.bulkedit.header.email": {
+        "message": "adresse e-mail"
+    }, 
+    "sendtocategory.bulkedit.header.status": {
+        "message": "status"
+    }, 
+    "sendtocategory.bulkedit.lastname": {
+        "message": "Nom"
+    }, 
+    "sendtocategory.bulkedit.legend.caption": {
+        "message": "légende"
+    }, 
+    "sendtocategory.bulkedit.legend.double": {
+        "message": "L'adresse électronique a été trouvée dans de multiples contacts. Choisissez quel contacts doit être ajouté à la catégorie."
+    }, 
+    "sendtocategory.bulkedit.legend.notok": {
+        "message": "L'adresse électronique n'a pas été trouvée dans le carnet d'adresses. Un nouveau contact doit être créé et sera ajouté à la catégorie"
+    }, 
+    "sendtocategory.bulkedit.legend.ok": {
+        "message": "L'adresse électronique pourra être sans ambiguïté assignée à un contact et ce contact sera ajouté à la catégorie."
+    }, 
+    "sendtocategory.bulkedit.legend.okdouble": {
+        "message": "L'adresse électronique a été trouvée dans de multiples contacts. Cependant, un de ces contacts est déjà assigné à cette catégorie et a été automatiquement choisi."
+    }, 
+    "sendtocategory.bulkedit.membersWithoutPrimaryEmail": {
+        "message": "Cette catégorie contient #### contacts sans une adresse e-mail associée. Les informations de catégorie de ces contacts ne peut pas être édité avec cette boîte de dialogue. Ils ne sont pas représentés dans la liste ci-dessus."
+    }, 
+    "sendtocategory.bulkedit.noname": {
+        "message": "Nom Inconnu"
+    }, 
+    "sendtocategory.bulkedit.note": {
+        "message": "Allusion"
+    }, 
+    "sendtocategory.bulkedit.save.button": {
+        "message": "sauver la catégorie"
+    }, 
+    "sendtocategory.bulkedit.save.title": {
+        "message": "Les changements suivant ont été appliqué à la catégorie ####:"
+    }, 
+    "sendtocategory.bulkedit.title": {
+        "message": "Éditer directement la catégorie"
+    }, 
+    "sendtocategory.bulkedit.validate.button": {
+        "message": "valider les adresses e-mail"
+    },
+    "sendtocategory.cancel.button": {
+        "message": "Annuler"
+    }, 
+    "sendtocategory.catbox.header.catname": {
+        "message": "nom de la catégorie"
+    }, 
+    "sendtocategory.catbox.header.catsize": {
+        "message": "membres"
+    }, 
+    "sendtocategory.categoriescontext.label": {
+        "message": "Catégories"
+    }, 
+    "sendtocategory.category.all": {
+        "message": "Tous les contacts"
+    }, 
+    "sendtocategory.category.label": {
+        "message": "Catégorie"
+    }, 
+    "sendtocategory.categoryfilter.label": {
+        "message": "Catégories ..."
+    }, 
+    "sendtocategory.catogorybox.MFFAB.tooltip": {
+        "message": "Switch between standard category mode and MFFAB category mode"
+    }, 
+    "sendtocategory.catsedit.desc": {
+        "message": "Please define, if all, none or a subset of the selected contacts should be part of category ####."
+    }, 
+    "sendtocategory.catsedit.label.in": {
+        "message": "Subset of the selected contatcs which should be part of category ####:"
+    }, 
+    "sendtocategory.catsedit.title": {
+        "message": "Edit category membership of selected contacts"
+    },
+    "sendtocategory.edit.title": {
+        "message": "renommer la catégorie"
+    },
+    "sendtocategory.error.add": {
+        "message": "La catégorie [####] ne peut pas être ajoutée car une catégorie avec ce nom existe déjà."
+    }, 
+    "sendtocategory.error.rename": {
+        "message": "La catégorie [$OLDNAME$] ne peut pas être renommée en [$NEWNAME$] car une catégorie avec ce nom existe déjà.",
+        "placeholders": { "OLDNAME": { "content": "$1"}, "NEWNAME": { "content": "$2"}}
+    }, 
+    "sendtocategory.export.title": {
+        "message": "import/export category [no FR trans avail]"
+    }, 
+    "sendtocategory.exportAll.title": {
+        "message": "import/export address book [no FR trans avail]"
+    }, 
+    "sendtocategory.helpButton.label": {
+        "message": "?"
+    }, 
+    "sendtocategory.hideCategoryPaneButton.label": {
+        "message": "▼"
+    }, 
+    "sendtocategory.name.label": {
+        "message": "nom"
+    }, 
+    "sendtocategory.ok.button": {
+        "message": "Ok"
+    }, 
+    "sendtocategory.pref.addressbooktab.label": {
+        "message": "Addressbook (missing FR translation)"
+    }, 
+    "sendtocategory.pref.addressbooktab.rememberlastbook.desc": {
+        "message": "If the thunderbird addressbook is opened, usually the first found addressbook will be displayed. With this option set, the last used addressbook will be displayed."
+    }, 
+    "sendtocategory.pref.addressbooktab.rememberlastbook.label": {
+        "message": "Remember last used addressbook"
+    }, 
+    "sendtocategory.pref.generaltab.label": {
+        "message": "Bulk-Mails (missing FR translation)"
+    }, 
+    "sendtocategory.pref.generaltab.toaddr.desc1": {
+        "message": "En raison des lois de protection de données allemandes, il n'est pas authorisé d'insérer tous les membres d'une liste avec les champs 'to:' ou 'cc:' , cela révéleraient toutes les adresses électroniques à tous les membres de liste."
+    }, 
+    "sendtocategory.pref.generaltab.toaddr.desc2": {
+        "message": "C'est pourquoi, tous les membres de la catégorie doivent être inséré avec le champs 'bcc :' . Cependant, un tel courrier électronique n'aura pas de destinataire visible; en fonction du client de courrier électronique, il affichera quelque chose comme 'undisclosed-recipients:;'. Il est commun d'inclure un destinataire supplémentaire que tous le monde verra et qui porte le nom de la liste dans le champs 'to:' (votre propre adresse e-mail ou adresse sans réponse). Il n'est pas possible d'utiliser une adresse électronique non-existante, car la plupart des serveurs de courrier rejetteront ces courriers électroniques."
+    }, 
+    "sendtocategory.pref.generaltab.toaddr.desc3": {
+        "message": "Si ce champ est vide, le nom de la liste (à l'intérieur des parenthèses) sera ajouté au sujet du courrier électronique, pour identifier le courrier électronique dans une liste."
+    }, 
+    "sendtocategory.pref.generaltab.toaddr.label": {
+        "message": "Adresse Facultative(visible par tout le monde, le nom affiché sera le nom de la liste)"
+    }, 
+    "sendtocategory.pref.label": {
+        "message": "Gestion des Catégories"
+    }, 
+    "sendtocategory.remove.title": {
+        "message": "supprimer la catégorie"
+    },
+    "sendtocategory.send.title": {
+        "message": "envoyer un e-mail à la catégorie"
+    },
+    "sendtocategory.showCategoryPaneButton.label": {
+        "message": "▲"
+    }, 
+    "sendtocategory.wizard.export.desc": {
+        "message": "Export has finished, ##EXPORTNUM## contacts{{ of category '##CAT##'}} from address book '##BOOK##' have been exported."
+    }, 
+    "sendtocategory.wizard.export.options.categorie": {
+        "message": "Export the affiliation to category '##CAT##' and its subcategories. Ignore all other categories and the above export selection for the category field."
+    }, 
+    "sendtocategory.wizard.export.options.csv.desc1": {
+        "message": "Please set the properties of the CSV file."
+    }, 
+    "sendtocategory.wizard.export.options.csv.desc2": {
+        "message": "Please select data fields for export. "
+    }, 
+    "sendtocategory.wizard.export.options.csv.title": {
+        "message": "Export settings for CSV files"
+    }, 
+    "sendtocategory.wizard.export.options.export": {
+        "message": "export"
+    }, 
+    "sendtocategory.wizard.export.options.vcf.title": {
+        "message": "Export settings for VCF files"
+    }, 
+    "sendtocategory.wizard.export.title": {
+        "message": "Export finished"
+    }, 
+    "sendtocategory.wizard.import.control.desc": {
+        "message": "The following contacts and data fields will be imported (empty columns are not shown):"
+    }, 
+    "sendtocategory.wizard.import.control.title": {
+        "message": "Import verification"
+    }, 
+    "sendtocategory.wizard.import.desc": {
+        "message": "Import has finished, ##IMPORTNUM## contacts have been imported into address book '##BOOK##'{{ and also added to category '##CAT##' }}. Furthermore, the imported contacts have been added to the category '##TIMECAT##'  for easy identification."
+    }, 
+    "sendtocategory.wizard.import.error.csv": {
+        "message": "The selected CSV file could not be imported, because its lines do not contain the same number of fields."
+    }, 
+    "sendtocategory.wizard.import.error.empty": {
+        "message": "The selected file is empty. Aborting import."
+    }, 
+    "sendtocategory.wizard.import.error.reserved": {
+        "message": "The field name '####' is reserved and cannot be used. Please rename the field or disable its import."
+    }, 
+    "sendtocategory.wizard.import.mapping.csv.desc": {
+        "message": "The following table lists all found data fields. Each data field can be selected for import and can be mapped onto a standard thunderbird field or onto a custom field. For complex mapping it is often faster to edit the CSV file before import."
+    }, 
+    "sendtocategory.wizard.import.mapping.csv.title": {
+        "message": "Additional import settings for CSV files"
+    }, 
+    "sendtocategory.wizard.import.mapping.csvdatafield": {
+        "message": "CSV data field"
+    }, 
+    "sendtocategory.wizard.import.mapping.import": {
+        "message": "import"
+    }, 
+    "sendtocategory.wizard.import.mapping.thunderbirdfield": {
+        "message": "Thunderbird data field"
+    }, 
+    "sendtocategory.wizard.import.options.csv.charset": {
+        "message": "character set"
+    }, 
+    "sendtocategory.wizard.import.options.csv.delimiter": {
+        "message": "field seperator"
+    }, 
+    "sendtocategory.wizard.import.options.csv.delimiter.tab": {
+        "message": "tabulator"
+    }, 
+    "sendtocategory.wizard.import.options.csv.desc": {
+        "message": "The following properties of the CSV file have been recognized:"
+    }, 
+    "sendtocategory.wizard.import.options.csv.linebreak": {
+        "message": "line break"
+    }, 
+    "sendtocategory.wizard.import.options.csv.textident": {
+        "message": "text qualifier"
+    }, 
+    "sendtocategory.wizard.import.options.csv.title": {
+        "message": "Import settings for CSV files"
+    }, 
+    "sendtocategory.wizard.import.options.setting": {
+        "message": "Setting"
+    }, 
+    "sendtocategory.wizard.import.options.value": {
+        "message": "Value"
+    }, 
+    "sendtocategory.wizard.import.options.vcf.title": {
+        "message": "Import settings for VCF files"
+    }, 
+    "sendtocategory.wizard.import.title": {
+        "message": "Import finished"
+    }, 
+    "sendtocategory.wizard.mode.desc": {
+        "message": "This wizard will guide you through the import/export process of your contacts."
+    }, 
+    "sendtocategory.wizard.mode.export": {
+        "message": "Export ##NUM## contacts {{of category '##CAT##' }}from address book '##BOOK##'."
+    }, 
+    "sendtocategory.wizard.mode.export.selectfile": {
+        "message": "Select file for export"
+    }, 
+    "sendtocategory.wizard.mode.import": {
+        "message": "Import contacts {{into category '##CAT##' }}into address book '##BOOK##'. All imported contacts will also be addedto the category '##TIMECAT##'."
+    }, 
+    "sendtocategory.wizard.mode.import.selectfile": {
+        "message": "Select file for import"
+    }, 
+    "sendtocategory.wizard.mode.title": {
+        "message": "Welcome"
+    }, 
+    "sendtocategory.wizard.title": {
+        "message": "Category Manager Import/Export Wizard"
+    }, 
+    "sendtocategory.wizard.types.csv": {
+        "message": "Comma Seperated Values"
+    }, 
+    "sendtocategory.wizard.types.vcf": {
+        "message": "vCard"
+    }, 
+    "switch_to_MFFAB_mode": {
+        "message": "switch to MFFAB category mode"
+    }, 
+    "switch_to_standard_mode": {
+        "message": "switch to standard category mode"
+    }, 
+    "viewWithoutCategories": {
+        "message": "Non classé"
+    }
 }

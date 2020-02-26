@@ -174,7 +174,7 @@ jbCatMan.updateCategoryList = function () {
     newListItem.id = btoa("Default:" + newListItem.categoryFilter).split("=").join("");
     let categoryName = document.createElement("label");
     categoryName.setAttribute("flex", "1");
-    categoryName.setAttribute("value", jbCatMan.locale.viewAllCategories);
+    categoryName.setAttribute("value", jbCatMan.getLocalizedMessage("sendtocategory.category.all"));
     categoryName.setAttribute("style", "font-style:italic;");
     newListItem.appendChild(categoryName);
     let categorySize = document.createElement("label");
@@ -269,9 +269,9 @@ jbCatMan.updateContextMenu = function () {
     document.getElementById("CatManContextMenuImportExport").disabled = isRemote || isGlobal;
 
     if (isAll) {
-        document.getElementById("CatManContextMenuImportExport").label = jbCatMan.locale.menuAllExport;
+        document.getElementById("CatManContextMenuImportExport").label = jbCatMan.getLocalizedMessage("sendtocategory.exportAll.title");
     } else {
-        document.getElementById("CatManContextMenuImportExport").label = jbCatMan.locale.menuExport;
+        document.getElementById("CatManContextMenuImportExport").label = jbCatMan.getLocalizedMessage("sendtocategory.export.title");
     }
   
     //Special MFFAB entries
@@ -473,12 +473,12 @@ jbCatMan.onBulkEdit = function () {
   //all 3 dialogs are called in sequence. Skipped, if canceled.
   let categoriesList = document.getElementById("CatManCategoriesList");
   let categoryFilter = categoriesList.querySelector("#" + jbCatMan.data.selectedCategory).categoryFilter;
-  window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_editAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,resizable=no", categoryFilter, jbCatMan.locale.bulkTitle);
+  window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_editAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,resizable=no", categoryFilter, jbCatMan.getLocalizedMessage("sendtocategory.bulkedit.title"));
   if (jbCatMan.bulk.needToValidateBulkList) {
-    window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_validateAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,width=595,height=600,resizable=yes", categoryFilter, jbCatMan.locale.bulkTitle);
+    window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_validateAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,width=595,height=600,resizable=yes", categoryFilter, jbCatMan.getLocalizedMessage("sendtocategory.bulkedit.title"));
   }
   if (jbCatMan.bulk.needToSaveBulkList) {
-    window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_saveAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,resizable=yes", categoryFilter, jbCatMan.locale.bulkTitle);
+    window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_saveAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,resizable=yes", categoryFilter, jbCatMan.getLocalizedMessage("sendtocategory.bulkedit.title"));
   }
 }
 
@@ -487,7 +487,7 @@ jbCatMan.onBulkEdit = function () {
 jbCatMan.onAddCategory = function (event) {
   let parentCategory = event.target.categoryName;
   event.stopPropagation(); 
-  window.openDialog("chrome://sendtocategory/content/addressbook/edit_category.xul", "addCategory", "modal,centerscreen,chrome,resizable=no", parentCategory, jbCatMan.locale.addTitle, "add");
+  window.openDialog("chrome://sendtocategory/content/addressbook/edit_category.xul", "addCategory", "modal,centerscreen,chrome,resizable=no", parentCategory, jbCatMan.getLocalizedMessage("sendtocategory.add.title"), "add");
 }
 
 
@@ -495,7 +495,7 @@ jbCatMan.onAddCategory = function (event) {
 jbCatMan.onRenameCategory = function () {
   let categoriesList = document.getElementById("CatManCategoriesList");
   if (categoriesList.selectedItem.categoryName) {
-    window.openDialog("chrome://sendtocategory/content/addressbook/edit_category.xul", "editCategory", "modal,centerscreen,chrome,resizable=no", categoriesList.selectedItem.categoryName, jbCatMan.locale.editTitle, "rename");
+    window.openDialog("chrome://sendtocategory/content/addressbook/edit_category.xul", "editCategory", "modal,centerscreen,chrome,resizable=no", categoriesList.selectedItem.categoryName, jbCatMan.getLocalizedMessage("sendtocategory.edit.title"), "rename");
   }
 }
 
@@ -658,11 +658,13 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
 //###################################################
 
 jbCatMan.initAddressbook = function() {
+  jbCatMan.loadLocales(document);
+  
   //add categories field to details view
   let CatManCategoriesHeader = document.createElement("description");
   CatManCategoriesHeader.id = "CatManCategoriesHeader";
   CatManCategoriesHeader.setAttribute("class", "CardViewHeading");
-  CatManCategoriesHeader.textContent = jbCatMan.locale.categories;
+  CatManCategoriesHeader.textContent = jbCatMan.getLocalizedMessage("sendtocategory.categoriescontext.label");
 
   let CatManCategoriesLabel = document.createElement("description");
   CatManCategoriesLabel.id= "CatManCategoriesLabel";

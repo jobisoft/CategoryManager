@@ -3,24 +3,15 @@
 <?xml-stylesheet href="chrome://messenger/skin/messenger.css" type="text/css"?>
 <?xml-stylesheet href="chrome://sendtocategory/skin/richlist.css" type="text/css"?>
 
-<!DOCTYPE dialog
-[
-    <!ENTITY % dtd1 SYSTEM "chrome://sendtocategory/locale/catman.dtd" > %dtd1;
-]>
-
 <dialog id="CatManCategoryValidator"
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     buttons="accept,cancel"
-    buttonlabelaccept="&sendtocategory.bulkedit.save.button;"
-    buttonlabelcancel="&sendtocategory.cancel.button;"
+    i18n-buttonlabelaccept="sendtocategory.bulkedit.save.button"
+    i18n-buttonlabelcancel="sendtocategory.cancel.button"
     onload="jbCatManBulkEdit.loadValidateList()">
 
     <script type="text/javascript" src="chrome://sendtocategory/content/addressbook/bulkedit.js"/>
-    <script type="text/javascript">
-        jbCatMan.locale.bulkEditChoose = "&sendtocategory.bulkedit.choose;";
-        jbCatMan.locale.bulkEditNoName = "&sendtocategory.bulkedit.noname;";
-    </script>
     
     <vbox id="CatManDialogBox" flex="1">
         <vbox flex="1">
@@ -37,9 +28,9 @@
                 seltype="single">                   
 
                     <listheader style="border: 0; padding: 0; border-bottom: 1px solid lightgrey;">
-                        <treecol class="header" style="width:256px" label="&sendtocategory.bulkedit.header.email;" oncommand="jbCatManBulkEdit.stopme(event);" onclick="jbCatManBulkEdit.stopme(event);" />
-                        <treecol class="header" style="width:256px" label="&sendtocategory.bulkedit.header.contact;" oncommand="jbCatManBulkEdit.stopme(event);" onclick="jbCatManBulkEdit.stopme(event);" />
-                        <treecol class="header" flex="1" label="&sendtocategory.bulkedit.header.status;" oncommand="jbCatManBulkEdit.stopme(event);" onclick="jbCatManBulkEdit.stopme(event);" />    
+                        <treecol class="header" style="width:256px" i18n-label="sendtocategory.bulkedit.header.email" oncommand="jbCatManBulkEdit.stopme(event);" onclick="jbCatManBulkEdit.stopme(event);" />
+                        <treecol class="header" style="width:256px" i18n-label="sendtocategory.bulkedit.header.contact" oncommand="jbCatManBulkEdit.stopme(event);" onclick="jbCatManBulkEdit.stopme(event);" />
+                        <treecol class="header" flex="1" i18n-label="sendtocategory.bulkedit.header.status" oncommand="jbCatManBulkEdit.stopme(event);" onclick="jbCatManBulkEdit.stopme(event);" />    
                     </listheader>
   
                     <richlistitem id ="CatManListTemplate_OK" hidden="true">
@@ -50,7 +41,7 @@
 
                     <richlistitem id ="CatManListTemplate_NOTOK" hidden="true">
                         <hbox align="center" style="width:256px"><label crop="end" value=""/></hbox>
-                        <hbox align="center" style="width:256px"><textbox flex="2" placeholder="&sendtocategory.bulkedit.firstname;" value=""/><textbox flex="1" placeholder="&sendtocategory.bulkedit.lastname;" value=""/></hbox>
+                        <hbox align="center" style="width:256px"><textbox flex="2" i18n-placeholder="sendtocategory.bulkedit.firstname" value=""/><textbox flex="1" i18n-placeholder="sendtocategory.bulkedit.lastname" value=""/></hbox>
                         <hbox pack="center"><image src="chrome://sendtocategory/skin/notok.gif"/></hbox>
                     </richlistitem>
 
@@ -69,7 +60,7 @@
             </richlistbox>
             
             <groupbox>
-                <hbox class="groupbox-title"><label class="header">&sendtocategory.bulkedit.legend.caption;</label></hbox>
+                <hbox class="groupbox-title"><label class="header" i18n-value="sendtocategory.bulkedit.legend.caption"/></hbox>
                     <grid>
                         <columns>
                             <column/>
@@ -78,19 +69,19 @@
                         <rows>
                             <row align="center">
                                 <image height="20" src="chrome://sendtocategory/skin/ok.gif"/>
-                                <description>&sendtocategory.bulkedit.legend.ok;</description>
+                                <description i18n-textContent="sendtocategory.bulkedit.legend.ok"/>
                             </row>
                             <row align="center">
                                 <image height="20" src="chrome://sendtocategory/skin/ok-double.gif"/>
-                                <description>&sendtocategory.bulkedit.legend.okdouble;</description>
+                                <description i18n-textContent="sendtocategory.bulkedit.legend.okdouble"/>
                             </row>
                             <row align="center">
                                 <image height="20" src="chrome://sendtocategory/skin/double.gif"/>
-                                <description>&sendtocategory.bulkedit.legend.double;</description>
+                                <description i18n-textContent="sendtocategory.bulkedit.legend.double"/>
                             </row>
                             <row align="center">
                                 <image height="20" src="chrome://sendtocategory/skin/notok.gif"/>
-                                <description>&sendtocategory.bulkedit.legend.notok;</description>
+                                <description i18n-textContent="sendtocategory.bulkedit.legend.notok"/>
                             </row>
                         </rows>
                       </grid>    

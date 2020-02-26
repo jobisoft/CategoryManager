@@ -2,12 +2,12 @@
   "applications": {
     "gecko": {
       "id": "sendtocategory@jobisoft.de",
-      "strict_min_version": "68.0"
+      "strict_min_version": "68.5.0"
     }
   },
   "manifest_version": 2,
   "name": "Category Manager",
-  "version": "3.11",
+  "version": "3.11.1",
   "author": "John Bieling",
   "homepage_url": "https://github.com/jobisoft/CategoryManager/",
   "default_locale": "en-US",

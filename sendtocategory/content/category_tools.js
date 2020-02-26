@@ -1,5 +1,6 @@
 var { MailServices } = ChromeUtils.import("resource:///modules/MailServices.jsm");
 var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
+var { ConversionHelper } = ChromeUtils.import("chrome://sendtocategory/content/ConversionHelper.jsm");
 
 //create jbCatMan namespace
 var jbCatMan = {};
@@ -12,13 +13,43 @@ jbCatMan.quickdump = function (str) {
 
 
 
+jbCatMan.loadLocales = function(document, i18nAttributes = ["title", "label", "value", "tooltiptext", "placeholder"], i18nButtons = ["accept", "cancel"]) {
+  // set all i18n locale values
+  for (let i18nAttribute of i18nAttributes) {
+    for (let node of document.querySelectorAll("[i18n-"+i18nAttribute+"]")) {
+      let i18nId = node.getAttribute("i18n-"+i18nAttribute);
+      // small convinient hack: if the id ends with a colon, then it is not part of the id
+      // but should actually be printed
+      let i18nValue = i18nId.endsWith(":") 
+        ? ConversionHelper.GetStringFromName(i18nId.slice(0, -1)) + ":"
+        : ConversionHelper.GetStringFromName(i18nId);
+      node.setAttribute(i18nAttribute, i18nValue);
+    }      
+  }
 
+  for (let node of document.querySelectorAll("[i18n-textContent]")) {
+    let i18nId = node.getAttribute("i18n-textContent");
+    node.textContent = ConversionHelper.GetStringFromName(i18nId);
+  }      
+  
+  for (let i18nButton of i18nButtons) {
+    for (let node of document.querySelectorAll("[i18n-buttonlabel"+i18nButton+"]")) {
+      let i18nId = node.getAttribute("i18n-buttonlabel"+i18nButton);
+      node.getButton(i18nButton).label = ConversionHelper.GetStringFromName(i18nId);
+    }      
+  }    
+}	
 
 jbCatMan.getLocalizedMessage = function (msg, replacement = "") {
-  let bundle = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService).createBundle("chrome://sendtocategory/locale/bundle.strings");
   let localized = msg;
   try {
-    localized = bundle.GetStringFromName(msg).replace("####", replacement);
+    // if the replacement parameter is an Array, make use of the "placeholder" notation of the i18n WebExt API
+    // otherwise fall back to the legacy #### replacement
+    if (Array.isArray(replacement)) {
+      localized = ConversionHelper.formatStringFromName(msg, replacement);
+    } else {
+      localized = ConversionHelper.GetStringFromName(msg).replace("####", replacement);
+    }
   } catch (e) {}
   
   return localized;
@@ -142,10 +173,10 @@ jbCatMan.modifyCard = function (card) {
 // if that gets implemented.
 jbCatMan.updatePeopleSearchInput = function (categoryFilter) {
   if (Array.isArray(categoryFilter) && categoryFilter.length > 0) {
-    document.getElementById("peopleSearchInput").value = jbCatMan.locale.prefixForPeopleSearch + ": " + categoryFilter[categoryFilter.length-1];
+    document.getElementById("peopleSearchInput").value = jbCatMan.getLocalizedMessage("sendtocategory.category.label") + ": " + categoryFilter[categoryFilter.length-1];
     
   } else if (categoryFilter == "uncategorized") {
-    document.getElementById("peopleSearchInput").value = jbCatMan.locale.prefixForPeopleSearch + ": " + jbCatMan.getLocalizedMessage("viewWithoutCategories");
+    document.getElementById("peopleSearchInput").value = jbCatMan.getLocalizedMessage("sendtocategory.category.label") + ": " + jbCatMan.getLocalizedMessage("viewWithoutCategories");
     
   } else {
     document.getElementById("peopleSearchInput").value = "";
@@ -454,7 +485,7 @@ jbCatMan.getEmailFromCard = function (card) {
 
 jbCatMan.getUserNamefromCard = function (card) {
   let userName = "";
-  let fallback = jbCatMan.locale.bulkEditNoName;
+  let fallback = jbCatMan.getLocalizedMessage("sendtocategory.bulkedit.noname");
   // if no name is present, but an email, use the first part of the email as fallback for name - this is how TB is doing it as well
   if (card.primaryEmail) fallback = card.primaryEmail.split("@")[0];
   

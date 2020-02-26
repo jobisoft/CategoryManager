@@ -1,3 +1,5 @@
+var { MailServices } = ChromeUtils.import("resource:///modules/MailServices.jsm");
+var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
 
 var jbCatManEditDialog = {};
 
@@ -7,6 +9,8 @@ loader.loadSubScript("chrome://sendtocategory/content/category_tools.js");
 
 
 jbCatManEditDialog.Init = function () {
+  jbCatMan.loadLocales(document);
+
   //hide SOGo Category Tab
   if (window.document.getElementById("categoriesTabButton")) window.document.getElementById("categoriesTabButton").style.display = 'none';
 
@@ -251,7 +255,7 @@ jbCatManEditDialog.onPopupShowing = function (event) {
   let subCatBtn = window.document.getElementById('abCatManAddSubCategoryButton');
   mainCatBtn.label = jbCatMan.getLocalizedMessage("button_addMainCat");
   if (list.selectedItem) {
-    subCatBtn.label = jbCatMan.getLocalizedMessage("button_addSubCat").replace("##CAT##", list.selectedItem.categoryName);
+    subCatBtn.label = jbCatMan.getLocalizedMessage("button_addSubCat", list.selectedItem.categoryName);
     subCatBtn.hidden = false;
   } else {
     subCatBtn.hidden = true;

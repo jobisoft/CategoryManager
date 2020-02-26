@@ -5,6 +5,8 @@ var levels = [];
 
 function editCategoryLoad()
 {
+    jbCatMan.loadLocales(document);
+    
     originalName = window.arguments[0];
     levels = originalName ? originalName.split(" / ") : [];
 
@@ -51,7 +53,7 @@ function doOK()
           }
         } 
         else {
-          alert(jbCatMan.locale.errorAdd.replace("##newname##", newName));
+          alert(jbCatMan.getLocalizedMessage("sendtocategory.error.add", newName));
         }
         break;
       
@@ -66,7 +68,7 @@ function doOK()
           // Go through all contacts and rename that category.
           jbCatMan.updateCategories("rename", originalName, newName);          
         } else {
-            alert(jbCatMan.locale.errorRename.replace("##oldname##", originalName).replace("##newname##", newName));
+            alert(jbCatMan.getLocalizedMessage("sendtocategory.error.rename", [originalName, newName]));
         }
         break;
         

@@ -21,6 +21,8 @@ jbCatManBulkEdit.getCardsFromEmail = function (email) {
 
 
 jbCatManBulkEdit.loadBulkList = function () {
+  jbCatMan.loadLocales(document);
+
   document.title = window.arguments[1];
   let abURI = window.opener.GetSelectedDirectory();
 
@@ -46,13 +48,13 @@ jbCatManBulkEdit.loadBulkList = function () {
   emails.sort();
 
   //Update Label
-  document.getElementById("CatManBulkTextBoxLabel").value = jbCatMan.locale.bulkTextBoxLabel.replace("##name##","["+ jbCatMan.bulk.categoryFilter[jbCatMan.bulk.categoryFilter.length - 1] +"]");
+  document.getElementById("CatManBulkTextBoxLabel").value = jbCatMan.getLocalizedMessage("sendtocategory.bulkedit.edit.title", "["+ jbCatMan.bulk.categoryFilter[jbCatMan.bulk.categoryFilter.length - 1] +"]");
   document.getElementById("CatManBulkTextBox").value = emails.join("\n");
   
   //give feedback to users about possible category members without any email address, 
   //which will not be altered
   if (cardsWithoutEmails > 0) {
-    document.getElementById("CatManDescriptionNoPrimaryEmail").textContent = jbCatMan.locale.descriptionNoPrimaryEmail.replace("##counts##", cardsWithoutEmails);
+    document.getElementById("CatManDescriptionNoPrimaryEmail").textContent = jbCatMan.getLocalizedMessage("sendtocategory.bulkedit.membersWithoutPrimaryEmail", cardsWithoutEmails);
   } else {
     document.getElementById("CatManInfoBox").style.display = "none";
   }
@@ -96,6 +98,8 @@ jbCatManBulkEdit.stopme = function (e) {
 
 
 jbCatManBulkEdit.loadValidateList = function() {
+  jbCatMan.loadLocales(document);
+
   document.title = window.arguments[1];
 
   jbCatMan.bulk.validatorFields = [];
@@ -217,7 +221,7 @@ jbCatManBulkEdit.validateEmailList = function (i) {
           let menuList = document.createElement("menulist");
           let menuPopup = document.createElement("menupopup");
           let menuItem = document.createElement("menuitem");
-          menuItem.setAttribute("label", jbCatMan.locale.bulkEditChoose);
+          menuItem.setAttribute("label", jbCatMan.getLocalizedMessage("sendtocategory.bulkedit.choose"));
           menuPopup.appendChild(menuItem);
 
           let selectedUID = null;
@@ -275,7 +279,7 @@ jbCatManBulkEdit.saveList = function (){
   document.title = window.arguments[1];
 
   //Update Label
-  document.getElementById("CatManBulkTextBoxLabel").value = jbCatMan.locale.bulkTextBoxLabel.replace("##name##","["+ jbCatMan.bulk.categoryFilter[jbCatMan.bulk.categoryFilter.length - 1] +"]");
+  document.getElementById("CatManBulkTextBoxLabel").value = jbCatMan.getLocalizedMessage("sendtocategory.bulkedit.save.title", "["+ jbCatMan.bulk.categoryFilter[jbCatMan.bulk.categoryFilter.length - 1] +"]");
 
   //walk recursively through the saveList (DOM richlist) and process item by item
   jbCatMan.bulk.processedUIDs = [];

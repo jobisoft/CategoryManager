@@ -59,7 +59,7 @@ jbCatMan.contactPanelCategoryMenuInit = function () {
     
     let menupopup = document.getElementById("CatManCategoryFilterListPopup");
     let newItem = document.createElement("menuitem");
-    newItem.setAttribute("label", jbCatMan.locale.placeholderText);
+    newItem.setAttribute("label", jbCatMan.getLocalizedMessage("sendtocategory.categoryfilter.label"));
     newItem.setAttribute("value", "");
     menupopup.appendChild( newItem );
     
@@ -98,3 +98,5 @@ jbCatMan.contactPanelCategoryMenuChanged = function () {
     abResultsTree.view.selection.selectAll();
   }
 }
+
+document.getElementById("addressbookList").addEventListener("select", function() { jbCatMan.contactPanelCategoryMenuInit(); }, false);

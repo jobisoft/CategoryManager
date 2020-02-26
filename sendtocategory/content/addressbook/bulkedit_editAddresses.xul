@@ -3,35 +3,25 @@
 <?xml-stylesheet href="chrome://messenger/skin/messenger.css" type="text/css"?>
 <?xml-stylesheet href="chrome://sendtocategory/skin/richlist.css" type="text/css"?>
 
-<!DOCTYPE dialog
-[
-    <!ENTITY % dtd1 SYSTEM "chrome://sendtocategory/locale/catman.dtd" > %dtd1;
-]>
-
 <dialog id="CatManCategoryEditor"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     xmlns:html="http://www.w3.org/1999/xhtml"
     buttons="accept,cancel"
-    buttonlabelaccept="&sendtocategory.bulkedit.validate.button;"
-    buttonlabelcancel="&sendtocategory.cancel.button;"
+    i18n-buttonlabelaccept="sendtocategory.bulkedit.validate.button"
+    i18n-buttonlabelcancel="sendtocategory.cancel.button"
     onload="jbCatManBulkEdit.loadBulkList()">
 
     <script type="text/javascript" src="chrome://sendtocategory/content/addressbook/bulkedit.js"/>
-    <script type="text/javascript">
-        jbCatMan.locale.bulkTextBoxLabel = "&sendtocategory.bulkedit.edit.title;";
-        jbCatMan.locale.descriptionNoPrimaryEmail = "&sendtocategory.bulkedit.membersWithoutPrimaryEmail;";
-        jbCatMan.locale.bulkEditNoName = "&sendtocategory.bulkedit.noname;";
-    </script>
     
     <vbox id="CatManDialogBox">
         <vbox>
-              <label id="CatManBulkTextBoxLabel" value="&sendtocategory.bulkedit.edit.title;"/>
+              <label id="CatManBulkTextBoxLabel" i18n-value="sendtocategory.bulkedit.edit.title"/>
               <html:textarea id="CatManBulkTextBox" rows="30" cols="50"/>
         </vbox>
     </vbox>
     
     <groupbox id="CatManInfoBox">
-        <hbox class="groupbox-title"><label class="header">&sendtocategory.bulkedit.note;</label></hbox>
+        <hbox class="groupbox-title"><label class="header" i18n-value="sendtocategory.bulkedit.note"/></hbox>
         <grid>
             <columns>
                 <column/>

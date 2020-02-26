@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/css" href="chrome://global/skin/"?>
 <?xml-stylesheet type="text/css" href="chrome://messenger/skin/preferences/preferences.css"?>
-<!DOCTYPE dialog SYSTEM "chrome://sendtocategory/locale/catman.dtd">
 
 <dialog 
     id="CatManPreferences"
@@ -14,7 +13,7 @@
 
     <tabbox id="CatManPreferencesTabbox" flex="1" >
         <tabs>
-            <tab id="CatManPreferencesTabCategories" label="&sendtocategory.pref.generaltab.label;"/>
+            <tab id="CatManPreferencesTabCategories" i18n-label="sendtocategory.pref.generaltab.label"/>
         </tabs>
 
         <tabpanels flex="1">
@@ -22,12 +21,12 @@
             <tabpanel orient="vertical">
                 <vbox id="CatManPreferencesBoxCategories">
 
-                  <description style="padding:1ex 0 0 0">&sendtocategory.pref.generaltab.toaddr.desc1;</description>
+                  <description style="padding:1ex 0 0 0" i18n-textContent="sendtocategory.pref.generaltab.toaddr.desc1"/>
                   <label  style="font-size:xx-small" value="* http://www.lda.bayern.de/lda/datenschutzaufsicht/p_archiv/2013/pm004.html"/>
-                  <description  style="padding:1em 0">&sendtocategory.pref.generaltab.toaddr.desc2;</description>
-                  <label value="&sendtocategory.pref.generaltab.toaddr.label;"/>
+                  <description  style="padding:1em 0" i18n-textContent="sendtocategory.pref.generaltab.toaddr.desc2"/>
+                  <label i18n-value="sendtocategory.pref.generaltab.toaddr.label"/>
                   <textbox id="sendtocategory.to_address" preference="extensions.sendtocategory.to_address" style="width:100%"/>
-                  <description>&sendtocategory.pref.generaltab.toaddr.desc3;</description>
+                  <description i18n-textContent="sendtocategory.pref.generaltab.toaddr.desc3"/>
 
                 </vbox>
             </tabpanel>

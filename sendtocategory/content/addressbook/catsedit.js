@@ -16,13 +16,12 @@ jbCatManCatsEdit.init = function () {
   this.categoryName = window.arguments[0];
   this.localTimeout = null;
   this.locked = false;
-  
-  // update label and description
-  let xulLabel = document.getElementById("CatsEditLabel").textContent;
-  document.getElementById("CatsEditLabel").textContent = xulLabel.replace("##name##","["+ this.categoryName.split(" / ").pop() + "]");
 
-  let xulDesc = document.getElementById("CatsEditDescription").textContent;
-  document.getElementById("CatsEditDescription").textContent = xulDesc.replace("##name##","[ "+ this.categoryName + " ]");
+  jbCatMan.loadLocales(document);
+  
+  // set label and description
+  document.getElementById("CatsEditLabel").textContent =  jbCatMan.getLocalizedMessage("sendtocategory.catsedit.label.in", "["+ this.categoryName.split(" / ").pop() + "]");
+  document.getElementById("CatsEditDescription").textContent = jbCatMan.getLocalizedMessage("sendtocategory.catsedit.desc", "[ "+ this.categoryName + " ]");
 
   // fill listboxes
   this.inbox = document.getElementById('CatsEditInBox');

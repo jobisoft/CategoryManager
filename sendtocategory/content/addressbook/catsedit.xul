@@ -3,18 +3,13 @@
 <?xml-stylesheet href="chrome://messenger/skin/messenger.css" type="text/css"?>
 <?xml-stylesheet href="chrome://sendtocategory/skin/richlist.css" type="text/css"?>
 
-<!DOCTYPE dialog
-[
-    <!ENTITY % dtd1 SYSTEM "chrome://sendtocategory/locale/catman.dtd" > %dtd1;
-]>
-
 <dialog id="CatManCatsEditor"
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     buttons="accept,cancel"
-    buttonlabelaccept="&sendtocategory.ok.button;"
-    buttonlabelcancel="&sendtocategory.cancel.button;"
-    title="&sendtocategory.catsedit.title;"
+    i18n-buttonlabelaccept="sendtocategory.ok.button"
+    i18n-buttonlabelcancel="sendtocategory.cancel.button"
+    i18n-title="sendtocategory.catsedit.title"
     onload="jbCatManCatsEdit.init()"
     onclose="return jbCatManCatsEdit.closeCheck()">
 
@@ -32,7 +27,7 @@
                 <button id ="CatsEditRemoveAllButton" disabled="true" label="&lt;&lt;" onclick="jbCatManCatsEdit.onClickRemoveAll()" />
             </vbox>
             <vbox width="250" pack="end">
-                <description id="CatsEditLabel">&sendtocategory.catsedit.label.in;</description>
+                <description id="CatsEditLabel" i18n-textContent="sendtocategory.catsedit.label.in"/>
                 <richlistbox id="CatsEditInBox" width="100%" height="350" seltype="multiple" onclick="jbCatManCatsEdit.onSelect()" />
             </vbox>
         </hbox>
@@ -45,14 +40,14 @@
         value="0"/>
         
         <groupbox>
-            <hbox class="groupbox-title"><label class="header">&sendtocategory.bulkedit.note;</label></hbox>
+            <hbox class="groupbox-title"><label class="header" i18n-value="sendtocategory.bulkedit.note"/></hbox>
             <grid>
                 <columns>
                     <column/>
                 </columns>
                 <rows>
                     <row>
-                        <description id="CatsEditDescription">&sendtocategory.catsedit.desc;</description>
+                        <description id="CatsEditDescription" i18n-textContent="sendtocategory.catsedit.desc"/>
                     </row>
                 </rows>
             </grid>
