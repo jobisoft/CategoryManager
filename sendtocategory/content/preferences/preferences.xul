@@ -4,7 +4,6 @@
 
 <dialog 
     id="CatManPreferences"
-    type="child"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     title="CategoryManager"
     width="500"
@@ -25,7 +24,7 @@
                   <label  style="font-size:xx-small" value="* http://www.lda.bayern.de/lda/datenschutzaufsicht/p_archiv/2013/pm004.html"/>
                   <description  style="padding:1em 0" i18n-textContent="sendtocategory.pref.generaltab.toaddr.desc2"/>
                   <label i18n-value="sendtocategory.pref.generaltab.toaddr.label"/>
-                  <textbox id="sendtocategory.to_address" preference="extensions.sendtocategory.to_address" style="width:100%"/>
+                  <textbox id="sendtocategory.to_address" instantApply="true" preference="extensions.sendtocategory.to_address" style="width:100%"/>
                   <description i18n-textContent="sendtocategory.pref.generaltab.toaddr.desc3"/>
 
                 </vbox>
@@ -34,6 +33,5 @@
         </tabpanels>
     </tabbox>
             
-    <script src="chrome://global/content/preferencesBindings.js" type="application/javascript"/>            
     <script src="chrome://sendtocategory/content/preferences/preferences.js" type="application/javascript"/>
 </dialog>

@@ -12,6 +12,48 @@ jbCatMan.quickdump = function (str) {
 
 
 
+jbCatMan.loadPreferences = async function (document) {
+  // save on accept
+  let dialog = document.querySelector("dialog");
+  if (dialog) {
+    dialog.addEventListener("dialogaccept", function() {jbCatMan.savePreferences(document)});
+  }  
+
+  for (let node of document.querySelectorAll("[preference]")) {
+    if (node.getAttribute("instantApply") == "true") {
+      node.addEventListener("change", function (event) {jbCatMan.savePreference(event.target);});
+    }
+    jbCatMan.loadPreference(node);    
+  }
+}
+
+jbCatMan.savePreferences = async function (document) {
+  for (let node of document.querySelectorAll("[preference]")) {
+    jbCatMan.savePreference(node);    
+  }
+}
+
+jbCatMan.loadPreference = async function (node) {
+  switch (node.tagName) {
+    case "textbox":
+      node.setAttribute("value", await ConversionHelper.getPref(node.getAttribute("preference")));
+      break;
+  }
+}
+
+jbCatMan.savePreference = async function (node) {
+  switch (node.tagName) {
+    case "textbox":
+      await ConversionHelper.setPref(node.getAttribute("preference"), node.value);
+      break;
+  }
+}
+
+
+
+
+
+
 
 jbCatMan.loadLocales = function(document, i18nAttributes = ["title", "label", "value", "tooltiptext", "placeholder"], i18nButtons = ["accept", "cancel"]) {
   // set all i18n locale values
@@ -508,7 +550,6 @@ jbCatMan.scanCategories = function (abURI, quickscan = false) {
     
   // scan all addressbooks, if this is the new root addressbook (introduced in TB38)
   // otherwise just scan the selected one
-  let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
   let addressBooks = jbCatMan.getSearchesFromSearchString(abURI);
 
   for (var l = 0; l < addressBooks.length; l++) {

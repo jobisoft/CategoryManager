@@ -286,7 +286,7 @@ jbCatMan.updateButtons = function () {
 }
 
 
-jbCatMan.writeToCategory = function () {
+jbCatMan.writeToCategory = async function () {
   let categoriesList = document.getElementById("CatManCategoriesList");
 
   let searchstring = jbCatMan.getCategorySearchString(GetSelectedDirectory(), categoriesList.querySelector("#" + jbCatMan.data.selectedCategory).categoryFilter);
@@ -308,9 +308,8 @@ jbCatMan.writeToCategory = function () {
     }
   }
   
-  let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
-  let setting = prefs.getCharPref("to_address"); 
-
+  let setting = await ConversionHelper.getPref("extensions.sendtocategory.to_address"); 
+  
   if (bcc.length > 0) {
     let sURL="mailto:";
     //Add envelope addr if specified - or add [ListName] to Subject
@@ -382,7 +381,6 @@ jbCatMan.onSelectAddressbook = function () {
   let selectedBook = GetSelectedDirectory();
   
   if (selectedBook) {
-    let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
     jbCatMan.data.selectedCategory = null;
     jbCatMan.updateCategoryList();
   } else {
