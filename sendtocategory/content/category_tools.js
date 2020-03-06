@@ -387,7 +387,7 @@ jbCatMan.getStringFromCategories = function(catsArray) {
 jbCatMan.getCategoriesfromCard = function (card) {
   let catString = "";
   try {
-    catString = card.getPropertyAsAString(field);
+    catString = card.getPropertyAsAString(jbCatMan.getCategoryField());
   } catch (ex) {}
   let catsArray = jbCatMan.getCategoriesFromString(catString);
   return catsArray;
@@ -404,7 +404,7 @@ jbCatMan.setCategoriesforCard = function (card, catsArray) {
   let catsString = jbCatMan.getStringFromCategories(catsArray.filter((e, i, a) => (i == (a.length-1)) || !a[i+1].startsWith(e + " / ")));
 
   try {
-     card.setPropertyAsAString(field, catsString);
+     card.setPropertyAsAString(jbCatMan.getCategoryField(), catsString);
   } catch (ex) {
     retval = false;
   }
