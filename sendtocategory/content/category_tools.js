@@ -62,7 +62,7 @@ jbCatMan.init = async function () {
   jbCatMan.printDumps = false;
   jbCatMan.printDumpsIndent = " ";
 
-  jbCatMan.isMFFABInstalled = (await AddonManager.getAddonByID("{3e17310d-82e8-4a43-bd2f-7c3055bfe589}") != null);
+  jbCatMan.isMFFABInstalled = false;
 
   jbCatMan.printDebugCounts = Array();
   jbCatMan.printDebugCounts[jbCatMan.printDumpsIndent] = 0;
@@ -382,16 +382,6 @@ jbCatMan.convertCategory = function (abURI, category) {
 }
 
 jbCatMan.isMFFABCategoryMode = function () {
-    let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-    //make sure, if MFFAB mode is activated, we can actually get the seperator
-    //switch back to standard mode, if not possible
-    if (prefs.getBoolPref("extensions.sendtocategory.mffab_mode")) {
-        //user requested MFFAB mode, is MFFAB installed?
-        if (jbCatMan.isMFFABInstalled) return true;
-            
-        //if we are still here, MFAAB is not installed, switch to default mode
-        prefs.setBoolPref("extensions.sendtocategory.mffab_mode",false); 
-    } 
     return false;
 }
 
