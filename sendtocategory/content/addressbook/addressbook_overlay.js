@@ -261,7 +261,6 @@ jbCatMan.updateContextMenu = function () {
     document.getElementById("CatManContextMenuRemove").disabled = (isAll || isRemote || isGlobal || isUncategorized);
     document.getElementById("CatManContextMenuRename").disabled = (isAll || isRemote || isGlobal || isUncategorized);
     document.getElementById("CatManContextMenuBulk").disabled = isAll || isRemote || isGlobal || isUncategorized;
-    document.getElementById("CatManContextMenuMFFABConvert").disabled = (isUncategorized || isRemote || isGlobal || jbCatMan.data.categoryList.length == 0);
 
     document.getElementById("CatManContextMenuSend").disabled = (isAll || isRemote || isUncategorized); 
 
@@ -273,15 +272,6 @@ jbCatMan.updateContextMenu = function () {
     } else {
         document.getElementById("CatManContextMenuImportExport").label = jbCatMan.getLocalizedMessage("sendtocategory.export.title");
     }
-  
-    //Special MFFAB entries
-    let all = isAll ? "_all_" : "_";
-    
-    if (jbCatMan.isMFFABCategoryMode()) {
-        document.getElementById("CatManContextMenuMFFABConvert").label = jbCatMan.getLocalizedMessage("convert"+all+"to_standard_category");
-    } else {
-        document.getElementById("CatManContextMenuMFFABConvert").label = jbCatMan.getLocalizedMessage("convert"+all+"to_MFFAB_category");
-    }
 }
 
 jbCatMan.updateButtons = function () {
@@ -292,14 +282,7 @@ jbCatMan.updateButtons = function () {
     if (selectedBook) isRemote = MailServices.ab.getDirectory(selectedBook).isRemote;
     if (selectedBook == "moz-abdirectory://?") isGlobal = true;
 
-    if (jbCatMan.isMFFABCategoryMode()) {
-        document.getElementById("CatManBoxLabel").value = jbCatMan.getLocalizedMessage("found_categories", "(MFFAB) ");
-        document.getElementById("CatManModeSlider").src = "chrome://sendtocategory/skin/slider-on.png";
-    } else {
-        document.getElementById("CatManBoxLabel").value = jbCatMan.getLocalizedMessage("found_categories", "");
-        document.getElementById("CatManModeSlider").src = "chrome://sendtocategory/skin/slider-off.png";
-    }
-    document.getElementById("CatManModeSlider").hidden = !jbCatMan.isMFFABInstalled;
+    document.getElementById("CatManBoxLabel").value = jbCatMan.getLocalizedMessage("found_categories", "");
 }
 
 
@@ -433,31 +416,6 @@ jbCatMan.onSelectCategoryList = function () {
 jbCatMan.onPeopleSearchClick = function () {
   jbCatMan.data.selectedCategory = null;
   document.getElementById("CatManCategoriesList").clearSelection();
-}
-
-jbCatMan.onConvertCategory = function () {
-    let categoriesList = document.getElementById("CatManCategoriesList");
-    let category = categoriesList.selectedItem.categoryName;
-    if (category) {
-      jbCatMan.convertCategory(GetSelectedDirectory(), category);
-      // Remove the deleted category from the list
-      jbCatMan.data.selectedCategory = jbCatMan.data.selectedCategory.filter( x => x != category) //TODO
-      if ( jbCatMan.data.selectedCategory.length == 0)  jbCatMan.data.selectedCategory = "";
-      jbCatMan.updateCategoryList();
-    }
-}
-
-jbCatMan.onSwitchCategoryMode = function () {
-    let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-    prefs.setBoolPref("extensions.sendtocategory.mffab_mode",!prefs.getBoolPref("extensions.sendtocategory.mffab_mode"));
-
-    //updateList
-    jbCatMan.data.selectedCategory = null;
-    jbCatMan.updateCategoryList();
-    
-    //check selected card after update
-    let cards = GetSelectedAbCards();
-    if (cards.length == 1 && cards[0].isMailList == false) DisplayCardViewPane(cards[0]);
 }
 
 
@@ -701,18 +659,7 @@ jbCatMan.initAddressbook = function() {
   
   //Add listener for changed selection in results pane, to update CardViewPane
   document.getElementById("abResultsTree").addEventListener("select", jbCatMan.onAbResultsPaneSelectionChanged, false);
-
-  //show/hide special MFFAB context menu entries
-  document.getElementById("CatManContextMenuMFFABSplitter").hidden = !jbCatMan.isMFFABInstalled;
-  document.getElementById("CatManContextMenuMFFABConvert").hidden = !jbCatMan.isMFFABInstalled;
   
-  //if MFFAB is installed and default category mode, check if it might be better to silently switch to MFFAB mode
-  if (jbCatMan.isMFFABInstalled && !jbCatMan.isMFFABCategoryMode()) {
-    let hasCategories = jbCatMan.booksHaveContactsWithProperty("Categories");
-    let hasCategory = jbCatMan.booksHaveContactsWithProperty("Category");
-    if (hasCategory && !hasCategories) jbCatMan.onSwitchCategoryMode();
-  }
-
   //hide SOGo Categories ContextMenu
   if (document.getElementById("sc-categories-contextmenu")) document.getElementById("sc-categories-contextmenu").style.display = 'none';
 

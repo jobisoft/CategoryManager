@@ -8,21 +8,6 @@
     "button_addSubCat": {
         "message": "Add category below '####'"
     }, 
-    "category_description": {
-        "message": "Caution: These categories are '#### categories' and are independent from the 'MFFAB categories', which are stored in a different contact property and can be managed in the 'Other data' tab."
-    }, 
-    "convert_all_to_MFFAB_category": {
-        "message": "convert all categories to MFFAB categories"
-    }, 
-    "convert_all_to_standard_category": {
-        "message": "convert all categories to standard categories"
-    }, 
-    "convert_to_MFFAB_category": {
-        "message": "convert to MFFAB category"
-    }, 
-    "convert_to_standard_category": {
-        "message": "convert to standard category"
-    }, 
     "createNewCategory": {
         "message": "créez nouvelle catégorie ici"
     }, 
@@ -112,9 +97,6 @@
     }, 
     "sendtocategory.categoryfilter.label": {
         "message": "Catégories ..."
-    }, 
-    "sendtocategory.catogorybox.MFFAB.tooltip": {
-        "message": "Switch between standard category mode and MFFAB category mode"
     }, 
     "sendtocategory.catsedit.desc": {
         "message": "Please define, if all, none or a subset of the selected contacts should be part of category ####."
@@ -305,12 +287,6 @@
     }, 
     "sendtocategory.wizard.types.vcf": {
         "message": "vCard"
-    }, 
-    "switch_to_MFFAB_mode": {
-        "message": "switch to MFFAB category mode"
-    }, 
-    "switch_to_standard_mode": {
-        "message": "switch to standard category mode"
     }, 
     "viewWithoutCategories": {
         "message": "Non classé"

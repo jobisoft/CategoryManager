@@ -8,21 +8,6 @@
     "button_addSubCat": {
         "message": "Add category below '####'"
     }, 
-    "category_description": {
-        "message": "Внимание: эти категории '#### categories' не зависят от 'MFFAB categories', которые хранятся в другом свойстве контакта и могут управляться на вкладке «Другие данные»."
-    }, 
-    "convert_all_to_MFFAB_category": {
-        "message": "преобразовать все категории в MFFAB категории"
-    }, 
-    "convert_all_to_standard_category": {
-        "message": "преобразовать все категории в стандартные категории"
-    }, 
-    "convert_to_MFFAB_category": {
-        "message": "преобразовать в MFFAB категорию"
-    }, 
-    "convert_to_standard_category": {
-        "message": "преобразовать в стандартную категорию"
-    }, 
     "createNewCategory": {
         "message": "Создать новую категорию здесь"
     }, 
@@ -112,10 +97,7 @@
     }, 
     "sendtocategory.categoryfilter.label": {
         "message": "Категории ..."
-    }, 
-    "sendtocategory.catogorybox.MFFAB.tooltip": {
-        "message": "Переключение между режимом стандартной категории и MFFAB режимом категории"
-    }, 
+    },
     "sendtocategory.catsedit.desc": {
         "message": "Укажите, если все, ни один или подмножество выбранных контактов должны быть частью категории ####."
     }, 
@@ -305,12 +287,6 @@
     }, 
     "sendtocategory.wizard.types.vcf": {
         "message": "vCard"
-    }, 
-    "switch_to_MFFAB_mode": {
-        "message": "перейти в MFFAB режим категории"
-    }, 
-    "switch_to_standard_mode": {
-        "message": "перейти в стандартный режим категории"
     }, 
     "viewWithoutCategories": {
         "message": "Не категоризировано"

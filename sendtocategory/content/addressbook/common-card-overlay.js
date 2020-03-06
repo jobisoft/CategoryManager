@@ -13,11 +13,6 @@ jbCatManEditDialog.Init = function () {
 
   //hide SOGo Category Tab
   if (window.document.getElementById("categoriesTabButton")) window.document.getElementById("categoriesTabButton").style.display = 'none';
-
-  if (jbCatMan.isMFFABInstalled) {
-    window.document.getElementById('abCatManCategoriesDescription').textContent = jbCatMan.getLocalizedMessage("category_description", "Category Manager")
-    window.document.getElementById('abCatManCategoriesDescription').hidden = false;
-  }
   
   /* Bugfix "andre jutisz"
   The original idea was to remove the SOGo code, which was run after the OK button of the
@@ -194,7 +189,7 @@ jbCatManEditDialog.addItemToList = function (categoryName, checked = true) {
 
 
 jbCatManEditDialog.onLoadCard = function (aCard, aDocument) { 
-  jbCatManEditDialog.catsArray = aCard ? jbCatMan.getCategoriesfromCard(aCard, "Categories") : []; 	
+  jbCatManEditDialog.catsArray = aCard ? jbCatMan.getCategoriesfromCard(aCard) : []; 	
 
   let abURI = jbCatManEditDialog.getSelectedAb(aDocument.defaultView);
   jbCatMan.scanCategories(abURI);
@@ -223,7 +218,7 @@ jbCatManEditDialog.onSaveCard = function (aCard, aDocument) {
       catsArray.push(value);
     }
   }
-  jbCatMan.setCategoriesforCard(aCard, catsArray, "Categories");	
+  jbCatMan.setCategoriesforCard(aCard, catsArray);	
 }
 
 

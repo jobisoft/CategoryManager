@@ -34,7 +34,6 @@
                 </menupopup>
             </button>
         </hbox>
-        <description id="abCatManCategoriesDescription" hidden="true" style="margin-top:1em; width: 400px"></description>
       </vbox>
     </tabpanel>
   </tabpanels>

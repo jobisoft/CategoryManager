@@ -8,21 +8,6 @@
     "button_addSubCat": {
         "message": "Kategorie unterhalb von '####' hinzufügen"
     }, 
-    "category_description": {
-        "message": "Achtung: Bei diesen Kategorien handelt es sich um '#### Kategorien', diese sind unabhängig von den 'MFFAB Kategorien', die in einer anderen Kontakt-Eigenschaft gespeichert und unter dem Reiter 'Other data' bearbeitet werden können."
-    }, 
-    "convert_all_to_MFFAB_category": {
-        "message": "konvertiere alle Kategorien zu MFFAB Kategorien"
-    }, 
-    "convert_all_to_standard_category": {
-        "message": "konvertiere alle Kategorien zu Standard Kategorien"
-    }, 
-    "convert_to_MFFAB_category": {
-        "message": "konvertieren zu MFFAB Kategorie"
-    }, 
-    "convert_to_standard_category": {
-        "message": "konvertieren zu Standard Kategorie"
-    }, 
     "createNewCategory": {
         "message": "hier neue Kategorie anlegen"
     }, 
@@ -112,10 +97,7 @@
     }, 
     "sendtocategory.categoryfilter.label": {
         "message": "Kategoriefilter ..."
-    }, 
-    "sendtocategory.catogorybox.MFFAB.tooltip": {
-        "message": "Zwischen dem Standard Kategorie-Modus und dem MFFAB Kategorie-Modus wechseln"
-    }, 
+    },
     "sendtocategory.catsedit.desc": {
         "message": "Bitte legen Sie fest, ob alle, keine oder nur ein Teil der gerade im Adressbuch selektierten Kontakte der Kategorie #### zugeordnet werden sollen."
     }, 
@@ -305,13 +287,7 @@
     }, 
     "sendtocategory.wizard.types.vcf": {
         "message": "vCard"
-    }, 
-    "switch_to_MFFAB_mode": {
-        "message": "aktiviere MFFAB Kategorie-Modus"
-    }, 
-    "switch_to_standard_mode": {
-        "message": "aktiviere Standard Kategorie-Modus"
-    }, 
+    },
     "viewWithoutCategories": {
         "message": "Unkategorisiert"
     }
