@@ -57,12 +57,13 @@ jbCatMan.getLocalizedMessage = function (msg, replacement = "") {
 
 
 
-jbCatMan.init = function () { 
+jbCatMan.init = async function () { 
   //enable or disable debug dump messages
   jbCatMan.printDumps = false;
   jbCatMan.printDumpsIndent = " ";
 
-  jbCatMan.isMFFABInstalled = jbCatMan.checkIfMFFABInstalled(); //we only need to do this once
+  jbCatMan.isMFFABInstalled = (await AddonManager.getAddonByID("{3e17310d-82e8-4a43-bd2f-7c3055bfe589}") != null);
+
   jbCatMan.printDebugCounts = Array();
   jbCatMan.printDebugCounts[jbCatMan.printDumpsIndent] = 0;
   
@@ -378,17 +379,6 @@ jbCatMan.convertCategory = function (abURI, category) {
         jbCatMan.setCategoriesforCard(card, standardCatArray, "Categories");
         jbCatMan.modifyCard(card);
     }
-}
-
-
-jbCatMan.checkIfMFFABInstalled = function () {
-    let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-    let sep = "";
-    try {
-        sep = prefs.getCharPref("morecols.category.separator");
-    } catch (ex) {}
-    if (sep != "") return true;
-    else return false;
 }
 
 jbCatMan.isMFFABCategoryMode = function () {
