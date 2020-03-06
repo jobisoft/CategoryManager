@@ -398,8 +398,8 @@ jbCatMan.isMFFABCategoryMode = function () {
 jbCatMan.getCategorySeperator = function (field = jbCatMan.getCategoryField()) {
     let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
     
-    if (field == "Category") return prefs.getCharPref("morecols.category.separator") + " ";
-    else return prefs.getCharPref("extensions.sendtocategory.seperator");
+    if (field == "Category") return ", "; //MFFAB
+    else return "\u001A"; //CatMan
 }
 
 jbCatMan.getCategoryField = function (mode = jbCatMan.isMFFABCategoryMode()) {
