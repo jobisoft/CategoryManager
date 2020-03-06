@@ -13,7 +13,7 @@ const ADDON_ID = "sendtocategory@jobisoft.de";
 var ConversionHelper = {
   getWXAPI(name, sync=false) {
     function implementation(api) {
-      let impl = api.getAPI({ extension })[name];
+      let impl = api.getAPI(context)[name];
 
       if (name == "storage") {
         impl.local.get = (...args) => impl.local.callMethodInParentProcess("get", args);
@@ -25,6 +25,9 @@ var ConversionHelper = {
     }
 
     let extension = ExtensionParent.GlobalManager.getExtension(ADDON_ID);
+    // ToDo: Get the true context
+    let context = { extension , callOnClose : function() {} };
+    
     if (sync) {
       let api = extension.apiManager.getAPI(name, extension, "addon_parent");
       return implementation(api);
@@ -36,10 +39,24 @@ var ConversionHelper = {
   },
   
   GetStringFromName: function(aName) {
-    return ConversionHelper.getWXAPI("i18n", true).getMessage(aName);
+    return this.getWXAPI("i18n", true).getMessage(aName);
   },
   
   formatStringFromName: function(aName, aParams, aLength) {
-    return ConversionHelper.getWXAPI("i18n", true).getMessage(aName, aParams);
-  }
+    return this.getWXAPI("i18n", true).getMessage(aName, aParams);
+  },
+
+  
+  
+  getPref: async function(aName, aFallback = null) {
+    let storage = await this.getWXAPI("storage");
+    let defaultValue = await storage.local.get({ ["pref.default." + aName] : aFallback });
+    let value = await storage.sync.get({ ["pref.value." + aName] :  defaultValue["pref.default." + aName] });
+    return value["pref.value." + aName];
+  },
+  
+  setPref: async function(aName, aValue) {
+    let storage = await this.getWXAPI("storage");
+    await storage.sync.set({ ["pref.value." + aName] : aValue });
+  }  
 }

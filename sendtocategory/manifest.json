@@ -15,6 +15,22 @@
   "icons": {
     "32": "skin/icon.png"
   },
+  "experiment_apis": {
+    "legacyprefs": {
+      "schema": "api/legacyprefs/schema.json",
+      "parent": {
+        "scopes": [
+          "addon_parent"
+        ],
+        "paths": [
+          [
+            "legacyprefs"
+          ]
+        ],
+        "script": "api/legacyprefs/implementation.js"
+      }
+    }
+  },  
   "legacy": {
     "type": "xul",
     "options": {
