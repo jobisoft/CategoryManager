@@ -15,6 +15,10 @@
   "icons": {
     "32": "skin/icon.png"
   },
+  "permissions": ["storage", "unlimitedStorage"],
+  "background": {
+    "scripts": ["prefs.js", "background.js"]
+  },
   "experiment_apis": {
     "legacyprefs": {
       "schema": "api/legacyprefs/schema.json",
