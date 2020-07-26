@@ -294,10 +294,10 @@ jbCatMan.updateButtons = function () {
 
     if (jbCatMan.isMFFABCategoryMode()) {
         document.getElementById("CatManBoxLabel").value = jbCatMan.getLocalizedMessage("found_categories", "(MFFAB) ");
-        document.getElementById("CatManModeSlider").src = "chrome://sendtocategory/skin/slider-on.png";
+        document.getElementById("CatManModeSlider").src = "chrome://sendtocategory/content/skin/slider-on.png";
     } else {
         document.getElementById("CatManBoxLabel").value = jbCatMan.getLocalizedMessage("found_categories", "");
-        document.getElementById("CatManModeSlider").src = "chrome://sendtocategory/skin/slider-off.png";
+        document.getElementById("CatManModeSlider").src = "chrome://sendtocategory/content/skin/slider-off.png";
     }
     document.getElementById("CatManModeSlider").hidden = !jbCatMan.isMFFABInstalled;
 }
@@ -540,15 +540,15 @@ jbCatMan.addCategoryPopupEntry = function (newCategoryName, cards) {
     newItem.setAttribute("disabled","true")
   } else if (countIn == 0 ) {
     // all out
-    newItem.setAttribute("image", "chrome://sendtocategory/skin/checkbox-none.png");
+    newItem.setAttribute("image", "chrome://sendtocategory/content/skin/checkbox-none.png");
     newItem.addEventListener("click", jbCatMan.onCategoriesContextMenuItemCommand, false);
   } else if (countOut == 0) {
     // all in
-    newItem.setAttribute("image", "chrome://sendtocategory/skin/checkbox-all.png");
+    newItem.setAttribute("image", "chrome://sendtocategory/content/skin/checkbox-all.png");
     newItem.addEventListener("click", jbCatMan.onCategoriesContextMenuItemCommand, false);
   } else {
     // mixed
-    newItem.setAttribute("image", "chrome://sendtocategory/skin/checkbox-some.png");
+    newItem.setAttribute("image", "chrome://sendtocategory/content/skin/checkbox-some.png");
     newItem.addEventListener("click", jbCatMan.onCategoriesContextMenuItemCommand, false);
     newItem.setAttribute("label", categoryLevels[categoryLevels.length - 1] + " (" + countIn + "/" + (countIn + countOut) + ")");    
   }

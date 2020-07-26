@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/messenger.css" type="text/css"?>
-<?xml-stylesheet href="chrome://sendtocategory/skin/richlist.css" type="text/css"?>
+<?xml-stylesheet href="chrome://sendtocategory/content/skin/richlist.css" type="text/css"?>
 
 <!DOCTYPE dialog
 [
@@ -45,25 +45,25 @@
                     <richlistitem id ="CatManListTemplate_OK" hidden="true">
                         <hbox align="center" style="width:256px"><label crop="end" value=""/></hbox>
                         <hbox align="center"  style="width:256px"><label crop="end" value=""/></hbox>
-                        <hbox pack="center"><image src="chrome://sendtocategory/skin/ok.gif"/></hbox>
+                        <hbox pack="center"><image src="chrome://sendtocategory/content/skin/ok.gif"/></hbox>
                     </richlistitem>
 
                     <richlistitem id ="CatManListTemplate_NOTOK" hidden="true">
                         <hbox align="center" style="width:256px"><label crop="end" value=""/></hbox>
                         <hbox align="center" style="width:256px"><textbox flex="2" placeholder="&sendtocategory.bulkedit.firstname;" value=""/><textbox flex="1" placeholder="&sendtocategory.bulkedit.lastname;" value=""/></hbox>
-                        <hbox pack="center"><image src="chrome://sendtocategory/skin/notok.gif"/></hbox>
+                        <hbox pack="center"><image src="chrome://sendtocategory/content/skin/notok.gif"/></hbox>
                     </richlistitem>
 
                     <richlistitem id ="CatManListTemplate_DOUBLE" hidden="true">
                         <hbox align="center" style="width:256px"><label crop="end" value=""/></hbox>
                         <hbox align="center" style="width:256px"></hbox>
-                        <hbox pack="center"><image src="chrome://sendtocategory/skin/double.gif"/></hbox>
+                        <hbox pack="center"><image src="chrome://sendtocategory/content/skin/double.gif"/></hbox>
                     </richlistitem>
 
                     <richlistitem id ="CatManListTemplate_DOUBLEOK" hidden="true">
                         <hbox align="center" style="width:256px"><label crop="end" value=""/></hbox>
                         <hbox align="center" style="width:256px"></hbox>
-                        <hbox pack="center"><image src="chrome://sendtocategory/skin/ok-double.gif"/></hbox>
+                        <hbox pack="center"><image src="chrome://sendtocategory/content/skin/ok-double.gif"/></hbox>
                     </richlistitem>
 
             </richlistbox>
@@ -77,19 +77,19 @@
                         </columns>
                         <rows>
                             <row align="center">
-                                <image height="20" src="chrome://sendtocategory/skin/ok.gif"/>
+                                <image height="20" src="chrome://sendtocategory/content/skin/ok.gif"/>
                                 <description>&sendtocategory.bulkedit.legend.ok;</description>
                             </row>
                             <row align="center">
-                                <image height="20" src="chrome://sendtocategory/skin/ok-double.gif"/>
+                                <image height="20" src="chrome://sendtocategory/content/skin/ok-double.gif"/>
                                 <description>&sendtocategory.bulkedit.legend.okdouble;</description>
                             </row>
                             <row align="center">
-                                <image height="20" src="chrome://sendtocategory/skin/double.gif"/>
+                                <image height="20" src="chrome://sendtocategory/content/skin/double.gif"/>
                                 <description>&sendtocategory.bulkedit.legend.double;</description>
                             </row>
                             <row align="center">
-                                <image height="20" src="chrome://sendtocategory/skin/notok.gif"/>
+                                <image height="20" src="chrome://sendtocategory/content/skin/notok.gif"/>
                                 <description>&sendtocategory.bulkedit.legend.notok;</description>
                             </row>
                         </rows>

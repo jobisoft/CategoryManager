@@ -1,5 +1,5 @@
 content sendtocategory content/
-skin sendtocategory classic/1.0 skin/
+
 locale sendtocategory de locale/de/
 locale sendtocategory en-US locale/en-US/
 locale sendtocategory fr locale/fr/

@@ -64,10 +64,10 @@ richlistitem hbox.twisty:hover{
 
 richlistitem[isOpen=false] hbox.twisty{ 
     background-color: lightgrey;
-    mask: url("chrome://sendtocategory/skin/arrow-right.svg") no-repeat right center;
+    mask: url("chrome://sendtocategory/content/skin/arrow-right.svg") no-repeat right center;
 }
 
 richlistitem[isOpen=true] hbox.twisty{ 
     background-color: grey;
-    mask: url("chrome://sendtocategory/skin/arrow-down.svg") no-repeat right center;
+    mask: url("chrome://sendtocategory/content/skin/arrow-down.svg") no-repeat right center;
 }

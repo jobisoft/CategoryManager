@@ -13,7 +13,7 @@
   "default_locale": "en-US",
   "description": "__MSG_extensionDescription__",
   "icons": {
-    "32": "skin/icon.png"
+    "32": "content/skin/icon.png"
   },
   "legacy": {
     "type": "xul",

@@ -7,8 +7,8 @@ This add-on scans all contact-cards of the currently selected addressbook, extra
 
 ## Icon sources
 
-* [slider-on.png] by [John Bieling](https://github.com/jobisoft/TbSync/blob/master/skin/src/LICENSE)
-* [slider-off.png] by [John Bieling](https://github.com/jobisoft/TbSync/blob/master/skin/src/LICENSE)
+* [slider-on.png] by [John Bieling](https://github.com/jobisoft/TbSync/blob/master/content/skin/src/LICENSE)
+* [slider-off.png] by [John Bieling](https://github.com/jobisoft/TbSync/blob/master/content/skin/src/LICENSE)
 * [checkbox-all/some/none.png] by [Cole Bemis](https://www.iconfinder.com/icons/226561/check_square_icon)
-* [icon.png] based on 'Venn Diagram' by [WARPAINT Media Inc., CA](https://thenounproject.com/search/?q=three%20circles&i=31898#) from Noun Project ([info](https://github.com/jobisoft/CategoryManager/tree/master/sendtocategory/skin/catman))
+* [icon.png] based on 'Venn Diagram' by [WARPAINT Media Inc., CA](https://thenounproject.com/search/?q=three%20circles&i=31898#) from Noun Project ([info](https://github.com/jobisoft/CategoryManager/tree/master/sendtocategory/content/skin/catman))
 
