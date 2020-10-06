@@ -3,7 +3,6 @@ var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
 
 // Load an additional JavaScript file.
 Services.scriptloader.loadSubScript("chrome://sendtocategory/content/addressbook/common-card-overlay.js", window, "UTF-8");
-Services.scriptloader.loadSubScript("chrome://messenger/content/customElements.js", window, "UTF-8");
 
 // Called on window load or on add-on activation while window is already open.
 async function onLoad(wasAlreadyOpen) {
