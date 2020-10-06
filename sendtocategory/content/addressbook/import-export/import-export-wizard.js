@@ -1,20 +1,17 @@
+// Import any needed modules.
+var { MailServices } = ChromeUtils.import("resource:///modules/MailServices.jsm");
+var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
+
 var jbCatMan = window.opener.jbCatMan;
 var jbCatManWizard = {};
 
-var { MailServices } = ChromeUtils.import("resource:///modules/MailServices.jsm");
-
-let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-loader.loadSubScript("chrome://sendtocategory/content/parser/csv/csv.js");
-//loader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcard.js");
-//loader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcf.js");
+Services.scriptloader.loadSubScript("chrome://sendtocategory/content/parser/csv/csv.js");
+//Services.scriptloader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcard.js");
+//Services.scriptloader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcf.js");
 
 /* TODO 
   - do not export empty cols?
 */
-
-
-
-
 
 jbCatManWizard.Init = function () {
   

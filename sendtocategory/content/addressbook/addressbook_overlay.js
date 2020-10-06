@@ -1,8 +1,7 @@
 var { MailServices } = ChromeUtils.import("resource:///modules/MailServices.jsm");
 var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
 
-let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-loader.loadSubScript("chrome://sendtocategory/content/category_tools.js");
+Services.scriptloader.loadSubScript("chrome://sendtocategory/content/category_tools.js");
 
 
 /* stuff
@@ -619,21 +618,21 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
   onItemAdded: function AbListenerToUpdateCategoryList_onItemAdded(aParentDir, aItem) {
     if (aItem instanceof Components.interfaces.nsIAbCard) {
       window.clearTimeout(jbCatMan.eventUpdateTimeout);
-      jbCatMan.eventUpdateTimeout = window.setTimeout(function() { jbCatMan.updateCategoryList(); }, 500);
+      jbCatMan.eventUpdateTimeout = window.setTimeout(jbCatMan.updateCategoryList, 500);
     }
   },
 
   onItemPropertyChanged: function AbListenerToUpdateCategoryList_onItemPropertyChanged(aItem, aProperty, aOldValue, aNewValue) {
     if (aItem instanceof Components.interfaces.nsIAbCard) {
       window.clearTimeout(jbCatMan.eventUpdateTimeout);
-      jbCatMan.eventUpdateTimeout = window.setTimeout(function() { jbCatMan.updateCategoryList(); }, 500);
+      jbCatMan.eventUpdateTimeout = window.setTimeout(jbCatMan.updateCategoryList, 500);
     }
   },
 
   onItemRemoved: function AbListenerToUpdateCategoryList_onItemRemoved(aParentDir, aItem) {
     if (aItem instanceof Components.interfaces.nsIAbCard) {
       window.clearTimeout(jbCatMan.eventUpdateTimeout);
-      jbCatMan.eventUpdateTimeout = window.setTimeout(function() { jbCatMan.updateCategoryList(); }, 500);
+      jbCatMan.eventUpdateTimeout = window.setTimeout(jbCatMan.updateCategoryList, 500);
     }
   },
 
@@ -734,8 +733,3 @@ jbCatMan.onAbResultsPaneSelectionChanged = function () {
   }
 
 }
-  
-
-
-// run init function after window has been loaded
-window.addEventListener("load", jbCatMan.initAddressbook, false);

@@ -24,10 +24,10 @@ messenger.WindowListener.registerWindow(
 
 messenger.WindowListener.registerWindow(
   "chrome://messenger/content/addressbook/abEditCardDialog.xul", 
-  "chrome://sendtocategory/content/scripts/abEditCardDialog.js");
+  "chrome://sendtocategory/content/scripts/commonCardDialog.js");
 
 messenger.WindowListener.registerWindow(
   "chrome://messenger/content/addressbook/abNewCardDialog.xul", 
-  "chrome://sendtocategory/content/scripts/abNewCardDialog.js");
+  "chrome://sendtocategory/content/scripts/commonCardDialog.js");
 
 messenger.WindowListener.startListening();
