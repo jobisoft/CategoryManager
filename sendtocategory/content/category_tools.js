@@ -180,17 +180,31 @@ jbCatMan.getSubCategories = function (parentCategory) {
   return subCategories;
 }
 
-jbCatMan.getNumberOfFilteredCards = function (abURI, categoryFilter) {
+jbCatMan.searchDirectory = function (searchUri) {
+  return new Promise((resolve, reject) => {
+    let listener = {
+      cards : [],
+      
+      onSearchFinished(aResult, aErrorMsg) {
+        resolve(this.cards);
+      },
+      onSearchFoundCard(aCard) {
+        this.cards.push(aCard.QueryInterface(Components.interfaces.nsIAbCard));
+      }
+    }
+    let parts = searchUri.split("?");
+    let result = MailServices.ab.getDirectory(parts.shift()).search(parts.join("?"), listener);
+  });
+}
+
+jbCatMan.getNumberOfFilteredCards = async function (abURI, categoryFilter) {
   let searchstring = jbCatMan.getCategorySearchString(abURI, categoryFilter);
   let searches = jbCatMan.getSearchesFromSearchString(searchstring);
 
   let length = 0;
   for (let search of searches) {
-    let cards = MailServices.ab.getDirectory(search).childCards;
-    while (cards.hasMoreElements()) {
-      let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
-      length++;
-    }
+    let cards = await jbCatMan.searchDirectory(search);
+    length += cards.length;
   }
   return length;    
 }

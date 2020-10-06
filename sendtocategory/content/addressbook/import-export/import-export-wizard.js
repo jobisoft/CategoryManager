@@ -13,7 +13,7 @@ Services.scriptloader.loadSubScript("chrome://sendtocategory/content/parser/csv/
   - do not export empty cols?
 */
 
-jbCatManWizard.Init = function () {
+jbCatManWizard.Init = async function () {
   
   // Get the passed filter.
   jbCatManWizard.categoryFilter = window.arguments[0];
@@ -90,7 +90,7 @@ jbCatManWizard.Init = function () {
   
   if (hasSelectedCategories) {
     // user selected a category
-    jbCatManWizard.exportsize = jbCatMan.getNumberOfFilteredCards(jbCatManWizard.currentAddressBook.URI, jbCatManWizard.categoryFilter);
+    jbCatManWizard.exportsize = await jbCatMan.getNumberOfFilteredCards(jbCatManWizard.currentAddressBook.URI, jbCatManWizard.categoryFilter);
   } else if (jbCatManWizard.categoryFilter == "uncategorized") {
     jbCatManWizard.exportsize = jbCatMan.data.cardsWithoutCategories.length;    
   } else { // all
