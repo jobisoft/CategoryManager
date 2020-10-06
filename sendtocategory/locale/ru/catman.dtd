@@ -8,8 +8,6 @@
 <!ENTITY sendtocategory.categoryfilter.label "Категории ...">
 <!ENTITY sendtocategory.categoriescontext.label "Категории">
 
-<!ENTITY sendtocategory.catogorybox.MFFAB.tooltip "Переключение между режимом стандартной категории и MFFAB режимом категории">
-
 <!ENTITY sendtocategory.helpButton.label "?">
 <!ENTITY sendtocategory.hideCategoryPaneButton.label "&#9660;">
 <!ENTITY sendtocategory.showCategoryPaneButton.label "&#9650;">

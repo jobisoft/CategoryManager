@@ -91,7 +91,7 @@ jbCatManCatsEdit.init = function () {
 
     
   document.addEventListener("dialogaccept", function(event) {
-    jbCatManCatsEdit.onAccept();
+    /* await */ jbCatManCatsEdit.onAccept();
     event.preventDefault(); // Prevent the dialog closing.
   });
   
@@ -160,7 +160,7 @@ jbCatManCatsEdit.onClickRemoveAll = function () {
 
 
 /* Initiate final actions: lock dialog and call updateCard for first card */
-jbCatManCatsEdit.onAccept = function () {
+jbCatManCatsEdit.onAccept = async function () {
   this.locked = true;
   document.documentElement.getButton("cancel").disabled = true;
   document.documentElement.getButton("accept").disabled = true;
@@ -170,7 +170,7 @@ jbCatManCatsEdit.onAccept = function () {
 
 
 /* Check if category membership of card changed and update category property, if needed */
- jbCatManCatsEdit.updateCard = function (progress) {
+ jbCatManCatsEdit.updateCard = async function (progress) {
   // update progress bar
   document.getElementById('CatsEditProgressBar').value =  (100 * progress) / this.cards.length;
    
@@ -207,7 +207,7 @@ jbCatManCatsEdit.onAccept = function () {
     
     if (item.card) {
       jbCatMan.setCategoriesforCard(item.card, item.catsArray);
-      jbCatMan.modifyCard(item.card);
+      await jbCatMan.modifyCard(item.card);
     }
     
     // continue with next contact

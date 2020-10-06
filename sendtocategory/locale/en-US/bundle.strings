@@ -1,12 +1,4 @@
-switch_to_standard_mode=switch to standard category mode
-switch_to_MFFAB_mode=switch to MFFAB category mode
 found_categories=Filter contacts by categories ####:
-convert_to_MFFAB_category=convert to MFFAB category
-convert_to_standard_category=convert to standard category
-convert_all_to_MFFAB_category=convert all categories to MFFAB categories
-convert_all_to_standard_category=convert all categories to standard categories
-category_description=Caution: These categories are "#### categories" and are independent from the "MFFAB categories", which are stored in a different contact property and can be managed in the 'Other data' tab. 
-
 viewWithoutCategories=Uncategorized
 createNewCategory=create new category here
 

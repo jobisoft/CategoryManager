@@ -1,12 +1,4 @@
-switch_to_standard_mode=перейти в стандартный режим категории
-switch_to_MFFAB_mode=перейти в MFFAB режим категории
 found_categories=Фильтровать контакты по категориям ####:
-convert_to_MFFAB_category=преобразовать в MFFAB категорию
-convert_to_standard_category=преобразовать в стандартную категорию
-convert_all_to_MFFAB_category=преобразовать все категории в MFFAB категории
-convert_all_to_standard_category=преобразовать все категории в стандартные категории
-category_description=Внимание: эти категории "#### categories" не зависят от "MFFAB categories", которые хранятся в другом свойстве контакта и могут управляться на вкладке «Другие данные».
-
 viewWithoutCategories=Не категоризировано
 createNewCategory=Создать новую категорию здесь
 

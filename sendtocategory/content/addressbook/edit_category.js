@@ -21,13 +21,13 @@ function editCategoryLoad()
       break;
     }
   
-    document.addEventListener("dialogaccept", function(event) {
-        let rv = doOK();
+    document.addEventListener("dialogaccept", async function(event) {
+        let rv = await doOK();
         if (!rv) event.preventDefault(); // Prevent the dialog closing.
     });
 }
 
-function doOK()
+async function doOK()
 {
     let newName = document.getElementById("categoryName").value.trim();
     if (newName == "") {
@@ -47,7 +47,7 @@ function doOK()
             let catsArray = jbCatMan.getCategoriesfromCard(card);
             catsArray.push(newName);
             jbCatMan.setCategoriesforCard(card, catsArray);
-            jbCatMan.modifyCard(card);            
+            await jbCatMan.modifyCard(card);            
           }
         } 
         else {
@@ -64,7 +64,7 @@ function doOK()
           // Manipulate selectedCategory.
           jbCatMan.data.selectedCategory = btoa("Category:" + newName).split("=").join("");
           // Go through all contacts and rename that category.
-          jbCatMan.updateCategories("rename", originalName, newName);          
+          await jbCatMan.updateCategories("rename", originalName, newName);          
         } else {
             alert(jbCatMan.locale.errorRename.replace("##oldname##", originalName).replace("##newname##", newName));
         }

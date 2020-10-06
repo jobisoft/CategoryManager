@@ -7,14 +7,9 @@ var jbCatManEditDialog = {};
 Services.scriptloader.loadSubScript("chrome://sendtocategory/content/category_tools.js");
 
 
-jbCatManEditDialog.Init = function () {
+jbCatManEditDialog.Init = async function () {
   //hide SOGo Category Tab
   if (window.document.getElementById("categoriesTabButton")) window.document.getElementById("categoriesTabButton").style.display = 'none';
-
-  if (jbCatMan.isMFFABInstalled) {
-    window.document.getElementById('abCatManCategoriesDescription').textContent = jbCatMan.getLocalizedMessage("category_description", "Category Manager")
-    window.document.getElementById('abCatManCategoriesDescription').hidden = false;
-  }
   
   /* Bugfix "andre jutisz"
   The original idea was to remove the SOGo code, which was run after the OK button of the
@@ -33,7 +28,7 @@ jbCatManEditDialog.Init = function () {
 
   if (window.location.href=="chrome://messenger/content/addressbook/abNewCardDialog.xhtml") {
     // if this is the new card dialog, manually trigger onLoadCard to init category tab
-    jbCatManEditDialog.onLoadCard(null, window.document);
+    await jbCatManEditDialog.onLoadCard(null, window.document);
     if (window.document.getElementById("abPopup")) {
       window.document.getElementById("abPopup").addEventListener("command", function() { jbCatManEditDialog.onLoadCard(null, window.document); }, false);
     }
@@ -190,11 +185,11 @@ jbCatManEditDialog.addItemToList = function (categoryName, checked = true) {
 
 
 
-jbCatManEditDialog.onLoadCard = function (aCard, aDocument) { 
+jbCatManEditDialog.onLoadCard = async function (aCard, aDocument) { 
   jbCatManEditDialog.catsArray = aCard ? jbCatMan.getCategoriesfromCard(aCard, "Categories") : []; 	
 
   let abURI = jbCatManEditDialog.getSelectedAb(aDocument.defaultView);
-  jbCatMan.scanCategories(abURI);
+  await jbCatMan.scanCategories(abURI);
   
   // Clear current list.
   let list = aDocument.getElementById("abCatManCategoriesList");

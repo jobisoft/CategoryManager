@@ -31,7 +31,6 @@ jbCatMan.init = function () {
   jbCatMan.printDumps = false;
   jbCatMan.printDumpsIndent = " ";
 
-  jbCatMan.isMFFABInstalled = jbCatMan.checkIfMFFABInstalled(); //we only need to do this once
   jbCatMan.printDebugCounts = Array();
   jbCatMan.printDebugCounts[jbCatMan.printDumpsIndent] = 0;
   
@@ -72,12 +71,12 @@ jbCatMan.getWorkAbUri = function(book) {
 /*
   If the selected book is a mailinglist, add the given card (if not already added)
 */
-jbCatMan.updateMailinglist = function(abUri, selectedBook, card) {
+jbCatMan.updateMailinglist = async function(abUri, selectedBook, card) {
   if (selectedBook.isMailList) {
     
     //is card already part of selectedBook?
     let UID = jbCatMan.getUIDFromCard(card);
-    if (jbCatMan.getCardFromUID(UID, selectedBook.URI)) 
+    if (await jbCatMan.getCardFromUID(UID, selectedBook.URI)) 
       return;
     
     //find this mailinglist card (nsIAbCard) in the parent directory (selectedBook.URI == mailListCard.mailListURI)
@@ -101,7 +100,7 @@ jbCatMan.updateMailinglist = function(abUri, selectedBook, card) {
   Save a given card using the internal mapping between the directoryId (attribute of card) 
   and directoryURI, so all cards can be modified, even if the directoryURI is not known. 
 */
-jbCatMan.modifyCard = function (card) {
+jbCatMan.modifyCard = async function (card) {
   let selectedBook = MailServices.ab.getDirectory(GetSelectedDirectory());
   let abUri;
 
@@ -119,12 +118,12 @@ jbCatMan.modifyCard = function (card) {
       //add card to address book
       let newCard = ab.addCard(card);
       //also add card to mailinglist, if needed
-      jbCatMan.updateMailinglist(abUri, selectedBook, newCard);
+      await jbCatMan.updateMailinglist(abUri, selectedBook, newCard);
   } else {
     //save card changes
     ab.modifyCard(card);
     //if the selected book is a mailinglist, but the modified card is not in the mailinglist -> add
-    jbCatMan.updateMailinglist(abUri, selectedBook, card);
+    await jbCatMan.updateMailinglist(abUri, selectedBook, card);
   }
   
   return abUri;
@@ -171,7 +170,7 @@ jbCatMan.getReducedCategoriesForHierarchyMode = function (parentCategory = null)
   return reducedCategories;
 }
 
-jbCatMan.getSubCategories = function (parentCategory) {
+jbCatMan.getSubCategories = async function (parentCategory) {
   let subCategories = [];
   for (let category of jbCatMan.data.categoryList) {
     // Do not include parentCategory.
@@ -181,7 +180,7 @@ jbCatMan.getSubCategories = function (parentCategory) {
   return subCategories;
 }
 
-jbCatMan.getNumberOfFilteredCards = function (abURI, categoryFilter) {
+jbCatMan.getNumberOfFilteredCards = async function (abURI, categoryFilter) {
   let searchstring = jbCatMan.getCategorySearchString(abURI, categoryFilter);
   let searches = jbCatMan.getSearchesFromSearchString(searchstring);
 
@@ -255,7 +254,8 @@ jbCatMan.doCategorySearch = function (categoryFilter) {
 
   //update results pane based on selected category 
   let searchString = jbCatMan.getCategorySearchString(abURI, categoryFilter);
-  SetAbView(searchString);
+  // SetAbView now takes two parameters, the abURL and the search parameter
+  SetAbView(...searchString.split("?"));
 
   if (document.getElementById("CardViewBox") != null) {
     SelectFirstCard();  
@@ -289,7 +289,7 @@ jbCatMan.getUIDFromCard = function (card) {
 
 
 // this function expects to be run on a single book only (so DbRowID is unique enough), otherwise the full UID needs to be used to get the card 
-jbCatMan.getCardFromUID = function (UID, abURI) {
+jbCatMan.getCardFromUID = async function (UID, abURI) {
   let UIDS = UID.split("\u001A");
   let DbRowID = UIDS[0];
   
@@ -323,68 +323,13 @@ jbCatMan.moveCategoryBetweenArrays = function (category, srcArray, dstArray) {
     }
 }
 
-//MFFAB integration stuff
-jbCatMan.convertCategory = function (abURI, category) {
-    //get all cards, which are part of the category we want to convert (is empty if all cats get converted)
-    let searchstring = jbCatMan.getCategorySearchString(abURI, [category]);
-    let cards = MailServices.ab.getDirectory(searchstring).childCards;
-
-    while (cards.hasMoreElements()) {
-        let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
-
-        let mffabCatArray = jbCatMan.getCategoriesfromCard(card, "Category");
-        let standardCatArray = jbCatMan.getCategoriesfromCard(card, "Categories");
-
-        //if a single cat is to be converted, we take that cat out of the old property and put it into the other property
-        //if all cats are to be converted, we take out ALL cats from the old prop and add all found cats to the other property
-        if (jbCatMan.isMFFABCategoryMode()) { //convert from MFFAB to standard
-            jbCatMan.moveCategoryBetweenArrays(category, mffabCatArray, standardCatArray);
-        } else { //convert from standard to MFFAB
-            jbCatMan.moveCategoryBetweenArrays(category, standardCatArray, mffabCatArray);
-        }
-        
-        jbCatMan.setCategoriesforCard(card, mffabCatArray, "Category");
-        jbCatMan.setCategoriesforCard(card, standardCatArray, "Categories");
-        jbCatMan.modifyCard(card);
-    }
+jbCatMan.getCategorySeperator = function () {
+  let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+  return prefs.getCharPref("extensions.sendtocategory.seperator");
 }
 
-
-jbCatMan.checkIfMFFABInstalled = function () {
-    let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-    let sep = "";
-    try {
-        sep = prefs.getCharPref("morecols.category.separator");
-    } catch (ex) {}
-    if (sep != "") return true;
-    else return false;
-}
-
-jbCatMan.isMFFABCategoryMode = function () {
-    let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-    //make sure, if MFFAB mode is activated, we can actually get the seperator
-    //switch back to standard mode, if not possible
-    if (prefs.getBoolPref("extensions.sendtocategory.mffab_mode")) {
-        //user requested MFFAB mode, is MFFAB installed?
-        if (jbCatMan.isMFFABInstalled) return true;
-            
-        //if we are still here, MFAAB is not installed, switch to default mode
-        prefs.setBoolPref("extensions.sendtocategory.mffab_mode",false); 
-    } 
-    return false;
-}
-
-jbCatMan.getCategorySeperator = function (field = jbCatMan.getCategoryField()) {
-    let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-    
-    if (field == "Category") return prefs.getCharPref("morecols.category.separator") + " ";
-    else return prefs.getCharPref("extensions.sendtocategory.seperator");
-}
-
-jbCatMan.getCategoryField = function (mode = jbCatMan.isMFFABCategoryMode()) {
-    //everytime we switch books, this information is re-querried
-    if (mode) return "Category";
-    else return "Categories";
+jbCatMan.getCategoryField = function () {
+  return "Categories";
 }
 
 
@@ -415,7 +360,7 @@ jbCatMan.getCategoriesfromCard = function (card, field = jbCatMan.getCategoryFie
   try {
     catString = card.getPropertyAsAString(field);
   } catch (ex) {}
-  let catsArray = jbCatMan.getCategoriesFromString(catString, jbCatMan.getCategorySeperator(field));
+  let catsArray = jbCatMan.getCategoriesFromString(catString, jbCatMan.getCategorySeperator());
   return catsArray;
 }
 
@@ -427,7 +372,7 @@ jbCatMan.setCategoriesforCard = function (card, catsArray,  field = jbCatMan.get
     return false;
   
   // Sanity check: Do not include parents.
-  let catsString = jbCatMan.getStringFromCategories(catsArray.filter((e, i, a) => (i == (a.length-1)) || !a[i+1].startsWith(e + " / ")), jbCatMan.getCategorySeperator(field));
+  let catsString = jbCatMan.getStringFromCategories(catsArray.filter((e, i, a) => (i == (a.length-1)) || !a[i+1].startsWith(e + " / ")), jbCatMan.getCategorySeperator());
 
   try {
      card.setPropertyAsAString(field, catsString);
@@ -469,7 +414,7 @@ jbCatMan.getUserNamefromCard = function (card) {
   return userName;
 }
 
-jbCatMan.updateCategories = function (mode, oldName, newName) {
+jbCatMan.updateCategories = async function (mode, oldName, newName) {
   //get address book manager
   let addressBook = MailServices.ab.getDirectory(GetSelectedDirectory()); //GetSelectedDirectory() returns an URI, but we need the directory itself
   let cards = addressBook.childCards;
@@ -512,7 +457,7 @@ jbCatMan.updateCategories = function (mode, oldName, newName) {
       // Was there a manipulation of the card due to rename or delete request?
       if (writeCategoriesToCard) {
         jbCatMan.setCategoriesforCard(card, rebuildCatArray)
-        jbCatMan.modifyCard(card);
+        await jbCatMan.modifyCard(card);
       }
     }
   }
@@ -520,7 +465,7 @@ jbCatMan.updateCategories = function (mode, oldName, newName) {
 
 
 
-jbCatMan.scanCategories = function (abURI, field = jbCatMan.getCategoryField(), quickscan = false) {
+jbCatMan.scanCategories = async function (abURI, field = jbCatMan.getCategoryField(), quickscan = false) {
   //concept decision: we remove empty categories on addressbook switch (select) 
   //-> the category array is constantly cleared and build from scan results
   let data = {};

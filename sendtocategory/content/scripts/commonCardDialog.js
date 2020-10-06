@@ -6,7 +6,7 @@ Services.scriptloader.loadSubScript("chrome://sendtocategory/content/addressbook
 Services.scriptloader.loadSubScript("chrome://messenger/content/customElements.js", window, "UTF-8");
 
 // Called on window load or on add-on activation while window is already open.
-function onLoad(wasAlreadyOpen) {
+async function onLoad(wasAlreadyOpen) {
   WL.injectCSS("chrome://messenger/skin/menulist.css");
   WL.injectCSS("chrome://sendtocategory/content/skin/richlist-cardedit.css");
   WL.injectElements(`   
@@ -42,7 +42,7 @@ function onLoad(wasAlreadyOpen) {
   ["chrome://sendtocategory/locale/catman.dtd"]);
   
   // Init on load
-  window.jbCatManEditDialog.Init(); 
+  await window.jbCatManEditDialog.Init(); 
 
   // Register load and save listeners.
   if (window.location.href=="chrome://messenger/content/addressbook/abNewCardDialog.xul") {

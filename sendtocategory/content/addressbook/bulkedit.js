@@ -3,7 +3,7 @@ var { MailServices } = ChromeUtils.import("resource:///modules/MailServices.jsm"
 var jbCatMan = window.opener.jbCatMan;
 var jbCatManBulkEdit = {}
 
-jbCatManBulkEdit.getCardsFromEmail = function (email) {
+jbCatManBulkEdit.getCardsFromEmail = async function (email) {
   let abURI = jbCatMan.getWorkAbUri(MailServices.ab.getDirectory(jbCatMan.bulk.selectedDirectory));
   
   let EmailQuery = "(PrimaryEmail,bw,@V)(SecondEmail,bw,@V)";
@@ -20,7 +20,7 @@ jbCatManBulkEdit.getCardsFromEmail = function (email) {
 
 
 
-jbCatManBulkEdit.loadBulkList = function () {
+jbCatManBulkEdit.loadBulkList = async function () {
   document.title = window.arguments[1];
   let abURI = window.opener.GetSelectedDirectory();
 
@@ -139,7 +139,7 @@ jbCatManBulkEdit.loadValidateList = function() {
 
 
 
-jbCatManBulkEdit.validateEmailList = function (i) {
+jbCatManBulkEdit.validateEmailList = async function (i) {
   if (i < jbCatMan.bulk.toBeValidated.length) {
     let validatorList = document.getElementById("CatManValidatorList");
     let entry = jbCatMan.bulk.toBeValidated[i];
@@ -149,7 +149,7 @@ jbCatManBulkEdit.validateEmailList = function (i) {
     if (entry.email != "") {
       let memberIdx = -1;
 
-      let cardsIterator = jbCatManBulkEdit.getCardsFromEmail(entry.email);
+      let cardsIterator = await jbCatManBulkEdit.getCardsFromEmail(entry.email);
       let cards = [];
       while (cardsIterator.hasMoreElements()) {
               cards.push(cardsIterator.getNext().QueryInterface(Components.interfaces.nsIAbCard));
@@ -284,7 +284,7 @@ jbCatManBulkEdit.saveList = function (){
 
 
 
-jbCatManBulkEdit.saveList_AddCards = function (i) {
+jbCatManBulkEdit.saveList_AddCards = async function (i) {
   let CatManSaverList = document.getElementById("CatManSaverList");
   let category = jbCatMan.bulk.categoryFilter[jbCatMan.bulk.categoryFilter.length - 1];
 
@@ -299,7 +299,7 @@ jbCatManBulkEdit.saveList_AddCards = function (i) {
 
         //OK, DOUBLE, or DOUBLEOK
         let name = UID;
-        let card = jbCatMan.getCardFromUID(UID, jbCatMan.getWorkAbUri(MailServices.ab.getDirectory(jbCatMan.bulk.selectedDirectory)));
+        let card = await jbCatMan.getCardFromUID(UID, jbCatMan.getWorkAbUri(MailServices.ab.getDirectory(jbCatMan.bulk.selectedDirectory)));
         let idx = jbCatMan.bulk.originalMembers.indexOf(UID);
 
         //Has this UID been processed already? Do not add the same contact twice
@@ -327,7 +327,7 @@ jbCatManBulkEdit.saveList_AddCards = function (i) {
               let cats = jbCatMan.getCategoriesfromCard(card);
               cats.push(category);
               jbCatMan.setCategoriesforCard(card, cats);
-              jbCatMan.modifyCard(card);
+              await jbCatMan.modifyCard(card);
               //Log
               let row = document.createXULElement('richlistitem');
               let cell = document.createXULElement('label');
@@ -361,7 +361,7 @@ jbCatManBulkEdit.saveList_AddCards = function (i) {
         jbCatMan.setCategoriesforCard(card, cats);
 
         //add the new card to the book and then call modify, which inits sysnc
-        jbCatMan.modifyCard(card);
+        await jbCatMan.modifyCard(card);
 
         //Log
         let row = document.createXULElement('richlistitem');
@@ -384,7 +384,7 @@ jbCatManBulkEdit.saveList_AddCards = function (i) {
 
 
 
-jbCatManBulkEdit.saveList_RemoveCards = function (i) {    
+jbCatManBulkEdit.saveList_RemoveCards = async function (i) {    
   let CatManSaverList = document.getElementById("CatManSaverList");
   let category =  jbCatMan.bulk.categoryFilter[jbCatMan.bulk.categoryFilter.length - 1];
   
@@ -393,7 +393,7 @@ jbCatManBulkEdit.saveList_RemoveCards = function (i) {
 
     let UID = jbCatMan.bulk.originalMembers[i];
     let name = UID;
-    let card = jbCatMan.getCardFromUID(UID, jbCatMan.bulk.selectedDirectory);
+    let card = await jbCatMan.getCardFromUID(UID, jbCatMan.bulk.selectedDirectory);
     if (card==null) {
       // ERROR
       let row = document.createXULElement('richlistitem');
@@ -429,7 +429,7 @@ jbCatManBulkEdit.saveList_RemoveCards = function (i) {
 
       // Update card
       jbCatMan.setCategoriesforCard(card, cats);
-      jbCatMan.modifyCard(card);
+      await jbCatMan.modifyCard(card);
     }
     window.setTimeout(function() { jbCatManBulkEdit.saveList_RemoveCards(i+1); }, 20);
 

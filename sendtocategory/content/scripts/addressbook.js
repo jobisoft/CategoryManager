@@ -32,8 +32,6 @@ function onLoad(wasAlreadyOpen) {
             <menuitem id="CatManContextMenuBulk" disabled="true" label="&sendtocategory.bulkedit.title;" oncommand="jbCatMan.onBulkEdit()"/>
             <menuseparator />
             <menuitem id="CatManContextMenuImportExport" disabled="true" label="&sendtocategory.export.title;" oncommand="jbCatMan.onImportExport()" />
-            <menuseparator id="CatManContextMenuMFFABSplitter"/>
-            <menuitem id="CatManContextMenuMFFABConvert" label="" oncommand="jbCatMan.onConvertCategory()" />
         </menupopup>
     </popupset>
     
@@ -42,7 +40,7 @@ function onLoad(wasAlreadyOpen) {
         <splitter id="CatManSplitter" collapse="after" resizebefore="closest" resizeafter="closest" state="open" orient="vertical"></splitter>
 	
         <vbox id="CatManBox" persist="height top">
-                    <hbox align="center" style="padding:1ex 5px 1ex 0"><label id ="CatManBoxLabel" value="" flex="1" /><label hidden="true" value="MFFAB" pack="end" /><image hidden="true" id="CatManModeSlider" src='chrome://sendtocategory/content/skin/slider-off.png'  onclick="jbCatMan.onSwitchCategoryMode()" tooltiptext="&sendtocategory.catogorybox.MFFAB.tooltip;" pack="end"/></hbox>
+                    <hbox align="center" style="padding:1ex 5px 1ex 0"><label id ="CatManBoxLabel" value="" flex="1" /></hbox>
                     <richlistbox 
                     id="CatManCategoriesList"
                     flex="1"
