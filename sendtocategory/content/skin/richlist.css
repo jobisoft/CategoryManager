@@ -4,7 +4,7 @@ richlistitem .label label {
     margin:0 6px 0 0;
 }
 
-richlistitem .text textbox {
+richlistitem .text input {
     width:122px; /* width/2 - 3*/
     padding:3px;
     margin:2px 6px 2px 0;

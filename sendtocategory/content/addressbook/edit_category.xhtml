@@ -9,6 +9,7 @@
 
 <dialog id="CatManCategoryEditor"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
   buttons="accept,cancel"
   onload="editCategoryLoad();">
   
@@ -17,7 +18,7 @@
     <hbox align="center">
       <label value="&sendtocategory.name.label;:" control="categoryName"/>
       <label style="font-style: italic" id="parentCategory" control="categoryName"/>
-      <textbox id="categoryName"/>
+      <html:input type="text" id="categoryName"/>
     </hbox>
   </vbox>
 </dialog>

@@ -25,7 +25,7 @@ async function onLoad(wasAlreadyOpen) {
           </richlistbox>
         </vbox>
         <hbox pack="end">
-            <textbox id="abCatManAddCategoryBox" flex="1" />
+            <html:input type="text" id="abCatManAddCategoryBox" style="width:100%" />
             <button disabled="true" flex="0" id="abCatManAddCategoryButton" type="menu" label="+">
                 <menupopup id="abCatManAddCategoryButtonPopup">
                     <menuitem id="abCatManAddMainCategoryButton"
