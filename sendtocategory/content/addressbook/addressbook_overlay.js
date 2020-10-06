@@ -62,7 +62,7 @@ jbCatMan.dragdrop = {
         let destination = event.currentTarget.categoryName;
         let originalName = event.dataTransfer.getData("categoryName");
         let newName = destination + " / " + originalName.split(" / ").slice(-1);
-        /* await */ jbCatMan.updateCategories("rename", originalName, newName); 
+        /* */ jbCatMan.updateCategories("rename", originalName, newName); 
         break;
 
       
@@ -79,10 +79,10 @@ jbCatMan.dragdrop = {
   },
 };
 
-jbCatMan.addCategoryListEntry = async function (abURI, newCategoryName) {
+jbCatMan.addCategoryListEntry = function (abURI, newCategoryName) {
   let newListItem = document.createXULElement("richlistitem");
   newListItem.categoryName = newCategoryName;
-  newListItem.subCategories = await jbCatMan.getSubCategories(newCategoryName);
+  newListItem.subCategories = jbCatMan.getSubCategories(newCategoryName);
   newListItem.categoryFilter = newListItem.subCategories.concat(newCategoryName); // to filter the view
   newListItem.categorySize = jbCatMan.data.categoryMembers[newCategoryName].length;
   newListItem.id = btoa("Category:" + newCategoryName).split("=").join("");
@@ -120,7 +120,7 @@ jbCatMan.addCategoryListEntry = async function (abURI, newCategoryName) {
   return newListItem;
 }
 
-jbCatMan.toggleCategoryListEntry = async function (abURI, element) {
+jbCatMan.toggleCategoryListEntry = function (abURI, element) {
   let categoriesList = document.getElementById("CatManCategoriesList");
   let isOpen = (element.getAttribute("isOpen") == "true");
 
@@ -142,15 +142,15 @@ jbCatMan.toggleCategoryListEntry = async function (abURI, element) {
 
     let reducedCategories = jbCatMan.getReducedCategoriesForHierarchyMode(element.categoryName);    
     for (let subCat of reducedCategories) {
-      let newItem = await jbCatMan.addCategoryListEntry(abURI, subCat);
+      let newItem = jbCatMan.addCategoryListEntry(abURI, subCat);
       if (newItem) categoriesList.insertBefore(newItem, hook);    
     }
   }
 }
 
-jbCatMan.updateCategoryList = async function () {
+jbCatMan.updateCategoryList = function () {
   let abURI = GetSelectedDirectory();
-  await jbCatMan.scanCategories(abURI);
+  jbCatMan.scanCategories(abURI);
   
   // Save current open-states.
   let categoriesList = document.getElementById("CatManCategoriesList");
@@ -192,7 +192,7 @@ jbCatMan.updateCategoryList = async function () {
   // Add all first level categories.
   let reducedCategories = jbCatMan.getReducedCategoriesForHierarchyMode();    
   for (let subCat of reducedCategories) {
-    let newItem = await jbCatMan.addCategoryListEntry(abURI, subCat);
+    let newItem = jbCatMan.addCategoryListEntry(abURI, subCat);
     if (newItem) categoriesList.appendChild(newItem);
   }
 
@@ -200,7 +200,7 @@ jbCatMan.updateCategoryList = async function () {
   for (let openFilter of openFilters) {
     let node = categoriesList.querySelector("#" + openFilter);  
     if (node) {
-      await jbCatMan.toggleCategoryListEntry(abURI, node);
+      jbCatMan.toggleCategoryListEntry(abURI, node);
     }
   }
   
@@ -291,7 +291,7 @@ jbCatMan.updateButtons = function () {
 }
 
 
-jbCatMan.writeToCategory = async function () {
+jbCatMan.writeToCategory = function () {
   let categoriesList = document.getElementById("CatManCategoriesList");
 
   let searchstring = jbCatMan.getCategorySearchString(GetSelectedDirectory(), categoriesList.querySelector("#" + jbCatMan.data.selectedCategory).categoryFilter);
@@ -369,13 +369,13 @@ jbCatMan.onToggleDisplay = function (show) {
   }
 }
 
-jbCatMan.onSelectAddressbook = async function () {
+jbCatMan.onSelectAddressbook = function () {
   let selectedBook = GetSelectedDirectory();
   
   if (selectedBook) {
     let prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.sendtocategory.");
     jbCatMan.data.selectedCategory = null;
-    await jbCatMan.updateCategoryList();
+    jbCatMan.updateCategoryList();
   } else {
     //if for some reason no address book is selected, select the first one
     gDirTree.view.selection.select(0);
@@ -389,7 +389,7 @@ jbCatMan.onClickCategoryList = function (event) {
   let abURI = GetSelectedDirectory();
 
   if (categoriesList.selectedIndex != -1 && categoriesList.selectedItem.subCategories.length > 0) {
-    /* await */ jbCatMan.toggleCategoryListEntry(abURI, categoriesList.selectedItem);
+    /* */ jbCatMan.toggleCategoryListEntry(abURI, categoriesList.selectedItem);
   }
 }
 
@@ -454,7 +454,7 @@ jbCatMan.onDeleteCategory = function () {
   let category = categoriesList.selectedItem.categoryName;
   if (category) {
     // Go through all contacts and remove that category.
-    /* await */ jbCatMan.updateCategories("remove", category);
+    /* */ jbCatMan.updateCategories("remove", category);
   }
 }
 

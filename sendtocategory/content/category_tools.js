@@ -71,12 +71,12 @@ jbCatMan.getWorkAbUri = function(book) {
 /*
   If the selected book is a mailinglist, add the given card (if not already added)
 */
-jbCatMan.updateMailinglist = async function(abUri, selectedBook, card) {
+jbCatMan.updateMailinglist = function(abUri, selectedBook, card) {
   if (selectedBook.isMailList) {
     
     //is card already part of selectedBook?
     let UID = jbCatMan.getUIDFromCard(card);
-    if (await jbCatMan.getCardFromUID(UID, selectedBook.URI)) 
+    if (jbCatMan.getCardFromUID(UID, selectedBook.URI)) 
       return;
     
     //find this mailinglist card (nsIAbCard) in the parent directory (selectedBook.URI == mailListCard.mailListURI)
@@ -100,7 +100,7 @@ jbCatMan.updateMailinglist = async function(abUri, selectedBook, card) {
   Save a given card using the internal mapping between the directoryId (attribute of card) 
   and directoryURI, so all cards can be modified, even if the directoryURI is not known. 
 */
-jbCatMan.modifyCard = async function (card) {
+jbCatMan.modifyCard = function (card) {
   let selectedBook = MailServices.ab.getDirectory(GetSelectedDirectory());
   let abUri;
 
@@ -118,12 +118,12 @@ jbCatMan.modifyCard = async function (card) {
       //add card to address book
       let newCard = ab.addCard(card);
       //also add card to mailinglist, if needed
-      await jbCatMan.updateMailinglist(abUri, selectedBook, newCard);
+      jbCatMan.updateMailinglist(abUri, selectedBook, newCard);
   } else {
     //save card changes
     ab.modifyCard(card);
     //if the selected book is a mailinglist, but the modified card is not in the mailinglist -> add
-    await jbCatMan.updateMailinglist(abUri, selectedBook, card);
+    jbCatMan.updateMailinglist(abUri, selectedBook, card);
   }
   
   return abUri;
@@ -170,7 +170,7 @@ jbCatMan.getReducedCategoriesForHierarchyMode = function (parentCategory = null)
   return reducedCategories;
 }
 
-jbCatMan.getSubCategories = async function (parentCategory) {
+jbCatMan.getSubCategories = function (parentCategory) {
   let subCategories = [];
   for (let category of jbCatMan.data.categoryList) {
     // Do not include parentCategory.
@@ -180,7 +180,7 @@ jbCatMan.getSubCategories = async function (parentCategory) {
   return subCategories;
 }
 
-jbCatMan.getNumberOfFilteredCards = async function (abURI, categoryFilter) {
+jbCatMan.getNumberOfFilteredCards = function (abURI, categoryFilter) {
   let searchstring = jbCatMan.getCategorySearchString(abURI, categoryFilter);
   let searches = jbCatMan.getSearchesFromSearchString(searchstring);
 
@@ -289,7 +289,7 @@ jbCatMan.getUIDFromCard = function (card) {
 
 
 // this function expects to be run on a single book only (so DbRowID is unique enough), otherwise the full UID needs to be used to get the card 
-jbCatMan.getCardFromUID = async function (UID, abURI) {
+jbCatMan.getCardFromUID = function (UID, abURI) {
   let UIDS = UID.split("\u001A");
   let DbRowID = UIDS[0];
   
@@ -375,7 +375,7 @@ jbCatMan.setCategoriesforCard = function (card, catsArray,  field = jbCatMan.get
   let catsString = jbCatMan.getStringFromCategories(catsArray.filter((e, i, a) => (i == (a.length-1)) || !a[i+1].startsWith(e + " / ")), jbCatMan.getCategorySeperator());
 
   try {
-     card.setPropertyAsAString(field, catsString);
+     card.setProperty(field, catsString);
   } catch (ex) {
     retval = false;
   }
@@ -414,7 +414,7 @@ jbCatMan.getUserNamefromCard = function (card) {
   return userName;
 }
 
-jbCatMan.updateCategories = async function (mode, oldName, newName) {
+jbCatMan.updateCategories = function (mode, oldName, newName) {
   //get address book manager
   let addressBook = MailServices.ab.getDirectory(GetSelectedDirectory()); //GetSelectedDirectory() returns an URI, but we need the directory itself
   let cards = addressBook.childCards;
@@ -457,7 +457,7 @@ jbCatMan.updateCategories = async function (mode, oldName, newName) {
       // Was there a manipulation of the card due to rename or delete request?
       if (writeCategoriesToCard) {
         jbCatMan.setCategoriesforCard(card, rebuildCatArray)
-        await jbCatMan.modifyCard(card);
+        jbCatMan.modifyCard(card);
       }
     }
   }
@@ -465,7 +465,7 @@ jbCatMan.updateCategories = async function (mode, oldName, newName) {
 
 
 
-jbCatMan.scanCategories = async function (abURI, field = jbCatMan.getCategoryField(), quickscan = false) {
+jbCatMan.scanCategories = function (abURI, field = jbCatMan.getCategoryField(), quickscan = false) {
   //concept decision: we remove empty categories on addressbook switch (select) 
   //-> the category array is constantly cleared and build from scan results
   let data = {};

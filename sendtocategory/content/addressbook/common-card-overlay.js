@@ -7,7 +7,7 @@ var jbCatManEditDialog = {};
 Services.scriptloader.loadSubScript("chrome://sendtocategory/content/category_tools.js");
 
 
-jbCatManEditDialog.Init = async function () {
+jbCatManEditDialog.Init = function () {
   //hide SOGo Category Tab
   if (window.document.getElementById("categoriesTabButton")) window.document.getElementById("categoriesTabButton").style.display = 'none';
   
@@ -28,7 +28,7 @@ jbCatManEditDialog.Init = async function () {
 
   if (window.location.href=="chrome://messenger/content/addressbook/abNewCardDialog.xhtml") {
     // if this is the new card dialog, manually trigger onLoadCard to init category tab
-    await jbCatManEditDialog.onLoadCard(null, window.document);
+    jbCatManEditDialog.onLoadCard(null, window.document);
     if (window.document.getElementById("abPopup")) {
       window.document.getElementById("abPopup").addEventListener("command", function() { jbCatManEditDialog.onLoadCard(null, window.document); }, false);
     }
@@ -185,11 +185,11 @@ jbCatManEditDialog.addItemToList = function (categoryName, checked = true) {
 
 
 
-jbCatManEditDialog.onLoadCard = async function (aCard, aDocument) { 
+jbCatManEditDialog.onLoadCard = function (aCard, aDocument) { 
   jbCatManEditDialog.catsArray = aCard ? jbCatMan.getCategoriesfromCard(aCard, "Categories") : []; 	
 
   let abURI = jbCatManEditDialog.getSelectedAb(aDocument.defaultView);
-  await jbCatMan.scanCategories(abURI);
+  jbCatMan.scanCategories(abURI);
   
   // Clear current list.
   let list = aDocument.getElementById("abCatManCategoriesList");

@@ -13,7 +13,7 @@ Services.scriptloader.loadSubScript("chrome://sendtocategory/content/parser/csv/
   - do not export empty cols?
 */
 
-jbCatManWizard.Init = async function () {
+jbCatManWizard.Init = function () {
   
   // Get the passed filter.
   jbCatManWizard.categoryFilter = window.arguments[0];
@@ -90,7 +90,7 @@ jbCatManWizard.Init = async function () {
   
   if (hasSelectedCategories) {
     // user selected a category
-    jbCatManWizard.exportsize = await jbCatMan.getNumberOfFilteredCards(jbCatManWizard.currentAddressBook.URI, jbCatManWizard.categoryFilter);
+    jbCatManWizard.exportsize = jbCatMan.getNumberOfFilteredCards(jbCatManWizard.currentAddressBook.URI, jbCatManWizard.categoryFilter);
   } else if (jbCatManWizard.categoryFilter == "uncategorized") {
     jbCatManWizard.exportsize = jbCatMan.data.cardsWithoutCategories.length;    
   } else { // all
@@ -487,7 +487,7 @@ jbCatManWizard.SilentAfter_Import_Mapping_CSV = function () {
 }
 
 /* actual import */
-jbCatManWizard.ProgressAfter_Import_Control_CSV = async function (dialog, step = 0) {
+jbCatManWizard.ProgressAfter_Import_Control_CSV = function (dialog, step = 0) {
   step = step + 1;
   if (step > jbCatManWizard.csv.numberOfRows()) {
     //after import is done, update number of imported contacts, header row does not count and is skipped
@@ -509,7 +509,7 @@ jbCatManWizard.ProgressAfter_Import_Control_CSV = async function (dialog, step =
         if (value.trim() !=  "") card.setProperty(prop, value);
       }
       //add the new card to the book and then call modify, which inits sysnc
-      await jbCatMan.modifyCard(card);
+      jbCatMan.modifyCard(card);
     }
 
     dialog.window.setTimeout(function() { jbCatManWizard.ProgressAfter_Import_Control_CSV(dialog, step); }, 20);
@@ -524,7 +524,7 @@ jbCatManWizard.ProgressAfter_Import_Control_CSV = async function (dialog, step =
  * CSV EXPORT FUNCTIONS 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-jbCatManWizard.ProgressBefore_Export_CSV = async function (dialog, step = 0) {
+jbCatManWizard.ProgressBefore_Export_CSV = function (dialog, step = 0) {
   //scan to-be-exported contacts and extract all possible properties for csv header
 
   if (step == 0) {
@@ -553,7 +553,7 @@ jbCatManWizard.ProgressBefore_Export_CSV = async function (dialog, step = 0) {
 }
 
 
-jbCatManWizard.ProgressAfter_Export_CSV = async function (dialog, step = 0) {
+jbCatManWizard.ProgressAfter_Export_CSV = function (dialog, step = 0) {
   //do export
   let delim = document.getElementById("CatManWizardExportCsvDelimiter").value;
   let textident = document.getElementById("CatManWizardExportCsvTextIdentifier").value;

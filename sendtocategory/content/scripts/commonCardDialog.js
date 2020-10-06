@@ -5,7 +5,7 @@ var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
 Services.scriptloader.loadSubScript("chrome://sendtocategory/content/addressbook/common-card-overlay.js", window, "UTF-8");
 
 // Called on window load or on add-on activation while window is already open.
-async function onLoad(wasAlreadyOpen) {
+function onLoad(wasAlreadyOpen) {
   WL.injectCSS("chrome://messenger/skin/menulist.css");
   WL.injectCSS("chrome://sendtocategory/content/skin/richlist-cardedit.css");
   WL.injectElements(`   
@@ -40,7 +40,7 @@ async function onLoad(wasAlreadyOpen) {
   ["chrome://sendtocategory/locale/catman.dtd"]);
   
   // Init on load
-  await window.jbCatManEditDialog.Init(); 
+  window.jbCatManEditDialog.Init(); 
 
   // Register load and save listeners.
   if (window.location.href=="chrome://messenger/content/addressbook/abNewCardDialog.xul") {
