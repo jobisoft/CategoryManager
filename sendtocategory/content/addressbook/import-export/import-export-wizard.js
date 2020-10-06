@@ -198,7 +198,7 @@ jbCatManWizard.onpageadvanced = function (curPage) {
   if (typeof typeFunction === 'function') {
       this.advance = true;
       this.more = true;
-      window.openDialog("chrome://sendtocategory/content/addressbook/import-export/progress.xul", "progress-window", "modal,dialog,centerscreen,chrome,resizable=no,width=300, height=20", type);
+      window.openDialog("chrome://sendtocategory/content/addressbook/import-export/progress.xhtml", "progress-window", "modal,dialog,centerscreen,chrome,resizable=no,width=300, height=20", type);
       if (!this.advance) return false;
   }
   
@@ -255,7 +255,7 @@ jbCatManWizard.onpageadvanced = function (curPage) {
   if (typeof typeFunction === 'function') {
       this.advance = true;
       this.more = true;
-      window.openDialog("chrome://sendtocategory/content/addressbook/import-export/progress.xul", "progress-window", "modal,dialog,centerscreen,chrome,resizable=no,width=300, height=20", type);
+      window.openDialog("chrome://sendtocategory/content/addressbook/import-export/progress.xhtml", "progress-window", "modal,dialog,centerscreen,chrome,resizable=no,width=300, height=20", type);
       if (!this.advance) return false;
   }
 
@@ -389,21 +389,21 @@ jbCatManWizard.ProgressBefore_Import_Mapping_CSV = function (dialog, step = 0) {
       {
         let mappingList = document.getElementById("CatManWizardImport_Mapping_CSV");
         for (let x=0; x<jbCatManWizard.datafields.length; x++) {
-          let newListEntry = document.createElement("richlistitem");
+          let newListEntry = document.createXULElement("richlistitem");
           
-          let labelBox = document.createElement("hbox");
+          let labelBox = document.createXULElement("hbox");
           labelBox.setAttribute("align", "center");
           labelBox.setAttribute("style", "width:210px");
-            let label = document.createElement("label");
+            let label = document.createXULElement("label");
             label.setAttribute("crop", "end");
             label.setAttribute("value", jbCatManWizard.datafields[x]);
             labelBox.appendChild(label);
           newListEntry.appendChild(labelBox);
           
-          let menupopup = document.createElement("menupopup");
+          let menupopup = document.createXULElement("menupopup");
           //append standardFields
           for (let i=0; i <  jbCatManWizard.standardFields.length; i++) {
-            let menuitem = document.createElement("menuitem");
+            let menuitem = document.createXULElement("menuitem");
             menuitem.setAttribute("value",  jbCatManWizard.standardFields[i]);
             menuitem.setAttribute("label",  jbCatManWizard.standardFields[i]);
             menupopup.appendChild(menuitem);
@@ -411,7 +411,7 @@ jbCatManWizard.ProgressBefore_Import_Mapping_CSV = function (dialog, step = 0) {
           //append selected field, if not in standardFields
           let itemIndex = jbCatManWizard.standardFields.indexOf(jbCatManWizard.datafields[x]);
           if (itemIndex == -1){
-            let menuitem = document.createElement("menuitem");
+            let menuitem = document.createXULElement("menuitem");
             menuitem.setAttribute("value", jbCatManWizard.datafields[x]);
             menuitem.setAttribute("label", jbCatManWizard.datafields[x]);
             menuitem.setAttribute("selected", "true");
@@ -422,9 +422,9 @@ jbCatManWizard.ProgressBefore_Import_Mapping_CSV = function (dialog, step = 0) {
             menupopup.childNodes[itemIndex].setAttribute("style", "font-weight:bold;");
           }
           
-          let menulistBox = document.createElement("hbox");
+          let menulistBox = document.createXULElement("hbox");
           menulistBox.setAttribute("style", "width:210px");
-            let menulist = document.createElement("menulist", { is : "menulist-editable"});
+            let menulist = document.createXULElement("menulist", { is : "menulist-editable"});
             menulist.setAttribute("is", "menulist-editable");
             menulist.setAttribute("editable", "true");
             menulist.setAttribute("flex", "1");
@@ -432,7 +432,7 @@ jbCatManWizard.ProgressBefore_Import_Mapping_CSV = function (dialog, step = 0) {
             menulistBox.appendChild(menulist);
           newListEntry.appendChild(menulistBox);
 
-          let checkbox = document.createElement("checkbox");
+          let checkbox = document.createXULElement("checkbox");
           checkbox.setAttribute("pack", "end");
           checkbox.setAttribute("checked", "true");
           newListEntry.appendChild(checkbox);
@@ -873,8 +873,6 @@ jbCatManWizard.importControlView = {
   map: null,
 
   init: function(id, importData, importMap) {
-    const XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
-
     this.columns = importData[0].slice();
     this.data = importData.slice();
     this.map = importMap;
@@ -906,7 +904,7 @@ jbCatManWizard.importControlView = {
       }
       if (isEmpty) continue;
       
-      let newListEntry = document.createElementNS(XUL_NS, "treecol");
+      let newListEntry = document.createXULElement("treecol");
       newListEntry.setAttribute("id", "CatManimportControlViewCol_" + col); 
       newListEntry.setAttribute("label", this.map[col]);
       newListEntry.setAttribute("width", "160");

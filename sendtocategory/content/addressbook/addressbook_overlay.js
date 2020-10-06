@@ -80,7 +80,7 @@ jbCatMan.dragdrop = {
 };
 
 jbCatMan.addCategoryListEntry = function (abURI, newCategoryName) {
-  let newListItem = document.createElement("richlistitem");
+  let newListItem = document.createXULElement("richlistitem");
   newListItem.categoryName = newCategoryName;
   newListItem.subCategories = jbCatMan.getSubCategories(newCategoryName);
   newListItem.categoryFilter = newListItem.subCategories.concat(newCategoryName); // to filter the view
@@ -99,7 +99,7 @@ jbCatMan.addCategoryListEntry = function (abURI, newCategoryName) {
   newListItem.setAttribute("class", levels.join(" "));
   newListItem.setAttribute("isOpen", "false");
 
-  let categoryMore = document.createElement("hbox");
+  let categoryMore = document.createXULElement("hbox");
   if (newListItem.subCategories.length > 0) {
     categoryMore.setAttribute("class", "twisty");
     categoryMore.addEventListener("click", function(e) { jbCatMan.onClickCategoryList(e); }, false);
@@ -108,12 +108,12 @@ jbCatMan.addCategoryListEntry = function (abURI, newCategoryName) {
   categoryMore.style["margin-left"] = ((categoryLevels.length-1) * 16) + "px";
   newListItem.appendChild(categoryMore);
   
-  let categoryName = document.createElement("label");
+  let categoryName = document.createXULElement("label");
   categoryName.setAttribute("flex", "1");
   categoryName.setAttribute("value", categoryLevels[categoryLevels.length-1]);
   newListItem.appendChild(categoryName);
   
-  let categorySize = document.createElement("label");
+  let categorySize = document.createXULElement("label");
   categorySize.setAttribute("flex", "0");
   categorySize.setAttribute("value", newListItem.categorySize);
   newListItem.appendChild(categorySize);
@@ -168,15 +168,15 @@ jbCatMan.updateCategoryList = function () {
 
   // Disable "all" element if global book and global book empty or if remote book.
   if (!(MailServices.ab.getDirectory(abURI).isRemote)) {// || (abURI == "moz-abdirectory://?" && jbCatMan.data.abSize == 0))) {
-    let newListItem = document.createElement("richlistitem");
+    let newListItem = document.createXULElement("richlistitem");
     newListItem.categoryFilter = "none";
     newListItem.id = btoa("Default:" + newListItem.categoryFilter).split("=").join("");
-    let categoryName = document.createElement("label");
+    let categoryName = document.createXULElement("label");
     categoryName.setAttribute("flex", "1");
     categoryName.setAttribute("value", jbCatMan.locale.viewAllCategories);
     categoryName.setAttribute("style", "font-style:italic;");
     newListItem.appendChild(categoryName);
-    let categorySize = document.createElement("label");
+    let categorySize = document.createXULElement("label");
     categorySize.setAttribute("flex", "0");
     categorySize.setAttribute("value", jbCatMan.data.abSize);
     categorySize.setAttribute("style", "font-style:italic;");
@@ -201,20 +201,20 @@ jbCatMan.updateCategoryList = function () {
   
   // Disable "cardsWithoutCategories" element if global book and global book empty or if remote book
   if (!(MailServices.ab.getDirectory(abURI).isRemote)) {// || (abURI == "moz-abdirectory://?" && jbCatMan.data.cardsWithoutCategories.length == 0))) {
-    let newListItem = document.createElement("richlistitem");
+    let newListItem = document.createXULElement("richlistitem");
     newListItem.categoryFilter = "uncategorized";
     newListItem.id = btoa("Default:" + newListItem.categoryFilter).split("=").join("");
 
-    let categoryMore = document.createElement("hbox");
+    let categoryMore = document.createXULElement("hbox");
     categoryMore.setAttribute("flex", "0");
     newListItem.appendChild(categoryMore);
     
-    let categoryName = document.createElement("label");
+    let categoryName = document.createXULElement("label");
     categoryName.setAttribute("flex", "1");
     categoryName.setAttribute("value", jbCatMan.getLocalizedMessage("viewWithoutCategories"));
     categoryName.setAttribute("style", "font-style:italic;");
     newListItem.appendChild(categoryName);
-    let categorySize = document.createElement("label");
+    let categorySize = document.createXULElement("label");
     categorySize.setAttribute("flex", "0");
     categorySize.setAttribute("value", jbCatMan.data.cardsWithoutCategories.length);
     categorySize.setAttribute("style", "font-style:italic;");
@@ -356,7 +356,7 @@ jbCatMan.writeToCategory = function () {
 jbCatMan.onImportExport = function () {
   let categoriesList = document.getElementById("CatManCategoriesList");
   let categoryFilter = categoriesList.querySelector("#" + jbCatMan.data.selectedCategory).categoryFilter;
-  window.openDialog("chrome://sendtocategory/content/addressbook/import-export/import-export-wizard.xul", "import-export-wizard", "modal,dialog,centerscreen,chrome,resizable=no", categoryFilter);
+  window.openDialog("chrome://sendtocategory/content/addressbook/import-export/import-export-wizard.xhtml", "import-export-wizard", "modal,dialog,centerscreen,chrome,resizable=no", categoryFilter);
 }
 
 
@@ -472,12 +472,12 @@ jbCatMan.onBulkEdit = function () {
   //all 3 dialogs are called in sequence. Skipped, if canceled.
   let categoriesList = document.getElementById("CatManCategoriesList");
   let categoryFilter = categoriesList.querySelector("#" + jbCatMan.data.selectedCategory).categoryFilter;
-  window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_editAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,resizable=no", categoryFilter, jbCatMan.locale.bulkTitle);
+  window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_editAddresses.xhtml", "bulkeditCategory", "modal,centerscreen,chrome,resizable=no", categoryFilter, jbCatMan.locale.bulkTitle);
   if (jbCatMan.bulk.needToValidateBulkList) {
-    window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_validateAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,width=595,height=600,resizable=yes", categoryFilter, jbCatMan.locale.bulkTitle);
+    window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_validateAddresses.xhtml", "bulkeditCategory", "modal,centerscreen,chrome,width=595,height=600,resizable=yes", categoryFilter, jbCatMan.locale.bulkTitle);
   }
   if (jbCatMan.bulk.needToSaveBulkList) {
-    window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_saveAddresses.xul", "bulkeditCategory", "modal,centerscreen,chrome,resizable=yes", categoryFilter, jbCatMan.locale.bulkTitle);
+    window.openDialog("chrome://sendtocategory/content/addressbook/bulkedit_saveAddresses.xhtml", "bulkeditCategory", "modal,centerscreen,chrome,resizable=yes", categoryFilter, jbCatMan.locale.bulkTitle);
   }
 }
 
@@ -486,7 +486,7 @@ jbCatMan.onBulkEdit = function () {
 jbCatMan.onAddCategory = function (event) {
   let parentCategory = event.target.categoryName;
   event.stopPropagation(); 
-  window.openDialog("chrome://sendtocategory/content/addressbook/edit_category.xul", "addCategory", "modal,centerscreen,chrome,resizable=no", parentCategory, jbCatMan.locale.addTitle, "add");
+  window.openDialog("chrome://sendtocategory/content/addressbook/edit_category.xhtml", "addCategory", "modal,centerscreen,chrome,resizable=no", parentCategory, jbCatMan.locale.addTitle, "add");
 }
 
 
@@ -494,7 +494,7 @@ jbCatMan.onAddCategory = function (event) {
 jbCatMan.onRenameCategory = function () {
   let categoriesList = document.getElementById("CatManCategoriesList");
   if (categoriesList.selectedItem.categoryName) {
-    window.openDialog("chrome://sendtocategory/content/addressbook/edit_category.xul", "editCategory", "modal,centerscreen,chrome,resizable=no", categoriesList.selectedItem.categoryName, jbCatMan.locale.editTitle, "rename");
+    window.openDialog("chrome://sendtocategory/content/addressbook/edit_category.xhtml", "editCategory", "modal,centerscreen,chrome,resizable=no", categoriesList.selectedItem.categoryName, jbCatMan.locale.editTitle, "rename");
   }
 }
 
@@ -512,7 +512,7 @@ jbCatMan.onDeleteCategory = function () {
 jbCatMan.addCategoryPopupEntry = function (newCategoryName, cards) {
   let categoryLevels = newCategoryName.split(" / ");
   let itemType = "menu"
-  let newItem = document.createElement(itemType);
+  let newItem = document.createXULElement(itemType);
   newItem.setAttribute("class", itemType + "-iconic");
   newItem.setAttribute("label", categoryLevels[categoryLevels.length - 1]);
   newItem.setAttribute("value", newCategoryName);
@@ -553,7 +553,7 @@ jbCatMan.addCategoryPopupEntry = function (newCategoryName, cards) {
   }
 
   // Add popup for subcategories
-  let newPopup = document.createElement("menupopup");
+  let newPopup = document.createXULElement("menupopup");
   newPopup.categoryName = newCategoryName;
   newItem.appendChild(newPopup);
   
@@ -584,7 +584,7 @@ jbCatMan.onResultsTreeContextMenuPopup = function (event) {
     }
     
     // Add "new" entry.
-    let newItem = document.createElement("menuitem");
+    let newItem = document.createXULElement("menuitem");
     newItem.setAttribute("label", jbCatMan.getLocalizedMessage("createNewCategory"));
     newItem.style["font-style"] = "italic";
     newItem.addEventListener("click", jbCatMan.onAddCategory, false);
@@ -598,7 +598,7 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
   document.getElementById("abResultsTreeContext").hidePopup(); 
   event.stopPropagation(); 
 
-  window.openDialog("chrome://sendtocategory/content/addressbook/catsedit.xul", "editCategory", "modal,centerscreen,chrome,resizable=no",  event.target.getAttribute("value"));
+  window.openDialog("chrome://sendtocategory/content/addressbook/catsedit.xhtml", "editCategory", "modal,centerscreen,chrome,resizable=no",  event.target.getAttribute("value"));
 }
 
 
@@ -658,17 +658,17 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
 
 jbCatMan.initAddressbook = function() {
   //add categories field to details view
-  let CatManCategoriesHeader = document.createElement("description");
+  let CatManCategoriesHeader = document.createXULElement("description");
   CatManCategoriesHeader.id = "CatManCategoriesHeader";
   CatManCategoriesHeader.setAttribute("class", "CardViewHeading");
   CatManCategoriesHeader.textContent = jbCatMan.locale.categories;
 
-  let CatManCategoriesLabel = document.createElement("description");
+  let CatManCategoriesLabel = document.createXULElement("description");
   CatManCategoriesLabel.id= "CatManCategoriesLabel";
   CatManCategoriesLabel.setAttribute("class", "CardViewText");
   CatManCategoriesLabel.CatManCategoriesLabelText = "";
   
-  let cvbCategories = document.createElement("vbox");
+  let cvbCategories = document.createXULElement("vbox");
   cvbCategories.id = "cvbCategories";
   cvbCategories.setAttribute("class", "cardViewGroup");
   cvbCategories.appendChild(CatManCategoriesHeader);

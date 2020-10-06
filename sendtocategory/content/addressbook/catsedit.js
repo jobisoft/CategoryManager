@@ -2,10 +2,10 @@ var jbCatMan = window.opener.jbCatMan;
 var jbCatManCatsEdit = {}
 
 jbCatManCatsEdit.createItem = function (label, UID, isMember) {
-    let newListItem = document.createElement("richlistitem");
+    let newListItem = document.createXULElement("richlistitem");
     newListItem.setAttribute("value", UID);
     newListItem.wasMember = isMember;
-    let item = document.createElement("label");
+    let item = document.createXULElement("label");
     item.setAttribute("value", label);
     newListItem.appendChild(item);
     return newListItem;

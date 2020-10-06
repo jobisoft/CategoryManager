@@ -61,13 +61,13 @@ jbCatMan.contactPanelCategoryMenuInit = function () {
     for(let i = (itemCount-1); i >= 0; i-- ) menulist.getItemAtIndex(i).remove();
     
     let menupopup = document.getElementById("CatManCategoryFilterListPopup");
-    let newItem = document.createElement("menuitem");
+    let newItem = document.createXULElement("menuitem");
     newItem.setAttribute("label", jbCatMan.locale.placeholderText);
     newItem.setAttribute("value", "");
     menupopup.appendChild( newItem );
     
     for (let i = 0; i < jbCatMan.data.categoryList.length; i++) {
-      let newItem = document.createElement("menuitem");
+      let newItem = document.createXULElement("menuitem");
       newItem.setAttribute("label", "- " + jbCatMan.data.categoryList[i]);
       newItem.setAttribute("value", jbCatMan.data.categoryList[i]);
       menupopup.appendChild( newItem );

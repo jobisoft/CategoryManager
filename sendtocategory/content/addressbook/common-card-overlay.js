@@ -31,7 +31,7 @@ jbCatManEditDialog.Init = function () {
   window.document.getElementById('abCatManAddMainCategoryButton').addEventListener("command", jbCatManEditDialog.insertNewCategoryEntry, false);
   window.document.getElementById('abCatManAddSubCategoryButton').addEventListener("command", jbCatManEditDialog.insertNewCategoryEntry, false);
 
-  if (window.location.href=="chrome://messenger/content/addressbook/abNewCardDialog.xul") {
+  if (window.location.href=="chrome://messenger/content/addressbook/abNewCardDialog.xhtml") {
     // if this is the new card dialog, manually trigger onLoadCard to init category tab
     jbCatManEditDialog.onLoadCard(null, window.document);
     if (window.document.getElementById("abPopup")) {
@@ -44,7 +44,7 @@ jbCatManEditDialog.Init = function () {
 jbCatManEditDialog.getSelectedAb = function (window) {
   let abURI = "";
 
-  if (window.location.href=="chrome://messenger/content/addressbook/abNewCardDialog.xul") {
+  if (window.location.href=="chrome://messenger/content/addressbook/abNewCardDialog.xhtml") {
     abURI = window.document.getElementById("abPopup").value;
   } else if (window.arguments[0].hasOwnProperty("abURI")) {
     abURI = window.arguments[0].abURI;
@@ -166,20 +166,20 @@ jbCatManEditDialog.addItemToList = function (categoryName, checked = true) {
   let level = levels.length-1;
   let color = (255 - (level * 16)).toString(16);
   
-  let hbox = window.document.createElement("hbox");
+  let hbox = window.document.createXULElement("hbox");
   
-  let checkbox = window.document.createElement("checkbox");
+  let checkbox = window.document.createXULElement("checkbox");
   checkbox.setAttribute("checked", checked ? "true" : "false");
   checkbox.style["margin-left"] = (level*16) + "px";
   checkbox.addEventListener("command", jbCatManEditDialog.onCheckBoxes); 
   hbox.appendChild(checkbox);
 
-  let categoryLabel = window.document.createElement("label");
+  let categoryLabel = window.document.createXULElement("label");
   categoryLabel.setAttribute("flex", "1");
   categoryLabel.setAttribute("value", levels[level]);
   hbox.appendChild(categoryLabel);
 
-  let newListItem = window.document.createElement("richlistitem");
+  let newListItem = window.document.createXULElement("richlistitem");
   newListItem.setAttribute("custom-color", "true");
   newListItem.style.setProperty("--custom-color", "#" + color + color + color);
   newListItem.categoryName = categoryName;
