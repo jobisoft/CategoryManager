@@ -1,5 +1,8 @@
-let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-loader.loadSubScript("chrome://sendtocategory/content/category_tools.js");
+// Import any needed modules.
+var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
+
+// Load an additional JavaScript file.
+Services.scriptloader.loadSubScript("chrome://sendtocategory/content/category_tools.js");
 
 //###################################################
 // overriding a core thunderbird function

@@ -2,7 +2,7 @@
  * This file is provided by the addon-developer-support repository at
  * https://github.com/thundernest/addon-developer-support
  *
- * Version: 1.23
+ * Version: 1.24
  * - automatically localize i18n locale strings in injectElements()
  *
  * Version: 1.22
@@ -517,7 +517,7 @@ var WindowListener = class extends ExtensionCommon.ExtensionAPI {
             }
 
             if (debug) console.log ("Injecting into root document:");
-            let localicedXulString = xulString.replaceAll(/__MSG_(.*?)__/g, localize);
+            let localicedXulString = xulString.replace(/__MSG_(.*?)__/g, localize);
             injectChildren(Array.from(window.MozXULElement.parseXULToFragment(localicedXulString, dtdFiles).children), window.document.documentElement);
 
             for (let bar of toolbarsToResolve) {

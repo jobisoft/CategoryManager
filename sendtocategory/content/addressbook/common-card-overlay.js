@@ -1,9 +1,10 @@
+// Import any needed modules.
+var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
 
 var jbCatManEditDialog = {};
 
 // we need to be independent from the main addressbook here
-let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-loader.loadSubScript("chrome://sendtocategory/content/category_tools.js");
+Services.scriptloader.loadSubScript("chrome://sendtocategory/content/category_tools.js");
 
 
 jbCatManEditDialog.Init = function () {
@@ -273,15 +274,3 @@ jbCatManEditDialog.onItemSelected = function (event) {
 
 
 
-//Init on load
-window.addEventListener("load", function() { 
-  jbCatManEditDialog.Init(); 
-}, false);
-
-//register load and save listeners
-if (window.location.href=="chrome://messenger/content/addressbook/abNewCardDialog.xul") {
-  window.RegisterSaveListener(jbCatManEditDialog.onSaveCard);        
-} else {            
-    window.RegisterLoadListener(jbCatManEditDialog.onLoadCard);
-    window.RegisterSaveListener(jbCatManEditDialog.onSaveCard);	
-}
