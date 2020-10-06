@@ -8,19 +8,23 @@
 ]>
 
 
-<wizard 
+<window 
       width="600"
       height="600"
-      id="CatManWizard" 
       title="&sendtocategory.wizard.title;"
       onload="jbCatManWizard.Init();"
+      xmlns:html="http://www.w3.org/1999/xhtml"
       xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
+  <linkset>
+    <html:link rel="localization" href="toolkit/global/wizard.ftl"/>
+  </linkset>
+  
   <script type="application/javascript" src="chrome://sendtocategory/content/addressbook/import-export/import-export-wizard.js"/>
 
-
-
-
+<wizard
+      id="CatManWizard">
+      
   <wizardpage pageid="CatManWizardMode" label="&sendtocategory.wizard.mode.title;" next="CatManWizardImport">
 
   <!-- locales used in javascript -->
@@ -265,5 +269,5 @@
       &sendtocategory.wizard.export.desc;
     </description>  
   </wizardpage>
-
 </wizard>
+</window>
