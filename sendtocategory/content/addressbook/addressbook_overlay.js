@@ -620,6 +620,7 @@ jbCatMan.initAddressbook = function() {
   let cvbCategories = document.createXULElement("vbox");
   cvbCategories.id = "cvbCategories";
   cvbCategories.setAttribute("class", "cardViewGroup");
+  cvbCategories.setAttribute("CatManUI", "true");
   cvbCategories.appendChild(CatManCategoriesHeader);
   cvbCategories.appendChild(CatManCategoriesLabel);
 

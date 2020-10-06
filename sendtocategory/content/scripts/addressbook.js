@@ -97,4 +97,8 @@ function onLoad(wasAlreadyOpen) {
 
 // called on window unload or on add-on deactivation while window is still open
 function onUnload(isAddOnShutDown) {
+  let elements = Array.from(window.document.querySelectorAll('[CatManUI]'));
+  for (let element of elements) {
+    element.remove();
+  }
 }
