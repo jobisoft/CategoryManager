@@ -57,8 +57,8 @@ jbCatManCatsEdit.init = function () {
   }
   
   // scroll to top 
-  this.inbox.scrollToIndex(0);
-  this.outbox.scrollToIndex(0);
+  this.inbox.scrollIntoView(true);
+  this.outbox.scrollIntoView(true);
   
   // add CTRL + A event listeners to listboxes
   this.inbox.addEventListener("keydown", function(e) {

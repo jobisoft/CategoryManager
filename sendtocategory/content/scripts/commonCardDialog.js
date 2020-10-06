@@ -15,10 +15,9 @@ async function onLoad(wasAlreadyOpen) {
   
   <tabpanels id="abTabPanels">
     <tabpanel id="abCatManCategoriesTab" flex="0" insertbefore="abHomeTab">
-      <vbox flex="1">
-        <vbox style="height: 230px" flex="0">
+      <vbox flex="1" style="max-height: 230px;">
+        <vbox>
           <richlistbox
-          flex="1"
           id="abCatManCategoriesList"
           seltype="single">
           </richlistbox>

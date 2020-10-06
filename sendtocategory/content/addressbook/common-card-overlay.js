@@ -203,6 +203,7 @@ jbCatManEditDialog.onLoadCard = async function (aCard, aDocument) {
   for (let subCat of reducedCategories) {
     jbCatManEditDialog.appendCategoryEntries(subCat, jbCatManEditDialog.catsArray.filter(cat => (cat == subCat || cat.startsWith(subCat + " / "))).length > 0);
   }
+  list.style.height = "230px";
 }
 
 
