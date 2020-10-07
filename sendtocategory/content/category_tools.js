@@ -193,6 +193,10 @@ jbCatMan.searchDirectory = function (searchUri) {
       }
     }
     let parts = searchUri.split("?");
+    // search() returns nothing, if search parameter is null, add a dummy search
+    if (parts.length == 1) {
+      parts.push("(or(IsMailList,=,FALSE))");
+    }
     let result = MailServices.ab.getDirectory(parts.shift()).search(parts.join("?"), listener);
   });
 }
