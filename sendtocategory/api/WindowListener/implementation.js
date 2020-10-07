@@ -2,6 +2,9 @@
  * This file is provided by the addon-developer-support repository at
  * https://github.com/thundernest/addon-developer-support
  *
+ * Version: 1.25
+ * - adding waitForMasterPassword
+ *
  * Version: 1.24
  * - automatically localize i18n locale strings in injectElements()
  *
@@ -78,6 +81,19 @@ var WindowListener = class extends ExtensionCommon.ExtensionAPI {
     if (this.debug) console.error("WindowListener API: " + msg);
   }
   
+  // async sleep function using Promise
+  async sleep(delay) {
+    let timer =  Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
+    return new Promise(function(resolve, reject) {
+      let event = {
+        notify: function(timer) {
+          resolve();
+        }
+      }
+      timer.initWithCallback(event, delay, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+    });
+  }
+          
   getAPI(context) {
     // track if this is the background/main context
     this.isBackgroundContext = (context.viewType == "background");
@@ -104,6 +120,15 @@ var WindowListener = class extends ExtensionCommon.ExtensionAPI {
 
     return {
       WindowListener: {
+
+        async waitForMasterPassword() {
+          // Wait until master password has been entered (if needed)
+          while (!Services.logins.isLoggedIn) {
+            console.log("Waiting for master password.");
+            await self.sleep(1000);
+          }          
+          console.log("Master password has been entered.");
+        },
 
         aDocumentExistsAt(uriString) {
           self.log("Checking if document at <" + uriString + "> used in registration actually exists.");
@@ -225,19 +250,6 @@ var WindowListener = class extends ExtensionCommon.ExtensionAPI {
         },
 
         async startListening() {
-          // async sleep function using Promise
-          async function sleep(delay) {
-            let timer =  Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
-            return new Promise(function(resolve, reject) {
-              let event = {
-                notify: function(timer) {
-                  resolve();
-                }
-              }
-              timer.initWithCallback(event, delay, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
-            });
-          };
-
           if (!self.isBackgroundContext)
             throw new Error("The WindowListener API may only be called from the background page.");
 
@@ -338,7 +350,7 @@ var WindowListener = class extends ExtensionCommon.ExtensionAPI {
                             // On my system it takes 70ms.
                             let loaded = false;
                             for (let i=0; i < 100 && !loaded; i++) {
-                              await sleep(100);
+                              await self.sleep(100);
                               let targetWindow = mutation.target.contentWindow.wrappedJSObject;
                               if (targetWindow && targetWindow.location.href == mutation.target.getAttribute("src") && targetWindow.document.readyState == "complete") {
                                 loaded = true;
