@@ -49,25 +49,33 @@ jbCatMan.dragdrop = {
     switch (event.type) {
       case "dragenter":
       case "dragover":
-        event.preventDefault();
-        event.currentTarget.style["background-color"] = "#555555"; 
+        if (event.dataTransfer.getData("categoryName")) {
+          event.preventDefault();
+          event.currentTarget.style["background-color"] = "#555555";
+        }
         break;
+
       case "dragleave":
-        event.currentTarget.style["background-color"] = ""; 
-        break;
-      
+        if (event.dataTransfer.getData("categoryName")) {
+          event.currentTarget.style["background-color"] = ""; 
+        }
+        break;      
 
       case "drop":
-        event.preventDefault();
-        let destination = event.currentTarget.categoryName;
-        let originalName = event.dataTransfer.getData("categoryName");
-        let newName = destination + " / " + originalName.split(" / ").slice(-1);
-        /* */ jbCatMan.updateCategories("rename", originalName, newName); 
+        if (event.dataTransfer.getData("categoryName")) {
+          event.preventDefault();
+          let destination = event.currentTarget.categoryName;
+          let originalName = event.dataTransfer.getData("categoryName");
+          let newName = destination + " / " + originalName.split(" / ").slice(-1);
+          /* */ jbCatMan.updateCategories("rename", originalName, newName); 
+        }
         break;
 
       
       case "dragstart": 
-        event.dataTransfer.setData("categoryName", event.currentTarget.categoryName);
+        if (GetSelectedDirectory() != "moz-abdirectory://?") {
+          event.dataTransfer.setData("categoryName", event.currentTarget.categoryName);
+        }
         break;
           
       case "dragend": 

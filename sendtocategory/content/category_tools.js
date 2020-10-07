@@ -409,14 +409,10 @@ jbCatMan.updateCategories = function (mode, oldName, newName) {
   let addressBook = MailServices.ab.getDirectory(GetSelectedDirectory()); //GetSelectedDirectory() returns an URI, but we need the directory itself
   let cards = addressBook.childCards;
 
-  while (true) {
-    let more = false;
-    try { more = cards.hasMoreElements() } catch (ex) {} 
-    if (!more) break;
+  while (cards.hasMoreElements()) {
     let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
     let catArray = jbCatMan.getCategoriesfromCard(card);
     let rebuildCatArray = [];
-        
     if (catArray.length > 0) {  
       let writeCategoriesToCard = false;
       for (let i=0; i < catArray.length; i++) {        
