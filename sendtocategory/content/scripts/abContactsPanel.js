@@ -27,11 +27,12 @@ function onLoad(wasAlreadyOpen) {
     </vbox>`,
   ["chrome://sendtocategory/locale/catman.dtd"]);
   
-  window.document.getElementById("addressbookList").addEventListener("select", window.jbCatMan.contactPanelCategoryMenuInit, false);
+  window.document.getElementById("addressbookList").addEventListener("command", window.jbCatMan.contactPanelCategoryMenuInit, false);
   window.jbCatMan.contactPanelCategoryMenuInit();
 }
 
 // called on window unload or on add-on deactivation while window is still open
 function onUnload(isAddOnShutDown) {
+    window.document.getElementById("addressbookList").removeEventListener("command", window.jbCatMan.contactPanelCategoryMenuInit, false);
     delete window.jbCatMan;
 }
