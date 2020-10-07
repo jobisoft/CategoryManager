@@ -81,7 +81,7 @@ jbCatManBulkEdit.checkInput = function () {
     }
   }
 
-  document.getElementById('CatManWizard').getButton("accept").disabled = !status;
+  document.documentElement.getButton("accept").disabled = !status;
   return status;
 }
 
@@ -127,7 +127,7 @@ jbCatManBulkEdit.loadValidateList = function() {
   validatorList.clearSelection();
   validatorList.style.visibility = 'hidden'; 
 
-  document.getElementById('CatManWizard').getButton("accept").disabled = true;
+  document.documentElement.getButton("accept").disabled = true;
   window.setTimeout(function() { jbCatManBulkEdit.validateEmailList(0); }, 20);
 
   document.addEventListener("dialogaccept", function(event) {

@@ -162,8 +162,8 @@ jbCatManCatsEdit.onClickRemoveAll = function () {
 /* Initiate final actions: lock dialog and call updateCard for first card */
 jbCatManCatsEdit.onAccept = function () {
   this.locked = true;
-  document.getElementById('CatManWizard').getButton("cancel").disabled = true;
-  document.getElementById('CatManWizard').getButton("accept").disabled = true;
+  document.documentElement.getButton("cancel").disabled = true;
+  document.documentElement.getButton("accept").disabled = true;
   document.getElementById('CatsEditProgressBar').style.visibility = "visible";
   this.localTimeout = window.setTimeout(function() { jbCatManCatsEdit.updateCard(0); }, 1);
 }
