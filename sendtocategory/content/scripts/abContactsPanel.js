@@ -28,6 +28,7 @@ function onLoad(wasAlreadyOpen) {
   ["chrome://sendtocategory/locale/catman.dtd"]);
   
   window.document.getElementById("addressbookList").addEventListener("select", window.jbCatMan.contactPanelCategoryMenuInit, false);
+  window.jbCatMan.contactPanelCategoryMenuInit();
 }
 
 // called on window unload or on add-on deactivation while window is still open

@@ -19,6 +19,10 @@ jbCatMan.contactPanelCategoryMenuInit = function () {
   let currentlySelectedAddressbook = document.getElementById('addressbookList').value;
   if (currentlySelectedAddressbook != "") {
     
+    // Reset search. 
+    jbCatMan.updatePeopleSearchInput([]);
+    SetAbView(GetSelectedDirectory());
+  
     jbCatMan.scanCategories(GetSelectedDirectory());
 
     let menulist = document.getElementById("CatManCategoryFilterList");
