@@ -170,8 +170,8 @@ jbCatManWizard.Init = async function () {
 
 /* Disable back button on last page */
 jbCatManWizard.finishWizard = function () {
-  document.documentElement.getButton("back").hidden=true;
-  document.documentElement.getButton("cancel").hidden=true;
+  document.getElementById('CatManWizard').getButton("back").hidden=true;
+  document.getElementById('CatManWizard').getButton("cancel").hidden=true;
 }
 
 
