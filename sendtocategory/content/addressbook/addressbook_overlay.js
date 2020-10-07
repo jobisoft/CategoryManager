@@ -291,7 +291,7 @@ jbCatMan.updateButtons = function () {
 }
 
 
-jbCatMan.writeToCategory = function () {
+jbCatMan.writeToCategory = async function () {
   let categoriesList = document.getElementById("CatManCategoriesList");
 
   let searchstring = jbCatMan.getCategorySearchString(GetSelectedDirectory(), categoriesList.querySelector("#" + jbCatMan.data.selectedCategory).categoryFilter);
@@ -299,10 +299,9 @@ jbCatMan.writeToCategory = function () {
 
   let bcc = [];
   for (let search of searches) {
-    let cards = MailServices.ab.getDirectory(search).childCards;
+    let cards = await jbCatMan.searchDirectory(search);
     
-    while (cards.hasMoreElements()) {
-      let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
+    for (let card of cards) {
       let email = jbCatMan.getEmailFromCard(card);
       if (email) {
         let entry = card.displayName 
