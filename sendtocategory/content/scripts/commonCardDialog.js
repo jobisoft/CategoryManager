@@ -53,4 +53,5 @@ function onLoad(wasAlreadyOpen) {
 
 // called on window unload or on add-on deactivation while window is still open
 function onUnload(isAddOnShutDown) {
+  delete window.jbCatMan;
 }

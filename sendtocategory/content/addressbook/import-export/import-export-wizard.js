@@ -80,7 +80,8 @@ jbCatManWizard.Init = async function () {
     ];
     
     
-  jbCatManWizard.currentAddressBook = MailServices.ab.getDirectory(window.opener.GetSelectedDirectory()); //GetSelectedDirectory() returns an URI, but we need the directory itself
+  jbCatManWizard.currentAddressBookUri = window.opener.GetSelectedDirectory();
+  jbCatManWizard.currentAddressBook = MailServices.ab.getDirectory(jbCatManWizard.currentAddressBookUri); //GetSelectedDirectory() returns an URI, but we need the directory itself
   jbCatManWizard.timestamp = "Import_" + (new Date()).toISOString().substring(0, 19);
     
   // Show option to export only the categories of the passed categoryFilter, if that is provided.
@@ -508,8 +509,8 @@ jbCatManWizard.ProgressAfter_Import_Control_CSV = function (dialog, step = 0) {
         //do not add empty properties
         if (value.trim() !=  "") card.setProperty(prop, value);
       }
-      //add the new card to the book and then call modify, which inits sysnc
-      jbCatMan.modifyCard(card);
+      //add the new card to the book
+      MailServices.ab.getDirectory(jbCatManWizard.currentAddressBookUri).addCard(card);
     }
 
     dialog.window.setTimeout(function() { jbCatManWizard.ProgressAfter_Import_Control_CSV(dialog, step); }, 20);

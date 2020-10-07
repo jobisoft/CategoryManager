@@ -93,6 +93,7 @@ function onLoad(wasAlreadyOpen) {
 
   // run init function after window has been loaded
   window.jbCatMan.initAddressbook();
+  if (wasAlreadyOpen) window.jbCatMan.onSelectAddressbook();
 }
 
 // called on window unload or on add-on deactivation while window is still open
@@ -101,4 +102,5 @@ function onUnload(isAddOnShutDown) {
   for (let element of elements) {
     element.remove();
   }
+delete window.jbCatMan;
 }

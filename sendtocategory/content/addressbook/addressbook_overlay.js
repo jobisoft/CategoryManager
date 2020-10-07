@@ -296,7 +296,6 @@ jbCatMan.writeToCategory = async function () {
 
   let searchstring = jbCatMan.getCategorySearchString(GetSelectedDirectory(), categoriesList.querySelector("#" + jbCatMan.data.selectedCategory).categoryFilter);
   let searches = jbCatMan.getSearchesFromSearchString(searchstring);
-
   let bcc = [];
   for (let search of searches) {
     let cards = await jbCatMan.searchDirectory(search);
@@ -565,22 +564,22 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
  jbCatMan.AbListenerToUpdateCategoryList = {
   onItemAdded: function AbListenerToUpdateCategoryList_onItemAdded(aParentDir, aItem) {
     if (aItem instanceof Components.interfaces.nsIAbCard) {
-      window.clearTimeout(jbCatMan.eventUpdateTimeout);
-      jbCatMan.eventUpdateTimeout = window.setTimeout(jbCatMan.updateCategoryList, 500);
+      jbCatMan.eventUpdateTimeout.cancel();
+      jbCatMan.eventUpdateTimeout.initWithCallback({ notify: function(timer) {jbCatMan.updateCategoryList(); }}, 500, 0);
     }
   },
 
   onItemPropertyChanged: function AbListenerToUpdateCategoryList_onItemPropertyChanged(aItem, aProperty, aOldValue, aNewValue) {
     if (aItem instanceof Components.interfaces.nsIAbCard) {
-      window.clearTimeout(jbCatMan.eventUpdateTimeout);
-      jbCatMan.eventUpdateTimeout = window.setTimeout(jbCatMan.updateCategoryList, 500);
+      jbCatMan.eventUpdateTimeout.cancel();
+      jbCatMan.eventUpdateTimeout.initWithCallback({ notify: function(timer) {jbCatMan.updateCategoryList(); }}, 500, 0);
     }
   },
 
   onItemRemoved: function AbListenerToUpdateCategoryList_onItemRemoved(aParentDir, aItem) {
     if (aItem instanceof Components.interfaces.nsIAbCard) {
-      window.clearTimeout(jbCatMan.eventUpdateTimeout);
-      jbCatMan.eventUpdateTimeout = window.setTimeout(jbCatMan.updateCategoryList, 500);
+      jbCatMan.eventUpdateTimeout.cancel();
+      jbCatMan.eventUpdateTimeout.initWithCallback({ notify: function(timer) {jbCatMan.updateCategoryList(); }}, 500, 0);
     }
   },
 
