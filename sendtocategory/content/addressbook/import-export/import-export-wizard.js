@@ -536,9 +536,12 @@ jbCatManWizard.ProgressBefore_Export_CSV = async function (dialog) {
   
   for(let step = 0; step < exportCards.length; step++) {
     dialog.setProgressBar(100*step/exportCards.length); //jbCatManWizard.exportsize
+    await jbCatMan.sleep(5);
 
     //scan next found card
     jbCatManWizard.searchThunderbirdProperties(exportCards[step].properties);
+    dialog.setProgressBar(100*(step+1)/exportCards.length); //jbCatManWizard.exportsize
+    await jbCatMan.sleep(5);
   }
   jbCatManWizard.xuladdThunderbirdProperties("CatManWizardExport_CSV", "CatManExportDataFieldListTemplate", jbCatManWizard.standardFields);
   dialog.done(true);
@@ -576,6 +579,7 @@ jbCatManWizard.ProgressAfter_Export_CSV =async function (dialog) {
 
   for(let step = 0; step < exportCards.length; step++) {
     dialog.setProgressBar(100*step/exportCards.length); //jbCatManWizard.exportsize
+    await jbCatMan.sleep(5);    
     let card = exportCards[step];
     //get all properties of card and write it to csv file
     let data = [];
@@ -591,6 +595,8 @@ jbCatManWizard.ProgressAfter_Export_CSV =async function (dialog) {
       data.push(jbCatManWizard.csvEscape(field, delim, textident));
     }
     jbCatManWizard.appendFile(data.join(delim)+linebreak, charset);
+    dialog.setProgressBar(100*(step+1)/exportCards.length); //jbCatManWizard.exportsize
+    await jbCatMan.sleep(5);    
   }
 
   //close csv file

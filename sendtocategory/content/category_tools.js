@@ -201,6 +201,18 @@ jbCatMan.searchDirectory = function (searchUri) {
   });
 }
 
+jbCatMan.sleep = function (delay) {
+  let timer =  Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
+  return new Promise(function(resolve, reject) {
+    let event = {
+      notify: function(timer) {
+        resolve();
+      }
+    }
+    timer.initWithCallback(event, delay, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+  });
+}
+
 jbCatMan.getNumberOfFilteredCards = async function (abURI, categoryFilter) {
   let searchstring = jbCatMan.getCategorySearchString(abURI, categoryFilter);
   let searches = jbCatMan.getSearchesFromSearchString(searchstring);
