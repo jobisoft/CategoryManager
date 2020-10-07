@@ -524,70 +524,59 @@ jbCatManWizard.ProgressAfter_Import_Control_CSV = function (dialog, step = 0) {
  * CSV EXPORT FUNCTIONS 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-jbCatManWizard.ProgressBefore_Export_CSV = function (dialog, step = 0) {
+jbCatManWizard.ProgressBefore_Export_CSV = async function (dialog) {
   //scan to-be-exported contacts and extract all possible properties for csv header
 
-  if (step == 0) {
-    //get all to-be-exported contatcs
-    let searchstring =  jbCatMan.getCategorySearchString(jbCatManWizard.currentAddressBook.URI, jbCatManWizard.categoryFilter);
-    jbCatManWizard.exportCards = MailServices.ab.getDirectory(searchstring).childCards;
+  //get all to-be-exported contatcs
+  let searchstring =  jbCatMan.getCategorySearchString(jbCatManWizard.currentAddressBook.URI, jbCatManWizard.categoryFilter);
+  let exportCards = await jbCatMan.searchDirectory(searchstring);
 
-    //get all standard thunderbird fields (defined at csv import wizard page)
-    //we no longer do that, but define them in JS
-
-    //reset list of found props with standard fields
-    jbCatManWizard.resetThunderbirdProperties("CatManWizardExport_CSV", jbCatManWizard.standardFields);
-  }
+  //reset list of found props with standard fields
+  jbCatManWizard.resetThunderbirdProperties("CatManWizardExport_CSV", jbCatManWizard.standardFields);
   
-  step = step + 1;
-  if (jbCatManWizard.exportCards.hasMoreElements()) {
-    dialog.setProgressBar(100*step/jbCatManWizard.exportsize);
+  for(let step = 0; step < exportCards.length; step++) {
+    dialog.setProgressBar(100*step/exportCards.length); //jbCatManWizard.exportsize
 
     //scan next found card
-    jbCatManWizard.searchThunderbirdProperties(jbCatManWizard.exportCards.getNext().QueryInterface(Components.interfaces.nsIAbCard).properties);
-    dialog.window.setTimeout(function() { jbCatManWizard.ProgressBefore_Export_CSV(dialog, step); }, 20);
-  } else {
-    jbCatManWizard.xuladdThunderbirdProperties("CatManWizardExport_CSV", "CatManExportDataFieldListTemplate", jbCatManWizard.standardFields);
-    dialog.done(true);
+    jbCatManWizard.searchThunderbirdProperties(exportCards[step].properties);
   }
+  jbCatManWizard.xuladdThunderbirdProperties("CatManWizardExport_CSV", "CatManExportDataFieldListTemplate", jbCatManWizard.standardFields);
+  dialog.done(true);
 }
 
 
-jbCatManWizard.ProgressAfter_Export_CSV = function (dialog, step = 0) {
+jbCatManWizard.ProgressAfter_Export_CSV =async function (dialog) {
   //do export
   let delim = document.getElementById("CatManWizardExportCsvDelimiter").value;
   let textident = document.getElementById("CatManWizardExportCsvTextIdentifier").value;
   let linebreak = document.getElementById("CatManWizardExportCsvLinebreak").value.replace("LF","\n").replace("CR","\r");
   let charset = document.getElementById("CatManWizardExportCsvCharset").value;
   
-  if (step == 0) {
-    //init export file
-    jbCatManWizard.initFile(jbCatManWizard.fileObj);
-    //get cards to be exported
-    let searchstring = jbCatMan.getCategorySearchString(jbCatManWizard.currentAddressBook.URI, jbCatManWizard.categoryFilter);
-    jbCatManWizard.exportCards = MailServices.ab.getDirectory(searchstring).childCards;
-    //escape header of all fields which need to be exported
-    let header = [];
-    jbCatManWizard.props2export = [];
-    let exportList = document.getElementById("CatManWizardExport_CSV");
-    for (var i=0; i<exportList.getRowCount(); i++) {
-      let v = exportList.getItemAtIndex(i).childNodes[0].childNodes[0].value;
-      let c = exportList.getItemAtIndex(i).childNodes[1].childNodes[0].checked;
-      
-      //export property if checked or if CatManWizardExport_Categories_CSV is checked
-      if (c || (v==jbCatMan.getCategoryField() && document.getElementById("CatManWizardExport_Categories_CSV").checked)) {
-        jbCatManWizard.props2export.push(v);
-        header.push(jbCatManWizard.csvEscape(v, delim, textident));
-      }
+  //init export file
+  jbCatManWizard.initFile(jbCatManWizard.fileObj);
+  //get cards to be exported
+  let searchstring = jbCatMan.getCategorySearchString(jbCatManWizard.currentAddressBook.URI, jbCatManWizard.categoryFilter);
+  let exportCards = await jbCatMan.searchDirectory(searchstring);
+  //escape header of all fields which need to be exported
+  let header = [];
+  jbCatManWizard.props2export = [];
+  let exportList = document.getElementById("CatManWizardExport_CSV");
+  for (var i=0; i<exportList.getRowCount(); i++) {
+    let v = exportList.getItemAtIndex(i).childNodes[0].childNodes[0].value;
+    let c = exportList.getItemAtIndex(i).childNodes[1].childNodes[0].checked;
+    
+    //export property if checked or if CatManWizardExport_Categories_CSV is checked
+    if (c || (v==jbCatMan.getCategoryField() && document.getElementById("CatManWizardExport_Categories_CSV").checked)) {
+      jbCatManWizard.props2export.push(v);
+      header.push(jbCatManWizard.csvEscape(v, delim, textident));
     }
-
-    jbCatManWizard.appendFile(header.join(delim)+linebreak, charset);
   }
 
-  step = step + 1;
-  if (jbCatManWizard.exportCards.hasMoreElements()) {
-    dialog.setProgressBar(100*step/jbCatManWizard.exportsize);
-    let card = jbCatManWizard.exportCards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
+  jbCatManWizard.appendFile(header.join(delim)+linebreak, charset);
+
+  for(let step = 0; step < exportCards.length; step++) {
+    dialog.setProgressBar(100*step/exportCards.length); //jbCatManWizard.exportsize
+    let card = exportCards[step];
     //get all properties of card and write it to csv file
     let data = [];
     for (let h=0; h<jbCatManWizard.props2export.length; h++) {
@@ -602,14 +591,13 @@ jbCatManWizard.ProgressAfter_Export_CSV = function (dialog, step = 0) {
       data.push(jbCatManWizard.csvEscape(field, delim, textident));
     }
     jbCatManWizard.appendFile(data.join(delim)+linebreak, charset);
-    dialog.window.setTimeout(function() { jbCatManWizard.ProgressAfter_Export_CSV(dialog, step); }, 20);
-  } else {
-    //close csv file
-    jbCatManWizard.closeFile();
-    //update number of exported contacts
-    document.getElementById('CatManWizardExportDesc').textContent = document.getElementById('CatManWizardExportDesc').textContent.replace("##EXPORTNUM##",step-1);
-    dialog.done(true);
   }
+
+  //close csv file
+  jbCatManWizard.closeFile();
+  //update number of exported contacts
+  document.getElementById('CatManWizardExportDesc').textContent = document.getElementById('CatManWizardExportDesc').textContent.replace("##EXPORTNUM##", exportCards.length);
+  dialog.done(true);
 }
 
 
