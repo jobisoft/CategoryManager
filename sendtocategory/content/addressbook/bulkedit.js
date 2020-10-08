@@ -1,7 +1,28 @@
 var { MailServices } = ChromeUtils.import("resource:///modules/MailServices.jsm");
+var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
+
+Services.scriptloader.loadSubScript("chrome://sendtocategory/content/scripts/i18n.js");
 
 var jbCatMan = window.opener.jbCatMan;
 var jbCatManBulkEdit = {}
+
+function initLocales(acceptLabel, cancelLabel) {
+  let extension = jbCatMan.extension
+  i18n.updateDocument({ extension });
+  // Historically, a few locales are mapped to javascrip variables
+  jbCatMan.locale.descriptionNoPrimaryEmail = extension.localeData.localizeMessage("sendtocategory.bulkedit.membersWithoutPrimaryEmail");
+  jbCatMan.locale.bulkEditNoName = extension.localeData.localizeMessage("sendtocategory.bulkedit.noname");
+  jbCatMan.locale.bulkEditChoose = extension.localeData.localizeMessage("sendtocategory.bulkedit.choose");
+  
+  if (document.documentElement.getButton("accept") && acceptLabel) {
+    document.documentElement.getButton("accept").label = extension.localeData.localizeMessage(acceptLabel);
+  }
+  
+  if (document.documentElement.getButton("cancel") && cancelLabel) {
+    document.documentElement.getButton("cancel").label = extension.localeData.localizeMessage(cancelLabel);
+  }
+}
+
 
 jbCatManBulkEdit.getCardsFromEmail = async function (email) { 
   let EmailQuery = "(PrimaryEmail,bw,@V)(SecondEmail,bw,@V)";
@@ -21,6 +42,7 @@ jbCatManBulkEdit.getCardsFromEmail = async function (email) {
 jbCatManBulkEdit.loadBulkList = async function () {
   document.title = window.arguments[1];
   let abURI = window.opener.GetSelectedDirectory();
+  initLocales("sendtocategory.bulkedit.validate.button", "sendtocategory.cancel.button");
 
   let emails = [];
   let cardsWithoutEmails = 0;
@@ -42,7 +64,7 @@ jbCatManBulkEdit.loadBulkList = async function () {
   emails.sort();
 
   //Update Label
-  document.getElementById("CatManBulkTextBoxLabel").value = jbCatMan.locale.bulkTextBoxLabel.replace("##name##","["+ jbCatMan.bulk.categoryFilter[jbCatMan.bulk.categoryFilter.length - 1] +"]");
+  document.getElementById("CatManBulkTextBoxLabel").value = jbCatMan.getLocalizedMessage("sendtocategory.bulkedit.edit.title").replace("##name##","["+ jbCatMan.bulk.categoryFilter[jbCatMan.bulk.categoryFilter.length - 1] +"]");
   document.getElementById("CatManBulkTextBox").value = emails.join("\n");
   
   //give feedback to users about possible category members without any email address, 
@@ -93,6 +115,7 @@ jbCatManBulkEdit.stopme = function (e) {
 
 jbCatManBulkEdit.loadValidateList = function() {
   document.title = window.arguments[1];
+  initLocales("sendtocategory.bulkedit.save.button", "sendtocategory.cancel.button");
 
   jbCatMan.bulk.validatorFields = [];
   jbCatMan.bulk.toBeValidated = [];
@@ -264,9 +287,10 @@ jbCatManBulkEdit.validateEmailList = async function (i) {
 
 jbCatManBulkEdit.saveList = function (){
   document.title = window.arguments[1];
+  initLocales("sendtocategory.bulkedit.close.button");
 
   //Update Label
-  document.getElementById("CatManBulkTextBoxLabel").value = jbCatMan.locale.bulkTextBoxLabel.replace("##name##","["+ jbCatMan.bulk.categoryFilter[jbCatMan.bulk.categoryFilter.length - 1] +"]");
+  document.getElementById("CatManBulkTextBoxLabel").value = jbCatMan.getLocalizedMessage("sendtocategory.bulkedit.save.title").replace("##name##","["+ jbCatMan.bulk.categoryFilter[jbCatMan.bulk.categoryFilter.length - 1] +"]");
 
   //walk recursively through the saveList (DOM richlist) and process item by item
   jbCatMan.bulk.processedUIDs = [];

@@ -1,10 +1,28 @@
+var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
+
+Services.scriptloader.loadSubScript("chrome://sendtocategory/content/scripts/i18n.js");
+
 var jbCatMan = window.opener.jbCatMan;
 var dialogType = "";
 var originalName = "";
 var levels = [];
 
+function initLocales(acceptLabel, cancelLabel) {
+  let extension = jbCatMan.extension
+  i18n.updateDocument({ extension });
+  
+  if (document.documentElement.getButton("accept") && acceptLabel) {
+    document.documentElement.getButton("accept").label = extension.localeData.localizeMessage(acceptLabel);
+  }
+  
+  if (document.documentElement.getButton("cancel") && cancelLabel) {
+    document.documentElement.getButton("cancel").label = extension.localeData.localizeMessage(cancelLabel);
+  }
+}
+
 function editCategoryLoad()
 {
+    initLocales();
     originalName = window.arguments[0];
     levels = originalName ? originalName.split(" / ") : [];
 

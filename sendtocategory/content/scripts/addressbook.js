@@ -3,35 +3,37 @@ var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
 
 // Load an additional JavaScript file.
 Services.scriptloader.loadSubScript("chrome://sendtocategory/content/addressbook/addressbook_overlay.js", window, "UTF-8");
-window.jbCatMan.locale.categories = "&sendtocategory.categoriescontext.label;";
-window.jbCatMan.locale.addTitle = "&sendtocategory.add.title;";
-window.jbCatMan.locale.editTitle = "&sendtocategory.edit.title;";
-window.jbCatMan.locale.bulkTitle = "&sendtocategory.bulkedit.title;";
-
-window.jbCatMan.locale.errorRename = "&sendtocategory.error.rename;";
-window.jbCatMan.locale.errorAdd = "&sendtocategory.error.add;";
-window.jbCatMan.locale.infoAdd = "&sendtocategory.info.add;";
-window.jbCatMan.locale.confirmRename = "&sendtocategory.confirm.rename;";
-window.jbCatMan.locale.confirmDelete = "&sendtocategory.confirm.delete;";
-
-window.jbCatMan.locale.menuExport = "&sendtocategory.export.title;";
-window.jbCatMan.locale.menuAllExport = "&sendtocategory.exportAll.title;";
-
-window.jbCatMan.locale.prefixForPeopleSearch = "&sendtocategory.category.label;";
-window.jbCatMan.locale.viewAllCategories = "&sendtocategory.category.all;";
 
 // called on window load or on add-on activation while window is already open
 function onLoad(wasAlreadyOpen) {
+  // make extension object available
+  window.jbCatMan.extension = WL.extension;
+
+  // historically, some locales have been mapped into variables
+  window.jbCatMan.locale.categories = window.jbCatMan.getLocalizedMessage("sendtocategory.categoriescontext.label");
+  window.jbCatMan.locale.addTitle = window.jbCatMan.getLocalizedMessage("sendtocategory.add.title");
+  window.jbCatMan.locale.editTitle = window.jbCatMan.getLocalizedMessage("sendtocategory.edit.title");
+  window.jbCatMan.locale.bulkTitle = window.jbCatMan.getLocalizedMessage("sendtocategory.bulkedit.title");
+  window.jbCatMan.locale.errorRename = window.jbCatMan.getLocalizedMessage("sendtocategory.error.rename");
+  window.jbCatMan.locale.errorAdd = window.jbCatMan.getLocalizedMessage("sendtocategory.error.add");
+  window.jbCatMan.locale.infoAdd = window.jbCatMan.getLocalizedMessage("sendtocategory.info.add");
+  window.jbCatMan.locale.confirmRename = window.jbCatMan.getLocalizedMessage("sendtocategory.confirm.rename");
+  window.jbCatMan.locale.confirmDelete = window.jbCatMan.getLocalizedMessage("sendtocategory.confirm.delete");
+  window.jbCatMan.locale.menuExport = window.jbCatMan.getLocalizedMessage("sendtocategory.export.title");
+  window.jbCatMan.locale.menuAllExport = window.jbCatMan.getLocalizedMessage("sendtocategory.exportAll.title");
+  window.jbCatMan.locale.prefixForPeopleSearch = window.jbCatMan.getLocalizedMessage("sendtocategory.category.label");
+  window.jbCatMan.locale.viewAllCategories = window.jbCatMan.getLocalizedMessage("sendtocategory.category.all");
+  
   WL.injectCSS("chrome://sendtocategory/content/skin/richlist.css");
   WL.injectElements(`<popupset>
         <menupopup id="CatManContextMenu">
-            <menuitem id="CatManContextMenuSend" disabled="true" label="&sendtocategory.send.title;" oncommand="jbCatMan.writeToCategory();"/>
+            <menuitem id="CatManContextMenuSend" disabled="true" label="__MSG_sendtocategory.send.title__" oncommand="jbCatMan.writeToCategory()"/>
             <menuseparator/>
-            <menuitem id="CatManContextMenuRename" disabled="true" label="&sendtocategory.edit.title;" oncommand="jbCatMan.onRenameCategory()"/>
-            <menuitem id="CatManContextMenuRemove" disabled="true" label="&sendtocategory.remove.title;" oncommand="jbCatMan.onDeleteCategory()"/>
-            <menuitem id="CatManContextMenuBulk" disabled="true" label="&sendtocategory.bulkedit.title;" oncommand="jbCatMan.onBulkEdit()"/>
+            <menuitem id="CatManContextMenuRename" disabled="true" label="__MSG_sendtocategory.edit.title__" oncommand="jbCatMan.onRenameCategory()"/>
+            <menuitem id="CatManContextMenuRemove" disabled="true" label="__MSG_sendtocategory.remove.title__" oncommand="jbCatMan.onDeleteCategory()"/>
+            <menuitem id="CatManContextMenuBulk" disabled="true" label="__MSG_sendtocategory.bulkedit.title__" oncommand="jbCatMan.onBulkEdit()"/>
             <menuseparator />
-            <menuitem id="CatManContextMenuImportExport" disabled="true" label="&sendtocategory.export.title;" oncommand="jbCatMan.onImportExport()" />
+            <menuitem id="CatManContextMenuImportExport" disabled="true" label="__MSG_sendtocategory.export.title__" oncommand="jbCatMan.onImportExport()" />
         </menupopup>
     </popupset>
     
@@ -47,21 +49,21 @@ function onLoad(wasAlreadyOpen) {
                     seltype="single"
                     context="CatManContextMenu">
                         <!-- listheader class="CatManHeader">
-                            <label class="CatManHeaderCell1 header" flex="1" value="&sendtocategory.catbox.header.catname;" />
-                            <label class="CatManHeaderCell2 header" flex="0" value="&sendtocategory.catbox.header.catsize;" />
+                            <label class="CatManHeaderCell1 header" flex="1" value="__MSG_sendtocategory.catbox.header.catname__" />
+                            <label class="CatManHeaderCell2 header" flex="0" value="__MSG_sendtocategory.catbox.header.catsize__" />
                         </listheader -->
                     </richlistbox>
                     <hbox pack="end">
                         <button 
                         class="ghostbutton"
                         disabled="false"
-                        label="&sendtocategory.helpButton.label;"
+                        label="__MSG_sendtocategory.helpButton.label__"
                         oncommand="jbCatMan.onHelpButton()"/>
                         <button
                         class="ghostbutton"
                         id="CatManHideCategoryPaneButton"
                         disabled="false"
-                        label="&sendtocategory.hideCategoryPaneButton.label;"
+                        label="__MSG_sendtocategory.hideCategoryPaneButton.label__"
                         oncommand="jbCatMan.onToggleDisplay(false)"/>                        
                     </hbox>
         </vbox>
@@ -70,13 +72,13 @@ function onLoad(wasAlreadyOpen) {
                     <button 
                     class="ghostbutton"
                     disabled="false"
-                    label="&sendtocategory.helpButton.label;"
+                    label="__MSG_sendtocategory.helpButton.label__"
                     oncommand="jbCatMan.onHelpButton()"/>
                     <button
                     class="ghostbutton"
                     id="CatManShowCategoryPaneButton"
                     disabled="false"
-                    label="&sendtocategory.showCategoryPaneButton.label;"
+                    label="__MSG_sendtocategory.showCategoryPaneButton.label__"
                     oncommand="jbCatMan.onToggleDisplay(true)"/>                        
                 </hbox>
         </vbox>
@@ -84,12 +86,11 @@ function onLoad(wasAlreadyOpen) {
 
         
   <menupopup id="abResultsTreeContext">
-    <menu id="CatManCategoriesContextMenu" label="&sendtocategory.categoriescontext.label;" insertafter="abResultsTreeContext-properties">
+    <menu id="CatManCategoriesContextMenu" label="__MSG_sendtocategory.categoriescontext.label__" insertafter="abResultsTreeContext-properties">
       <menupopup>
       </menupopup>
     </menu>
-  </menupopup>`,
-  ["chrome://sendtocategory/locale/catman.dtd"]);
+  </menupopup>`);
 
   // run init function after window has been loaded
   window.jbCatMan.paintAddressbook();

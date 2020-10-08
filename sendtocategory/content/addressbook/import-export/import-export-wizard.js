@@ -6,6 +6,7 @@ var jbCatMan = window.opener.jbCatMan;
 var jbCatManWizard = {};
 
 Services.scriptloader.loadSubScript("chrome://sendtocategory/content/parser/csv/csv.js");
+Services.scriptloader.loadSubScript("chrome://sendtocategory/content/scripts/i18n.js");
 //Services.scriptloader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcard.js");
 //Services.scriptloader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcf.js");
 
@@ -14,6 +15,9 @@ Services.scriptloader.loadSubScript("chrome://sendtocategory/content/parser/csv/
 */
 
 jbCatManWizard.Init = async function () {
+  i18n.updateDocument({ extension: window.opener.jbCatMan.extension });
+  // bug https://bugzilla.mozilla.org/show_bug.cgi?id=1618252
+  document.getElementById('CatManWizard')._adjustWizardHeader();
   
   // Get the passed filter.
   jbCatManWizard.categoryFilter = window.arguments[0];
@@ -21,8 +25,8 @@ jbCatManWizard.Init = async function () {
   // Define all allowed file extensions. The XUL wizard MUST contain an landing page for import
   // and export for each extension: CatManWizardImport_EXT and CatManWizardExport_EXT
   jbCatManWizard.filetypes = {};
-  jbCatManWizard.filetypes.csv = document.getElementById('sendtocategory.wizard.types.csv').value;
-  //jbCatManWizard.filetypes.vcf = document.getElementById('sendtocategory.wizard.types.vcf').value;
+  jbCatManWizard.filetypes.csv = jbCatMan.getLocalizedMessage('sendtocategory.wizard.types.csv');
+  //jbCatManWizard.filetypes.vcf = jbCatMan.getLocalizedMessage('sendtocategory.wizard.types.vcf');
 
   // Define all fields, which are not allowed to be imported/exported, because they are managed by TB itself.
   jbCatManWizard.forbiddenFields = ["DbRowID","RecordKey","LastRecordKey","UID"];
@@ -209,8 +213,8 @@ jbCatManWizard.onpageadvanced = function (curPage) {
     case "CatManWizardMode":
       let nsIFilePicker = Components.interfaces.nsIFilePicker;
       let fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(Components.interfaces.nsIFilePicker);
-      if (document.getElementById('CatManWizardMode').value == "Export") fp.init(window, document.getElementById('sendtocategory.wizard.mode.export.selectfile').value , nsIFilePicker.modeSave);
-      else fp.init(window, document.getElementById('sendtocategory.wizard.mode.import.selectfile').value, nsIFilePicker.modeOpen);
+      if (document.getElementById('CatManWizardMode').value == "Export") fp.init(window, jbCatMan.getLocalizedMessage('sendtocategory.wizard.mode.export.selectfile') , nsIFilePicker.modeSave);
+      else fp.init(window, jbCatMan.getLocalizedMessage('sendtocategory.wizard.mode.import.selectfile'), nsIFilePicker.modeOpen);
 
       // add all allowed file types
       let extAtIndex = [];
@@ -357,7 +361,7 @@ jbCatManWizard.ProgressBefore_Import_Mapping_CSV = function (dialog, step = 0) {
       //re-read file with selected encoding
       jbCatManWizard.fileContent = jbCatManWizard.readFile(jbCatManWizard.fileObj, document.getElementById("CatManWizardImportCsvCharset").value);
       if (jbCatManWizard.fileContent.trim().length == 0) {
-        alert(document.getElementById('sendtocategory.wizard.import.error.empty').value);
+        alert(jbCatMan.getLocalizedMessage('sendtocategory.wizard.import.error.empty'));
         dialog.done(false);
       }
     break;
@@ -365,7 +369,7 @@ jbCatManWizard.ProgressBefore_Import_Mapping_CSV = function (dialog, step = 0) {
     case 2:
       //parse file with selected options
       jbCatManWizard.csv = new CSVParser(jbCatManWizard.fileContent, {textIdentifier : jbCatManWizard.csvTextIdentifier[document.getElementById('CatManWizardImportCsvTextIdentifier').selectedIndex], fieldSeparator : jbCatManWizard.csvDelimiter[document.getElementById('CatManWizardImportCsvDelimiter').selectedIndex], strict : true,  ignoreEmpty: true});
-      try {jbCatManWizard.csv.parse();} catch (e) {alert (document.getElementById('sendtocategory.wizard.import.error.csv').value); dialog.done(false);}
+      try {jbCatManWizard.csv.parse();} catch (e) {alert (jbCatMan.getLocalizedMessage('sendtocategory.wizard.import.error.csv')); dialog.done(false);}
     break;
 
     case 3:
@@ -469,7 +473,7 @@ jbCatManWizard.SilentAfter_Import_Mapping_CSV = function () {
     let c = mappingList.getItemAtIndex(i).getElementsByTagName("checkbox")[0].checked;
     if (c && jbCatManWizard.forbiddenFields.indexOf(v) != -1)
     {
-      alert(document.getElementById('sendtocategory.wizard.import.error.reserved').value.replace("##fieldname##",v));
+      alert(jbCatMan.getLocalizedMessage('sendtocategory.wizard.import.error.reserved').replace("##fieldname##",v));
       return false;
     }
     //add fields to header for import - mapout the used fields

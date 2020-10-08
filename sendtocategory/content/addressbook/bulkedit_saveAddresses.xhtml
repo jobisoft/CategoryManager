@@ -2,28 +2,19 @@
 <?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
 <?xml-stylesheet href="chrome://sendtocategory/content/skin/richlist.css" type="text/css"?>
 
-<!DOCTYPE dialog
-[
-    <!ENTITY % dtd1 SYSTEM "chrome://sendtocategory/locale/catman.dtd" > %dtd1;
-]>
+<!DOCTYPE dialog>
 
 <dialog id="CatManCategorySaver"
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     buttons="accept"
-    buttonlabelaccept="&sendtocategory.bulkedit.close.button;"
     onload="jbCatManBulkEdit.saveList()">
 
     <script type="text/javascript" src="chrome://sendtocategory/content/addressbook/bulkedit.js"/>
-    <script type="text/javascript">
-        jbCatMan.locale.bulkTextBoxLabel = "&sendtocategory.bulkedit.save.title;";
-        jbCatMan.locale.bulkEditChoose = "&sendtocategory.bulkedit.choose;";
-        jbCatMan.locale.bulkEditNoName = "&sendtocategory.bulkedit.noname;";
-    </script>
     
     <vbox id="CatManDialogBox">
         <vbox>
-              <label id="CatManBulkTextBoxLabel" value="&sendtocategory.bulkedit.save.title;"/>
+              <label id="CatManBulkTextBoxLabel" value="__MSG_sendtocategory.bulkedit.save.title__"/>
 
                 <html:progress
                     max="100"

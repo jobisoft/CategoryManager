@@ -1,5 +1,314 @@
 {
-  "extensionDescription": {
-    "message": "Category manager voor contacten. Ook mogelijk een email te sturen naar alle leden van een categorie (ook bekend als op categorie gebaseerde contact groepen)."
-  }
+    "button_addMainCat": {
+        "message": "Voeg hoogste categorie niveau toe"
+    },
+    "button_addSubCat": {
+        "message": "Voeg categorie toe onder \"##CAT##\""
+    },
+    "createNewCategory": {
+        "message": "Maak hier een nieuwe categorie"
+    },
+    "extensionDescription": {
+        "message": "Category manager voor contacten. Ook mogelijk een email te sturen naar alle leden van een categorie (ook bekend als op categorie gebaseerde contact groepen)."
+    },
+    "found_categories": {
+        "message": "Filter contacten per categorie ####:"
+    },
+    "sendtocategory.add.title": {
+        "message": "maak een nieuwe categorie"
+    },
+    "sendtocategory.bulkedit.choose": {
+        "message": "Selecteer contact a.u.b. ..."
+    },
+    "sendtocategory.bulkedit.close.button": {
+        "message": "logboek sluiten"
+    },
+    "sendtocategory.bulkedit.edit.title": {
+        "message": "Wijzig leden van categorie ##name## rechtstreeks:"
+    },
+    "sendtocategory.bulkedit.firstname": {
+        "message": "voornaam"
+    },
+    "sendtocategory.bulkedit.header.contact": {
+        "message": "toegewezen contact"
+    },
+    "sendtocategory.bulkedit.header.email": {
+        "message": "e-mail adres"
+    },
+    "sendtocategory.bulkedit.header.status": {
+        "message": "status"
+    },
+    "sendtocategory.bulkedit.lastname": {
+        "message": "achternaam"
+    },
+    "sendtocategory.bulkedit.legend.caption": {
+        "message": "legenda"
+    },
+    "sendtocategory.bulkedit.legend.double": {
+        "message": "E-mail adres werd gevonden in meerdere contacten. Selecteer a.u.b. welke van deze contacten toegevoegd moet worden aan de categorie."
+    },
+    "sendtocategory.bulkedit.legend.notok": {
+        "message": "E-mail adres werd niet gevonden in het adresboek. Een nieuw contact moet gecreëerd worden en zal toegevoegd worden aan de categorie."
+    },
+    "sendtocategory.bulkedit.legend.ok": {
+        "message": "E-mail adres kan uniek toegewezen worden aan een contact, en dit contact zal toegewezen worden aan de categorie."
+    },
+    "sendtocategory.bulkedit.legend.okdouble": {
+        "message": "E-mail adres werd gevonden in meerdere contacten. Hoewel een van deze contacten reeds is toegewezen aan deze categorie en automatisch geselecteerd is."
+    },
+    "sendtocategory.bulkedit.membersWithoutPrimaryEmail": {
+        "message": "Deze categorie bevat ##counts## contacten zonder een toegewezen email adres. De categorie informatie van deze contacten kan niet met deze dialoog gewijzigd worden. Ze worden niet getoond in de lijst hierboven."
+    },
+    "sendtocategory.bulkedit.noname": {
+        "message": "Naam Onbekend"
+    },
+    "sendtocategory.bulkedit.note": {
+        "message": "Notitie"
+    },
+    "sendtocategory.bulkedit.save.button": {
+        "message": "bewaar categorie"
+    },
+    "sendtocategory.bulkedit.save.title": {
+        "message": "De volgende wijzigingen zijn uitgevoerd op categorie ##name##:"
+    },
+    "sendtocategory.bulkedit.title": {
+        "message": "wijzig categorie rechtstreeks"
+    },
+    "sendtocategory.bulkedit.validate.button": {
+        "message": "bevestig e-mail adres"
+    },
+    "sendtocategory.bulkeditMenu.label": {
+        "message": "wijzig categorie ##name## rechtstreeks"
+    },
+    "sendtocategory.cancel.button": {
+        "message": "Annuleer"
+    },
+    "sendtocategory.catbox.header.catname": {
+        "message": "categorie naam"
+    },
+    "sendtocategory.catbox.header.catsize": {
+        "message": "leden"
+    },
+    "sendtocategory.categoriescontext.label": {
+        "message": "Categorieën"
+    },
+    "sendtocategory.category.all": {
+        "message": "Alle contacten"
+    },
+    "sendtocategory.category.label": {
+        "message": "categorie"
+    },
+    "sendtocategory.categoryfilter.label": {
+        "message": "Categorieën ..."
+    },
+    "sendtocategory.catsedit.desc": {
+        "message": "Definieer a.u.b. of alle, geen of een gedeelte van de geselecteerde contacten deel moet zijn van categorie ##name##."
+    },
+    "sendtocategory.catsedit.label.in": {
+        "message": "Deelverzameling van de geselecteerde contacten welke deel moet zijn van categorie ##name##:"
+    },
+    "sendtocategory.catsedit.title": {
+        "message": "Wijzig categorie van de geselecteerde contacten"
+    },
+    "sendtocategory.confirm.delete": {
+        "message": "Deze actie wijzigt de categorie van ##number## contacten, het lidmaatschap van categorie [##oldname##] wordt verwijderd. Dit kan niet ongedaan worden gemaakt, wilt U doorgaan?"
+    },
+    "sendtocategory.confirm.rename": {
+        "message": "Deze actie wijzigt de categorie van ##number## contacten, het lidmaatschap van categorie [##oldname##] wordt vervangen door het lidmaatschap van categorie [##newname##]. Dit kan niet ongedaan worden gemaakt, wilt U doorgaan?"
+    },
+    "sendtocategory.edit.title": {
+        "message": "geef categorie een andere naam"
+    },
+    "sendtocategory.editMenu.label": {
+        "message": "geef categorie ##name## een andere naam"
+    },
+    "sendtocategory.error.add": {
+        "message": "De categorie [##newname##] kan niet toegevoegd worden], omdat een categorie met die naam reeds bestaat."
+    },
+    "sendtocategory.error.rename": {
+        "message": "De categorie [##oldname##] kan niet hernoemd worden naar [##newname##], omdat een categorie met die naam reeds bestaat."
+    },
+    "sendtocategory.export.title": {
+        "message": "importeer/exporteer categorie"
+    },
+    "sendtocategory.exportAll.title": {
+        "message": "importeer/exporteer adresboek"
+    },
+    "sendtocategory.helpButton.label": {
+        "message": "?"
+    },
+    "sendtocategory.hideCategoryPaneButton.label": {
+        "message": "&#9660;"
+    },
+    "sendtocategory.info.add": {
+        "message": "De nieuwe categorie [##newname##] is nog niet aan een contact toegewezen. Als U het adresboek sluit zonder een contact toe te wijzen wordt de nieuw gecreëerde categorie verwijderd."
+    },
+    "sendtocategory.name.label": {
+        "message": "naam"
+    },
+    "sendtocategory.ok.button": {
+        "message": "Ok"
+    },
+    "sendtocategory.pref.addressbooktab.label": {
+        "message": "Adresboek"
+    },
+    "sendtocategory.pref.addressbooktab.rememberlastbook.desc": {
+        "message": "Als het thunderbird adresboek geopend is, zal gewoonlijk het eerst gevonden adresboek getoond worden. Als deze optie wordt gebruikt wordt het laatst gebruikte adresboek getoond."
+    },
+    "sendtocategory.pref.addressbooktab.rememberlastbook.label": {
+        "message": "Denk aan het laatst gebruikte adresboek"
+    },
+    "sendtocategory.pref.generaltab.label": {
+        "message": "Bulk-Mails"
+    },
+    "sendtocategory.pref.generaltab.toaddr.desc1": {
+        "message": "Vanwege Duitse wetgeving omtrent gegevens bescherming, is het niet toegestaan* alle leden van een categorie op te nemen in het 'to:' of 'cc:' veld, omdat dan alle email adressen zichtbaar zijn voor alle leden van de lijst."
+    },
+    "sendtocategory.pref.generaltab.toaddr.desc2": {
+        "message": "Daarom worden alle e-mail adressen in het 'bcc:' veld geplaatst. Hoewel een dergelijke mail geen zichtbare ontvanger heeft; afhankelijk van het email programma, zal het in plaats daarvan iets als 'undisclosed-recipients:;' weergeven. Het is gebruikelijk om een extra ontvanger toe te voegen - voor iedereen zichtbaar - in het 'to:' veld (uw eigen adres of een no-reply adres), welke de naam van de categorie toont. Meestal is het niet mogelijk een niet-bestaand email adres te gebruiken omdat de meeste mail servers deze emails afwijzen."
+    },
+    "sendtocategory.pref.generaltab.toaddr.desc3": {
+        "message": "Als dit veld leeg blijf, zal de naam van de categorie (tussen brackets) toegevoegd worden aan het onderwerp van de email, om de email te indentificeren als deel van een categorie."
+    },
+    "sendtocategory.pref.generaltab.toaddr.label": {
+        "message": "optioneel 'to:' adres (zichtbaar voor iedereen, de getoonde naam is de naam van de categorie)"
+    },
+    "sendtocategory.pref.label": {
+        "message": "Categorie Manager"
+    },
+    "sendtocategory.remove.title": {
+        "message": "verwijder categorie"
+    },
+    "sendtocategory.removeMenu.label": {
+        "message": "verwijder categorie ##name##"
+    },
+    "sendtocategory.send.title": {
+        "message": "stuur e-mail naar categorie"
+    },
+    "sendtocategory.sendMenu.label": {
+        "message": "stuur e-mail naar categorie ##name##"
+    },
+    "sendtocategory.showCategoryPaneButton.label": {
+        "message": "&#9650;"
+    },
+    "sendtocategory.wizard.export.desc": {
+        "message": "Exporteren is beëindigd, ##EXPORTNUM## contacten{{ van categorie '##CAT##'}} van adresboek '##BOOK##' zijn geëxporteerd."
+    },
+    "sendtocategory.wizard.export.options.categorie": {
+        "message": "Exporteer het lidmaatschap naar categorie '##CAT##' en de subcategorieën. Negeer alle andere categorieën en de hierboven ingestelde export selectie voor het categorieveld."
+    },
+    "sendtocategory.wizard.export.options.csv.desc1": {
+        "message": "Stel a.u.b. de eigenschappen van het CSV-bestand in."
+    },
+    "sendtocategory.wizard.export.options.csv.desc2": {
+        "message": "Selecteer a.u.b. gegevensvelden voor export. "
+    },
+    "sendtocategory.wizard.export.options.csv.title": {
+        "message": "Export instellingen voor CSV bestanden"
+    },
+    "sendtocategory.wizard.export.options.export": {
+        "message": "exporteer"
+    },
+    "sendtocategory.wizard.export.options.vcf.title": {
+        "message": "Export instellingen for VCF files"
+    },
+    "sendtocategory.wizard.export.title": {
+        "message": "Exporteren beëindigd"
+    },
+    "sendtocategory.wizard.import.control.desc": {
+        "message": "De volgende contacten en gegevensvelden zullen geimporteerd worden (lege kolommen worden niet getoond):"
+    },
+    "sendtocategory.wizard.import.control.title": {
+        "message": "Import verificatie"
+    },
+    "sendtocategory.wizard.import.desc": {
+        "message": "Importeren is beëindigd, ##IMPORTNUM## contacten zijn geimporteerd in adresboek '##BOOK##'{{ en ook toegevoegd aan categorie '##CAT##' }}. Verder zijn de geimporteerde contacten toegevoegd aan de categorie '##TIMECAT##'  om bijvoorbeeld een ​​import gemakkelijk ongedaan te maken."
+    },
+    "sendtocategory.wizard.import.error.csv": {
+        "message": "Het geselecteerde CSV bestand kan niet geïmporteerd worden, omdat niet alle regels hetzelfde aantal velden hebben."
+    },
+    "sendtocategory.wizard.import.error.empty": {
+        "message": "Het geselecteerde bestand is leeg. Importeren Afbreken."
+    },
+    "sendtocategory.wizard.import.error.reserved": {
+        "message": "Het veld '##fieldname##' is gereserveerd en kan niet gebruikt worden. Hernoem a.u.b. het veld of schakel de import ervan uit."
+    },
+    "sendtocategory.wizard.import.mapping.csv.desc": {
+        "message": "De volgende tabel geeft alle gegevensvelden weer. Elk gegevensveld kan geselecteerd worden voor import en toegewezen worden aan een standaard thunderbird veld of aan een eigen veld. Voor een complexe toewijzing is het vaak sneller om voor het importeren het CSV bestand aan te passen ."
+    },
+    "sendtocategory.wizard.import.mapping.csv.title": {
+        "message": "Toegevoegde import-instellingen voor CSV bestanden"
+    },
+    "sendtocategory.wizard.import.mapping.csvdatafield": {
+        "message": "CSV gegevensveld"
+    },
+    "sendtocategory.wizard.import.mapping.import": {
+        "message": "importeren"
+    },
+    "sendtocategory.wizard.import.mapping.thunderbirdfield": {
+        "message": "Thunderbird gegevensveld"
+    },
+    "sendtocategory.wizard.import.options.csv.charset": {
+        "message": "karakterset"
+    },
+    "sendtocategory.wizard.import.options.csv.delimiter": {
+        "message": "veld scheidingsteken"
+    },
+    "sendtocategory.wizard.import.options.csv.delimiter.tab": {
+        "message": "tabulator"
+    },
+    "sendtocategory.wizard.import.options.csv.desc": {
+        "message": "De volgende eigenschappen van het CSV bestand zijn bekend:"
+    },
+    "sendtocategory.wizard.import.options.csv.linebreak": {
+        "message": "regeleinde"
+    },
+    "sendtocategory.wizard.import.options.csv.textident": {
+        "message": "tekstherkenningsteken"
+    },
+    "sendtocategory.wizard.import.options.csv.title": {
+        "message": "Import instellingen voor CSV bestanden"
+    },
+    "sendtocategory.wizard.import.options.setting": {
+        "message": "Instelling"
+    },
+    "sendtocategory.wizard.import.options.value": {
+        "message": "Waarde"
+    },
+    "sendtocategory.wizard.import.options.vcf.title": {
+        "message": "Import instellingen for VCF files"
+    },
+    "sendtocategory.wizard.import.title": {
+        "message": "Importeren beëindigd"
+    },
+    "sendtocategory.wizard.mode.desc": {
+        "message": "Deze wizard zal U door de import/export procedure van Uw contacten leiden."
+    },
+    "sendtocategory.wizard.mode.export": {
+        "message": "Exporteer ##NUM## contacten {{van categorie '##CAT##' }}van adresboek '##BOOK##'."
+    },
+    "sendtocategory.wizard.mode.export.selectfile": {
+        "message": "Selecteer bestand voor export"
+    },
+    "sendtocategory.wizard.mode.import": {
+        "message": "Importeer contacten {{in categorie '##CAT##' }}in adresboek '##BOOK##'. Alle geimporteerde contacten worden ook toegevoegd aan de categorie '##TIMECAT##'."
+    },
+    "sendtocategory.wizard.mode.import.selectfile": {
+        "message": "Selecteer bestand voor import"
+    },
+    "sendtocategory.wizard.mode.title": {
+        "message": "Welkom"
+    },
+    "sendtocategory.wizard.title": {
+        "message": "Categorie Manager Import/Export Wizard"
+    },
+    "sendtocategory.wizard.types.csv": {
+        "message": "Comma Seperated Values"
+    },
+    "sendtocategory.wizard.types.vcf": {
+        "message": "vCard"
+    },
+    "viewWithoutCategories": {
+        "message": "Niet Gecategoriseerd"
+    }
 }

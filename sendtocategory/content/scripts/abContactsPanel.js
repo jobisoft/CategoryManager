@@ -4,12 +4,15 @@ var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
 // Load an additional JavaScript file.
 Services.scriptloader.loadSubScript("chrome://sendtocategory/content/contactpanel/abContactsPanel_overlay.js", window, "UTF-8");
 
-window.jbCatMan.locale.prefixForPeopleSearch = "&sendtocategory.category.label;";
-window.jbCatMan.locale.placeholderText = "&sendtocategory.categoryfilter.label;";
-
-
 // called on window load or on add-on activation while window is already open
 function onLoad(wasAlreadyOpen) {
+  // make extension object available
+  window.jbCatMan.extension = WL.extension;
+
+  // historically, some locales have been mapped into variables
+  window.jbCatMan.locale.prefixForPeopleSearch = window.jbCatMan.getLocalizedMessage("sendtocategory.category.label");
+  window.jbCatMan.locale.placeholderText = window.jbCatMan.getLocalizedMessage("sendtocategory.categoryfilter.label");
+  
   WL.injectCSS("resource://quicktext/skin/quicktext.css");
   WL.injectElements(`   
     <vbox id="results_box" flex="1">
@@ -24,8 +27,7 @@ function onLoad(wasAlreadyOpen) {
  
             </hbox>
         </vbox>
-    </vbox>`,
-  ["chrome://sendtocategory/locale/catman.dtd"]);
+    </vbox>`);
   
   window.document.getElementById("addressbookList").addEventListener("command", window.jbCatMan.contactPanelCategoryMenuInit, false);
   window.jbCatMan.contactPanelCategoryMenuInit();

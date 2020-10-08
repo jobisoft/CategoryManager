@@ -3,18 +3,13 @@
 <?xml-stylesheet href="chrome://messenger/skin/messenger.css" type="text/css"?>
 <?xml-stylesheet href="chrome://sendtocategory/content/skin/richlist.css" type="text/css"?>
 
-<!DOCTYPE dialog
-[
-    <!ENTITY % dtd1 SYSTEM "chrome://sendtocategory/locale/catman.dtd" > %dtd1;
-]>
+<!DOCTYPE dialog>
 
 <dialog id="CatManCatsEditor"
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     buttons="accept,cancel"
-    buttonlabelaccept="&sendtocategory.ok.button;"
-    buttonlabelcancel="&sendtocategory.cancel.button;"
-    title="&sendtocategory.catsedit.title;"
+    title="__MSG_sendtocategory.catsedit.title__"
     onload="jbCatManCatsEdit.init()"
     onclose="return jbCatManCatsEdit.closeCheck()">
 
@@ -32,7 +27,7 @@
                 <button id ="CatsEditRemoveAllButton" disabled="true" label="&lt;&lt;" onclick="jbCatManCatsEdit.onClickRemoveAll()" />
             </vbox>
             <vbox width="250" pack="end">
-                <description id="CatsEditLabel">&sendtocategory.catsedit.label.in;</description>
+                <description id="CatsEditLabel">__MSG_sendtocategory.catsedit.label.in__</description>
                 <richlistbox id="CatsEditInBox" width="100%" height="350" seltype="multiple" onclick="jbCatManCatsEdit.onSelect()" />
             </vbox>
         </hbox>
@@ -45,14 +40,14 @@
         value="0"/>
         
         <groupbox>
-            <hbox class="groupbox-title"><label class="header">&sendtocategory.bulkedit.note;</label></hbox>
+            <hbox class="groupbox-title"><label class="header">__MSG_sendtocategory.bulkedit.note__</label></hbox>
             <grid>
                 <columns>
                     <column/>
                 </columns>
                 <rows>
                     <row>
-                        <description id="CatsEditDescription">&sendtocategory.catsedit.desc;</description>
+                        <description id="CatsEditDescription">__MSG_sendtocategory.catsedit.desc__</description>
                     </row>
                 </rows>
             </grid>

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/css" href="chrome://global/skin/"?>
 <?xml-stylesheet type="text/css" href="chrome://messenger/skin/preferences/preferences.css"?>
-<!DOCTYPE dialog SYSTEM "chrome://sendtocategory/locale/catman.dtd">
+
+<!DOCTYPE dialog>
 
 <dialog 
     id="CatManPreferences"
@@ -11,11 +12,12 @@
     title="CategoryManager"
     width="500"
     height="600"
+    onload="init()"
     buttons="accept,cancel">
 
     <tabbox id="CatManPreferencesTabbox" flex="1" >
         <tabs>
-            <tab id="CatManPreferencesTabCategories" label="&sendtocategory.pref.generaltab.label;"/>
+            <tab id="CatManPreferencesTabCategories" label="__MSG_sendtocategory.pref.generaltab.label__"/>
         </tabs>
 
         <tabpanels flex="1">
@@ -23,12 +25,12 @@
             <tabpanel orient="vertical">
                 <vbox id="CatManPreferencesBoxCategories">
 
-                  <description style="padding:1ex 0 0 0">&sendtocategory.pref.generaltab.toaddr.desc1;</description>
+                  <description style="padding:1ex 0 0 0">__MSG_sendtocategory.pref.generaltab.toaddr.desc1__</description>
                   <label  style="font-size:xx-small" value="* http://www.lda.bayern.de/lda/datenschutzaufsicht/p_archiv/2013/pm004.html"/>
-                  <description  style="padding:1em 0">&sendtocategory.pref.generaltab.toaddr.desc2;</description>
-                  <label value="&sendtocategory.pref.generaltab.toaddr.label;"/>
+                  <description  style="padding:1em 0">__MSG_sendtocategory.pref.generaltab.toaddr.desc2__</description>
+                  <label value="__MSG_sendtocategory.pref.generaltab.toaddr.label__"/>
                   <html:input type="text" id="sendtocategory.to_address" preference="extensions.sendtocategory.to_address" style="width:100%"/>
-                  <description>&sendtocategory.pref.generaltab.toaddr.desc3;</description>
+                  <description>__MSG_sendtocategory.pref.generaltab.toaddr.desc3__</description>
 
                 </vbox>
             </tabpanel>

@@ -1,5 +1,314 @@
 {
-  "extensionDescription": {
-    "message": "Менеджер категорий для контактов, также позволяет отправлять электронную почту всем членам категории (групп контактов, основанных на категории)."
-  }
+    "button_addMainCat": {
+        "message": "Add top level category"
+    },
+    "button_addSubCat": {
+        "message": "Add category below \"##CAT##\""
+    },
+    "createNewCategory": {
+        "message": "Создать новую категорию здесь"
+    },
+    "extensionDescription": {
+        "message": "Менеджер категорий для контактов, также позволяет отправлять электронную почту всем членам категории (групп контактов, основанных на категории)."
+    },
+    "found_categories": {
+        "message": "Фильтровать контакты по категориям ####:"
+    },
+    "sendtocategory.add.title": {
+        "message": "добавить категорию"
+    },
+    "sendtocategory.bulkedit.choose": {
+        "message": "Выберите контакт ..."
+    },
+    "sendtocategory.bulkedit.close.button": {
+        "message": "закрыть журнал изменений"
+    },
+    "sendtocategory.bulkedit.edit.title": {
+        "message": "Редактировать участников категории ##name## непосредственно:"
+    },
+    "sendtocategory.bulkedit.firstname": {
+        "message": "имя"
+    },
+    "sendtocategory.bulkedit.header.contact": {
+        "message": "назначенный контакт"
+    },
+    "sendtocategory.bulkedit.header.email": {
+        "message": "e-mail адрес"
+    },
+    "sendtocategory.bulkedit.header.status": {
+        "message": "статус"
+    },
+    "sendtocategory.bulkedit.lastname": {
+        "message": "фамилия"
+    },
+    "sendtocategory.bulkedit.legend.caption": {
+        "message": "легенда"
+    },
+    "sendtocategory.bulkedit.legend.double": {
+        "message": "Адрес электронной почты был найден в нескольких контактах. Выберите, какой из этих контактов следует добавить в категорию."
+    },
+    "sendtocategory.bulkedit.legend.notok": {
+        "message": "E-mail адрес не был найден в адресной книге. Новый контакт должен быть создан и будет добавлен в категорию."
+    },
+    "sendtocategory.bulkedit.legend.ok": {
+        "message": "E-mail адрес может быть однозначно назначен контакту и этот контакт будет добавлен в категорию."
+    },
+    "sendtocategory.bulkedit.legend.okdouble": {
+        "message": "Адрес электронной почты был найден в нескольких контактах. Однако один из этих контактов уже назначен этой категории и был автоматически выбран."
+    },
+    "sendtocategory.bulkedit.membersWithoutPrimaryEmail": {
+        "message": "Эта категория содержит ##counts## контакты без привязанного адреса электронной почты. Информация о категории этих контактов не может быть отредактирована в этом диалоговом окне. Они не показаны в списке выше."
+    },
+    "sendtocategory.bulkedit.noname": {
+        "message": "Неизвестное Имя"
+    },
+    "sendtocategory.bulkedit.note": {
+        "message": "Заметка"
+    },
+    "sendtocategory.bulkedit.save.button": {
+        "message": "сохранить категорию"
+    },
+    "sendtocategory.bulkedit.save.title": {
+        "message": "Следующие изменения были применены к категории ##name##:"
+    },
+    "sendtocategory.bulkedit.title": {
+        "message": "Редактировать категорию непосредственно"
+    },
+    "sendtocategory.bulkedit.validate.button": {
+        "message": "утвердить e-mail адреса"
+    },
+    "sendtocategory.bulkeditMenu.label": {
+        "message": "редактировать категорию ##name## непосредственно"
+    },
+    "sendtocategory.cancel.button": {
+        "message": "Отмена"
+    },
+    "sendtocategory.catbox.header.catname": {
+        "message": "имя категории"
+    },
+    "sendtocategory.catbox.header.catsize": {
+        "message": "участники"
+    },
+    "sendtocategory.categoriescontext.label": {
+        "message": "Категории"
+    },
+    "sendtocategory.category.all": {
+        "message": "Все контакты"
+    },
+    "sendtocategory.category.label": {
+        "message": "категория"
+    },
+    "sendtocategory.categoryfilter.label": {
+        "message": "Категории ..."
+    },
+    "sendtocategory.catsedit.desc": {
+        "message": "Укажите, если все, ни один или подмножество выбранных контактов должны быть частью категории ##name##."
+    },
+    "sendtocategory.catsedit.label.in": {
+        "message": "Подмножество выбранных контактов, которые должны быть частью категории ##name##:"
+    },
+    "sendtocategory.catsedit.title": {
+        "message": "Редактировать членство в категории для выбранных контактов"
+    },
+    "sendtocategory.confirm.delete": {
+        "message": "Это действие изменит свойство категории для  ##number## контактов. Членство в категории [##oldname##] будет удалено. Это действие нельзя отменить, вы хотите продолжить?"
+    },
+    "sendtocategory.confirm.rename": {
+        "message": "Это действие изменит свойство категории для ##number## контактов. Членство в категории [##oldname##] будет заменено на членство в категории [##newname##]. Это действие нельзя отменить, вы хотите продолжить?"
+    },
+    "sendtocategory.edit.title": {
+        "message": "переименовать категорию"
+    },
+    "sendtocategory.editMenu.label": {
+        "message": "переименовать категорию ##name##"
+    },
+    "sendtocategory.error.add": {
+        "message": "Категория [##newname##] не может быть добавлена, так как категория с таким именем уже существует."
+    },
+    "sendtocategory.error.rename": {
+        "message": "Категория [##oldname##] не может быть переименована в [##newname##], так как категория с таким именем уже существует."
+    },
+    "sendtocategory.export.title": {
+        "message": "импорт/экспорт категории"
+    },
+    "sendtocategory.exportAll.title": {
+        "message": "импорт/экспорт адресной книги"
+    },
+    "sendtocategory.helpButton.label": {
+        "message": "?"
+    },
+    "sendtocategory.hideCategoryPaneButton.label": {
+        "message": "&#9660;"
+    },
+    "sendtocategory.info.add": {
+        "message": "Новая категория [##newname##] еще не подключена к контакту. Если вы закроете адресную книгу без назначения контакта, новая категория будет удалена."
+    },
+    "sendtocategory.name.label": {
+        "message": "имя"
+    },
+    "sendtocategory.ok.button": {
+        "message": "Готово"
+    },
+    "sendtocategory.pref.addressbooktab.label": {
+        "message": "Адресная книга"
+    },
+    "sendtocategory.pref.addressbooktab.rememberlastbook.desc": {
+        "message": "Если открывается адресная книга thunderbird, обычно отображается первая найденная адресная книга. С помощью этой опции отобразится последняя используемая адресная книга."
+    },
+    "sendtocategory.pref.addressbooktab.rememberlastbook.label": {
+        "message": "Запомнить последнюю использованную адресную книгу"
+    },
+    "sendtocategory.pref.generaltab.label": {
+        "message": "Большие письма"
+    },
+    "sendtocategory.pref.generaltab.toaddr.desc1": {
+        "message": "Из-за немецких законов защиты данных не разрешается * вставлять всех членов списка в поле «Кому:» или «cc:», поскольку это будет раскрывать все адреса электронной почты всем членам списка."
+    },
+    "sendtocategory.pref.generaltab.toaddr.desc2": {
+        "message": "Таким образом, все члены категории будут добавлены в поле 'bcc:'. Однако такое электронное письмо не будет иметь видимого получателя. В зависимости от клиента электронной почты, он отобразит что-то вроде 'undisclosed-recipients:;' вместо получателя. Обычно используется дополнительный получатель - чтобы все видели его - в поле 'to:' (ваш собственный адрес или адрес без ответа no-reply), который имеет имя списка в качестве отображаемого имени. В основном невозможно использовать несуществующий адрес электронной почты, поскольку большинство почтовых серверов отклоняют эти письма."
+    },
+    "sendtocategory.pref.generaltab.toaddr.desc3": {
+        "message": "Если это поле остается пустым, имя списка (внутри скобок) будет добавлено к теме письма, чтобы идентифицировать электронную почту как часть списка."
+    },
+    "sendtocategory.pref.generaltab.toaddr.label": {
+        "message": "необязательный 'to:' адрес (видимый для всех, отображаемое имя - это имя списка)"
+    },
+    "sendtocategory.pref.label": {
+        "message": "Менеджер категорий"
+    },
+    "sendtocategory.remove.title": {
+        "message": "удалить категорию"
+    },
+    "sendtocategory.removeMenu.label": {
+        "message": "удалить категорию ##name##"
+    },
+    "sendtocategory.send.title": {
+        "message": "послать e-mail в категорию"
+    },
+    "sendtocategory.sendMenu.label": {
+        "message": "послать e-mail в категорию ##name##"
+    },
+    "sendtocategory.showCategoryPaneButton.label": {
+        "message": "&#9650;"
+    },
+    "sendtocategory.wizard.export.desc": {
+        "message": "Экспорт завершен, ##EXPORTNUM## контактов {{ из категории '##CAT##'}} из адресной книги '##BOOK##' было экспортировано."
+    },
+    "sendtocategory.wizard.export.options.categorie": {
+        "message": "Export the affiliation to category '##CAT##' and its subcategories. Ignore all other categories and the above export selection for the category field."
+    },
+    "sendtocategory.wizard.export.options.csv.desc1": {
+        "message": "Укажите свойства CSV файла."
+    },
+    "sendtocategory.wizard.export.options.csv.desc2": {
+        "message": "Выберите поля данных для экспорта. "
+    },
+    "sendtocategory.wizard.export.options.csv.title": {
+        "message": "Параметры экспорта для CSV файлов"
+    },
+    "sendtocategory.wizard.export.options.export": {
+        "message": "экспорт"
+    },
+    "sendtocategory.wizard.export.options.vcf.title": {
+        "message": "Параметры экспорта для файлов VCF"
+    },
+    "sendtocategory.wizard.export.title": {
+        "message": "Экспорт завершен"
+    },
+    "sendtocategory.wizard.import.control.desc": {
+        "message": "Будут импортированы следующие контакты и поля данных (пустые столбцы не показаны):"
+    },
+    "sendtocategory.wizard.import.control.title": {
+        "message": "Проверка импорта"
+    },
+    "sendtocategory.wizard.import.desc": {
+        "message": "Импорт завершен, ##IMPORTNUM## контактов было импортировано в адресную книгу '##BOOK##'{{ а также добавлены в категорию '##CAT##' }}. Кроме того, импортированные контакты были добавлены в категорию '##TIMECAT##' для удобной идентификации."
+    },
+    "sendtocategory.wizard.import.error.csv": {
+        "message": "Выбранный CSV файл не может быть импортирован, поскольку его строки не содержат одинакового количества полей."
+    },
+    "sendtocategory.wizard.import.error.empty": {
+        "message": "Выбранный файл пуст. Отмена импорта."
+    },
+    "sendtocategory.wizard.import.error.reserved": {
+        "message": "Поле с именем '##fieldname##' зарезервировано и не может быть использовано. Переименуйте поле или отключите его импорт."
+    },
+    "sendtocategory.wizard.import.mapping.csv.desc": {
+        "message": "В следующей таблице перечислены все найденные поля данных. Каждое поле данных может быть выбрано для импорта и может быть отображено в стандартное поле thunderbird или в пользовательское поле. Для сложного преобразования часто требуется отредактировать CSV-файл перед импортом."
+    },
+    "sendtocategory.wizard.import.mapping.csv.title": {
+        "message": "Дополнительные параметры импорта для файлов CSV"
+    },
+    "sendtocategory.wizard.import.mapping.csvdatafield": {
+        "message": "Поле данных CSV"
+    },
+    "sendtocategory.wizard.import.mapping.import": {
+        "message": "импорт"
+    },
+    "sendtocategory.wizard.import.mapping.thunderbirdfield": {
+        "message": "Поле данных Thunderbird"
+    },
+    "sendtocategory.wizard.import.options.csv.charset": {
+        "message": "набор символов"
+    },
+    "sendtocategory.wizard.import.options.csv.delimiter": {
+        "message": "разделитель полей"
+    },
+    "sendtocategory.wizard.import.options.csv.delimiter.tab": {
+        "message": "табулятор"
+    },
+    "sendtocategory.wizard.import.options.csv.desc": {
+        "message": "Следующие свойства CSV файла были признаны:"
+    },
+    "sendtocategory.wizard.import.options.csv.linebreak": {
+        "message": "разрыв строки"
+    },
+    "sendtocategory.wizard.import.options.csv.textident": {
+        "message": "текстовый классификатор"
+    },
+    "sendtocategory.wizard.import.options.csv.title": {
+        "message": "Параметры импорта для CSV файлов"
+    },
+    "sendtocategory.wizard.import.options.setting": {
+        "message": "Настройка"
+    },
+    "sendtocategory.wizard.import.options.value": {
+        "message": "Значение"
+    },
+    "sendtocategory.wizard.import.options.vcf.title": {
+        "message": "Параметры импорта для файлов VCF"
+    },
+    "sendtocategory.wizard.import.title": {
+        "message": "Импорт завершен"
+    },
+    "sendtocategory.wizard.mode.desc": {
+        "message": "Этот мастер проведет вас через процесс импорта/экспорта ваших контактов."
+    },
+    "sendtocategory.wizard.mode.export": {
+        "message": "Экспорт ##NUM## контактов {{из категории '##CAT##' }}из адресной книги '##BOOK##'."
+    },
+    "sendtocategory.wizard.mode.export.selectfile": {
+        "message": "Выбрать файл для экспорта"
+    },
+    "sendtocategory.wizard.mode.import": {
+        "message": "Импорт контактов {{в категорию '##CAT##' }}в адресную книгу '##BOOK##'. Все импортированные контакты также будут добавлены в категорию '##TIMECAT##'."
+    },
+    "sendtocategory.wizard.mode.import.selectfile": {
+        "message": "Выбрать файл для импорта"
+    },
+    "sendtocategory.wizard.mode.title": {
+        "message": "Добро пожаловать!"
+    },
+    "sendtocategory.wizard.title": {
+        "message": "Мастер импорта/экспорта менеджера категорий"
+    },
+    "sendtocategory.wizard.types.csv": {
+        "message": "Значения разделенные запятыми"
+    },
+    "sendtocategory.wizard.types.vcf": {
+        "message": "vCard"
+    },
+    "viewWithoutCategories": {
+        "message": "Не категоризировано"
+    }
 }

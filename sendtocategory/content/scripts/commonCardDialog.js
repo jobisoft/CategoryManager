@@ -6,11 +6,14 @@ Services.scriptloader.loadSubScript("chrome://sendtocategory/content/addressbook
 
 // Called on window load or on add-on activation while window is already open.
 function onLoad(wasAlreadyOpen) {
+  // make extension object available
+  window.jbCatMan.extension = WL.extension;
+  
   WL.injectCSS("chrome://messenger/skin/menulist.css");
   WL.injectCSS("chrome://sendtocategory/content/skin/richlist-cardedit.css");
   WL.injectElements(`   
   <tabs id="abTabs">
-    <tab insertbefore="homeTabButton" id="abCatManCategoriesTabButton" label="&sendtocategory.categoriescontext.label;"/>
+    <tab insertbefore="homeTabButton" id="abCatManCategoriesTabButton" label="__MSG_sendtocategory.categoriescontext.label__"/>
   </tabs>
   
   <tabpanels id="abTabPanels">
@@ -36,8 +39,7 @@ function onLoad(wasAlreadyOpen) {
         <description id="abCatManCategoriesDescription" hidden="true" style="margin-top:1em; width: 400px"></description>
       </vbox>
     </tabpanel>
-  </tabpanels>`,
-  ["chrome://sendtocategory/locale/catman.dtd"]);
+  </tabpanels>`);
   
   // Init on load
   window.jbCatManEditDialog.Init(); 

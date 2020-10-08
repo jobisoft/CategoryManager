@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
 
-<!-- DTD File with all strings specific to the file -->
-<!DOCTYPE dialog
-[
-    <!ENTITY % dtd1 SYSTEM "chrome://sendtocategory/locale/catman.dtd" > %dtd1;
-]>
+<!DOCTYPE dialog>
 
 <dialog id="CatManCategoryEditor"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -16,7 +12,7 @@
   <script type="application/javascript" src="chrome://sendtocategory/content/addressbook/edit_category.js" />
   <vbox id="CatManDialogBox">
     <hbox align="center">
-      <label value="&sendtocategory.name.label;:" control="categoryName"/>
+      <label value="__MSG_sendtocategory.name.label__:" control="categoryName"/>
       <label style="font-style: italic" id="parentCategory" control="categoryName"/>
       <html:input type="text" id="categoryName"/>
     </hbox>

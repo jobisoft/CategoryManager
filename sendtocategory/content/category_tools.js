@@ -15,11 +15,12 @@ jbCatMan.quickdump = function (str) {
 
 
 jbCatMan.getLocalizedMessage = function (msg, replacement = "") {
-  let bundle = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService).createBundle("chrome://sendtocategory/locale/bundle.strings");
   let localized = msg;
   try {
-    localized = bundle.GetStringFromName(msg).replace("####", replacement);
-  } catch (e) {}
+    localized = jbCatMan.extension.localeData.localizeMessage(msg).replace("####", replacement);
+  } catch (e) {
+    Components.utils.reportError(e);    
+  }
   
   return localized;
 }
