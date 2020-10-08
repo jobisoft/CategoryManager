@@ -611,7 +611,7 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
 // init
 //###################################################
 
-jbCatMan.initAddressbook = function() {
+jbCatMan.paintAddressbook = function() {
   //add categories field to details view
   let CatManCategoriesHeader = document.createXULElement("description");
   CatManCategoriesHeader.id = "CatManCategoriesHeader";
@@ -660,6 +660,15 @@ jbCatMan.initAddressbook = function() {
   document.getElementById("CatManCategoriesList").addEventListener("dblclick", jbCatMan.writeToCategory, false);
   document.getElementById("CatManCategoriesList").addEventListener("select", jbCatMan.onSelectCategoryList, false);
 }
+
+jbCatMan.unpaintAddressbook = function() {
+  jbCatMan.AbListenerToUpdateCategoryList.remove();
+  document.getElementById("peopleSearchInput").removeEventListener('command', jbCatMan.onPeopleSearchClick , true);
+  document.getElementById("dirTree").removeEventListener('select', jbCatMan.onSelectAddressbook, true);
+  document.getElementById("abResultsTreeContext").removeEventListener("popupshowing", jbCatMan.onResultsTreeContextMenuPopup, false);
+  document.getElementById("abResultsTree").removeEventListener("select", jbCatMan.onAbResultsPaneSelectionChanged, false);
+}  
+
 
 
 jbCatMan.onAbResultsPaneSelectionChanged = function () {

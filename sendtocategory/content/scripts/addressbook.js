@@ -92,22 +92,16 @@ function onLoad(wasAlreadyOpen) {
   ["chrome://sendtocategory/locale/catman.dtd"]);
 
   // run init function after window has been loaded
-  window.jbCatMan.initAddressbook();
+  window.jbCatMan.paintAddressbook();
   if (wasAlreadyOpen) window.jbCatMan.onSelectAddressbook();
 }
 
 // called on window unload or on add-on deactivation while window is still open
 function onUnload(isAddOnShutDown) {
-  jbCatMan.AbListenerToUpdateCategoryList.remove();
-  
-  document.getElementById("peopleSearchInput").removeEventListener('command', jbCatMan.onPeopleSearchClick , true);
-  document.getElementById("dirTree").removeEventListener('select', jbCatMan.onSelectAddressbook, true);
-  document.getElementById("abResultsTreeContext").removeEventListener("popupshowing", jbCatMan.onResultsTreeContextMenuPopup, false);
-  document.getElementById("abResultsTree").removeEventListener("select", jbCatMan.onAbResultsPaneSelectionChanged, false);
-  
+  window.jbCatMan.unpaintAddressbook();
   let elements = Array.from(window.document.querySelectorAll('[CatManUI]'));
   for (let element of elements) {
     element.remove();
   }
-delete window.jbCatMan;
+  delete window.jbCatMan;
 }
