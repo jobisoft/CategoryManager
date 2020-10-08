@@ -1,3 +1,2 @@
-- filter on global AB seems to be broken
-- all cats are listed twice
 - case insensitive search
+- searchstring not defined from time to time
