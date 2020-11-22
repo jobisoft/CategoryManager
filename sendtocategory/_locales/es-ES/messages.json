@@ -120,7 +120,7 @@
         "message": "cambiar nombre de categoría"
     },
     "sendtocategory.editMenu.label": {
-        "message": "Cambiar nombre de categoría ##name##"
+        "message": "cambiar el nombre de la categoría ##name##"
     },
     "sendtocategory.error.add": {
         "message": "No se puede añadir la categoría [##newname##] porque ya existe una categoría con ese nombre."
@@ -129,10 +129,10 @@
         "message": "No se puede cambiar el nombre de la categoría [##oldname##] a [##newname##] porque ya existe una categoría con ese nombre."
     },
     "sendtocategory.export.title": {
-        "message": "Importar/exportar la categoría"
+        "message": "importar/exportar categoría"
     },
     "sendtocategory.exportAll.title": {
-        "message": "Importar/exportar la libreta de direcciones"
+        "message": "importar/exportar libreta de direcciones"
     },
     "sendtocategory.helpButton.label": {
         "message": "?"
@@ -177,16 +177,16 @@
         "message": "Category Manager"
     },
     "sendtocategory.remove.title": {
-        "message": "Eliminar categoría"
+        "message": "eliminar categoría"
     },
     "sendtocategory.removeMenu.label": {
-        "message": "Eliminar la categoría ##name##"
+        "message": "eliminar la categoría ##name##"
     },
     "sendtocategory.send.title": {
-        "message": "Enviar correo a categoría"
+        "message": "enviar correo a categoría"
     },
     "sendtocategory.sendMenu.label": {
-        "message": "Enviar correo a la categoría ##name##"
+        "message": "enviar correo a la categoría ##name##"
     },
     "sendtocategory.showCategoryPaneButton.label": {
         "message": "&#9650;"
