@@ -1,4 +1,14 @@
-var i18n = {
+/*
+ * This file is provided by the addon-developer-support repository at
+ * https://github.com/thundernest/addon-developer-support
+ *
+ * For usage descriptions, please check:
+ * https://github.com/thundernest/addon-developer-support/tree/master/scripts/i18n 
+ * 
+ * Version: 1.1
+ */
+ 
+ var i18n = {
 	updateString(string) {
 		let re = new RegExp(this.keyPrefix + "(.+?)__", "g");
 		return string.replace(re, matched => {

@@ -17,6 +17,14 @@
     "32": "content/skin/icon.png"
   },
   "experiment_apis": {
+    "LegacyPrefs": {
+      "schema": "api/LegacyPrefs/schema.json",
+      "parent": {
+        "scopes": ["addon_parent"],
+        "paths": [["LegacyPrefs"]],
+        "script": "api/LegacyPrefs/implementation.js"
+      }
+    },
     "WindowListener": {
       "schema": "api/WindowListener/schema.json",
       "parent": {
