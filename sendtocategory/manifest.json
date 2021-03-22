@@ -36,11 +36,7 @@
   },
   "background": {
     "scripts": [
-      "content/scripts/preferences/backgroundHandler/prefBranchHandler.js",
       "background.js"
     ]
-  },
-  "options_ui": {
-    "page": "content/preferences/options.html"
-  }
+  }  
 }

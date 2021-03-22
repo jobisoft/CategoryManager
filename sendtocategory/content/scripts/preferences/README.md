@@ -1,38 +1,47 @@
 ## Objective
 
-* delegate the actual preference handling to the WebExtension background page to be independent of the used preference storage back-end
+This script delegates preference handling to the WebExtension background
+page, so it is independent of the used preference storage.
 
-* provide an automated preference load/save mechanism, similar to the former preferencesBindings.js script
+This script provides an automated preference load/save support as formaly
+provided by the preferencesBindings.js script.
 
-* universal design to be used in WebExtension HTML pages as well as in privileged scripts loaded by the WindowListener API
+This file is intended to be used in WebExtension HTML pages (popups,
+options, content, windows) as well as in WindowListener legacy scripts. The
+script communicates with the WebExtension background page either via
+runtime messaging (if run in WebExtension pages) or via WindowListener
+notifyTools.js (if run in legacy scripts).
 
-The script will use either [`runtime.sendMessage()`](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/sendMessage)
-(if loaded in a WebExtension page) or [notifyTools.js](https://github.com/thundernest/addon-developer-support/tree/master/scripts/notifyTools)
-(if loaded in a privileged script) to delegate the preference handling to the WebExtension background page.
+The script provides 3 main preference functions:
+* setPref(aName, aValue)
+* getPref(aName, a Fallback)
+* clearPref(aName)
+
+This script also provides an init() function which can be called during page load,
+which will request the state of all preferences and keeps a local cache. If that cache
+has been set up, the 3 main functions will work with this local cache and can be used
+in synchronous code. If init() is not called, the 3 main function will make their
+requests to the background page and will return a Promise instead of a direct value.
  
-The WebExtension background page needs to load a preference handler, which answers the requests from preference.js. The currently available background handlers are [prefBranchHandler.js](https://github.com/thundernest/addon-developer-support/tree/master/scripts/preferences/backgroundHandler) and [localStorageHandler.js](https://github.com/thundernest/addon-developer-support/tree/master/scripts/preferences/backgroundHandler).
-
+The automated preference load/save support is enabled by calling the load(window)
+function during page load.
+ 
 ## Usage
 
 This script provides the following public methods:
 
-### async preferences.initCache();
+### async preferences.init();
 
-Use this function during page load to asynchronously request all preferences from the
-WebExtension background page to set up a local cache. It will also set up a listener to
-be notified by the background page, after a preference has been changed elsewhere so it
-can update the local cache.
-
-After the cache has been set up, the `getPref()`, `setPref()` and `clearPref()` functions
-will interact synchronously with the local cache instead of making asynchronous calls to
-the WebExtention background page.
-
+This function will asynchronously requests all preferences from the background page
+to set up a local cache. It also sets up a listener to be notified by the background script,
+if a preference chamged so it can update its local cache. After the cache has been set up,
+the other public methods preference functions access the local cache synchronously
 
 
 ### preferences.getPref(aName, [aFallback]);
 
 Gets the value for preference `aName`. Returns either a Promise for a value received
-from the WebExtension background page or a direct value from the local cache (if used).
+from the background script or a direct value from the local cache - see init().
 
 If no user value and also no default value has been defined, the fallback value will be
 returned (or `null`).
@@ -40,24 +49,22 @@ returned (or `null`).
 
 ### preferences.setPref(aName, aValue);
 
-Sends an update request for the preference `aName` to the WebExtension background page and
-updates the local cache (if used).
+Sends an update request for the preference `aName` to the background script and updates
+the local cache (if used). 
 
 ### preferences.clearPref(aName);
 
-Sends a request to delete the user value for the preference `aName` to the WebExtension
-background page and updates the local cache (if used). Subsequent calls to `getPref` will return
-the default value.
+Sends a request to delete the user value for the preference `aName` to the background script
+and updates the local cache (if used). ence `aName`. Subsequent calls to `getPref` will return the default value. The clearing is also propagated to the MailExtensions storage and all other instances of this script will clear the preference as well. This script is not waiting for the MailExtensions storage to complete the change.
 
 ### async preferences.load(window);
 
-This will search the given `window` for elements with a `preference` attribute (containing the name of a preference) and will load the appropriate values. Any user changes to these elements values will instantly update the linked preferences. This behavior can be changed by adding the `instantApply` attribute to the element and setting it to `false`.
+This will search the given `window` for elements with a `preference` attribute (containing the name of a preference) and will load the appropriate values. Any user changes to these elements values will instantly update the linked preferences. This behaviour can be changed by adding the `instantApply` attribute to the element and setting it to `false`. 
 
 If a linked preference is modified elsewhere, the element's value in the given window will be automatically updated to new new value.
 
 **Note:** _Also supported is the `delayprefsave` attribute, which causes to defer the preference updates by 1s. This requires to add the `alarms` permission to the `manifest.json` file._
 
-### async preferences.save();
+### preferences.saves();
 
-This will search the `window` provided by a previous call to `preferences.loadPreferences()` for elements with a `preference` attribute (containing the name of a preference) and will update those preferences with the current values of the linked elements.
-
+This will search the `window` provided by a previous call to `preferences.loadPreferences` for elements with a `preference` attribute (containing the name of a preference) and will update those preferences with the current values of the linked elements.

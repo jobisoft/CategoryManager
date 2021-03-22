@@ -8,7 +8,7 @@ const ADDON_ID = "sendtocategory@jobisoft.de";
  * For usage descriptions, please check:
  * https://github.com/thundernest/addon-developer-support/tree/master/scripts/notifyTools
  *
- * Version: 1.2
+ * Version: 1.1
  *
  * Author: John Bieling (john@thunderbird.net)
  *
@@ -16,13 +16,13 @@ const ADDON_ID = "sendtocategory@jobisoft.de";
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-
+ 
 var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
 
 var notifyTools = {
   registeredCallbacks: {},
   registeredCallbacksNextId: 1,
-
+  
   onNotifyExperimentObserver: {
     observe: async function (aSubject, aTopic, aData) {
       if (ADDON_ID == "") {
@@ -34,12 +34,10 @@ var notifyTools = {
       // The data has been stuffed in an array so simple strings can be used as
       // payload without the observerService complaining.
       let [data] = aSubject.wrappedJSObject;
-      for (let registeredCallback of Object.values(
-        notifyTools.registeredCallbacks
-      )) {
+      for (let registeredCallback of Object.values(notifyTools.registeredCallbacks)) {
         registeredCallback(data);
       }
-    },
+    }
   },
 
   registerListener: function (listener) {
@@ -56,40 +54,23 @@ var notifyTools = {
     if (ADDON_ID == "") {
       throw new Error("notifyTools: ADDON_ID is empty!");
     }
-    return new Promise((resolve) => {
-      Services.obs.notifyObservers(
-        { data, resolve },
-        "WindowListenerNotifyBackgroundObserver",
-        ADDON_ID
-      );
+    return new Promise(resolve => {
+    Services.obs.notifyObservers(
+      {data, resolve},
+      "WindowListenerNotifyBackgroundObserver",
+      ADDON_ID
+    );
     });
-  },
-};
+  }
+}
 
 try {
-  window.addEventListener(
-    "load",
-    function (event) {
-      Services.obs.addObserver(
-        notifyTools.onNotifyExperimentObserver,
-        "WindowListenerNotifyExperimentObserver",
-        false
-      );
-      window.addEventListener(
-        "unload",
-        function (event) {
-          Services.obs.removeObserver(
-            notifyTools.onNotifyExperimentObserver,
-            "WindowListenerNotifyExperimentObserver"
-          );
-        },
-        false
-      );
-    },
-    false
-  );
+  window.addEventListener("load", function (event) {
+    Services.obs.addObserver(notifyTools.onNotifyExperimentObserver, "WindowListenerNotifyExperimentObserver", false);
+    window.addEventListener("unload", function (event) {
+    Services.obs.removeObserver(notifyTools.onNotifyExperimentObserver, "WindowListenerNotifyExperimentObserver");
+    }, false);
+  }, false);
 } catch (e) {
-  console.log(
-    "WindowListenerNotifyExperimentObserver cannot be registered in a window-less environment."
-  );
+  console.log("WindowListenerNotifyExperimentObserver cannot be registered in a window-less environment.")
 }
