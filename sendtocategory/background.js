@@ -1,7 +1,24 @@
 async function main() {
+  
+  // Setup preference handler.
+  // The prefBranchHandler.js is loaded by manifest.json into the background page.
+  // If all calls to set/get preference outside of the background script have been
+  // replaced by runtime messaging or background notifications (through
+  // preferences.js from ADS), the used storage backend can be changed just by
+  // loading a different preference handler, for example localStorageHandler.js.
+  prefBranchHandler.init(
+    {
+      seperator: "\u001A",
+      to_address: "1",
+      disable_global_book: true,
+    },
+    "extensions.sendtocategory."
+  );
+  prefBranchHandler.enableListeners();
 
-  // Setup WindowListener API 
-  messenger.WindowListener.registerDefaultPrefs("defaults/preferences/pref.js");
+  /*
+   * Setup WindowListener API 
+   */
 
   messenger.WindowListener.registerChromeUrl([
     ["content", "sendtocategory",          "content/"]

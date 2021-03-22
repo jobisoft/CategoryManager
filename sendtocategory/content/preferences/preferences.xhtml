@@ -28,7 +28,7 @@
                   <label  style="font-size:xx-small" value="* http://www.lda.bayern.de/lda/datenschutzaufsicht/p_archiv/2013/pm004.html"/>
                   <description  style="padding:1em 0">__MSG_sendtocategory.pref.generaltab.toaddr.desc2__</description>
                   <label value="__MSG_sendtocategory.pref.generaltab.toaddr.label__"/>
-                  <html:input type="text" id="sendtocategory.to_address" preference="extensions.sendtocategory.to_address" style="width:100%"/>
+                  <html:input type="text" preference="to_address" style="width:100%"/>
                   <description>__MSG_sendtocategory.pref.generaltab.toaddr.desc3__</description>
 
                 </vbox>
@@ -37,7 +37,8 @@
         </tabpanels>
     </tabbox>
             
-    <script src="chrome://global/content/preferencesBindings.js" type="application/javascript"/>            
     <script src="chrome://sendtocategory/content/scripts/i18n/i18n.js" type="application/javascript"/>
+    <script src="chrome://sendtocategory/content/scripts/notifyTools/notifyTools.js" type="application/javascript"/>
+    <script src="chrome://sendtocategory/content/scripts/preferences/preferences.js" type="application/javascript"/>
     <script src="chrome://sendtocategory/content/preferences/preferences.js" type="application/javascript"/>
 </dialog>

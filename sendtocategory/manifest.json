@@ -36,6 +36,7 @@
   },
   "background": {
     "scripts": [
+      "content/scripts/preferences/backgroundHandler/prefBranchHandler.js",
       "background.js"
     ]
   }  
