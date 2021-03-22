@@ -1,7 +1,39 @@
 [
   {
     "namespace": "LegacyPrefs",
+    "events": [
+      {
+        "name": "onChanged",
+        "type": "function",
+        "description": "Fired when a preference has been changed.",
+        "parameters": [
+          {
+            "name": "name",
+            "type": "string",
+            "description": "Name of the preference."
+          },
+          {
+            "name": "value",
+            "type": "any",
+            "description": "Value of the preference."
+          }
+        ]
+      }
+    ],
     "functions": [
+      {
+        "name": "setObservingBranch",
+        "type": "function",
+        "async": true,
+        "description": "Set the branch which onChanged should be sensitive for.",
+        "parameters": [
+          {
+            "name": "aBranch",
+            "type": "string",
+            "description": "Name of the branch to observe."
+          }
+        ]
+      },
       {
         "name": "getUserPref",
         "type": "function",
