@@ -24,8 +24,6 @@ async function main() {
     ["content", "sendtocategory",          "content/"]
   ]);
 
-  messenger.WindowListener.registerOptionsPage("chrome://sendtocategory/content/preferences/preferences.xhtml");
-
   messenger.WindowListener.registerWindow(
     "chrome://messenger/content/addressbook/addressbook.xhtml", 
     "chrome://sendtocategory/content/scripts/addressbook.js");
