@@ -2,43 +2,18 @@
  * This file is provided by the addon-developer-support repository at
  * https://github.com/thundernest/addon-developer-support
  *
- * Version: 1.45
- * - Add notifyExperiment() function to send data to privileged scripts inside
- *   an Experiment. The privileged script must include notifyTools.js from the
- *   addon-developer-support repository.
+ * Version: 1.51
+ * - use wrench button for options for TB78.10
  *
- *   // In a WebExtension background script:
- *   // Note: Restrictions of the structured clone algorythm apply to the send data.
- *   messenger.WindowListener.notifyExperiment({data: "voilá"});
+ * Version: 1.50
+ * - use built-in CSS rules to fix options button for dark themes (thanks to Thunder)
+ * - fix some occasions where options button was not added
  *
- *   // In a privileged script inside an Experiment:
- *   let Listerner1 = notifyTools.registerListener((rv) => console.log("listener #1", rv));
- *   let Listerner2 = notifyTools.registerListener((rv) => console.log("listener #2", rv));
- *   let Listerner3 = notifyTools.registerListener((rv) => console.log("listener #3", rv));
- *   notifyTools.removeListener(Listerner2);
+ * Version: 1.49
+ * - fixed missing eventListener for Beta + Daily
  *
- * - Add onNotifyBackground event, which can be registered in the background page,
- *   to receive data from privileged scripts inside an Experiment. The privileged
- *   script must include notifyTools.js from the addon-developer-support repository.
- *
- *   // In a WebExtension background script:
- *   messenger.WindowListener.onNotifyBackground.addListener(async (info) => {
- *    switch (info.command) {
- *     case "doSomething":
- *      let rv = await doSomething(info.data);
- *      return {
- *       result: rv,
- *       data: [1,2,3]
- *      };
- *      break;
- *    }
- *   });
- *
- *   // In a privileged script inside an Experiment:
- *   let rv = await notifyTools.notifyBackground({command: "doSomething", data: [1,2,3]});
- *   // rv will be whatever has been returned by the background script.
- *   // Note: Restrictions of the structured clone algorythm apply to
- *   // the send and recieved data.
+ * Version: 1.48
+ * - moved notifyTools into its own NotifyTools API.
  *
  * Version: 1.39
  * - fix for 68
@@ -148,8 +123,12 @@ var WindowListener = class extends ExtensionCommon.ExtensionAPI {
     if (this.debug) console.log("WindowListener API: " + msg);
   }
 
-  getThunderbirdMajorVersion() {
-    return parseInt(Services.appinfo.version.split(".").shift());
+  getThunderbirdVersion() {
+    let parts = Services.appinfo.version.split(".");
+    return {
+      major: parseInt(parts[0]),
+      minor: parseInt(parts[1]),
+    }
   }
 
   getCards(e) {
@@ -158,10 +137,10 @@ var WindowListener = class extends ExtensionCommon.ExtensionAPI {
     let doc;
 
     // 78,86, and 87+ need special handholding. *Yeah*.
-    if (this.getThunderbirdMajorVersion() < 86) {
+    if (this.getThunderbirdVersion().major < 86) {
       let ownerDoc = e.document || e.target.ownerDocument;
       doc = ownerDoc.getElementById("html-view-browser").contentDocument;
-    } else if (this.getThunderbirdMajorVersion() < 87) {
+    } else if (this.getThunderbirdVersion().major < 87) {
       let ownerDoc = e.document || e.target;
       doc = ownerDoc.getElementById("html-view-browser").contentDocument;
     } else {
@@ -251,8 +230,11 @@ var WindowListener = class extends ExtensionCommon.ExtensionAPI {
           // Setup either the options entry in the menu or the button
           //window.document.getElementById(id).addEventListener("command", function() {window.openDialog(self.pathToOptionsPage, "AddonOptions", "chrome,resizable,centerscreen", WL)});
           if (card.addon.id == this.extension.id) {
-            if (this.getThunderbirdMajorVersion() < 88) {
-              // Options menu in 78-87
+            let optionsMenu = 
+              (this.getThunderbirdVersion().major > 78 && this.getThunderbirdVersion().major < 88) ||
+              (this.getThunderbirdVersion().major == 78 && this.getThunderbirdVersion().minor < 10);
+            if (optionsMenu) {
+              // Options menu in 78.0-78.10 and 79-87
               let addonOptionsLegacyEntry = card.querySelector(
                 ".extension-options-legacy"
               );
@@ -283,33 +265,18 @@ var WindowListener = class extends ExtensionCommon.ExtensionAPI {
             } else {
               // Add-on button in 88
               let addonOptionsButton = card.querySelector(
-                ".extension-options-button2"
+                ".windowlistener-options-button"
               );
               if (card.addon.isActive && !addonOptionsButton) {
                 addonOptionsButton = card.ownerDocument.createElement("button");
-                addonOptionsButton.classList.add("extension-options-button2");
-                addonOptionsButton.style["min-width"] = "auto";
-                addonOptionsButton.style["min-height"] = "auto";
-                addonOptionsButton.style["width"] = "24px";
-                addonOptionsButton.style["height"] = "24px";
-                addonOptionsButton.style["margin"] = "0";
-                addonOptionsButton.style["margin-inline-start"] = "8px";
-                addonOptionsButton.style["-moz-context-properties"] = "fill";
-                addonOptionsButton.style["fill"] = "currentColor";
-                addonOptionsButton.style["background-image"] =
-                  "url('chrome://messenger/skin/icons/developer.svg')";
-                addonOptionsButton.style["background-repeat"] = "no-repeat";
-                addonOptionsButton.style["background-position"] =
-                  "center center";
-                addonOptionsButton.style["padding"] = "1px";
-                addonOptionsButton.style["display"] = "flex";
-                addonOptionsButton.style["justify-content"] = "flex-end";
+                addonOptionsButton.classList.add("windowlistener-options-button");
+                addonOptionsButton.classList.add("extension-options-button");
                 card.optionsButton.parentNode.insertBefore(
                   addonOptionsButton,
                   card.optionsButton
                 );
                 card
-                  .querySelector(".extension-options-button2")
+                  .querySelector(".windowlistener-options-button")
                   .addEventListener("click", this);
               } else if (!card.addon.isActive && addonOptionsButton) {
                 addonOptionsButton.remove();
@@ -345,25 +312,23 @@ var WindowListener = class extends ExtensionCommon.ExtensionAPI {
     }
   }
 
-  setupAddonManager(managerWindow, paint = true) {
+  setupAddonManager(managerWindow) {
     if (!managerWindow) {
       return;
     }
-    if (
+    if (!(
       managerWindow &&
       managerWindow[this.uniqueRandomID] &&
       managerWindow[this.uniqueRandomID].hasAddonManagerEventListeners
-    ) {
-      return;
-    }
+    )) {
     managerWindow.document.addEventListener("ViewChanged", this);
     managerWindow.document.addEventListener("update", this);
+      managerWindow.document.addEventListener("view-loaded", this);   
     managerWindow[this.uniqueRandomID] = {};
     managerWindow[this.uniqueRandomID].hasAddonManagerEventListeners = true;
-    if (paint) {
+    }
       this.handleEvent(managerWindow);
     }
-  }
 
   getMessenger(context) {
     let apis = ["storage", "runtime", "extension", "i18n"];
@@ -462,7 +427,9 @@ var WindowListener = class extends ExtensionCommon.ExtensionAPI {
       onTabClosing(aTab) {},
       onTabPersist(aTab) {},
       onTabRestored(aTab) {},
-      onTabSwitched(aNewTab, aOldTab) {},
+      onTabSwitched(aNewTab, aOldTab) {
+        self.setupAddonManager(self.getAddonManagerFromTab(aNewTab));
+      },
       async onTabOpened(aTab) {
         if (!aTab.pageLoaded) {
           // await a location change if browser is not loaded yet
@@ -489,89 +456,12 @@ var WindowListener = class extends ExtensionCommon.ExtensionAPI {
             aTab.browser.addProgressListener(reporterListener);
           });
         }
-        // Setup the ViewChange event listener in the outer browser of the add-on,
-        // but do not actually add the button/menu, as the inner browser is not yet ready,
-        // let the ViewChange event do it
-        self.setupAddonManager(self.getAddonManagerFromTab(aTab), false);
+        self.setupAddonManager(self.getAddonManagerFromTab(aTab));
       },
     };
-
-    this.onNotifyBackgroundObserver = {
-      observe: async function (aSubject, aTopic, aData) {
-        if (
-          Object.keys(self.observerTracker).length > 0 &&
-          aData == self.extension.id
-        ) {
-          let payload = aSubject.wrappedJSObject;
-          // This is called from the WL observer.js and therefore it should have a resolve
-          // payload, but better check.
-          if (payload.resolve) {
-            let observerTrackerPromises = [];
-            // Push listener into promise array, so they can run in parallel
-            for (let listener of Object.values(self.observerTracker)) {
-              observerTrackerPromises.push(listener(payload.data));
-            }
-            // We still have to await all of them but wait time is just the time needed
-            // for the slowest one.
-            let results = [];
-            for (let observerTrackerPromise of observerTrackerPromises) {
-              let rv = await observerTrackerPromise;
-              if (rv != null) results.push(rv);
-            }
-            if (results.length == 0) {
-              payload.resolve();
-            } else {
-              if (results.length > 1) {
-                console.warn(
-                  "Received multiple results from onNotifyBackground listeners. Using the first one, which can lead to inconsistent behavior.",
-                  results
-                );
-              }
-              payload.resolve(results[0]);
-            }
-          } else {
-            // Just call the listener.
-            for (let listener of Object.values(self.observerTracker)) {
-              listener(payload.data);
-            }
-          }
-        }
-      },
-    };
-
-    this.observerTracker = {};
-    this.observerTrackerNext = 1;
-    // Add observer for notifyTools.js
-    Services.obs.addObserver(
-      this.onNotifyBackgroundObserver,
-      "WindowListenerNotifyBackgroundObserver",
-      false
-    );
 
     return {
       WindowListener: {
-        notifyExperiment(data) {
-          Services.obs.notifyObservers(
-            // Stuff data in an array so simple strings can be used as payload
-            // without the observerService complaining.
-            [data],
-            "WindowListenerNotifyExperimentObserver",
-            self.extension.id
-          );
-        },
-
-        onNotifyBackground: new ExtensionCommon.EventManager({
-          context,
-          name: "WindowListener.onNotifyBackground",
-          register: (fire) => {
-            let trackerId = self.observerTrackerNext++;
-            self.observerTracker[trackerId] = fire.sync;
-            return () => {
-              delete self.observerTracker[trackerId];
-            };
-          },
-        }).api(),
-
         async waitForMasterPassword() {
           // Wait until master password has been entered (if needed)
           while (!Services.logins.isLoggedIn) {
@@ -787,7 +677,7 @@ var WindowListener = class extends ExtensionCommon.ExtensionAPI {
                       "chrome://messenger/content/messenger.xhtml"
                   ) {
                     if (self.pathToOptionsPage) {
-                      if (self.getThunderbirdMajorVersion() < 78) {
+                      if (self.getThunderbirdVersion().major < 78) {
                         let element_addonPrefs = window.document.getElementById(
                           self.menu_addonPrefs_id
                         );
@@ -1244,12 +1134,6 @@ var WindowListener = class extends ExtensionCommon.ExtensionAPI {
   }
 
   onShutdown(isAppShutdown) {
-    // Remove bbserver for notifyTools.js
-    Services.obs.removeObserver(
-      this.onNotifyBackgroundObserver,
-      "WindowListenerNotifyBackgroundObserver"
-    );
-
     // Unload from all still open windows
     let urls = Object.keys(this.registeredWindows);
     if (urls.length > 0) {
@@ -1261,7 +1145,7 @@ var WindowListener = class extends ExtensionCommon.ExtensionAPI {
             window.location.href ==
               "chrome://messenger/content/messenger.xhtml")
         ) {
-          if (this.getThunderbirdMajorVersion() < 78) {
+          if (this.getThunderbirdVersion().major < 78) {
             let element_addonPrefs = window.document.getElementById(
               this.menu_addonPrefs_id
             );
@@ -1287,10 +1171,11 @@ var WindowListener = class extends ExtensionCommon.ExtensionAPI {
               managerWindow[this.uniqueRandomID].hasAddonManagerEventListeners
             ) {
               managerWindow.document.removeEventListener("ViewChanged", this);
+              managerWindow.document.removeEventListener("view-loaded", this);
               managerWindow.document.removeEventListener("update", this);
 
               let cards = this.getCards(managerWindow);
-              if (this.getThunderbirdMajorVersion() < 88) {
+              if (this.getThunderbirdVersion().major < 88) {
                 // Remove options menu in 78-87
                 for (let card of cards) {
                   let addonOptionsLegacyEntry = card.querySelector(
@@ -1303,7 +1188,7 @@ var WindowListener = class extends ExtensionCommon.ExtensionAPI {
                 for (let card of cards) {
                   if (card.addon.id == this.extension.id) {
                     let addonOptionsButton = card.querySelector(
-                      ".extension-options-button2"
+                      ".windowlistener-options-button"
                     );
                     if (addonOptionsButton) addonOptionsButton.remove();
                     break;
