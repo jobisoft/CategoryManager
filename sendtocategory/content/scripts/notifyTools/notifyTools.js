@@ -1,5 +1,5 @@
 // Set this to the ID of your add-on.
-const ADDON_ID = "";
+const ADDON_ID = "sendtocategory@jobisoft.de";
 
 /*
  * This file is provided by the addon-developer-support repository at
