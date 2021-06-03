@@ -32,6 +32,14 @@
         "paths": [["WindowListener"]],
         "script": "api/WindowListener/implementation.js"
       }
+    },
+    "NotifyTools": {
+      "schema": "api/NotifyTools/schema.json",
+      "parent": {
+        "scopes": ["addon_parent"],
+        "paths": [["NotifyTools"]],
+        "script": "api/NotifyTools/implementation.js"
+      }
     }
   },
   "background": {

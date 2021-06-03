@@ -5,7 +5,8 @@
  * For usage descriptions, please check:
  * https://github.com/thundernest/addon-developer-support/tree/master/scripts/preferences/backgroundHandler
  *
- * Version: 1.0
+ * Version: 1.1
+ * - removed dependency from WindowListener API toward NotifyTools API
  *
  * Author: John Bieling (john@thunderbird.net)
  *
@@ -64,7 +65,9 @@
 
   enableListeners: async function () {
     // Listener for notifications from Legacy scripts
-    await messenger.WindowListener.onNotifyBackground.addListener(this.handler);
+    if (messenger.NotifyTools) {
+      await messenger.NotifyTools.onNotifyBackground.addListener(this.handler);
+    }
     // Listener for messages from WebExtension scripts
     await messenger.runtime.onMessage.addListener(this.handler);
     // Add storage change listener.
@@ -74,7 +77,9 @@
 
   disableListeners: async function () {
     await messenger.LegacyPrefs.onChanged.removeListener(this.storageChanged);  
-    await messenger.WindowListener.onNotifyBackground.removeListener(this.handler);
+    if (messenger.NotifyTools) {
+      await messenger.NotifyTools.onNotifyBackground.removeListener(this.handler);
+    }
     await messenger.runtime.onMessage.removeListener(this.handler);
   },
 
@@ -84,8 +89,8 @@
     messenger.runtime.sendMessage({ command, name, value }).catch(() => {
       /* hide error if no listener defined */
     });
-    if (messenger.WindowListener) {
-      messenger.WindowListener.notifyExperiment({ command, name, value });
+    if (messenger.NotifyTools) {
+      messenger.NotifyTools.notifyExperiment({ command, name, value });
     }
   },
   
@@ -114,3 +119,7 @@
     }
   },
 };
+
+if (!messenger.LegacyPrefs) {
+  throw new Error("The prefBranchHandler needs the LegacyPrefs API from the addon-developer-support repository.");
+}

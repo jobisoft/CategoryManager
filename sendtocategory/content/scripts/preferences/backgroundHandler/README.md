@@ -8,7 +8,7 @@
 
 ## prefBranchHandler
 
-The prefBranchHandler provides the following public methods:
+The prefBranchHandler needs the [LegacyPrefs API](https://github.com/thundernest/addon-developer-support/tree/master/auxiliary-apis/LegacyPrefs) and provides the following public methods:
 
 ### async prefBranchHandler.init(defaults, branch)
 
@@ -17,7 +17,7 @@ Initialize the prefBranch and define defaults. Example:
 ```
   prefBranchHandler.init(
     {
-      seperator: "\u001A",
+      separator: "\u001A",
       to_address: "",
       disable_global_book: true,
       max_number_of_categories: 100
@@ -47,7 +47,7 @@ Initialize the WebExtension local storage and define defaults. Example:
 ```
   localStorageHandler.init(
     {
-      seperator: "\u001A",
+      separator: "\u001A",
       to_address: "",
       disable_global_book: true,
       max_number_of_categories: 100

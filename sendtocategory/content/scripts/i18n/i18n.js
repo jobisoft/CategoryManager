@@ -6,6 +6,13 @@
  * https://github.com/thundernest/addon-developer-support/tree/master/scripts/i18n
  *
  * Version: 1.1
+ *
+ * Derived from:
+ * http://github.com/piroor/webextensions-lib-l10n
+ *
+ * Original license:
+ * The MIT License, Copyright (c) 2016-2019 YUKI "Piro" Hiroshi
+ *
  */
 
 var i18n = {
