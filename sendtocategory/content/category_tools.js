@@ -169,11 +169,7 @@ jbCatMan.searchDirectory = function (searchUri) {
       MailServices.ab.getDirectory(uri).search(search, listener);
     } else {
       let result = MailServices.ab.getDirectory(uri).childCards;
-      let cards = [];
-      while (result.hasMoreElements()) {
-        cards.push(result.getNext().QueryInterface(Components.interfaces.nsIAbCard));
-      }
-      resolve(cards);
+      resolve(result);
     }
   });
 }
@@ -409,8 +405,7 @@ jbCatMan.updateCategories = function (mode, oldName, newName) {
   let addressBook = MailServices.ab.getDirectory(GetSelectedDirectory()); //GetSelectedDirectory() returns an URI, but we need the directory itself
   let cards = addressBook.childCards;
 
-  while (cards.hasMoreElements()) {
-    let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
+  for (let card of cards) {
     let catArray = jbCatMan.getCategoriesfromCard(card);
     let rebuildCatArray = [];
     if (catArray.length > 0) {  
@@ -479,12 +474,7 @@ jbCatMan.scanCategories = function (abURI, field = jbCatMan.getCategoryField(), 
     if (addressBook.isRemote) continue;
 
     let cards = addressBook.childCards;
-    while (true) {
-      let more = false;
-      try { more = cards.hasMoreElements() } catch (ex) {} 
-      if (!more) break;
-
-      let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
+    for (let card of cards) {
       data.abSize++;
 
       //Keep track of mapping between directoryID and abURI, to get the owning AB for each card
