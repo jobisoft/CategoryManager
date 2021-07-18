@@ -784,8 +784,7 @@ jbCatManWizard.resetThunderbirdProperties = function (listname, defaults) {
 }
 
 jbCatManWizard.searchThunderbirdProperties = function (props) {
-  while (props.hasMoreElements()) {
-    prop = props.getNext().QueryInterface(Components.interfaces.nsIProperty); 
+  for (let prop of props) {
     if (jbCatManWizard.foundThunderbirdProperties.indexOf(prop.name) == -1 && jbCatManWizard.forbiddenFields.indexOf(prop.name) == -1) { 
       jbCatManWizard.foundThunderbirdProperties.push(prop.name);
     }
