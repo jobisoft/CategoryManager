@@ -20,20 +20,12 @@
         </vbox>
     </vbox>
     
-    <groupbox id="CatManInfoBox">
-        <hbox class="groupbox-title"><label class="header">__MSG_sendtocategory.bulkedit.note__</label></hbox>
-        <grid>
-            <columns>
-                <column/>
-                <column/>
-            </columns>
-            <rows>
-                <row align="center">
-                    <image height="20" src="chrome://sendtocategory/content/skin/double.gif"/>
-                    <description id="CatManDescriptionNoPrimaryEmail"></description>
-                </row>
-            </rows>
-        </grid>
-    </groupbox>
+    <vbox style="margin:6px;" id="CatManInfoBox">
+        <hbox class="groupbox-title"><label class="header">__MSG_sendtocategory.bulkedit.note__</label></hbox>        
+        <hbox style="margin:6px;">
+            <vbox><image src="chrome://sendtocategory/content/skin/double.gif"/></vbox>
+            <description flex="1" id="CatManDescriptionNoPrimaryEmail"></description>
+        </hbox>
+    </vbox>
     
 </dialog>
