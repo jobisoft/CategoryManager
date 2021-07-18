@@ -6,7 +6,7 @@ var jbCatMan = window.opener.jbCatMan;
 var jbCatManWizard = {};
 
 Services.scriptloader.loadSubScript("chrome://sendtocategory/content/parser/csv/csv.js");
-Services.scriptloader.loadSubScript("chrome://sendtocategory/content/scripts/i18n.js");
+Services.scriptloader.loadSubScript("chrome://sendtocategory/content/scripts/i18n/i18n.js");
 //Services.scriptloader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcard.js");
 //Services.scriptloader.loadSubScript("chrome://sendtocategory/content/parser/vcf/vcf.js");
 

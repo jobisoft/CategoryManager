@@ -2,7 +2,7 @@
  * This file is provided by the addon-developer-support repository at
  * https://github.com/thundernest/addon-developer-support
  *
- * Version: 1.52
+ * Version: 1.56
  *
  * Author: John Bieling (john@thunderbird.net)
  *
@@ -30,6 +30,7 @@ var WindowListener = class extends ExtensionCommon.ExtensionAPI {
     return {
       major: parseInt(parts[0]),
       minor: parseInt(parts[1]),
+      revision: parts.length > 2 ? parseInt(parts[2]) : 0,
     }
   }
 
@@ -134,7 +135,8 @@ var WindowListener = class extends ExtensionCommon.ExtensionAPI {
           if (card.addon.id == this.extension.id) {
             let optionsMenu = 
               (this.getThunderbirdVersion().major > 78 && this.getThunderbirdVersion().major < 88) ||
-              (this.getThunderbirdVersion().major == 78 && this.getThunderbirdVersion().minor < 10);
+              (this.getThunderbirdVersion().major == 78 && this.getThunderbirdVersion().minor < 10) ||
+              (this.getThunderbirdVersion().major == 78 && this.getThunderbirdVersion().minor == 10 && this.getThunderbirdVersion().revision < 2);
             if (optionsMenu) {
               // Options menu in 78.0-78.10 and 79-87
               let addonOptionsLegacyEntry = card.querySelector(
@@ -198,9 +200,11 @@ var WindowListener = class extends ExtensionCommon.ExtensionAPI {
   // returns the outer browser, not the nested browser of the add-on manager
   // events must be attached to the outer browser
   getAddonManagerFromTab(tab) {
-    let win = tab.browser.contentWindow;
-    if (win && win.location.href == "about:addons") {
-      return win;
+    if (tab.browser) {
+      let win = tab.browser.contentWindow;
+      if (win && win.location.href == "about:addons") {
+        return win;
+      }
     }
   }
 
@@ -214,7 +218,7 @@ var WindowListener = class extends ExtensionCommon.ExtensionAPI {
     }
   }
 
-  setupAddonManager(managerWindow) {
+  setupAddonManager(managerWindow, forceLoad = false) {
     if (!managerWindow) {
       return;
     }
@@ -229,7 +233,7 @@ var WindowListener = class extends ExtensionCommon.ExtensionAPI {
       managerWindow[this.uniqueRandomID] = {};
       managerWindow[this.uniqueRandomID].hasAddonManagerEventListeners = true;
     }
-    this.handleEvent(managerWindow);
+    if (forceLoad) this.handleEvent(managerWindow);
   }
 
   getMessenger(context) {
@@ -330,35 +334,37 @@ var WindowListener = class extends ExtensionCommon.ExtensionAPI {
       onTabPersist(aTab) {},
       onTabRestored(aTab) {},
       onTabSwitched(aNewTab, aOldTab) {
-        self.setupAddonManager(self.getAddonManagerFromTab(aNewTab));
+        //self.setupAddonManager(self.getAddonManagerFromTab(aNewTab));
       },
       async onTabOpened(aTab) {
-        if (!aTab.pageLoaded) {
-          // await a location change if browser is not loaded yet
-          await new Promise((resolve) => {
-            let reporterListener = {
-              QueryInterface: ChromeUtils.generateQI([
-                "nsIWebProgressListener",
-                "nsISupportsWeakReference",
-              ]),
-              onStateChange() {},
-              onProgressChange() {},
-              onLocationChange(
-                /* in nsIWebProgress*/ aWebProgress,
-                /* in nsIRequest*/ aRequest,
-                /* in nsIURI*/ aLocation
-              ) {
-                aTab.browser.removeProgressListener(reporterListener);
-                resolve();
-              },
-              onStatusChange() {},
-              onSecurityChange() {},
-              onContentBlockingEvent() {},
-            };
-            aTab.browser.addProgressListener(reporterListener);
-          });
+        if (aTab.browser) {
+          if (!aTab.pageLoaded) {
+            // await a location change if browser is not loaded yet
+            await new Promise((resolve) => {
+              let reporterListener = {
+                QueryInterface: ChromeUtils.generateQI([
+                  "nsIWebProgressListener",
+                  "nsISupportsWeakReference",
+                ]),
+                onStateChange() {},
+                onProgressChange() {},
+                onLocationChange(
+                  /* in nsIWebProgress*/ aWebProgress,
+                  /* in nsIRequest*/ aRequest,
+                  /* in nsIURI*/ aLocation
+                ) {
+                  aTab.browser.removeProgressListener(reporterListener);
+                  resolve();
+                },
+                onStatusChange() {},
+                onSecurityChange() {},
+                onContentBlockingEvent() {},
+              };
+              aTab.browser.addProgressListener(reporterListener);
+            });
+          }
+          self.setupAddonManager(self.getAddonManagerFromTab(aTab));
         }
-        self.setupAddonManager(self.getAddonManagerFromTab(aTab));
       },
     };
 
@@ -590,7 +596,8 @@ var WindowListener = class extends ExtensionCommon.ExtensionAPI {
                       } else {
                         // Setup the options button/menu in the add-on manager, if it is already open.
                         self.setupAddonManager(
-                          self.getAddonManagerFromWindow(window)
+                          self.getAddonManagerFromWindow(window),
+                          true
                         );
                         // Add a tabmonitor, to be able to setup the options button/menu in the add-on manager.
                         self

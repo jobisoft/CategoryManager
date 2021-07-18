@@ -1,3 +1,16 @@
+Version: 1.56
+-------------
+- be precise on which revision the wrench symbol should be displayed, instead of
+  the options button
+
+Version: 1.54
+-------------
+- fix "ownerDoc.getElementById() is undefined" bug
+
+Version: 1.53
+-------------
+- fix "tab.browser is undefined" bug
+
 Version: 1.52
 -------------
 - clear cache only if add-on is uninstalled/updated, not on app shutdown

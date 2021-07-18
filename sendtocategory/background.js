@@ -21,7 +21,7 @@ async function main() {
    */
 
   messenger.WindowListener.registerChromeUrl([
-    ["content", "sendtocategory",          "content/"]
+    ["content", "sendtocategory", "content/"]
   ]);
 
   messenger.WindowListener.registerWindow(

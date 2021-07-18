@@ -1,6 +1,6 @@
 var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
 
-Services.scriptloader.loadSubScript("chrome://sendtocategory/content/scripts/i18n.js");
+Services.scriptloader.loadSubScript("chrome://sendtocategory/content/scripts/i18n/i18n.js");
 
 var jbCatMan = window.opener.jbCatMan;
 var dialogType = "";
