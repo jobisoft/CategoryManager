@@ -240,8 +240,7 @@ jbCatMan.getSearchesFromSearchString = function(searchstring) {
   if (searchstring.startsWith("moz-abdirectory://?")) {
     searchstring = searchstring.substring(19);
     let allAddressBooks = MailServices.ab.directories;
-    while (allAddressBooks.hasMoreElements()) {
-       let abook = allAddressBooks.getNext().QueryInterface(Components.interfaces.nsIAbDirectory);
+    for (let abook of allAddressBooks) {
        if (abook instanceof Components.interfaces.nsIAbDirectory) { // or nsIAbItem or nsIAbCollection
         searches.push(abook.URI + searchstring);
        }
