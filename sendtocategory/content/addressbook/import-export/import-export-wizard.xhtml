@@ -48,7 +48,7 @@
 
 
   <wizardpage pageid="CatManWizardImport_CSV" label="__MSG_sendtocategory.wizard.import.options.csv.title__" next="CatManWizardImport_Mapping_CSV"> 
-     <description style='padding-bottom:1ex;'>
+    <description style='padding-bottom:1ex;'>
       __MSG_sendtocategory.wizard.import.options.csv.desc__
     </description>
     <richlistbox
@@ -109,7 +109,8 @@
 
     <richlistbox
     id="CatManWizardImport_Mapping_CSV"
-    flex="1"
+    flex="0"
+    height="420"
     ondblclick="jbCatManWizard.togglecheck(this, 2);"
     seltype="single">
 
@@ -223,7 +224,8 @@
 
     <richlistbox
     id="CatManWizardExport_CSV"
-    flex="1"
+    flex="0"
+    height="230"
     ondblclick="jbCatManWizard.togglecheck(this, 1);"
     seltype="single">
 
