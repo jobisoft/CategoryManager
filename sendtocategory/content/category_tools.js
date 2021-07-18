@@ -155,7 +155,7 @@ jbCatMan.searchDirectory = function (searchUri) {
     let listener = {
       cards : [],
       
-      onSearchFinished(aResult, aErrorMsg) {
+      onSearchFinished(status, complete, secInfo, location) {
         resolve(this.cards);
       },
       onSearchFoundCard(aCard) {
@@ -166,7 +166,7 @@ jbCatMan.searchDirectory = function (searchUri) {
     
     let {uri, search } = jbCatMan.getUriAndSearch(searchUri);
     if (search) {
-      MailServices.ab.getDirectory(uri).search(search, listener);
+      MailServices.ab.getDirectory(uri).search(search, "", listener);
     } else {
       let result = MailServices.ab.getDirectory(uri).childCards;
       resolve(result);
