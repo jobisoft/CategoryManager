@@ -569,38 +569,34 @@ jbCatMan.onCategoriesContextMenuItemCommand = function (event) {
   event, so if a new event comes in while the timeout for the last one is not yet
   done, it gets postponed.
 */
- jbCatMan.AbListenerToUpdateCategoryList = {
-  onItemAdded: function AbListenerToUpdateCategoryList_onItemAdded(aParentDir, aItem) {
-    if (aItem instanceof Components.interfaces.nsIAbCard) {
-      jbCatMan.eventUpdateTimeout.cancel();
-      jbCatMan.eventUpdateTimeout.initWithCallback({ notify: function(timer) {jbCatMan.updateCategoryList(); }}, 500, 0);
+
+jbCatMan.AbListenerToUpdateCategoryList = {
+  _notifications: [
+    "addrbook-contact-created",
+    "addrbook-contact-updated",
+    "addrbook-contact-deleted",
+  ],
+  register() {
+    for (let topic of this._notifications) {
+      Services.obs.addObserver(this, topic);
     }
   },
-
-  onItemPropertyChanged: function AbListenerToUpdateCategoryList_onItemPropertyChanged(aItem, aProperty, aOldValue, aNewValue) {
-    if (aItem instanceof Components.interfaces.nsIAbCard) {
-      jbCatMan.eventUpdateTimeout.cancel();
-      jbCatMan.eventUpdateTimeout.initWithCallback({ notify: function(timer) {jbCatMan.updateCategoryList(); }}, 500, 0);
+  unregister() {
+    for (let topic of this._notifications) {
+      Services.obs.removeObserver(this, topic);
     }
   },
-
-  onItemRemoved: function AbListenerToUpdateCategoryList_onItemRemoved(aParentDir, aItem) {
-    if (aItem instanceof Components.interfaces.nsIAbCard) {
-      jbCatMan.eventUpdateTimeout.cancel();
-      jbCatMan.eventUpdateTimeout.initWithCallback({ notify: function(timer) {jbCatMan.updateCategoryList(); }}, 500, 0);
+  observe(subject, topic, data) {
+    switch (topic) {
+      case "addrbook-contact-created":
+      case "addrbook-contact-updated":
+      case "addrbook-contact-deleted":
+        jbCatMan.eventUpdateTimeout.cancel();
+        jbCatMan.eventUpdateTimeout.initWithCallback({ notify: function(timer) {jbCatMan.updateCategoryList(); }}, 500, 0);
+        break;
     }
   },
-
-  add: function AbListenerToUpdateCategoryList_add() {
-    MailServices.ab.addAddressBookListener(jbCatMan.AbListenerToUpdateCategoryList, Components.interfaces.nsIAbListener.all);
-  },
-
-  remove: function AbListenerToUpdateCategoryList_remove() {
-    MailServices.ab.removeAddressBookListener(jbCatMan.AbListenerToUpdateCategoryList);
-  }
 };
-
-
 
 
 
@@ -634,7 +630,7 @@ jbCatMan.paintAddressbook = function() {
   cvbPhone.parentNode.insertBefore(cvbCategories, cvbPhone);
   
   // Add listener for card changes to update CategoryList
-  jbCatMan.AbListenerToUpdateCategoryList.add();
+  jbCatMan.AbListenerToUpdateCategoryList.register();
 
   // Add listener for action in search input field
   document.getElementById("peopleSearchInput").addEventListener('command', jbCatMan.onPeopleSearchClick , true);
@@ -662,7 +658,7 @@ jbCatMan.paintAddressbook = function() {
 }
 
 jbCatMan.unpaintAddressbook = function() {
-  jbCatMan.AbListenerToUpdateCategoryList.remove();
+  jbCatMan.AbListenerToUpdateCategoryList.unregister();
   document.getElementById("peopleSearchInput").removeEventListener('command', jbCatMan.onPeopleSearchClick , true);
   document.getElementById("dirTree").removeEventListener('select', jbCatMan.onSelectAddressbook, true);
   document.getElementById("abResultsTreeContext").removeEventListener("popupshowing", jbCatMan.onResultsTreeContextMenuPopup, false);
