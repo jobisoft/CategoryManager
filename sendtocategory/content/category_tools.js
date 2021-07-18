@@ -71,13 +71,13 @@ jbCatMan.getParentAb = function(book) {
   and directoryURI, so all cards can be modified, even if the directoryURI is not known. 
 */
 jbCatMan.modifyCard = function (card) {
-  if (card.directoryId == "") {
+  if (card.directoryUID == "") {
       if (!uri || uri == "moz-abdirectory://?") {
          throw { name: "jbCatManException", message: "Found card without directoryId.", toString: function() { return this.name + ": " + this.message; } };
       }
   } else {
     //save card changes
-    let abUri = jbCatMan.data.abURI[card.directoryId];
+    let abUri = jbCatMan.data.abURI[card.directoryUID];
     let ab = jbCatMan.getParentAb(MailServices.ab.getDirectory(abUri));
     ab.modifyCard(card);
   }
@@ -488,8 +488,8 @@ jbCatMan.scanCategories = function (abURI, field = jbCatMan.getCategoryField(), 
       data.abSize++;
 
       //Keep track of mapping between directoryID and abURI, to get the owning AB for each card
-      if (!data.abURI.hasOwnProperty(card.directoryId)) {
-        data.abURI[card.directoryId] = addressBook.URI;
+      if (!data.abURI.hasOwnProperty(card.directoryUID)) {
+        data.abURI[card.directoryUID] = addressBook.URI;
       }
 
       let catArray = jbCatMan.getCategoriesfromCard(card, field);
