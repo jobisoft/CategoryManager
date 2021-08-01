@@ -6,13 +6,6 @@ Services.scriptloader.loadSubScript("chrome://sendtocategory/content/category_to
 
 /* stuff
 
-// Get all properties of a card
-props = card.properties;
-while (props.hasMoreElements()) {
-    prop = props.getNext().QueryInterface(Components.interfaces.nsIProperty); 
-    dump("Prop ["+ prop.name+"] = ["+prop.value+"]\n");
-}
-
 https://dxr.mozilla.org/comm-central/source/mailnews/addrbook/src/nsAbManager.cpp
 Standard field list
 
