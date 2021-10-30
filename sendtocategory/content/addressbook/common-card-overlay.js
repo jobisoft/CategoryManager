@@ -164,7 +164,7 @@ jbCatManEditDialog.addItemToList = function (categoryName, checked = true) {
   let hbox = window.document.createXULElement("hbox");
   
   let checkbox = window.document.createXULElement("checkbox");
-  checkbox.setAttribute("checked", checked ? "true" : "false");
+  if (checked) checkbox.setAttribute("checked", "true");
   checkbox.style["margin-left"] = (level*16) + "px";
   checkbox.addEventListener("command", jbCatManEditDialog.onCheckBoxes); 
   hbox.appendChild(checkbox);
