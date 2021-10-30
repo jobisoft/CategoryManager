@@ -25,8 +25,8 @@ function onLoad(wasAlreadyOpen) {
           seltype="single">
           </richlistbox>
         </vbox>
-        <hbox pack="end">
-            <html:input type="text" id="abCatManAddCategoryBox" style="width:100%" />
+        <hbox style="display:flex;">
+            <html:input type="text" id="abCatManAddCategoryBox" style="flex-grow: 1;" />
             <button disabled="true" flex="0" id="abCatManAddCategoryButton" type="menu" label="+">
                 <menupopup id="abCatManAddCategoryButtonPopup">
                     <menuitem id="abCatManAddMainCategoryButton"
