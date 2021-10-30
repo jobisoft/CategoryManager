@@ -7,7 +7,7 @@
   },
   "manifest_version": 2,
   "name": "Category Manager",
-  "version": "5.0",
+  "version": "5.1",
   "author": "John Bieling",
   "homepage_url": "https://github.com/jobisoft/CategoryManager/",
   "default_locale": "en-US",
