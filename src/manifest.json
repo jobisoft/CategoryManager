@@ -1,0 +1,26 @@
+{
+  "manifest_version": 2,
+  "name": "Category Manager NG",
+  "version": "0.0.1",
+  "author": "kxxt",
+  "homepage_url": "https://TODO/",
+  "description": "A category manager for your address books",
+  "applications": {
+    "gecko": {
+      "id": "catman-ng@kxxt.dev",
+      "strict_min_version": "102.0",
+      "strict_max_version": "102.*"
+    }
+  },
+  "icons": {
+    "64": "images/icon-64px.png",
+    "32": "images/icon-32px.png",
+    "16": "images/icon-16px.png"
+  },
+  "permissions": ["addressBooks"],
+  "compose_action": {
+    "default_popup": "compose-action/popup.html",
+    "default_title": "Categories",
+    "default_icon": "images/icon-32px.png"
+  }
+}

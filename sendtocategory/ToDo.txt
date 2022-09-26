@@ -1,2 +1,0 @@
-- case insensitive search
-- searchstring not defined from time to time
