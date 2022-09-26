@@ -1,15 +1,15 @@
 {
   "manifest_version": 2,
-  "name": "Category Manager NG",
-  "version": "0.0.1",
-  "author": "kxxt",
-  "homepage_url": "https://TODO/",
-  "description": "A category manager for your address books",
+  "name": "Category Manager",
+  "version": "6.0",
+  "author": "John Bieling",
+  "homepage_url": "https://github.com/jobisoft/CategoryManager/",
+  "default_locale": "en-US",
+  "description": "__MSG_extensionDescription__",
   "applications": {
     "gecko": {
-      "id": "catman-ng@kxxt.dev",
-      "strict_min_version": "102.0",
-      "strict_max_version": "102.*"
+      "id": "sendtocategory@jobisoft.de",
+      "strict_min_version": "102.0"
     }
   },
   "icons": {
