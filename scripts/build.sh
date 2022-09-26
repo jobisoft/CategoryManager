@@ -10,10 +10,10 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 # XPI filename
 OUTPUT_FILE='category-manager-ng.xpi'
 
-scripts/gen-icons.sh
-
 cd "$SCRIPT_DIR"
 cd ..
+
+scripts/gen-icons.sh
 
 rm -f "$OUTPUT_FILE"
 
