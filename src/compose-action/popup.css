@@ -27,16 +27,13 @@ summary {
   outline: 0;
 }
 
-summary::-webkit-details-marker {
-  display: none;
-}
-
 .tree-nav__item {
   display: block;
   white-space: nowrap;
   color: #ccc;
   position: relative;
 }
+
 .tree-nav__item.is-expandable::before {
   border-left: 1px solid #333;
   content: "";
@@ -46,7 +43,12 @@ summary::-webkit-details-marker {
   top: 2.4rem;
   height: calc(100% - 2.4rem);
 }
-.tree-nav__item > a.tree-nav__item-title::before {
+
+.tree-nav__item > p.tree-nav__item-title {
+  display: inline;
+}
+
+.tree-nav__item > p.tree-nav__item-title::before {
   position: absolute;
   will-change: transform;
   transition: transform 300ms ease;
@@ -68,11 +70,7 @@ summary::-webkit-details-marker {
   transform: rotate(90deg);
 }
 
-.tree-nav__item > a.tree-nav__item-title {
-  padding-left: 2.4rem;
-}
-
-.tree-nav__item.is-expandable > .tree-nav__item-title {
+.tree-nav__item > .tree-nav__item-title {
   padding-left: 2.4rem;
 }
 

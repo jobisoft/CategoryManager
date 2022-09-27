@@ -5,9 +5,9 @@ import { isEmptyObject } from "../modules/utils.mjs";
 
 function writeTreeLeaf(prefix, category) {
   return `<div class="tree-nav__item">
-  <a class="tree-nav__item-title" data-category="${
+  <p class="tree-nav__item-title" data-category="${
     prefix + category.name
-  }">${escapeHtml(category.name)}</a>
+  }">${escapeHtml(category.name)}</p>
   </div>`;
 }
 
