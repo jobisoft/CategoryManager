@@ -1,0 +1,13 @@
+/* Global style sheet */
+
+html {
+  font-size: 16px;
+}
+
+body {
+  background-color: #191c1e;
+  color: white;
+  font-family: arial;
+  margin: 0;
+  padding: 1rem;
+}

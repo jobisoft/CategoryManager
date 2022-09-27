@@ -5,10 +5,6 @@
   padding: 10px;
 }
 
-html {
-  font-size: 16px;
-}
-
 #container {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -36,14 +32,6 @@ summary {
 
 summary::-webkit-details-marker {
   display: none;
-}
-
-body {
-  background-color: #191c1e;
-  color: white;
-  font-family: arial;
-  margin: 0;
-  padding: 1rem;
 }
 
 .tree-nav__item {
