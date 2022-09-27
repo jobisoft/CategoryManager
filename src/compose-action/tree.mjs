@@ -13,17 +13,17 @@ function writeTreeLeaf(prefix, category) {
 
 function writeTreeNode(prefix, category) {
   console.log(category);
-  const children = Object.keys(category.subCategories).map((key) => {
-    const subCategory = category.subCategories[key];
-    return isEmptyObject(subCategory.subCategories)
+  const children = Object.keys(category.categories).map((key) => {
+    const subCategory = category.categories[key];
+    return isEmptyObject(subCategory.categories)
       ? writeTreeLeaf(prefix + category.name + "/", subCategory)
       : writeTreeNode(prefix + category.name + "/", subCategory);
   });
-  return isEmptyObject(category.subCategories)
+  return isEmptyObject(category.categories)
     ? writeTreeLeaf(prefix, category)
     : `<details class="tree-nav__item is-expandable">
   <summary class="tree-nav__item-title" 
-           data-category="${prefix + category.name + "/"}">
+           data-category="${prefix + category.name}">
     ${escapeHtml(category.name)}
   </summary>
   ${children.join("\n")}
