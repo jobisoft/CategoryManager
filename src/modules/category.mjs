@@ -1,10 +1,10 @@
 class Category {
-  subCategories;
+  categories;
   name;
   contacts;
   constructor(name, contacts = [], subCategories = {}) {
     this.name = name;
-    this.subCategories = subCategories;
+    this.categories = subCategories;
     this.contacts = contacts;
   }
 }
@@ -37,10 +37,21 @@ class CategoryCollection {
     let cur = this.categories[rootName];
     cur.contacts.push(contact);
     category.slice(1).forEach((cat) => {
-      cur.subCategories[cat] ??= new Category(cat);
-      cur = cur.subCategories[cat];
+      cur.categories[cat] ??= new Category(cat);
+      cur = cur.categories[cat];
       cur.contacts.push(contact);
     });
+  }
+
+  lookup(categoryKey) {
+    // look up a category using a key like `A/B`
+    const category = categoryKey.split("/");
+    let cur = this;
+    for (const cat of category) {
+      if (cur.categories[cat] == null) return null;
+      cur = cur.categories[cat];
+    }
+    return cur;
   }
 }
 
