@@ -1,10 +1,10 @@
 class Category {
-  subCategory;
+  subCategories;
   name;
   contacts;
-  constructor(name, contacts = [], subCategory = null) {
+  constructor(name, contacts = [], subCategories = {}) {
     this.name = name;
-    this.subCategory = subCategory;
+    this.subCategories = subCategories;
     this.contacts = contacts;
   }
 }
@@ -19,15 +19,13 @@ class CategoryCollection {
 
   static fromFakeData(addressBook) {
     let col = new CategoryCollection(addressBook.name);
-    for (let contact of addressBook.contacts) {
-      for (let category of contact.categories) {
-        col.addContactToCategory(
-          {
-            name: contact.name,
-            email: contact.email,
-          },
-          category
-        );
+    for (const contact of addressBook.contacts) {
+      const contactData = {
+        name: contact.name,
+        email: contact.email,
+      };
+      for (const category of contact.categories) {
+        col.addContactToCategory(contactData, category);
       }
     }
     return col;
@@ -39,8 +37,8 @@ class CategoryCollection {
     let cur = this.categories[rootName];
     cur.contacts.push(contact);
     category.slice(1).forEach((cat) => {
-      cur.subCategory ??= new Category(cat);
-      cur = cur.subCategory;
+      cur.subCategories[cat] ??= new Category(cat);
+      cur = cur.subCategories[cat];
       cur.contacts.push(contact);
     });
   }
