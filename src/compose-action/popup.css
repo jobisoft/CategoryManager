@@ -1,6 +1,114 @@
 .popup-page {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-weight: bold;
-    height: 60px;
-    padding: 10px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: bold;
+  height: 60px;
+  padding: 10px;
+}
+
+html {
+  font-size: 16px;
+}
+
+#container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+#tree {
+  grid-column: 1;
+  width: 300px;
+}
+
+#contacts {
+  grid-column: 2;
+}
+
+/*
+ Only custom marker for summary/details
+ For cross browser compatible styling hide Firefox's marker by setting summary { display: block }
+ and Chrome and Safari's marker by setting ::-webkit-details-marker {display: none;}
+*/
+summary {
+  display: block;
+  cursor: pointer;
+  outline: 0;
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+
+body {
+  background-color: #191c1e;
+  color: white;
+  font-family: arial;
+  margin: 0;
+  padding: 1rem;
+}
+
+.tree-nav__item {
+  display: block;
+  white-space: nowrap;
+  color: #ccc;
+  position: relative;
+}
+.tree-nav__item.is-expandable::before {
+  border-left: 1px solid #333;
+  content: "";
+  height: 100%;
+  left: 0.8rem;
+  position: absolute;
+  top: 2.4rem;
+  height: calc(100% - 2.4rem);
+}
+.tree-nav__item .tree-nav__item {
+  margin-left: 2.4rem;
+}
+.tree-nav__item.is-expandable[open] > .tree-nav__item-title::before {
+  transform: rotate(90deg);
+}
+.tree-nav__item.is-expandable > .tree-nav__item-title {
+  padding-left: 2.4rem;
+}
+.tree-nav__item.is-expandable > .tree-nav__item-title::before {
+  position: absolute;
+  will-change: transform;
+  transition: transform 300ms ease;
+  font: var(--fa-font-solid);
+  color: #fff;
+  font-size: 1rem;
+  content: "\f054";
+  display: inline-block;
+  text-align: center;
+  top: 0.5rem;
+  left: 0.5rem;
+}
+
+.tree-nav__item-title {
+  cursor: pointer;
+  display: block;
+  outline: 0;
+  color: #fff;
+  font-size: 1rem;
+  line-height: 2rem;
+}
+.tree-nav__item-title .icon {
+  display: inline;
+  padding-left: 1.6rem;
+  margin-right: 0.8rem;
+  color: #666;
+  font-size: 1.4rem;
+  position: relative;
+}
+.tree-nav__item-title .icon::before {
+  top: 0;
+  position: absolute;
+  left: 0;
+  display: inline-block;
+  width: 1.6rem;
+  text-align: center;
+}
+
+.tree-nav__item-title::-webkit-details-marker {
+  display: none;
 }
