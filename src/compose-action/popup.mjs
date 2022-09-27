@@ -1,4 +1,5 @@
-import listAddressBooks from "../modules/address-book-test.mjs"
+import data from "../modules/fake-data-provider.mjs";
+import { CategoryCollection } from "../modules/category.mjs";
 
-console.log('List address books to console:');
-console.log(await listAddressBooks());
+let collection = CategoryCollection.fromFakeData(data[0]);
+console.log(collection);
