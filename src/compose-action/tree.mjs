@@ -5,9 +5,10 @@ import { isEmptyObject } from "../modules/utils.mjs";
 
 function writeTreeLeaf(prefix, category) {
   return `<div class="tree-nav__item">
-  <p class="tree-nav__item-title" data-category="${
-    prefix + category.name
-  }">${escapeHtml(category.name)}</p>
+    <p class="tree-nav__item-title" data-category="${prefix + category.name}">
+      <i class="fa-regular fa-square"></i>
+      ${escapeHtml(category.name)}
+    </p>
   </div>`;
 }
 
@@ -35,9 +36,10 @@ export function createTree(data, handler) {
     element: "#tree",
     data,
     template(data) {
-      return Object.keys(data.categories)
+      const html = Object.keys(data.categories)
         .map((key) => writeTreeNode("", data.categories[key]))
         .join("\n");
+      return html;
     },
   });
   component.element.addEventListener("click", handler);
