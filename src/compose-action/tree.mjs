@@ -17,8 +17,8 @@ function writeTreeNode(prefix, category) {
   const children = Object.keys(category.categories).map((key) => {
     const subCategory = category.categories[key];
     return isEmptyObject(subCategory.categories)
-      ? writeTreeLeaf(prefix + category.name + "/", subCategory)
-      : writeTreeNode(prefix + category.name + "/", subCategory);
+      ? writeTreeLeaf(prefix + category.name + " / ", subCategory)
+      : writeTreeNode(prefix + category.name + " / ", subCategory);
   });
   return isEmptyObject(category.categories)
     ? writeTreeLeaf(prefix, category)

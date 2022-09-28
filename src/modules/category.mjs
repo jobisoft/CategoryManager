@@ -45,7 +45,7 @@ class CategoryCollection {
 
   lookup(categoryKey) {
     // look up a category using a key like `A/B`
-    const category = categoryKey.split("/");
+    const category = categoryKey.split(" / ");
     let cur = this;
     for (const cat of category) {
       if (cur.categories[cat] == null) return null;
