@@ -5,27 +5,30 @@ export default [
       {
         name: "B A",
         email: "google@example.com",
-        categories: [["AAA"]],
+        categories: [["AAA"], ["First", "Second", "Third"]],
       },
       {
         name: "D C",
         email: "hello@example.com",
-        categories: [["AAA", "BB"]],
+        categories: [
+          ["AAA", "BB"],
+          ["First", "Second"],
+        ],
       },
       {
         name: "F E",
         email: "abc@example.com",
-        categories: [["AAA", "BB"]],
+        categories: [["AAA", "BB"], ["First"]],
       },
       {
         name: "AB K",
         email: "fake@example.com",
-        categories: [["TEST"], ["AAA", "BB"]],
+        categories: [["TEST"], ["AAA", "BB"], ["First", "Second", "Third"]],
       },
       {
         name: "Nasd Uasd",
         email: "test@example.com",
-        categories: [["TEST"]],
+        categories: [["TEST"], ["First", "Second"]],
       },
     ],
   },
