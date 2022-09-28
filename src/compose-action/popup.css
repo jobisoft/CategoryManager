@@ -49,7 +49,7 @@ summary {
   line-height: 2rem;
 }
 
-.tree-nav__item > p.tree-nav__item-title > i{
+.tree-nav__item > p.tree-nav__item-title > .tree-nav__checkbox{
   position: absolute;
   will-change: transform;
   transition: transform 300ms ease;
