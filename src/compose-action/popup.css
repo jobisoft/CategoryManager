@@ -3,7 +3,8 @@
 #container {
   display: grid;
   grid-template-columns: auto auto;
-  grid-template-rows: 32px auto;
+  grid-template-rows: 2rem auto;
+  gap: 0.5rem 0.5rem;
 }
 
 #tree {
@@ -22,7 +23,7 @@
   margin: 0;
   font-size: 1rem;
   text-align: right;
-  line-height: 32px;
+  line-height: 2rem;
 }
 
 #actions {
@@ -48,7 +49,7 @@
   color: #fff;
   cursor: pointer;
   display: inline-flex;
-  height: 32px;
+  height: 2rem;
   justify-content: center;
   line-height: 1;
   list-style: none;
