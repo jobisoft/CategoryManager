@@ -5,9 +5,14 @@ html {
 }
 
 body {
-  background-color: #191c1e;
-  color: white;
+  background-color: var(--catman-background);
+  color: var(--catman-foreground);
   font-family: arial;
   margin: 0;
   padding: 1rem;
+}
+
+:root {
+  --catman-background: #191c1e;
+  --catman-foreground: white;
 }
