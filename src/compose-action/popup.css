@@ -99,3 +99,13 @@ summary > .tree-nav__checkbox {
   font-size: 1rem;
   line-height: 2rem;
 }
+
+.tree-nav__item-title[data-selected="selected"] > .tree-nav__checkbox::before {
+  /* make checkbox selected */
+  content: "\f14a";
+}
+
+.tree-nav__item-title[data-selected="indeterminate"] > .tree-nav__checkbox::before {
+  /* make checkbox indeterminate */
+  content: "\f146";
+}
