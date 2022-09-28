@@ -1,4 +1,4 @@
-import { Component } from "../modules/ui.mjs";
+import { Component, escapeHtml } from "../modules/ui.mjs";
 
 export function createContactList(data = null) {
   return new Component({
@@ -6,7 +6,19 @@ export function createContactList(data = null) {
     data,
     template(data) {
       return `<ul>
-            ${data.map(({ name, email }) => `<li><b>${name}</b> ${email}</li>`).join('\n')}
+            ${data
+              .map(
+                ({ name, email }) =>
+                  `<li class="contact-row">
+                      <p class="contact-row__name">
+                        ${escapeHtml(name)}
+                      </p>
+                      <p class="contact-row__email">
+                        ${escapeHtml(email)}
+                      </p>
+                  </li>`
+              )
+              .join("\n")}
             </ul>`;
     },
   });
