@@ -149,8 +149,8 @@ summary {
   height: 100%;
   left: 0.8rem;
   position: absolute;
-  top: 2.4rem;
-  height: calc(100% - 2.4rem);
+  top: 2rem;
+  height: calc(100% - 2rem);
 }
 
 summary > .tree-nav__checkbox {
