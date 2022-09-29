@@ -7,6 +7,18 @@ class Category {
     this.categories = subCategories;
     this.contacts = contacts;
   }
+  toTreeData(prefix = "") {
+    let children = [];
+    let id = prefix + this.name;
+    for (const cat in this.categories) {
+      children.push(this.categories[cat].toTreeData(id + " / "));
+    }
+    return {
+      id,
+      text: this.name,
+      children,
+    };
+  }
 }
 
 class CategoryCollection {
@@ -52,6 +64,14 @@ class CategoryCollection {
       cur = cur.categories[cat];
     }
     return cur;
+  }
+
+  toTreeData() {
+    let data = [];
+    for (const cat in this.categories) {
+      data.push(this.categories[cat].toTreeData());
+    }
+    return data;
   }
 }
 
