@@ -42,6 +42,8 @@ class Category {
         .forEach(contacts.add, contacts); // 2. add contacts from subcategory to `contacts`
     }
     this.categories["Uncategorized"] = new Category(
+      // TODO: Maybe the user can define a category named "Uncategorized".
+      //       We could use a JS Symbol to avoid conflicts
       "Uncategorized",
       this.contacts.filter((x) => !contacts.has(x)),
       {},
