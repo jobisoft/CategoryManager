@@ -1,6 +1,5 @@
 import data from "../modules/fake-data-provider.mjs";
 import { CategoryCollection } from "../modules/category.mjs";
-import { createTree } from "./tree.mjs";
 import { createContactList } from "./contact-list.mjs";
 
 let collection = CategoryCollection.fromFakeData(data[0]);
