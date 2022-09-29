@@ -1,11 +1,20 @@
+import { isEmptyObject } from "./utils.mjs";
+
 class Category {
   categories;
   name;
   contacts;
-  constructor(name, contacts = [], subCategories = {}) {
+  isUncategorized;
+  constructor(
+    name,
+    contacts = [],
+    subCategories = {},
+    isUncategorized = false
+  ) {
     this.name = name;
     this.categories = subCategories;
     this.contacts = contacts;
+    this.isUncategorized = isUncategorized;
   }
   toTreeData(prefix = "") {
     let children = [];
@@ -17,30 +26,66 @@ class Category {
       id,
       text: this.name,
       children,
+      attributes: this.isUncategorized ? { class: "is-uncategrized" } : {},
     };
+  }
+  buildUncategorized() {
+    // only call this method once
+    if (isEmptyObject(this.categories)) {
+      // recursion base case
+      return this.contacts;
+    }
+    let contacts = new Set();
+    for (let cat in this.categories) {
+      this.categories[cat]
+        .buildUncategorized() // 1. build uncategorized for sub category
+        .forEach(contacts.add, contacts); // 2. add contacts from subcategory to `contacts`
+    }
+    this.categories["Uncategorized"] = new Category(
+      "Uncategorized",
+      this.contacts.filter((x) => !contacts.has(x)),
+      {},
+      true
+    );
+    return this.contacts;
   }
 }
 
-class CategoryCollection {
+class AddressBook {
   categories = {};
-  addressBookName;
+  contacts;
+  name;
 
-  constructor(addressBookName) {
-    this.addressBookName = addressBookName;
+  constructor(name, contacts) {
+    this.name = name;
+    this.contacts = contacts;
   }
 
   static fromFakeData(addressBook) {
-    let col = new CategoryCollection(addressBook.name);
+    let ab = new AddressBook(addressBook.name, addressBook.contacts);
     for (const contact of addressBook.contacts) {
-      const contactData = {
-        name: contact.name,
-        email: contact.email,
-      };
       for (const category of contact.categories) {
-        col.addContactToCategory(contactData, category);
+        ab.addContactToCategory(contact, category);
       }
     }
-    return col;
+    ab.buildUncategorized();
+    return ab;
+  }
+
+  buildUncategorized() {
+    // only call this method once
+    let contacts = new Set();
+    for (const cat in this.categories) {
+      this.categories[cat].buildUncategorized().forEach(contacts.add, contacts);
+    }
+    const filtered = this.contacts.filter((x) => !contacts.has(x));
+    if (filtered.length === 0) return;
+    this.categories["Uncategorized"] = new Category(
+      "Uncategorized",
+      filtered,
+      {},
+      true
+    );
   }
 
   addContactToCategory(contact, category) {
@@ -56,7 +101,7 @@ class CategoryCollection {
   }
 
   lookup(categoryKey) {
-    // look up a category using a key like `A/B`
+    // look up a category using a key like `A / B`
     const category = categoryKey.split(" / ");
     let cur = this;
     for (const cat of category) {
@@ -75,4 +120,4 @@ class CategoryCollection {
   }
 }
 
-export { Category, CategoryCollection };
+export { Category, AddressBook };
