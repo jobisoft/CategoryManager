@@ -30,6 +30,11 @@ export default [
         email: "test@example.com",
         categories: [["TEST"], ["First", "Second"]],
       },
+      {
+        name: "Emergency SOS",
+        email: "sos@example.com",
+        categories: [["First", "Special"]],
+      },
     ],
   },
 ];
