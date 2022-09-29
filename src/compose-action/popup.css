@@ -2,7 +2,7 @@
 
 #container {
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: auto 14rem;
   grid-template-rows: 2rem auto;
   gap: 0.5rem 2rem;
 }
