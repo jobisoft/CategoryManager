@@ -131,6 +131,10 @@
 
 /* TreeJS */
 
+#tree > .treejs > .treejs-nodes:first-child {
+  margin: 0;
+}
+
 #tree > .treejs > .treejs-nodes {
   padding-left: 0;
 }
