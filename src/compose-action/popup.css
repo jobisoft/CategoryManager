@@ -139,6 +139,14 @@
   border-top-color: var(--catman-foreground) !important;
 }
 
+#tree ul > li:first-child {
+  margin-top: 0.5rem;
+}
+
+#tree ul > li:not(:last-child) {
+  margin-bottom: 0.5rem;
+}
+
 /* Tree component */
 
 summary {
