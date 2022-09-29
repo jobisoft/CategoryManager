@@ -13,5 +13,11 @@ const categoryTitle = document.getElementById("category-title");
 
 let tree = new Tree("#tree", {
   data: treeData,
+  onLabelClick: (categoryKey) => {
+    if (categoryKey == null) return;
+    contacts.data = collection.lookup(categoryKey).contacts;
+    categoryTitle.innerText = categoryKey;
+    contacts.render();
+  },
 });
 contacts.render();
