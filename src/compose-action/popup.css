@@ -128,6 +128,16 @@
   font-size: 0.95rem;
 }
 
+/* TreeJS */
+
+#tree > .treejs > .treejs-nodes {
+  padding-left: 0;
+}
+
+#tree > .treejs .treejs-switcher::before {
+  border-top-color: var(--catman-foreground) !important;
+}
+
 /* Tree component */
 
 summary {
