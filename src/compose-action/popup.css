@@ -10,6 +10,7 @@
 #tree {
   grid-column: 1;
   grid-row: 2;
+  user-select: none;
 }
 
 #contacts {
