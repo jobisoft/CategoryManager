@@ -62,6 +62,8 @@ bindActionToButton("btn-to", async (e) => {
     ],
     ...details,
   });
+
+  window.close();
 });
 
 contacts.render();
