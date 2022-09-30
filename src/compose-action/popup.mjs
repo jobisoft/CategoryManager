@@ -3,7 +3,7 @@ import { AddressBook } from "../modules/category.mjs";
 import { createContactList } from "./contact-list.mjs";
 import { mapIterator } from "../modules/utils.mjs";
 
-let addressBook = AddressBook.fromFakeData(data[0]);
+let addressBook = AddressBook.fromFakeData(data[2]);
 let treeData = addressBook.toTreeData();
 
 console.log(treeData);
