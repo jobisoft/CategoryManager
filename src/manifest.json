@@ -17,8 +17,8 @@
     "32": "images/icon-32px.png",
     "16": "images/icon-16px.png"
   },
-  "permissions": ["addressBooks"],
-  "browser_action": {
+  "permissions": ["addressBooks", "compose", "tabs", "activeTab"],
+  "compose_action": {
     "default_popup": "compose-action/popup.html",
     "default_title": "Categories",
     "default_icon": "images/icon-32px.png"
