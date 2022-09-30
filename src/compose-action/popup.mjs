@@ -8,8 +8,9 @@ let treeData = addressBook.toTreeData();
 
 console.log(treeData);
 
-let contacts = createContactList([]);
+let contacts = createContactList(addressBook.contacts);
 const categoryTitle = document.getElementById("category-title");
+categoryTitle.innerText = addressBook.name;
 
 let tree = new Tree("#tree", {
   data: treeData,
