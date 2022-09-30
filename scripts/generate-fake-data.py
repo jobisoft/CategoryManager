@@ -3,6 +3,10 @@
 # requirements:
 # pip install names random-word
 
+# usage: python path-to-this-file.py
+# outputs: data.json (in current folder)
+# Wait patiently because it might take some time
+
 
 import names
 import json
