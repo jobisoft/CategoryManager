@@ -7,10 +7,29 @@ let addressBook = AddressBook.fromFakeData(data[2]);
 let treeData = addressBook.toTreeData();
 
 console.log(treeData);
-
+const [tab] = await browser.tabs.query({ currentWindow: true, active: true });
 let contacts = createContactList(addressBook.contacts);
 const categoryTitle = document.getElementById("category-title");
 categoryTitle.innerText = addressBook.name;
+
+document.addEventListener("contextmenu", () => {
+  console.log(tab);
+  browser.menus.overrideContext({ context: "tab", tabId: tab.id });
+  console.log("contextmenu");
+});
+
+browser.menus.onShown.addListener((info, tab) => {
+  // Extra Sugar: Logic to detect if mouse was over a category and enable/disable
+  // via menus.update menus (see info.menuIds)
+  // You can even change visibility of entries
+
+  // Maybe: https://www.sitepoint.com/community/t/determine-if-mouse-is-over-an-element/4239/4
+  console.log(info);
+});
+
+browser.menus.onClicked.addListener((info, tab) => {
+  console.log(info);
+});
 
 let tree = new Tree("#tree", {
   data: treeData,
@@ -31,8 +50,7 @@ function makeButtonEventHandler(fieldName) {
   return async (e) => {
     // No idea on how to grab tab id of the compose window.
     // Using browser.tabs.query as a work around
-    const tab = await browser.tabs.query({ currentWindow: true });
-    const details = await browser.compose.getComposeDetails(tab[0].id);
+    const details = await browser.compose.getComposeDetails(tab.id);
     const field = details[fieldName];
     const { selectedNodes } = tree;
     // Use email-addresses to parse rfc5322 email addresses.
@@ -57,7 +75,7 @@ function makeButtonEventHandler(fieldName) {
     });
 
     // set compose details
-    await browser.compose.setComposeDetails(tab[0].id, {
+    await browser.compose.setComposeDetails(tab.id, {
       ...details,
       [fieldName]: [
         ...mapIterator(map.entries(), ([email, name]) =>

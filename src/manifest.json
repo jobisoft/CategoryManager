@@ -17,7 +17,16 @@
     "32": "images/icon-32px.png",
     "16": "images/icon-16px.png"
   },
-  "permissions": ["addressBooks", "compose", "tabs", "activeTab"],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "permissions": [
+    "addressBooks",
+    "compose",
+    "tabs",
+    "menus",
+    "menus.overrideContext"
+  ],
   "compose_action": {
     "default_popup": "compose-action/popup.html",
     "default_title": "Categories",
