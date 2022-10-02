@@ -8,6 +8,7 @@ let treeData = addressBook.toTreeData();
 
 console.log(treeData);
 const [tab] = await browser.tabs.query({ currentWindow: true, active: true });
+const isComposeAction = tab.type == "messageCompose";
 let contacts = createContactList(addressBook.contacts);
 const categoryTitle = document.getElementById("category-title");
 categoryTitle.innerText = addressBook.name;
@@ -50,16 +51,22 @@ function makeButtonEventHandler(fieldName) {
   return async (e) => {
     // No idea on how to grab tab id of the compose window.
     // Using browser.tabs.query as a work around
-    const details = await browser.compose.getComposeDetails(tab.id);
-    const field = details[fieldName];
+
     const { selectedNodes } = tree;
     // Use email-addresses to parse rfc5322 email addresses.
     // And remove duplicate entries using a Map.
     let map = new Map();
-    field.forEach((addr) => {
-      const { address, name } = emailAddresses.parseOneAddress(addr);
-      map.set(address, name);
-    });
+    let details;
+    if (isComposeAction) {
+      details = await browser.compose.getComposeDetails(tab.id);
+      const field = details[fieldName];
+      field.forEach((addr) => {
+        const { address, name } = emailAddresses.parseOneAddress(addr);
+        map.set(address, name);
+      });
+    } else {
+      details = {};
+    }
 
     // retrieve contacts by selected categories and add them to map
     // 1. (TODO) remove sub categories if the parent category is selected
@@ -74,15 +81,25 @@ function makeButtonEventHandler(fieldName) {
       });
     });
 
-    // set compose details
-    await browser.compose.setComposeDetails(tab.id, {
-      ...details,
-      [fieldName]: [
-        ...mapIterator(map.entries(), ([email, name]) =>
-          name ? `${name} <${email}>` : email
-        ),
-      ],
-    });
+    const emailList = [
+      ...mapIterator(map.entries(), ([email, name]) =>
+        name ? `${name} <${email}>` : email
+      ),
+    ];
+
+    if (isComposeAction) {
+      // set compose details
+      await browser.compose.setComposeDetails(tab.id, {
+        ...details,
+        [fieldName]: emailList,
+      });
+    } else {
+      // open a new messageCompose window
+      await browser.compose.beginNew(null, {
+        [fieldName]: emailList,
+      });
+      console.log("Should OK");
+    }
 
     window.close();
   };
