@@ -13,7 +13,7 @@ browser.menus.create({
   title: "entry_1",
   contexts: ["tab"],
   viewTypes: ["tab"],
-  documentUrlPatterns: ["moz-extension://*/compose-action/popup.html"],
+  documentUrlPatterns: ["moz-extension://*/popup/popup.html"],
 });
 browser.menus.create(
   {
@@ -21,7 +21,7 @@ browser.menus.create(
     title: "entry_2",
     contexts: ["tab"],
     viewTypes: ["tab"],
-    documentUrlPatterns: ["moz-extension://*/compose-action/popup.html"],
+    documentUrlPatterns: ["moz-extension://*/popup/popup.html"],
   },
   () => {
     console.log("This is a callback when I am done (could also await me)");

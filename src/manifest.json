@@ -28,12 +28,12 @@
     "menus.overrideContext"
   ],
   "compose_action": {
-    "default_popup": "compose-action/popup.html",
+    "default_popup": "popup/popup.html",
     "default_title": "Categories",
     "default_icon": "images/icon-32px.png"
   },
   "browser_action": {
-    "default_popup": "compose-action/popup.html",
+    "default_popup": "popup/popup.html",
     "default_title": "Categories",
     "default_icon": "images/icon-32px.png"
   }
