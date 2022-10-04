@@ -2,6 +2,7 @@ import data from "../modules/fake-data-provider.mjs";
 import { AddressBook } from "../modules/category.mjs";
 import { createContactList } from "./contact-list.mjs";
 import { mapIterator } from "../modules/utils.mjs";
+import { createTree } from "./tree.mjs"
 
 let addressBook = AddressBook.fromFakeData(data[2]);
 let treeData = addressBook.toTreeData();
