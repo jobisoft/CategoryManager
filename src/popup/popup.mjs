@@ -22,7 +22,7 @@ document.addEventListener("contextmenu", () => {
 browser.menus.onShown.addListener((info, tab) => {
   // Extra Sugar: Logic to detect if mouse was over a category and enable/disable
   // via menus.update menus (see info.menuIds)
-  // You can even change visibility of entries
+  // You can even change visibility of entries 
 
   // Maybe: https://www.sitepoint.com/community/t/determine-if-mouse-is-over-an-element/4239/4
   console.log(info);
@@ -32,15 +32,27 @@ browser.menus.onClicked.addListener((info, tab) => {
   console.log(info);
 });
 
-let tree = new Tree("#tree", {
-  data: treeData,
-  onLabelClickOrDoubleClick: (categoryKey) => {
-    if (categoryKey == null) return;
-    contacts.data = addressBook.lookup(categoryKey).contacts;
-    categoryTitle.innerText = categoryKey;
-    contacts.render();
-  },
+// let tree = new Tree("#tree", {
+//   data: treeData,
+//   onLabelClickOrDoubleClick: (categoryKey) => {
+//     if (categoryKey == null) return;
+//     contacts.data = addressBook.lookup(categoryKey).contacts;
+//     categoryTitle.innerText = categoryKey;
+//     contacts.render();
+//   },
+// });
+
+let tree = createTree(collection, (event) => {
+  console.log(event.target, event.target.dataset);
+  const categoryKey = event.target.dataset.category;
+  if (categoryKey == null) return;
+  event.target.dataset.selected = "selected";
+  contacts.data = collection.lookup(categoryKey).contacts;
+  categoryTitle.innerText = categoryKey;
+  contacts.render();
 });
+tree.render();
+
 
 function bindActionToButton(id, f) {
   let button = document.getElementById(id);
