@@ -138,28 +138,6 @@
   font-size: 0.95rem;
 }
 
-/* TreeJS */
-
-#tree > .treejs > .treejs-nodes:first-child {
-  margin: 0;
-}
-
-#tree > .treejs > .treejs-nodes {
-  padding-left: 0;
-}
-
-#tree > .treejs .treejs-switcher::before {
-  border-top-color: var(--catman-foreground) !important;
-}
-
-#tree ul > li:first-child {
-  margin-top: 0.5rem;
-}
-
-#tree ul > li:not(:last-child) {
-  margin-bottom: 0.5rem;
-}
-
 /* Tree component */
 
 summary {
@@ -194,13 +172,12 @@ summary > .tree-nav__checkbox {
   line-height: 2rem;
 }
 
-.tree-nav__item > p.tree-nav__item-title > .tree-nav__checkbox {
+.tree-nav__item > p.tree-nav__item-title::before {
   position: absolute;
-  will-change: transform;
-  transition: transform 300ms ease;
-  color: #fff;
-  font-size: 1rem;
+  color: var(--catman-foreground);
   display: inline-block;
+  font: var(--fa-font-regular);
+  content: "\f111";
   text-align: center;
   top: 0.5rem;
   left: 0.5rem;
@@ -211,6 +188,7 @@ summary > .tree-nav__checkbox {
 }
 
 .tree-nav__item.is-expandable[open] > .tree-nav__item-title::before {
+  /* rotate the icon on expand */
   transform: rotate(90deg);
 }
 
@@ -219,6 +197,7 @@ summary > .tree-nav__checkbox {
 }
 
 .tree-nav__item.is-expandable > .tree-nav__item-title::before {
+  /* icon: expand */
   position: absolute;
   will-change: transform;
   transition: transform 300ms ease;
@@ -239,15 +218,4 @@ summary > .tree-nav__checkbox {
   color: #fff;
   font-size: 1rem;
   line-height: 2rem;
-}
-
-.tree-nav__item-title[data-selected="selected"] > .tree-nav__checkbox::before {
-  /* make checkbox selected */
-  content: "\f14a";
-}
-
-.tree-nav__item-title[data-selected="indeterminate"]
-  > .tree-nav__checkbox::before {
-  /* make checkbox indeterminate */
-  content: "\f146";
 }

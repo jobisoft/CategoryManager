@@ -6,7 +6,6 @@ import { isEmptyObject } from "../modules/utils.mjs";
 function writeTreeLeaf(prefix, category) {
   return `<div class="tree-nav__item">
     <p class="tree-nav__item-title" data-category="${prefix + category.name}">
-      <i class="tree-nav__checkbox fa-regular fa-square"></i>
       ${escapeHtml(category.name)}
     </p>
   </div>`;
@@ -26,7 +25,6 @@ function writeTreeNode(prefix, category) {
   <summary class="tree-nav__item-title" 
            data-category="${prefix + category.name}">
     ${escapeHtml(category.name)}
-    <i class="tree-nav__checkbox fa-regular fa-square"></i>
   </summary>
   ${children.join("\n")}
   </details>`;
