@@ -2,7 +2,7 @@ import data from "../modules/fake-data-provider.mjs";
 import { AddressBook } from "../modules/category.mjs";
 import { createContactList } from "./contact-list.mjs";
 import { mapIterator } from "../modules/utils.mjs";
-import { createTree } from "./tree.mjs"
+import { createTree } from "./tree.mjs";
 
 let addressBook = AddressBook.fromFakeData(data[2]);
 let treeData = addressBook.toTreeData();
@@ -23,7 +23,7 @@ document.addEventListener("contextmenu", () => {
 browser.menus.onShown.addListener((info, tab) => {
   // Extra Sugar: Logic to detect if mouse was over a category and enable/disable
   // via menus.update menus (see info.menuIds)
-  // You can even change visibility of entries 
+  // You can even change visibility of entries
 
   // Maybe: https://www.sitepoint.com/community/t/determine-if-mouse-is-over-an-element/4239/4
   console.log(info);
@@ -33,23 +33,8 @@ browser.menus.onClicked.addListener((info, tab) => {
   console.log(info);
 });
 
-
-let tree = createTree(addressBook, (event) => {
-  console.log(event.target, event.target.dataset);
-  const categoryKey = event.target.dataset.category;
-  if (categoryKey == null) return;
-  event.target.dataset.selected = "selected";
-  contacts.data = addressBook.lookup(categoryKey).contacts;
-  categoryTitle.innerText = categoryKey;
-  contacts.render();
-});
-tree.render();
-
-function makeButtonEventHandler(fieldName) {
-  return async (e) => {
-    // No idea on how to grab tab id of the compose window.
-    // Using browser.tabs.query as a work around
-
+function makeFieldUpdatingFunction(fieldName) {
+  return async (categoryKey) => {
     const { selectedNodes } = tree;
     // Use email-addresses to parse rfc5322 email addresses.
     // And remove duplicate entries using a Map.
@@ -67,17 +52,11 @@ function makeButtonEventHandler(fieldName) {
     }
 
     // retrieve contacts by selected categories and add them to map
-    // 1. (TODO) remove sub categories if the parent category is selected
-    // 2. add contacts to map
-    // The current implementation doesn't remove overlapping categories. Do this optimization in the future.
-    selectedNodes.forEach(({ id, status }) => {
-      // do not select indeterminate nodes
-      if (status != 2) return;
-      addressBook.lookup(id).contacts.forEach(({ name, email }) => {
-        // Respect the user's input. Do not overwrite user input
-        if (!map.has(email)) map.set(email, name);
-      });
-    });
+    const selectedContacts = addressBook.lookup(categoryKey).contacts;
+    for (const { email, name } of selectedContacts) {
+      // Respect the user's input.
+      if (!map.has(email)) map.set(email, name);
+    }
 
     const emailList = [
       ...mapIterator(map.entries(), ([email, name]) =>
@@ -96,11 +75,38 @@ function makeButtonEventHandler(fieldName) {
       await browser.compose.beginNew(null, {
         [fieldName]: emailList,
       });
-      console.log("Should OK");
     }
-
-    window.close();
   };
 }
+
+const bccOnDoubleClick = makeFieldUpdatingFunction("bcc");
+
+let tree = createTree({
+  data: addressBook,
+  click(event) {
+    if (event.detail > 1) {
+      // Disable click event on double click
+      event.preventDefault();
+      return false;
+    }
+    console.log(event.target, event.target.dataset);
+    const categoryKey = event.target.dataset.category;
+    if (categoryKey == null) return;
+    contacts.data = addressBook.lookup(categoryKey).contacts;
+    categoryTitle.innerText = categoryKey;
+    contacts.render();
+  },
+  doubleClick(event) {
+    // console.log("Double Click");
+    // event.stopPropagation();
+    // event.preventDefault();
+    const categoryKey = event.target.dataset.category;
+    if (categoryKey == null) return;
+    contacts.data = addressBook.lookup(categoryKey).contacts;
+    bccOnDoubleClick(categoryKey);
+    window.close();
+  },
+});
+tree.render();
 
 contacts.render();

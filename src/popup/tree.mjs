@@ -30,7 +30,7 @@ function writeTreeNode(prefix, category) {
   </details>`;
 }
 
-export function createTree(data, handler) {
+export function createTree({ data, click, doubleClick }) {
   let component = new Component({
     element: "#tree",
     data,
@@ -41,6 +41,7 @@ export function createTree(data, handler) {
       return html;
     },
   });
-  component.element.addEventListener("click", handler);
+  click && component.element.addEventListener("click", click);
+  doubleClick && component.element.addEventListener("dblclick", doubleClick);
   return component;
 }
