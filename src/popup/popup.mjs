@@ -33,32 +33,17 @@ browser.menus.onClicked.addListener((info, tab) => {
   console.log(info);
 });
 
-// let tree = new Tree("#tree", {
-//   data: treeData,
-//   onLabelClickOrDoubleClick: (categoryKey) => {
-//     if (categoryKey == null) return;
-//     contacts.data = addressBook.lookup(categoryKey).contacts;
-//     categoryTitle.innerText = categoryKey;
-//     contacts.render();
-//   },
-// });
 
-let tree = createTree(collection, (event) => {
+let tree = createTree(addressBook, (event) => {
   console.log(event.target, event.target.dataset);
   const categoryKey = event.target.dataset.category;
   if (categoryKey == null) return;
   event.target.dataset.selected = "selected";
-  contacts.data = collection.lookup(categoryKey).contacts;
+  contacts.data = addressBook.lookup(categoryKey).contacts;
   categoryTitle.innerText = categoryKey;
   contacts.render();
 });
 tree.render();
-
-
-function bindActionToButton(id, f) {
-  let button = document.getElementById(id);
-  button.addEventListener("click", f, false);
-}
 
 function makeButtonEventHandler(fieldName) {
   return async (e) => {
@@ -117,9 +102,5 @@ function makeButtonEventHandler(fieldName) {
     window.close();
   };
 }
-
-bindActionToButton("btn-to", makeButtonEventHandler("to"));
-bindActionToButton("btn-cc", makeButtonEventHandler("cc"));
-bindActionToButton("btn-bcc", makeButtonEventHandler("bcc"));
 
 contacts.render();
