@@ -14,9 +14,12 @@ let contactList = createContactList(addressBook.contacts);
 const categoryTitle = document.getElementById("category-title");
 categoryTitle.innerText = addressBook.name;
 
-document.addEventListener("contextmenu", () => {
+let elementForContextMenu;
+
+document.addEventListener("contextmenu", (e) => {
   console.log(tab);
   browser.menus.overrideContext({ context: "tab", tabId: tab.id });
+  elementForContextMenu = e.target;
   console.log("contextmenu");
 });
 
@@ -26,7 +29,7 @@ browser.menus.onShown.addListener((info, tab) => {
   // You can even change visibility of entries
 
   // Maybe: https://www.sitepoint.com/community/t/determine-if-mouse-is-over-an-element/4239/4
-  console.log(info);
+  console.log(info, elementForContextMenu);
 });
 
 browser.menus.onClicked.addListener((info, tab) => {
