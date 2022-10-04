@@ -10,7 +10,7 @@ let treeData = addressBook.toTreeData();
 console.log(treeData);
 const [tab] = await browser.tabs.query({ currentWindow: true, active: true });
 const isComposeAction = tab.type == "messageCompose";
-let contacts = createContactList(addressBook.contacts);
+let contactList = createContactList(addressBook.contacts);
 const categoryTitle = document.getElementById("category-title");
 categoryTitle.innerText = addressBook.name;
 
@@ -79,8 +79,6 @@ function makeFieldUpdatingFunction(fieldName) {
   };
 }
 
-const bccOnDoubleClick = makeFieldUpdatingFunction("bcc");
-
 let tree = createTree({
   data: addressBook,
   click(event) {
@@ -92,21 +90,23 @@ let tree = createTree({
     console.log(event.target, event.target.dataset);
     const categoryKey = event.target.dataset.category;
     if (categoryKey == null) return;
-    contacts.data = addressBook.lookup(categoryKey).contacts;
+    contactList.data = addressBook.lookup(categoryKey).contacts;
     categoryTitle.innerText = categoryKey;
-    contacts.render();
+    contactList.render();
   },
-  doubleClick(event) {
-    // console.log("Double Click");
-    // event.stopPropagation();
-    // event.preventDefault();
+  async doubleClick(event) {
     const categoryKey = event.target.dataset.category;
     if (categoryKey == null) return;
-    contacts.data = addressBook.lookup(categoryKey).contacts;
-    bccOnDoubleClick(categoryKey);
+    contactList.data = addressBook.lookup(categoryKey).contacts;
+    // open a new messageCompose window
+    await browser.compose.beginNew(null, {
+      bcc: contactList.data.map(({ email, name }) =>
+        name ? `${name} <${email}>` : email
+      ),
+    });
     window.close();
   },
 });
 tree.render();
 
-contacts.render();
+contactList.render();
