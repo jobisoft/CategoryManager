@@ -1,11 +1,12 @@
 import { escapeHtml, Component } from "../modules/ui.mjs";
 
 function writeAddressBookElement(addressBook) {
+  // todo: use address book id here. There might be duplicates in names
   let name = escapeHtml(addressBook.name);
   return `<li data-address-book="${name}">${name}</li>`;
 }
 
-export function createAddressBookList({ data, click, doubleClick }) {
+export function createAddressBookList({ data, click }) {
   let component = new Component({
     element: "#address-books",
     data,
@@ -15,6 +16,5 @@ export function createAddressBookList({ data, click, doubleClick }) {
     },
   });
   click && component.element.addEventListener("click", click);
-  doubleClick && component.element.addEventListener("dblclick", doubleClick);
   return component;
 }
