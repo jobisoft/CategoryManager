@@ -147,6 +147,7 @@
 }
 
 .tree-nav__item.is-expandable::before {
+  /* vertical line */
   border-left: 1px solid #333;
   content: "";
   height: 100%;
@@ -156,16 +157,14 @@
   height: calc(100% - 2rem);
 }
 
-summary > .tree-nav__checkbox {
-  margin-left: 0.2rem;
-}
-
 .tree-nav__item > p.tree-nav__item-title {
+  /* Leaf element */
   display: inline;
   line-height: 2rem;
 }
 
 .tree-nav__item > p.tree-nav__item-title::before {
+  /* Leaf element marker */
   position: absolute;
   color: var(--catman-foreground);
   display: inline-block;
@@ -180,7 +179,9 @@ summary > .tree-nav__checkbox {
   margin-left: 2rem;
 }
 
-.tree-nav__item.is-expandable[open] > .tree-nav__item-title::before {
+.tree-nav__item.is-expandable[open]
+  > .tree-nav__item-title
+  > .tree-nav__expander {
   /* rotate the icon on expand */
   transform: rotate(90deg);
 }
@@ -189,19 +190,19 @@ summary > .tree-nav__checkbox {
   padding-left: 2rem;
 }
 
-.tree-nav__item.is-expandable > .tree-nav__item-title::before {
+.tree-nav__item.is-expandable > .tree-nav__item-title > .tree-nav__expander {
   /* icon: expand */
   position: absolute;
   will-change: transform;
   transition: transform 300ms ease;
-  font: var(--fa-font-solid);
   color: #fff;
   font-size: 1rem;
-  content: "\f054";
-  display: inline-block;
   text-align: center;
-  top: 0.5rem;
-  left: 0.5rem;
+  display: inline-block;
+  top: 0;
+  left: 0;
+  padding-inline: 0.5rem;
+  padding-block: 0.5rem;
 }
 
 .tree-nav__item-title {

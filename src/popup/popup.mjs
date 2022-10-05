@@ -43,6 +43,9 @@ let categoryTree = createCategoryTree({
       // Disable click event on double click
       event.preventDefault();
       return false;
+    } else if (event.target.nodeName !== "I") {
+      // Only expand the tree on expander click
+      event.preventDefault();
     }
     console.log(event.target, event.target.dataset);
     const categoryKey = event.target.dataset.category;

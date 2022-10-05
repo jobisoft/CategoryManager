@@ -24,6 +24,7 @@ export function writeTreeNode(prefix, category) {
     : `<details class="tree-nav__item is-expandable">
   <summary class="tree-nav__item-title" 
            data-category="${escapeHtml(prefix + category.name)}">
+    <i class="tree-nav__expander fa-solid fa-chevron-right"></i>
     ${escapeHtml(category.name)}
   </summary>
   ${children.join("\n")}
