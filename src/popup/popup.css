@@ -201,6 +201,7 @@
   display: inline-block;
   top: 0;
   left: 0;
+  /* Make the clickable area larger */
   padding-inline: 0.5rem;
   padding-block: 0.5rem;
 }
