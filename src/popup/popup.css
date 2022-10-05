@@ -2,7 +2,8 @@
 
 #container {
   display: grid;
-  grid-template-columns: auto auto 14rem;
+  /* TODO: determin the max width of tree view in JS. use 15rem for now */
+  grid-template-columns: auto 15rem 14rem;
   grid-template-rows: 2rem auto;
   gap: 0.5rem 2rem;
   /* No idea why `calc(100vh - 2rem)` doesn't work */
@@ -146,7 +147,7 @@
 
 /* Tree component */
 
-summary {
+#tree > summary {
   display: block;
   cursor: pointer;
   outline: 0;
