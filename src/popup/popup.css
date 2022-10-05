@@ -23,37 +23,23 @@
   overflow: scroll;
 }
 
-#column-3 {
+#contacts {
   grid-column: 3;
-  grid-row: 1;
+  grid-row: 2;
   grid-row-end: 3;
   position: relative;
   overflow: scroll;
 }
 
-#column-3:before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -1.15rem;
-  height: 100%;
-  width: 0.3rem;
-  background: gray;
-  border-radius: 0.15rem;
-  background-clip: border-box;
-}
-
 #category-title {
+  grid-column: 2;
+  grid-row: 1;
+  grid-column-end: 4;
   margin: 0;
   font-size: 1rem;
   text-align: right;
   line-height: 2rem;
-  /* Do not let the scroll bar display over the title  */
-  padding-right: 5px;
-  /* Pin title on the top */
-  position: sticky;
   background: var(--catman-background);
-  top: 0;
 }
 
 #actions {
