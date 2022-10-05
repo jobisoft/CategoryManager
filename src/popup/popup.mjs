@@ -2,7 +2,7 @@ import data from "../modules/fake-data-provider.mjs";
 import { AddressBook } from "../modules/category.mjs";
 import { createContactList } from "./contact-list.mjs";
 import { mapIterator } from "../modules/utils.mjs";
-import { createTree } from "./tree.mjs";
+import { createTree } from "./category-tree.mjs";
 
 let addressBook = AddressBook.fromFakeData(data[2]);
 let treeData = addressBook.toTreeData();
@@ -17,7 +17,6 @@ categoryTitle.innerText = addressBook.name;
 let elementForContextMenu;
 
 document.addEventListener("contextmenu", (e) => {
-  console.log(tab);
   browser.menus.overrideContext({ context: "tab", tabId: tab.id });
   elementForContextMenu = e.target;
   console.log("contextmenu");
