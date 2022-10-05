@@ -9,21 +9,23 @@
 
 // When viewTypes is present, the document's URL is matched instead.
 browser.menus.create({
-  id: "entry_1",
-  title: "entry_1",
+  id: "add_to",
+  title: "Add to TO",
   contexts: ["tab"],
   viewTypes: ["tab"],
   documentUrlPatterns: ["moz-extension://*/popup/popup.html"],
 });
-browser.menus.create(
-  {
-    id: "entry_2",
-    title: "entry_2",
-    contexts: ["tab"],
-    viewTypes: ["tab"],
-    documentUrlPatterns: ["moz-extension://*/popup/popup.html"],
-  },
-  () => {
-    console.log("This is a callback when I am done (could also await me)");
-  }
-);
+browser.menus.create({
+  id: "add_cc",
+  title: "Add to CC",
+  contexts: ["tab"],
+  viewTypes: ["tab"],
+  documentUrlPatterns: ["moz-extension://*/popup/popup.html"],
+});
+browser.menus.create({
+  id: "add_bcc",
+  title: "Add to BCC",
+  contexts: ["tab"],
+  viewTypes: ["tab"],
+  documentUrlPatterns: ["moz-extension://*/popup/popup.html"],
+});
