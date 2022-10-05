@@ -5,7 +5,9 @@ import { isEmptyObject } from "../modules/utils.mjs";
 
 function writeTreeLeaf(prefix, category) {
   return `<div class="tree-nav__item">
-    <p class="tree-nav__item-title" data-category="${prefix + category.name}">
+    <p class="tree-nav__item-title" data-category="${escapeHtml(
+      prefix + category.name
+    )}">
       ${escapeHtml(category.name)}
     </p>
   </div>`;
@@ -23,7 +25,7 @@ function writeTreeNode(prefix, category) {
     ? writeTreeLeaf(prefix, category)
     : `<details class="tree-nav__item is-expandable">
   <summary class="tree-nav__item-title" 
-           data-category="${prefix + category.name}">
+           data-category="${escapeHtml(prefix + category.name)}">
     ${escapeHtml(category.name)}
   </summary>
   ${children.join("\n")}
