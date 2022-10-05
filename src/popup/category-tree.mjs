@@ -1,8 +1,6 @@
 import { escapeHtml, Component } from "../modules/ui.mjs";
 import { isEmptyObject } from "../modules/utils.mjs";
 
-// TODO: escape category in data-category
-
 function writeTreeLeaf(prefix, category) {
   return `<div class="tree-nav__item">
     <p class="tree-nav__item-title" data-category="${escapeHtml(
@@ -13,7 +11,7 @@ function writeTreeLeaf(prefix, category) {
   </div>`;
 }
 
-function writeTreeNode(prefix, category) {
+export function writeTreeNode(prefix, category) {
   console.log(category);
   const children = Object.keys(category.categories).map((key) => {
     const subCategory = category.categories[key];
@@ -30,20 +28,4 @@ function writeTreeNode(prefix, category) {
   </summary>
   ${children.join("\n")}
   </details>`;
-}
-
-export function createTree({ data, click, doubleClick }) {
-  let component = new Component({
-    element: "#tree",
-    data,
-    template(data) {
-      const html = Object.keys(data.categories)
-        .map((key) => writeTreeNode("", data.categories[key]))
-        .join("\n");
-      return html;
-    },
-  });
-  click && component.element.addEventListener("click", click);
-  doubleClick && component.element.addEventListener("dblclick", doubleClick);
-  return component;
 }

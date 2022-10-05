@@ -2,17 +2,15 @@ import data from "../modules/fake-data-provider.mjs";
 import { AddressBook } from "../modules/category.mjs";
 import { createContactList } from "./contact-list.mjs";
 import { mapIterator } from "../modules/utils.mjs";
-import { createTree } from "./category-tree.mjs";
+import { createAddressBookExplorer } from "./address-book-explorer.mjs";
 
-let addressBook = AddressBook.fromFakeData(data[2]);
-let treeData = addressBook.toTreeData();
+let addressBooks = data.map(AddressBook.fromFakeData);
 
-console.log(treeData);
 const [tab] = await browser.tabs.query({ currentWindow: true, active: true });
 const isComposeAction = tab.type == "messageCompose";
-let contactList = createContactList(addressBook.contacts);
+let contactList = createContactList(addressBooks[0].contacts);
 const categoryTitle = document.getElementById("category-title");
-categoryTitle.innerText = addressBook.name;
+categoryTitle.innerText = addressBooks[0].name;
 
 let elementForContextMenu;
 
@@ -81,8 +79,8 @@ function makeFieldUpdatingFunction(fieldName) {
   };
 }
 
-let tree = createTree({
-  data: addressBook,
+let tree = createAddressBookExplorer({
+  data: addressBooks,
   click(event) {
     if (event.detail > 1) {
       // Disable click event on double click

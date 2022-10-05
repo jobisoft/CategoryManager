@@ -9,7 +9,7 @@
   height: calc(600px - 2rem);
 }
 
-#tree {
+#explorer {
   grid-column: 1;
   grid-row: 2;
   user-select: none;
