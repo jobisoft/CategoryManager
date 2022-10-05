@@ -50,9 +50,9 @@ let categoryTree = createCategoryTree({
     console.log(event.target, event.target.dataset);
     const categoryKey = event.target.dataset.category;
     if (categoryKey == null) return;
-    contactList.data = currentAddressBook.lookup(categoryKey).contacts;
+    let newData = currentAddressBook.lookup(categoryKey).contacts;
     categoryTitle.innerText = categoryKey;
-    contactList.render();
+    contactList.update(newData);
   },
   async doubleClick(event) {
     const categoryKey = event.target.dataset.category;
@@ -74,7 +74,9 @@ let addressBookList = createAddressBookList({
     const addressBookName = event.target.dataset.addressBook;
     if (addressBookName == null) return;
     currentAddressBook = addressBooks[addressBookName];
+    categoryTitle.innerText = currentAddressBook.name;
     categoryTree.update(currentAddressBook);
+    contactList.update(currentAddressBook.contacts);
   },
 });
 
