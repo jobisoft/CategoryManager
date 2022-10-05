@@ -16,5 +16,11 @@ export function createAddressBookList({ data, click }) {
     },
   });
   click && component.element.addEventListener("click", click);
+  component.element.addEventListener("click", ({ target }) => {
+    for (const e of target.parentElement.children) {
+      e.classList.remove("selected");
+    }
+    target.classList.toggle("selected");
+  });
   return component;
 }

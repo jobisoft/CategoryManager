@@ -226,3 +226,31 @@ summary > .tree-nav__checkbox {
   font-size: 1rem;
   line-height: 2rem;
 }
+
+/* Address Book List */
+
+#address-books {
+  padding-left: 0;
+  font-size: 1rem;
+  user-select: none;
+}
+
+#address-books > li::before {
+  font: var(--fa-font-solid);
+  content: "\f2b9";
+  margin-right: 0.4rem;
+}
+
+#address-books > li {
+  display: block;
+  padding-block: 0.5rem;
+  transition: color 0.2s;
+}
+
+#address-books > li.selected {
+  color: aqua;
+}
+
+#address-books > li:hover {
+  color: dodgerblue;
+}
