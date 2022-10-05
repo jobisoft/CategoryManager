@@ -2,7 +2,7 @@ import data from "../modules/fake-data-provider.mjs";
 import { AddressBook } from "../modules/category.mjs";
 import { createContactList } from "./contact-list.mjs";
 import { mapIterator } from "../modules/utils.mjs";
-import { createAddressBookExplorer } from "./address-book-explorer.mjs";
+import { createAddressBookList } from "./address-book-list.mjs";
 
 let addressBooks = data.map(AddressBook.fromFakeData);
 
@@ -33,53 +33,7 @@ browser.menus.onClicked.addListener((info, tab) => {
   console.log(info);
 });
 
-function makeFieldUpdatingFunction(fieldName) {
-  return async (categoryKey) => {
-    const { selectedNodes } = tree;
-    // Use email-addresses to parse rfc5322 email addresses.
-    // And remove duplicate entries using a Map.
-    let map = new Map();
-    let details;
-    if (isComposeAction) {
-      details = await browser.compose.getComposeDetails(tab.id);
-      const field = details[fieldName];
-      field.forEach((addr) => {
-        const { address, name } = emailAddresses.parseOneAddress(addr);
-        map.set(address, name);
-      });
-    } else {
-      details = {};
-    }
-
-    // retrieve contacts by selected categories and add them to map
-    const selectedContacts = addressBook.lookup(categoryKey).contacts;
-    for (const { email, name } of selectedContacts) {
-      // Respect the user's input.
-      if (!map.has(email)) map.set(email, name);
-    }
-
-    const emailList = [
-      ...mapIterator(map.entries(), ([email, name]) =>
-        name ? `${name} <${email}>` : email
-      ),
-    ];
-
-    if (isComposeAction) {
-      // set compose details
-      await browser.compose.setComposeDetails(tab.id, {
-        ...details,
-        [fieldName]: emailList,
-      });
-    } else {
-      // open a new messageCompose window
-      await browser.compose.beginNew(null, {
-        [fieldName]: emailList,
-      });
-    }
-  };
-}
-
-let tree = createAddressBookExplorer({
+let addressBookList = createAddressBookList({
   data: addressBooks,
   click(event) {
     if (event.detail > 1) {
@@ -107,6 +61,6 @@ let tree = createAddressBookExplorer({
     window.close();
   },
 });
-tree.render();
+addressBookList.render();
 
 contactList.render();

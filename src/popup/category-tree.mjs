@@ -29,3 +29,19 @@ export function writeTreeNode(prefix, category) {
   ${children.join("\n")}
   </details>`;
 }
+
+export function createTree({ data, click, doubleClick }) {
+  let component = new Component({
+    element: "#tree",
+    data,
+    template(data) {
+      const html = Object.keys(data.categories)
+        .map((key) => writeTreeNode("", data.categories[key]))
+        .join("\n");
+      return html;
+    },
+  });
+  click && component.element.addEventListener("click", click);
+  doubleClick && component.element.addEventListener("dblclick", doubleClick);
+  return component;
+}
