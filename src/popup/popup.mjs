@@ -1,18 +1,18 @@
 import data from "../modules/fake-data-provider.mjs";
 import { AddressBook } from "../modules/category.mjs";
 import { createContactList } from "./contact-list.mjs";
-import { mapIterator } from "../modules/utils.mjs";
+import { createCategoryTree } from "./category-tree.mjs";
 import { createAddressBookList } from "./address-book-list.mjs";
 
-let addressBooks = data.map(AddressBook.fromFakeData);
+let addressBooks = Object.fromEntries(
+  data.map((d) => [d.name, AddressBook.fromFakeData(d)])
+);
 
 const [tab] = await browser.tabs.query({ currentWindow: true, active: true });
 const isComposeAction = tab.type == "messageCompose";
-let contactList = createContactList(addressBooks[0].contacts);
-const categoryTitle = document.getElementById("category-title");
-categoryTitle.innerText = addressBooks[0].name;
 
 let elementForContextMenu;
+let currentAddressBook = Object.values(addressBooks)[0];
 
 document.addEventListener("contextmenu", (e) => {
   browser.menus.overrideContext({ context: "tab", tabId: tab.id });
@@ -33,8 +33,11 @@ browser.menus.onClicked.addListener((info, tab) => {
   console.log(info);
 });
 
-let addressBookList = createAddressBookList({
-  data: addressBooks,
+let contactList = createContactList(currentAddressBook.contacts);
+const categoryTitle = document.getElementById("category-title");
+categoryTitle.innerText = currentAddressBook.name;
+let categoryTree = createCategoryTree({
+  data: currentAddressBook,
   click(event) {
     if (event.detail > 1) {
       // Disable click event on double click
@@ -44,14 +47,14 @@ let addressBookList = createAddressBookList({
     console.log(event.target, event.target.dataset);
     const categoryKey = event.target.dataset.category;
     if (categoryKey == null) return;
-    contactList.data = addressBook.lookup(categoryKey).contacts;
+    contactList.data = currentAddressBook.lookup(categoryKey).contacts;
     categoryTitle.innerText = categoryKey;
     contactList.render();
   },
   async doubleClick(event) {
     const categoryKey = event.target.dataset.category;
     if (categoryKey == null) return;
-    contactList.data = addressBook.lookup(categoryKey).contacts;
+    contactList.data = currentAddressBook.lookup(categoryKey).contacts;
     // open a new messageCompose window
     await browser.compose.beginNew(null, {
       bcc: contactList.data.map(({ email, name }) =>
@@ -61,6 +64,17 @@ let addressBookList = createAddressBookList({
     window.close();
   },
 });
-addressBookList.render();
 
+let addressBookList = createAddressBookList({
+  data: Object.values(addressBooks),
+  click(event) {
+    const addressBookName = event.target.dataset.addressBook;
+    if (addressBookName == null) return;
+    currentAddressBook = addressBooks[addressBookName];
+    categoryTree.update(currentAddressBook);
+  },
+});
+
+addressBookList.render();
+categoryTree.render();
 contactList.render();

@@ -30,7 +30,7 @@ export function writeTreeNode(prefix, category) {
   </details>`;
 }
 
-export function createTree({ data, click, doubleClick }) {
+export function createCategoryTree({ data, click, doubleClick }) {
   let component = new Component({
     element: "#tree",
     data,
