@@ -1,17 +1,17 @@
 export class Component {
   element;
-  #data;
+  data;
   template;
   constructor({ element, data, template }) {
     this.element = document.querySelector(element);
-    this.#data = data;
+    this.data = data;
     this.template = template;
   }
   render() {
-    this.element.innerHTML = this.template(this.#data);
+    this.element.innerHTML = this.template(this.data);
   }
   update(data) {
-    this.#data = data;
+    this.data = data;
     this.render();
   }
 }
