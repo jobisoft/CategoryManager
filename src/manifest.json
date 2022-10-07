@@ -25,7 +25,8 @@
     "compose",
     "tabs",
     "menus",
-    "menus.overrideContext"
+    "menus.overrideContext",
+    "storage"
   ],
   "compose_action": {
     "default_popup": "popup/popup.html",
@@ -36,5 +37,9 @@
     "default_popup": "popup/popup.html",
     "default_title": "Categories",
     "default_icon": "images/icon-32px.png"
+  },
+  "options_ui": {
+    "page": "options-ui/options.html",
+    "browser_style": true
   }
 }
