@@ -1,5 +1,7 @@
 import { isEmptyObject } from "./utils.mjs";
 
+export const uncategorized = Symbol("Uncategorized");
+
 class Category {
   categories;
   name;
@@ -16,19 +18,6 @@ class Category {
     this.contacts = contacts;
     this.isUncategorized = isUncategorized;
   }
-  toTreeData(prefix = "") {
-    let children = [];
-    let id = prefix + this.name;
-    for (const cat in this.categories) {
-      children.push(this.categories[cat].toTreeData(id + " / "));
-    }
-    return {
-      id,
-      text: this.name,
-      children,
-      attributes: this.isUncategorized ? { class: "is-uncategrized" } : {},
-    };
-  }
   buildUncategorized() {
     // only call this method once
     if (isEmptyObject(this.categories)) {
@@ -41,9 +30,7 @@ class Category {
         .buildUncategorized() // 1. build uncategorized for sub category
         .forEach(contacts.add, contacts); // 2. add contacts from subcategory to `contacts`
     }
-    this.categories["Uncategorized"] = new Category(
-      // TODO: Maybe the user can define a category named "Uncategorized".
-      //       We could use a JS Symbol to avoid conflicts
+    this.categories[uncategorized] = new Category(
       "Uncategorized",
       this.contacts.filter((x) => !contacts.has(x)),
       {},
@@ -82,7 +69,7 @@ class AddressBook {
     }
     const filtered = this.contacts.filter((x) => !contacts.has(x));
     if (filtered.length === 0) return;
-    this.categories["Uncategorized"] = new Category(
+    this.categories[uncategorized] = new Category(
       "Uncategorized",
       filtered,
       {},
@@ -102,15 +89,19 @@ class AddressBook {
     });
   }
 
-  lookup(categoryKey) {
+  lookup(categoryKey, isUncategorized = false) {
     // look up a category using a key like `A / B`
-    const category = categoryKey.split(" / ");
+    let category = categoryKey.split(" / ");
+    if (isUncategorized) {
+      // remove the last sub category
+      category.pop();
+    }
     let cur = this;
     for (const cat of category) {
       if (cur.categories[cat] == null) return null;
       cur = cur.categories[cat];
     }
-    return cur;
+    return isUncategorized ? cur.categories[uncategorized] : cur;
   }
 
   toTreeData() {

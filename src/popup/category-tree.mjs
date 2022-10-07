@@ -1,11 +1,15 @@
+import { uncategorized } from "../modules/category.mjs";
 import { escapeHtml, Component } from "../modules/ui.mjs";
 import { isEmptyObject } from "../modules/utils.mjs";
 
 function writeTreeLeaf(prefix, category) {
+  let uncategorizedAttr = category.isUncategorized
+    ? 'data-uncategorized=""'
+    : "";
   return `<div class="tree-nav__item">
     <p class="tree-nav__item-title" data-category="${escapeHtml(
       prefix + category.name
-    )}">
+    )}" ${uncategorizedAttr}>
       ${escapeHtml(category.name)}
     </p>
   </div>`;
@@ -13,12 +17,20 @@ function writeTreeLeaf(prefix, category) {
 
 export function writeTreeNode(prefix, category) {
   console.log(category);
-  const children = Object.keys(category.categories).map((key) => {
+  const newPrefix = prefix + category.name + " / ";
+  let children = Object.keys(category.categories).map((key) => {
     const subCategory = category.categories[key];
     return isEmptyObject(subCategory.categories)
-      ? writeTreeLeaf(prefix + category.name + " / ", subCategory)
-      : writeTreeNode(prefix + category.name + " / ", subCategory);
+      ? writeTreeLeaf(newPrefix, subCategory)
+      : writeTreeNode(newPrefix, subCategory);
   });
+  const uncategorizedCategory = category.categories[uncategorized];
+  if (uncategorizedCategory != null) {
+    children.push(
+      // symbol `uncategorized` is always the last one and needs special handling
+      writeTreeLeaf(newPrefix, uncategorizedCategory)
+    );
+  }
   return isEmptyObject(category.categories)
     ? writeTreeLeaf(prefix, category)
     : `<details class="tree-nav__item is-expandable">
@@ -36,10 +48,14 @@ export function createCategoryTree({ data, click, doubleClick }) {
     element: "#tree",
     data,
     template(data) {
-      const html = Object.keys(data.categories)
-        .map((key) => writeTreeNode("", data.categories[key]))
-        .join("\n");
-      return html;
+      let roots = Object.keys(data.categories).map((key) =>
+        writeTreeNode("", data.categories[key])
+      );
+      const uncategorizedCategory = data.categories[uncategorized];
+      if (uncategorizedCategory != null) {
+        roots.push(writeTreeLeaf("", uncategorizedCategory));
+      }
+      return roots.join("\n");
     },
   });
   click && component.element.addEventListener("click", click);

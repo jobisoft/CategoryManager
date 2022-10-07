@@ -10,10 +10,12 @@ let addressBooks = Object.fromEntries(
   data.map((d) => [d.name, AddressBook.fromFakeData(d)])
 );
 
+console.log(addressBooks);
 const [tab] = await browser.tabs.query({ currentWindow: true, active: true });
 const isComposeAction = tab.type == "messageCompose";
 
 let elementForContextMenu;
+// TODO: handling special case: no address book available
 let currentAddressBook = Object.values(addressBooks)[0];
 
 document.addEventListener("contextmenu", (e) => {
@@ -51,8 +53,12 @@ let categoryTree = createCategoryTree({
     }
     console.log(event.target, event.target.dataset);
     const categoryKey = event.target.dataset.category;
+    const isUncategorized = event.target.dataset.uncategorized;
     if (categoryKey == null) return;
-    let newData = currentAddressBook.lookup(categoryKey).contacts;
+    let newData = currentAddressBook.lookup(
+      categoryKey,
+      isUncategorized != null
+    ).contacts;
     categoryTitle.innerText = categoryKey;
     contactList.update(newData);
   },
