@@ -16,7 +16,6 @@ function writeTreeLeaf(prefix, category) {
 }
 
 export function writeTreeNode(prefix, category) {
-  console.log(category);
   const newPrefix = prefix + category.name + " / ";
   let children = Object.keys(category.categories).map((key) => {
     const subCategory = category.categories[key];
