@@ -110,30 +110,7 @@ async function addContactsToComposeDetails(fieldName, contacts) {
   });
 }
 
-function makeButtonEventHandler(fieldName) {
-  return async (e) => {
-    if (isComposeAction) {
-      await addContactsToComposeDetails(fieldName, contactList.data);
-      window.close();
-    } else {
-      const contacts = contactList.data;
-      const emailList = contacts.map(toRFC5322EmailAddress);
-      await browser.compose.beginNew(null, { [fieldName]: emailList });
-      window.close();
-    }
-  };
-}
-
-function bindHandlerToButton(fieldName) {
-  document
-    .getElementById(`btn-${fieldName}`)
-    .addEventListener("click", makeButtonEventHandler(fieldName));
-}
-
 addressBookList.render();
 categoryTree.render();
 contactList.render();
 
-bindHandlerToButton("cc");
-bindHandlerToButton("bcc");
-bindHandlerToButton("to");
