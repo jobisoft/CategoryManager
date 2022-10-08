@@ -15,6 +15,7 @@
   grid-column: 1;
   grid-row: 2;
   overflow: auto;
+  margin: 0;
 }
 
 #tree {
