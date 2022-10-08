@@ -20,10 +20,16 @@ let elementForContextMenu, currentCategoryElement;
 // TODO: handling special case: no address book available
 let currentAddressBook = Object.values(addressBooks)[0];
 
+function lookupContactsByCategoryElement(element) {
+  // find contacts by an category html element
+  const categoryKey = element.dataset.category;
+  const isUncategorized = element.dataset.uncategorized != null;
+  return currentAddressBook.lookup(categoryKey, isUncategorized).contacts;
+}
+
 function makeMenuEventHandler(fieldName) {
   return async () => {
-    const categoryKey = elementForContextMenu.dataset.category;
-    const contacts = currentAddressBook.lookup(categoryKey).contacts;
+    const contacts = lookupContactsByCategoryElement(elementForContextMenu);
     if (isComposeAction) {
       await addContactsToComposeDetails(fieldName, contacts);
     } else {
@@ -45,27 +51,22 @@ document.addEventListener("contextmenu", (e) => {
     e.preventDefault();
 });
 
-const addToBCCHandler = makeMenuEventHandler("bcc");
-const addToCCHandler = makeMenuEventHandler("cc");
-const addToToHandler = makeMenuEventHandler("to");
+const contextMenuHandlers = {
+  add_to: makeMenuEventHandler("to"),
+  add_cc: makeMenuEventHandler("cc"),
+  add_bcc: makeMenuEventHandler("bcc"),
+};
+
 browser.menus.onShown.addListener((info, tab) => {
   console.log(info, elementForContextMenu);
 });
 
 browser.menus.onClicked.addListener(async ({ menuItemId }, tab) => {
-  switch (menuItemId) {
-    case "add_to":
-      await addToToHandler();
-      break;
-    case "add_cc":
-      await addToCCHandler();
-      break;
-    case "add_bcc":
-      await addToBCCHandler();
-      break;
-    default:
-      console.error("Unknown menu item: ", menuItemId);
-      break;
+  const handler = contextMenuHandlers[menuItemId];
+  if (handler != null) {
+    handler();
+  } else {
+    console.error("No handler for", menuItemId);
   }
 });
 
@@ -94,19 +95,14 @@ let categoryTree = createCategoryTree({
       currentCategoryElement.classList.remove("active");
     currentCategoryElement = event.target;
     currentCategoryElement.classList.add("active");
-    const isUncategorized = currentCategoryElement.dataset.uncategorized;
-
-    let newData = currentAddressBook.lookup(
-      categoryKey,
-      isUncategorized != null
-    ).contacts;
+    const newData = lookupContactsByCategoryElement(currentCategoryElement);
     categoryTitle.innerText = categoryKey;
     contactList.update(newData);
   },
   async doubleClick(event) {
     const categoryKey = event.target.dataset.category;
     if (categoryKey == null) return;
-    const contacts = currentAddressBook.lookup(categoryKey).contacts;
+    const contacts = lookupContactsByCategoryElement(event.target);
     if (isComposeAction) {
       await addContactsToComposeDetails("bcc", contacts);
     } else {
