@@ -11,7 +11,6 @@ let addressBooks = Object.fromEntries(
   data.map((d) => [d.name, AddressBook.fromFakeData(d)])
 );
 
-console.log(addressBooks);
 const [tab] = await browser.tabs.query({ currentWindow: true, active: true });
 const isComposeAction = tab.type == "messageCompose";
 
@@ -21,18 +20,53 @@ let elementForContextMenu, currentCategoryElement;
 // TODO: handling special case: no address book available
 let currentAddressBook = Object.values(addressBooks)[0];
 
+function makeMenuEventHandler(fieldName) {
+  return async () => {
+    const categoryKey = elementForContextMenu.dataset.category;
+    const contacts = currentAddressBook.lookup(categoryKey).contacts;
+    if (isComposeAction) {
+      await addContactsToComposeDetails(fieldName, contacts);
+    } else {
+      const emailList = contacts.map(toRFC5322EmailAddress);
+      await browser.compose.beginNew(null, { [fieldName]: emailList });
+    }
+    window.close();
+  };
+}
+
 document.addEventListener("contextmenu", (e) => {
   browser.menus.overrideContext({ context: "tab", tabId: tab.id });
   elementForContextMenu = e.target;
-  console.log("contextmenu");
+  if (elementForContextMenu.nodeName === "I")
+    // Right click on the expander icon. Use the parent element
+    elementForContextMenu = elementForContextMenu.parentNode;
+  if (elementForContextMenu.dataset.category == null)
+    // No context menu outside category tree
+    e.preventDefault();
 });
 
+const addToBCCHandler = makeMenuEventHandler("bcc");
+const addToCCHandler = makeMenuEventHandler("cc");
+const addToToHandler = makeMenuEventHandler("to");
 browser.menus.onShown.addListener((info, tab) => {
   console.log(info, elementForContextMenu);
 });
 
-browser.menus.onClicked.addListener((info, tab) => {
-  console.log(info);
+browser.menus.onClicked.addListener(async ({ menuItemId }, tab) => {
+  switch (menuItemId) {
+    case "add_to":
+      await addToToHandler();
+      break;
+    case "add_cc":
+      await addToCCHandler();
+      break;
+    case "add_bcc":
+      await addToBCCHandler();
+      break;
+    default:
+      console.error("Unknown menu item: ", menuItemId);
+      break;
+  }
 });
 
 let contactList = createContactList(currentAddressBook.contacts);
