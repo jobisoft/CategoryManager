@@ -5,6 +5,7 @@ import { createCategoryTree } from "./category-tree.mjs";
 import { createAddressBookList } from "./address-book-list.mjs";
 import { mapIterator } from "../modules/utils.mjs";
 import { toRFC5322EmailAddress } from "../modules/contact.mjs";
+// global object: emailAddresses from popup.html
 
 let addressBooks = Object.fromEntries(
   data.map((d) => [d.name, AddressBook.fromFakeData(d)])
