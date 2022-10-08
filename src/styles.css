@@ -13,6 +13,13 @@ body {
 }
 
 :root {
-  --catman-background: #191c1e;
-  --catman-foreground: white;
+  --catman-background: white;
+  --catman-foreground: black;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --catman-background: #191c1e;
+    --catman-foreground: white;
+  }
 }
