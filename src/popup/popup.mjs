@@ -14,7 +14,9 @@ console.log(addressBooks);
 const [tab] = await browser.tabs.query({ currentWindow: true, active: true });
 const isComposeAction = tab.type == "messageCompose";
 
-let elementForContextMenu;
+// currentCategoryElement is only used for highlighting current selection
+let elementForContextMenu, currentCategoryElement;
+
 // TODO: handling special case: no address book available
 let currentAddressBook = Object.values(addressBooks)[0];
 
@@ -25,11 +27,6 @@ document.addEventListener("contextmenu", (e) => {
 });
 
 browser.menus.onShown.addListener((info, tab) => {
-  // Extra Sugar: Logic to detect if mouse was over a category and enable/disable
-  // via menus.update menus (see info.menuIds)
-  // You can even change visibility of entries
-
-  // Maybe: https://www.sitepoint.com/community/t/determine-if-mouse-is-over-an-element/4239/4
   console.log(info, elementForContextMenu);
 });
 
@@ -47,14 +44,23 @@ let categoryTree = createCategoryTree({
       // Disable click event on double click
       event.preventDefault();
       return false;
-    } else if (event.target.nodeName !== "I") {
-      // Only expand the tree on expander click
-      event.preventDefault();
     }
-    console.log(event.target, event.target.dataset);
+    if (event.target.nodeName === "I")
+      // A click on the expander
+      return;
+    event.preventDefault();
+
     const categoryKey = event.target.dataset.category;
-    const isUncategorized = event.target.dataset.uncategorized;
-    if (categoryKey == null) return;
+    if (categoryKey == null)
+      // Not a click on category
+      return;
+
+    if (currentCategoryElement != null)
+      currentCategoryElement.classList.remove("active");
+    currentCategoryElement = event.target;
+    currentCategoryElement.classList.add("active");
+    const isUncategorized = currentCategoryElement.dataset.uncategorized;
+
     let newData = currentAddressBook.lookup(
       categoryKey,
       isUncategorized != null
@@ -113,4 +119,3 @@ async function addContactsToComposeDetails(fieldName, contacts) {
 addressBookList.render();
 categoryTree.render();
 contactList.render();
-
