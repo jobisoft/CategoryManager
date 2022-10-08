@@ -15,11 +15,15 @@ body {
 :root {
   --catman-background: white;
   --catman-foreground: black;
+  --catman-highlight: turquoise;
+  --catman-hover: dodgerblue;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --catman-background: #191c1e;
     --catman-foreground: white;
+    --catman-highlight: aqua;
+    --catman-hover: dodgerblue;
   }
 }

@@ -234,9 +234,9 @@
 }
 
 #address-books > li.selected {
-  color: aqua;
+  color: var(--catman-highlight);
 }
 
 #address-books > li:hover {
-  color: dodgerblue;
+  color: var(--catman-hover);
 }
