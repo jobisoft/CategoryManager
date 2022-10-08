@@ -106,15 +106,27 @@
   line-height: 2rem;
 }
 
+.tree-nav__item-title {
+  cursor: pointer;
+  display: block;
+  outline: 0;
+  font-size: 1rem;
+  line-height: 2rem;
+  transition: color 0.2s;
+}
+
 .tree-nav__item-title[data-uncategorized] {
   font-style: italic;
   font-weight: bold;
 }
 
+.tree-nav__item-title:hover {
+  color: var(--catman-hover);
+}
+
 .tree-nav__item > p.tree-nav__item-title::before {
   /* Leaf element marker */
   position: absolute;
-  color: var(--catman-foreground);
   display: inline-block;
   font: var(--fa-font-regular);
   content: "\f111";
@@ -151,14 +163,6 @@
   /* Make the clickable area larger */
   padding-inline: 0.5rem;
   padding-block: 0.5rem;
-}
-
-.tree-nav__item-title {
-  cursor: pointer;
-  display: block;
-  outline: 0;
-  font-size: 1rem;
-  line-height: 2rem;
 }
 
 /* Address Book List */
