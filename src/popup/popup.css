@@ -44,6 +44,18 @@
   background: var(--catman-background);
 }
 
+/* Text when no address book is available */
+#info-text {
+  display: none;
+  position: absolute;
+  text-align: center;
+  margin: auto;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3rem;
+}
+
 /* Contact Row */
 
 #contacts > ul {

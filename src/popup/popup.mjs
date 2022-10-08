@@ -17,8 +17,10 @@ const isComposeAction = tab.type == "messageCompose";
 // currentCategoryElement is only used for highlighting current selection
 let elementForContextMenu, currentCategoryElement;
 
-// TODO: handling special case: no address book available
 let currentAddressBook = Object.values(addressBooks)[0];
+
+if (currentAddressBook == null)
+  document.getElementById("info-text").style.display = "initial";
 
 function lookupContactsByCategoryElement(element) {
   // find contacts by an category html element
@@ -70,9 +72,9 @@ browser.menus.onClicked.addListener(async ({ menuItemId }, tab) => {
   }
 });
 
-let contactList = createContactList(currentAddressBook.contacts);
+let contactList = createContactList(currentAddressBook?.contacts ?? []);
 const categoryTitle = document.getElementById("category-title");
-categoryTitle.innerText = currentAddressBook.name;
+categoryTitle.innerText = currentAddressBook?.name ?? "";
 let categoryTree = createCategoryTree({
   data: currentAddressBook,
   click(event) {

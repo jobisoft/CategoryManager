@@ -47,6 +47,7 @@ export function createCategoryTree({ data, click, doubleClick }) {
     element: "#tree",
     data,
     template(data) {
+      if (data == null) return "";
       let roots = Object.keys(data.categories).map((key) =>
         writeTreeNode("", data.categories[key])
       );
