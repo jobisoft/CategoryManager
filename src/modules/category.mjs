@@ -30,12 +30,15 @@ class Category {
         .buildUncategorized() // 1. build uncategorized for sub category
         .forEach(contacts.add, contacts); // 2. add contacts from subcategory to `contacts`
     }
-    this.categories[uncategorized] = new Category(
-      "Uncategorized",
-      this.contacts.filter((x) => !contacts.has(x)),
-      {},
-      true
-    );
+    const filtered = this.contacts.filter((x) => !contacts.has(x));
+    if (filtered.length > 0) {
+      this.categories[uncategorized] = new Category(
+        "Uncategorized",
+        filtered,
+        {},
+        true
+      );
+    }
     return this.contacts;
   }
 }
