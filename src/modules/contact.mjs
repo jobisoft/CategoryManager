@@ -1,3 +1,5 @@
+import { mapIterator } from "./utils.mjs";
+
 export function toRFC5322EmailAddress(value) {
   // Accepts: [email, name] or { email, name }
   let email, name;
@@ -7,4 +9,24 @@ export function toRFC5322EmailAddress(value) {
     ({ email, name } = value);
   }
   return name ? `${name} <${email}>` : email;
+}
+
+export async function addContactsToComposeDetails(fieldName, tab, contacts) {
+  const details = await browser.compose.getComposeDetails(tab.id);
+  const addresses = details[fieldName];
+  let map = new Map();
+  addresses.forEach((addr) => {
+    const { address, name } = emailAddresses.parseOneAddress(addr);
+    map.set(address, name);
+  });
+  contacts.forEach(({ email, name }) => {
+    // Add this contact if it doesn't exist in the map
+    if (!map.has(email)) map.set(email, name);
+  });
+  const emailList = [...mapIterator(map.entries(), toRFC5322EmailAddress)];
+  // set compose details
+  await browser.compose.setComposeDetails(tab.id, {
+    ...details,
+    [fieldName]: emailList,
+  });
 }

@@ -3,8 +3,10 @@ import { AddressBook } from "../modules/category.mjs";
 import { createContactList } from "./contact-list.mjs";
 import { createCategoryTree } from "./category-tree.mjs";
 import { createAddressBookList } from "./address-book-list.mjs";
-import { mapIterator } from "../modules/utils.mjs";
-import { toRFC5322EmailAddress } from "../modules/contact.mjs";
+import {
+  toRFC5322EmailAddress,
+  addContactsToComposeDetails,
+} from "../modules/contact.mjs";
 // global object: emailAddresses from popup.html
 
 let addressBooks = Object.fromEntries(
@@ -33,7 +35,7 @@ function makeMenuEventHandler(fieldName) {
   return async () => {
     const contacts = lookupContactsByCategoryElement(elementForContextMenu);
     if (isComposeAction) {
-      await addContactsToComposeDetails(fieldName, contacts);
+      await addContactsToComposeDetails(fieldName, tab, contacts);
     } else {
       const emailList = contacts.map(toRFC5322EmailAddress);
       await browser.compose.beginNew(null, { [fieldName]: emailList });
@@ -106,7 +108,7 @@ let categoryTree = createCategoryTree({
     if (categoryKey == null) return;
     const contacts = lookupContactsByCategoryElement(event.target);
     if (isComposeAction) {
-      await addContactsToComposeDetails("bcc", contacts);
+      await addContactsToComposeDetails("bcc", tab, contacts);
     } else {
       // open a new messageCompose window
       await browser.compose.beginNew(null, {
@@ -128,26 +130,6 @@ let addressBookList = createAddressBookList({
     contactList.update(currentAddressBook.contacts);
   },
 });
-
-async function addContactsToComposeDetails(fieldName, contacts) {
-  const details = await browser.compose.getComposeDetails(tab.id);
-  const addresses = details[fieldName];
-  let map = new Map();
-  addresses.forEach((addr) => {
-    const { address, name } = emailAddresses.parseOneAddress(addr);
-    map.set(address, name);
-  });
-  contacts.forEach(({ email, name }) => {
-    // Add this contact if it doesn't exist in the map
-    if (!map.has(email)) map.set(email, name);
-  });
-  const emailList = [...mapIterator(map.entries(), toRFC5322EmailAddress)];
-  // set compose details
-  await browser.compose.setComposeDetails(tab.id, {
-    ...details,
-    [fieldName]: emailList,
-  });
-}
 
 addressBookList.render();
 categoryTree.render();
