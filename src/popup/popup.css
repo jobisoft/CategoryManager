@@ -2,7 +2,7 @@
 
 #container {
   display: grid;
-  /* TODO: determin the max width of tree view in JS. use 15rem for now */
+  /* TODO: determine the max width of tree view in JS. use 15rem for now */
   grid-template-columns: auto 15rem 14rem;
   grid-template-rows: 2rem auto;
   gap: 0.5rem 2rem;
