@@ -17,9 +17,24 @@
     "32": "images/icon-32px.png",
     "16": "images/icon-16px.png"
   },
-  "permissions": ["addressBooks"],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "permissions": [
+    "addressBooks",
+    "compose",
+    "tabs",
+    "menus",
+    "menus.overrideContext",
+    "storage"
+  ],
   "compose_action": {
-    "default_popup": "compose-action/popup.html",
+    "default_popup": "popup/popup.html",
+    "default_title": "Categories",
+    "default_icon": "images/icon-32px.png"
+  },
+  "browser_action": {
+    "default_popup": "popup/popup.html",
     "default_title": "Categories",
     "default_icon": "images/icon-32px.png"
   }

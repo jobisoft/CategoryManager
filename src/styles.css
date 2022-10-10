@@ -1,0 +1,29 @@
+/* Global style sheet */
+
+html {
+  font-size: 14px;
+}
+
+body {
+  background-color: var(--catman-background);
+  color: var(--catman-foreground);
+  font-family: arial;
+  margin: 0;
+  padding: 1rem;
+}
+
+:root {
+  --catman-background: white;
+  --catman-foreground: black;
+  --catman-highlight: turquoise;
+  --catman-hover: dodgerblue;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --catman-background: #191c1e;
+    --catman-foreground: white;
+    --catman-highlight: aqua;
+    --catman-hover: dodgerblue;
+  }
+}

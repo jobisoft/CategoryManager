@@ -1,0 +1,79 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "TB:Linux",
+      "type": "firefox",
+      "request": "launch",
+      "reAttach": true,
+      "firefoxExecutable": "${input:thunderbird}",
+      "reloadOnChange": {
+        "watch": "${workspaceFolder}/src/**/*.{js,mjs,html,css,json}"
+      },
+      "profileDir": "${input:profile}",
+      "keepProfileChanges": true,
+      "internalConsoleOptions": "openOnSessionStart",
+      "addonPath": "${workspaceFolder}/src/",
+      "firefoxArgs": ["--start-debugger-server"],
+      "timeout": 10
+    },
+    {
+      "name": "Firefox",
+      "type": "firefox",
+      "request": "launch",
+      "reAttach": true,
+      "firefoxExecutable": "${input:firefox}",
+      "reloadOnChange": {
+        "watch": "${workspaceFolder}/src/**/*.{js,mjs,html,css,json}"
+      },
+      "profileDir": "${input:firefoxProfile}",
+      "keepProfileChanges": true,
+      "internalConsoleOptions": "openOnSessionStart",
+      "addonPath": "${workspaceFolder}/src/",
+      // "firefoxArgs": ["--start-debugger-server"],
+      "timeout": 10
+    }
+  ],
+  "inputs": [
+    {
+      "id": "thunderbird",
+      "type": "command",
+      "command": "extension.commandvariable.file.content",
+      "args": {
+        "fileName": "${workspaceFolder}/dev.config.json",
+        "json": "content.thunderbird.path",
+        "default": "/usr/bin/thunderbird"
+      }
+    },
+    {
+      "id": "profile",
+      "type": "command",
+      "command": "extension.commandvariable.file.content",
+      "args": {
+        "fileName": "${workspaceFolder}/dev.config.json",
+        "json": "content.thunderbird.profile",
+        "default": ""
+      }
+    },
+    {
+      "id": "firefox",
+      "type": "command",
+      "command": "extension.commandvariable.file.content",
+      "args": {
+        "fileName": "${workspaceFolder}/dev.config.json",
+        "json": "content.firefox.path",
+        "default": "/usr/bin/firefox-developer-edition"
+      }
+    },
+    {
+      "id": "firefoxProfile",
+      "type": "command",
+      "command": "extension.commandvariable.file.content",
+      "args": {
+        "fileName": "${workspaceFolder}/dev.config.json",
+        "json": "content.firefox.profile",
+        "default": "/usr/bin/firefox-developer-edition"
+      }
+    }
+  ]
+}

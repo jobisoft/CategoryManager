@@ -1,6 +1,0 @@
-.popup-page {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-weight: bold;
-    height: 60px;
-    padding: 10px;
-}
