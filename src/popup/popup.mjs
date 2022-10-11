@@ -1,5 +1,5 @@
 import data from "../modules/fake-data-provider.mjs";
-import { AddressBook } from "../modules/category.mjs";
+import { AddressBook } from "../modules/address-book.mjs";
 import { createContactList } from "./contact-list.mjs";
 import { createCategoryTree } from "./category-tree.mjs";
 import { createAddressBookList } from "./address-book-list.mjs";
