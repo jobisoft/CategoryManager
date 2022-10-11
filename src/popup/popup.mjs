@@ -45,7 +45,7 @@ function makeMenuEventHandler(fieldName) {
 }
 
 document.addEventListener("contextmenu", (e) => {
-  browser.menus.overrideContext({ context: "tab", tabId: tab.id });
+  browser.menus.overrideContext({ context: 'tab', tabId: tab.id });
   elementForContextMenu = e.target;
   if (elementForContextMenu.nodeName === "I")
     // Right click on the expander icon. Use the parent element
