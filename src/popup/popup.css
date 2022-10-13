@@ -68,7 +68,6 @@
 }
 
 .contact-row {
-  height: 2.5rem;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
