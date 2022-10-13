@@ -8,7 +8,7 @@ export function createContactList(data = null) {
       return `<ul>
             ${data
               .map(
-                ({ name, email }) =>
+                ({ name, email }) => // TODO: deal with contacts without email seriously
                   `<li class="contact-row">
                       <p class="contact-row__name">
                         ${escapeHtml(name)}
