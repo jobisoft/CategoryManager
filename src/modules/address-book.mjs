@@ -1,4 +1,5 @@
 import { uncategorized, Category } from "./category.mjs";
+import { parseContact } from "./contact.mjs";
 
 class AddressBook {
   categories = {};
@@ -14,6 +15,19 @@ class AddressBook {
   static fromFakeData(addressBook) {
     let ab = new AddressBook(addressBook.name, addressBook.contacts);
     for (const contact of addressBook.contacts) {
+      for (const category of contact.categories) {
+        ab.addContactToCategory(contact, category);
+      }
+    }
+    ab.buildUncategorized();
+    return ab;
+  }
+
+  static async fromTBAddressBook({ name, id }) {
+    const rawContacts = await browser.contacts.list(id);
+    const contacts = rawContacts.map(parseContact);
+    let ab = new AddressBook(name, contacts);
+    for (const contact of contacts) {
       for (const category of contact.categories) {
         ab.addContactToCategory(contact, category);
       }
