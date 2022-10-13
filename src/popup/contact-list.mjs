@@ -14,7 +14,7 @@ export function createContactList(data = null) {
                         ${escapeHtml(name)}
                       </p>
                       <p class="contact-row__email">
-                        ${escapeHtml(email)}
+                        ${email ? escapeHtml(email) : "No email available"}
                       </p>
                   </li>`
               )
