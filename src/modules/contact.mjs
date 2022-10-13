@@ -1,4 +1,17 @@
 import { mapIterator } from "./utils.mjs";
+// global object: ICAL from external ical.js
+
+export function parseContact({ id, properties: { vCard, DisplayName } }) {
+  const component = new ICAL.Component(ICAL.parse(vCard));
+  return {
+    id,
+    email: component.getFirstPropertyValue("email"),
+    name: DisplayName,
+    categories: component
+      .getAllProperties("categories")
+      .flatMap((x) => x.getValues().map((y) => [y])),
+  };
+}
 
 export function toRFC5322EmailAddress(value) {
   // Accepts: [email, name] or { email, name }
