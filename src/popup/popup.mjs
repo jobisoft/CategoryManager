@@ -6,12 +6,29 @@ import { createAddressBookList } from "./address-book-list.mjs";
 import {
   toRFC5322EmailAddress,
   addContactsToComposeDetails,
+  parseContact,
 } from "../modules/contact.mjs";
 // global object: emailAddresses from popup.html
 
-let addressBooks = Object.fromEntries(
-  data.map((d) => [d.name, AddressBook.fromFakeData(d)])
+let abInfos = await browser.addressBooks.list();
+// console.log([
+//   ...new Set(
+//     (await browser.contacts.list(abs[2].id))
+//       .map((c) => {
+//         const component = new ICAL.Component(ICAL.parse(c.properties.vCard));
+//         return component
+//           .getAllProperties("categories")
+//           .flatMap((x) => x.getValues());
+//       })
+//       .filter((x) => x.some((cat) => cat.includes("/")))
+//   ),
+// ]);
+
+let abValues = await Promise.all(
+  abInfos.map((ab) => AddressBook.fromTBAddressBook(ab))
 );
+
+let addressBooks = Object.fromEntries(abValues.map((ab) => [ab.name, ab]));
 
 const [tab] = await browser.tabs.query({ currentWindow: true, active: true });
 const isComposeAction = tab.type == "messageCompose";
@@ -45,7 +62,7 @@ function makeMenuEventHandler(fieldName) {
 }
 
 document.addEventListener("contextmenu", (e) => {
-  browser.menus.overrideContext({ context: 'tab', tabId: tab.id });
+  browser.menus.overrideContext({ context: "tab", tabId: tab.id });
   elementForContextMenu = e.target;
   if (elementForContextMenu.nodeName === "I")
     // Right click on the expander icon. Use the parent element
