@@ -86,6 +86,10 @@
   font-size: 0.95rem;
 }
 
+.contact-row__email .no-email {
+  color: orangered;
+}
+
 /* Tree component */
 
 #tree > summary {
