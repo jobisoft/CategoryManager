@@ -9,6 +9,7 @@ export function parseContact({ id, properties: { vCard, DisplayName } }) {
     name: DisplayName,
     categories: component
       .getAllProperties("categories")
+      // TODO: parse nested categories
       .flatMap((x) => x.getValues().map((y) => [y])),
   };
 }
