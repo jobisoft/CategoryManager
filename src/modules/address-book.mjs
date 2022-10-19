@@ -7,9 +7,10 @@ class AddressBook {
   name;
   id;
 
-  constructor(name, contacts) {
+  constructor(name, contacts, id) {
     this.name = name;
     this.contacts = contacts;
+    this.id = id ?? name;
   }
 
   static fromFakeData(addressBook) {
@@ -26,7 +27,7 @@ class AddressBook {
   static async fromTBAddressBook({ name, id }) {
     const rawContacts = await browser.contacts.list(id);
     const contacts = rawContacts.map(parseContact);
-    let ab = new AddressBook(name, contacts);
+    let ab = new AddressBook(name, contacts, id);
     for (const contact of contacts) {
       for (const category of contact.categories) {
         ab.addContactToCategory(contact, category);
