@@ -54,7 +54,11 @@ function makeMenuEventHandler(fieldName) {
     if (isComposeAction) {
       await addContactsToComposeDetails(fieldName, tab, contacts);
     } else {
-      const emailList = contacts.map(toRFC5322EmailAddress);
+      // Do a filterMap(using a flatMap) to remove contacts that do not have an email address
+      // and map the filtered contacts to rfc 5322 email address format.
+      const emailList = contacts.flatMap((c) =>
+        c.email == null ? [] : [toRFC5322EmailAddress(c)]
+      );
       await browser.compose.beginNew(null, { [fieldName]: emailList });
     }
     window.close();
@@ -129,7 +133,9 @@ let categoryTree = createCategoryTree({
     } else {
       // open a new messageCompose window
       await browser.compose.beginNew(null, {
-        bcc: contacts.map(toRFC5322EmailAddress),
+        bcc: contacts.flatMap((c) =>
+          c.email == null ? [] : [toRFC5322EmailAddress(c)]
+        ),
       });
     }
     window.close();

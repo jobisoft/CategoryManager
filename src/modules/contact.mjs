@@ -38,7 +38,7 @@ export async function addContactsToComposeDetails(fieldName, tab, contacts) {
   });
   contacts.forEach(({ email, name }) => {
     // Add this contact if it doesn't exist in the map
-    if (!map.has(email)) map.set(email, name);
+    if (email != null && !map.has(email)) map.set(email, name);
   });
   const emailList = [...mapIterator(map.entries(), toRFC5322EmailAddress)];
   // set compose details
