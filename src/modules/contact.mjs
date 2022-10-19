@@ -1,6 +1,10 @@
 import { mapIterator } from "./utils.mjs";
 // global object: ICAL from external ical.js
 
+function parseCategory(str) {
+  return str.split(" / ");
+}
+
 export function parseContact({ id, properties: { vCard, DisplayName } }) {
   const component = new ICAL.Component(ICAL.parse(vCard));
   return {
@@ -9,8 +13,7 @@ export function parseContact({ id, properties: { vCard, DisplayName } }) {
     name: DisplayName,
     categories: component
       .getAllProperties("categories")
-      // TODO: parse nested categories
-      .flatMap((x) => x.getValues().map((y) => [y])),
+      .flatMap((x) => x.getValues().map(parseCategory)),
   };
 }
 
