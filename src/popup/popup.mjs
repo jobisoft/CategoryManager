@@ -28,7 +28,7 @@ let abValues = await Promise.all(
   abInfos.map((ab) => AddressBook.fromTBAddressBook(ab))
 );
 
-let addressBooks = Object.fromEntries(abValues.map((ab) => [ab.name, ab]));
+let addressBooks = Object.fromEntries(abValues.map((ab) => [ab.id, ab]));
 
 const [tab] = await browser.tabs.query({ currentWindow: true, active: true });
 const isComposeAction = tab.type == "messageCompose";
@@ -145,9 +145,9 @@ let categoryTree = createCategoryTree({
 let addressBookList = createAddressBookList({
   data: Object.values(addressBooks),
   click(event) {
-    const addressBookName = event.target.dataset.addressBook;
-    if (addressBookName == null) return;
-    currentAddressBook = addressBooks[addressBookName];
+    const addressBookId = event.target.dataset.addressBook;
+    if (addressBookId == null) return;
+    currentAddressBook = addressBooks[addressBookId];
     categoryTitle.innerText = currentAddressBook.name;
     categoryTree.update(currentAddressBook);
     contactList.update(currentAddressBook.contacts);
