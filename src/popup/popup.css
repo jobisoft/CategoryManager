@@ -205,6 +205,10 @@
   transition: color 0.2s;
 }
 
+#address-books > li[data-address-book="all-contacts"] {
+  border-bottom: 0.2rem solid var(--catman-foreground);
+}
+
 #address-books > li.selected {
   color: var(--catman-highlight);
 }

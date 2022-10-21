@@ -6,7 +6,6 @@ import { createAddressBookList } from "./address-book-list.mjs";
 import {
   toRFC5322EmailAddress,
   addContactsToComposeDetails,
-  parseContact,
 } from "../modules/contact.mjs";
 // global object: emailAddresses from popup.html
 
@@ -27,16 +26,18 @@ let abInfos = await browser.addressBooks.list();
 let abValues = await Promise.all(
   abInfos.map((ab) => AddressBook.fromTBAddressBook(ab))
 );
-
-let addressBooks = Object.fromEntries(abValues.map((ab) => [ab.id, ab]));
+// Make "All Contacts" the first one
+abValues.unshift(AddressBook.fromAllContacts(abValues));
+// Map guarantees the order of keys is the insertion order
+let addressBooks = new Map(abValues.map((ab) => [ab.id, ab]));
 
 const [tab] = await browser.tabs.query({ currentWindow: true, active: true });
 const isComposeAction = tab.type == "messageCompose";
 
 // currentCategoryElement is only used for highlighting current selection
 let elementForContextMenu, currentCategoryElement;
-
-let currentAddressBook = Object.values(addressBooks)[0];
+// Default to all contacts
+let currentAddressBook = addressBooks.get("all-contacts");
 
 if (currentAddressBook == null)
   document.getElementById("info-text").style.display = "initial";
@@ -143,11 +144,11 @@ let categoryTree = createCategoryTree({
 });
 
 let addressBookList = createAddressBookList({
-  data: Object.values(addressBooks),
+  data: abValues,
   click(event) {
     const addressBookId = event.target.dataset.addressBook;
     if (addressBookId == null) return;
-    currentAddressBook = addressBooks[addressBookId];
+    currentAddressBook = addressBooks.get(addressBookId);
     categoryTitle.innerText = currentAddressBook.name;
     categoryTree.update(currentAddressBook);
     contactList.update(currentAddressBook.contacts);

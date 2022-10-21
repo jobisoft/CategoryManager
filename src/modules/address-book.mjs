@@ -15,12 +15,7 @@ class AddressBook {
 
   static fromFakeData(addressBook) {
     let ab = new AddressBook(addressBook.name, addressBook.contacts);
-    for (const contact of addressBook.contacts) {
-      for (const category of contact.categories) {
-        ab.addContactToCategory(contact, category);
-      }
-    }
-    ab.buildUncategorized();
+    ab.build();
     return ab;
   }
 
@@ -28,13 +23,34 @@ class AddressBook {
     const rawContacts = await browser.contacts.list(id);
     const contacts = rawContacts.map(parseContact);
     let ab = new AddressBook(name, contacts, id);
-    for (const contact of contacts) {
-      for (const category of contact.categories) {
-        ab.addContactToCategory(contact, category);
+    ab.build();
+    return ab;
+  }
+
+  static fromAllContacts(addressBooks) {
+    let contacts = new Map();
+    for (const ab of addressBooks) {
+      for (const contact of ab.contacts) {
+        // unique contacts from all address books
+        contacts.set(contact.id, contact);
       }
     }
-    ab.buildUncategorized();
-    return ab;
+    let ret = new AddressBook(
+      "All Contacts",
+      [...contacts.values()],
+      "all-contacts"
+    );
+    ret.build();
+    return ret;
+  }
+
+  build() {
+    for (const contact of this.contacts) {
+      for (const category of contact.categories) {
+        this.addContactToCategory(contact, category);
+      }
+    }
+    this.buildUncategorized();
   }
 
   buildUncategorized() {
@@ -78,14 +94,6 @@ class AddressBook {
       cur = cur.categories[cat];
     }
     return isUncategorized ? cur.categories[uncategorized] : cur;
-  }
-
-  toTreeData() {
-    let data = [];
-    for (const cat in this.categories) {
-      data.push(this.categories[cat].toTreeData());
-    }
-    return data;
   }
 }
 
