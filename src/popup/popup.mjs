@@ -1,4 +1,3 @@
-import data from "../modules/fake-data-provider.mjs";
 import { AddressBook } from "../modules/address-book.mjs";
 import { createContactList } from "./contact-list.mjs";
 import { createCategoryTree } from "./category-tree.mjs";
@@ -7,7 +6,14 @@ import {
   toRFC5322EmailAddress,
   addContactsToComposeDetails,
 } from "../modules/contact.mjs";
-// global object: emailAddresses from popup.html
+// global object: emailAddresses, ICAL from popup.html
+
+let myPort = browser.runtime.connect({ name: "sync" });
+myPort.postMessage("hello");
+
+myPort.onMessage.addListener((m) => {
+  console.log("Received msg from background:", m);
+});
 
 let abInfos = await browser.addressBooks.list();
 // console.log([
