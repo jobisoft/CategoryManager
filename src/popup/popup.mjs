@@ -8,45 +8,26 @@ import {
 } from "../modules/contact.mjs";
 // global object: emailAddresses, ICAL from popup.html
 
-let myPort = browser.runtime.connect({ name: "sync" });
-myPort.postMessage("hello");
-
-myPort.onMessage.addListener((m) => {
-  console.log("Received msg from background:", m);
-});
-
-let abInfos = await browser.addressBooks.list();
-// console.log([
-//   ...new Set(
-//     (await browser.contacts.list(abs[2].id))
-//       .map((c) => {
-//         const component = new ICAL.Component(ICAL.parse(c.properties.vCard));
-//         return component
-//           .getAllProperties("categories")
-//           .flatMap((x) => x.getValues());
-//       })
-//       .filter((x) => x.some((cat) => cat.includes("/")))
-//   ),
-// ]);
-
-let abValues = await Promise.all(
-  abInfos.map((ab) => AddressBook.fromTBAddressBook(ab))
-);
-// Make "All Contacts" the first one
-abValues.unshift(AddressBook.fromAllContacts(abValues));
-// Map guarantees the order of keys is the insertion order
-let addressBooks = new Map(abValues.map((ab) => [ab.id, ab]));
+let addressBooks = new Map();
 
 const [tab] = await browser.tabs.query({ currentWindow: true, active: true });
 const isComposeAction = tab.type == "messageCompose";
 
 // currentCategoryElement is only used for highlighting current selection
 let elementForContextMenu, currentCategoryElement;
+
 // Default to all contacts
 let currentAddressBook = addressBooks.get("all-contacts");
 
-if (currentAddressBook == null)
-  document.getElementById("info-text").style.display = "initial";
+function fullUpdateUI() {
+  currentAddressBook = addressBooks.get("all-contacts");
+  if (currentAddressBook == null)
+    document.getElementById("info-text").style.display = "initial";
+  categoryTitle.innerText = currentAddressBook?.name ?? "";
+  addressBookList.update([...addressBooks.values()]);
+  categoryTree.update(currentAddressBook);
+  contactList.update(currentAddressBook?.contacts ?? []);
+}
 
 function lookupContactsByCategoryElement(element) {
   // find contacts by an category html element
@@ -150,7 +131,7 @@ let categoryTree = createCategoryTree({
 });
 
 let addressBookList = createAddressBookList({
-  data: abValues,
+  data: [...addressBooks.values()],
   click(event) {
     const addressBookId = event.target.dataset.addressBook;
     if (addressBookId == null) return;
@@ -164,3 +145,20 @@ let addressBookList = createAddressBookList({
 addressBookList.render();
 categoryTree.render();
 contactList.render();
+
+let myPort = browser.runtime.connect({ name: "sync" });
+myPort.postMessage({ type: "fullUpdate" });
+myPort.onMessage.addListener(({ type, args }) => {
+  messageHandlers[type](args);
+});
+
+let messageHandlers = {
+  fullUpdate(args) {
+    addressBooks = args;
+    // The addressBooks lose their prototype in communication
+    for (let value of addressBooks.values()) {
+      Object.setPrototypeOf(value, AddressBook.prototype);
+    }
+    fullUpdateUI();
+  },
+};
