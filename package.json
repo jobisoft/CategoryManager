@@ -1,0 +1,23 @@
+{
+  "name": "category-manager",
+  "version": "1.0.0",
+  "description": "Category manager for Thunderbird contacts, also allows to send an email to all members of a category (category based contact groups).",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "lint": "eslint src/ --ext=.js,.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jobisoft/CategoryManager.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jobisoft/CategoryManager/issues"
+  },
+  "homepage": "https://github.com/jobisoft/CategoryManager#readme",
+  "devDependencies": {
+    "eslint": "^8.30.0"
+  }
+}

@@ -1,3 +1,4 @@
 *.xpi
 *.zip
 dev.config.json
+node_modules
