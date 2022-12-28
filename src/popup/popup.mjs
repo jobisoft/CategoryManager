@@ -1,5 +1,5 @@
 import data from "../modules/fake-data-provider.mjs";
-import { AddressBook } from "../modules/address-book.mjs";
+import { AddressBook, lookupCategory } from "../modules/address-book.mjs";
 import { createContactList } from "./contact-list.mjs";
 import { createCategoryTree } from "./category-tree.mjs";
 import { createAddressBookList } from "./address-book-list.mjs";
@@ -26,8 +26,11 @@ let abInfos = await browser.addressBooks.list();
 let abValues = await Promise.all(
   abInfos.map((ab) => AddressBook.fromTBAddressBook(ab))
 );
+
+abValues.unshift(AddressBook.fromFakeData(data[2]));
 // Make "All Contacts" the first one
 abValues.unshift(AddressBook.fromAllContacts(abValues));
+
 // Map guarantees the order of keys is the insertion order
 let addressBooks = new Map(abValues.map((ab) => [ab.id, ab]));
 
@@ -46,7 +49,8 @@ function lookupContactsByCategoryElement(element) {
   // find contacts by an category html element
   const categoryKey = element.dataset.category;
   const isUncategorized = element.dataset.uncategorized != null;
-  return currentAddressBook.lookup(categoryKey, isUncategorized).contacts;
+  return lookupCategory(currentAddressBook, categoryKey, isUncategorized)
+    .contacts;
 }
 
 function makeMenuEventHandler(fieldName) {

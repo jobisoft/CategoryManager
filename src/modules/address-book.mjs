@@ -1,7 +1,7 @@
 import { Category } from "./category.mjs";
 import { parseContact } from "./contact.mjs";
 
-class AddressBook {
+export class AddressBook {
   categories = {};
   uncategorized;
   contacts;
@@ -16,7 +16,6 @@ class AddressBook {
 
   static fromFakeData(addressBook) {
     let ab = new AddressBook(addressBook.name, addressBook.contacts);
-    console.log(ab)
     ab.build();
     return ab;
   }
@@ -63,12 +62,7 @@ class AddressBook {
     }
     const filtered = this.contacts.filter((x) => !contacts.has(x));
     if (filtered.length === 0) return;
-    this.uncategorized = new Category(
-      "Uncategorized",
-      filtered,
-      {},
-      true
-    );
+    this.uncategorized = new Category("Uncategorized", filtered, {}, true);
   }
 
   addContactToCategory(contact, category) {
@@ -84,19 +78,25 @@ class AddressBook {
   }
 
   lookup(categoryKey, isUncategorized = false) {
-    // look up a category using a key like `A / B`
-    let category = categoryKey.split(" / ");
-    if (isUncategorized) {
-      // remove the last sub category
-      category.pop();
-    }
-    let cur = this;
-    for (const cat of category) {
-      if (cur.categories[cat] == null) return null;
-      cur = cur.categories[cat];
-    }
-    return isUncategorized ? cur.uncategorized : cur;
+    return lookupCategory(this, categoryKey, isUncategorized);
   }
 }
 
-export { AddressBook };
+export function lookupCategory(
+  addressBook,
+  categoryKey,
+  isUncategorized = false
+) {
+  // look up a category using a key like `A / B`
+  let category = categoryKey.split(" / ");
+  if (isUncategorized) {
+    // remove the last sub category
+    category.pop();
+  }
+  let cur = addressBook;
+  for (const cat of category) {
+    if (cur.categories[cat] == null) return null;
+    cur = cur.categories[cat];
+  }
+  return isUncategorized ? cur.uncategorized : cur;
+}
