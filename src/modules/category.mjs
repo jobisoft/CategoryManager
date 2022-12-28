@@ -1,4 +1,4 @@
-import { isEmptyObject, filterObject } from "./utils.mjs";
+import { isEmptyObject, filterObjectByKeyToNull } from "./utils.mjs";
 
 class Category {
   categories;
@@ -28,10 +28,10 @@ class Category {
       // 1. build uncategorized for sub category
       this.categories[cat].buildUncategorized();
       // 2. add contacts from subcategory to `contacts`
-      Object.assign(contacts, this.categories[cat]);
+      Object.assign(contacts, this.categories[cat].contacts);
     }
     // Get the contacts that doesn't appear in any categories
-    const filtered = filterObject(this.contacts, (x) => !(x in contacts));
+    const filtered = filterObjectByKeyToNull(this.contacts, (x) => !(x in contacts));
     if (!isEmptyObject(filtered)) {
       this.uncategorized = new Category("Uncategorized", filtered, {}, true);
     }

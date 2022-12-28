@@ -9,8 +9,8 @@ export function* mapIterator(iterator, mapping) {
   }
 }
 
-export function filterObject(obj, predicate) {
+export function filterObjectByKeyToNull(obj, predicate) {
   return Object.keys(obj)
-    .filter((key) => predicate(obj[key]))
-    .reduce((res, key) => ((res[key] = obj[key]), res), {});
+    .filter((key) => predicate(key))
+    .reduce((res, key) => ((res[key] = null), res), {});
 }

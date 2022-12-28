@@ -1,6 +1,6 @@
 import { Category } from "./category.mjs";
 import { parseContact } from "./contact.mjs";
-import { filterObject, isEmptyObject } from "./utils.mjs";
+import { filterObjectByKeyToNull, isEmptyObject } from "./utils.mjs";
 
 export class AddressBook {
   categories = {};
@@ -59,9 +59,15 @@ export class AddressBook {
     let contacts = {};
     for (const cat in this.categories) {
       this.categories[cat].buildUncategorized();
-      Object.assign(contacts, this.categories[cat]);
+      console.log("assigning", this.categories[cat].contacts);
+      Object.assign(contacts, this.categories[cat].contacts);
     }
-    const filtered = filterObject(this.contacts, (x) => !(x in contacts));
+    console.log(contacts);
+    const filtered = filterObjectByKeyToNull(
+      this.contacts,
+      (x) => !(x in contacts)
+    );
+    console.log(filtered);
     if (isEmptyObject(filtered)) return;
     this.uncategorized = new Category("Uncategorized", filtered, {}, true);
   }
@@ -104,4 +110,56 @@ export function lookupCategory(
 
 export function id2contact(addressBook, contactId) {
   return addressBook.contacts[contactId];
+}
+
+function deleteContactRecursively(
+  categoryObj,
+  remainingCategoryPath,
+  contactId
+) {
+  // todo: clean up empty categories
+  if (remainingCategoryPath.length === 0) {
+    // Recursion base case
+    // If the category is a leaf, do nothing
+    // Otherwise, delete the contact in uncategorized category
+    if (!isEmptyObject(categoryObj.categories))
+      delete categoryObj.uncategorized.contacts[contactId];
+    return;
+  }
+  delete categoryObj.categories[remainingCategoryPath[0]].contacts[contactId];
+  deleteContactRecursively(
+    categoryObj.categories[remainingCategoryPath.shift()],
+    remainingCategoryPath,
+    contactId
+  );
+}
+
+export function deleteContact(addressBook, contactId) {
+  const contact = addressBook.contacts[contactId];
+  delete addressBook.contacts[contactId];
+  for (const cat of contact.categories) {
+    deleteContactRecursively(addressBook, cat, contactId);
+  }
+}
+
+export function updateContact(addressBook, contactNode, changedProperties) {
+  // We only care about email, name and categories
+  // if (changedProperties.DisplayName != null) {
+  //   addressBook.contacts[contactNode.id].name = changedProperties.DisplayName.newValue;
+  // }
+
+  // changedProperties only tells us whether Primary/SecondaryEmail changes.
+  // it won't tell us if other email address got updated.
+  // Let's just parse the vCard again so that nothing is left behind!
+  const id = contactNode.id;
+  const newContact = parseContact(contactNode);
+  const oldContact = addressBook.contacts[id];
+  if (newContact.categories !== oldContact.categories) {
+    // Categories changed.
+    console.log("changed contact:", newContact, changedProperties);
+    console.log("Old categories: ", oldContact.categories);
+    console.log("New categories: ", newContact.categories);
+    // TODO: update the category tree.
+  }
+  addressBook.contacts[id] = newContact;
 }
