@@ -19,7 +19,7 @@ class Category {
   }
   buildUncategorized() {
     // only call this method once
-    if (isEmptyObject(this.categories)) {
+    if (this.isLeaf()) {
       // recursion base case
       return;
     }
@@ -31,10 +31,16 @@ class Category {
       Object.assign(contacts, this.categories[cat].contacts);
     }
     // Get the contacts that doesn't appear in any categories
-    const filtered = filterObjectByKeyToNull(this.contacts, (x) => !(x in contacts));
+    const filtered = filterObjectByKeyToNull(
+      this.contacts,
+      (x) => !(x in contacts)
+    );
     if (!isEmptyObject(filtered)) {
       this.uncategorized = new Category("Uncategorized", filtered, {}, true);
     }
+  }
+  isLeaf() {
+    return isEmptyObject(this.categories);
   }
 }
 

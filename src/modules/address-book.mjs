@@ -17,7 +17,7 @@ export class AddressBook {
 
   static fromFakeData(addressBook) {
     let ab = new AddressBook(addressBook.name, addressBook.contacts);
-    ab.build();
+    ab.#build();
     return ab;
   }
 
@@ -30,7 +30,7 @@ export class AddressBook {
       })
     );
     let ab = new AddressBook(name, contacts, id);
-    ab.build();
+    ab.#build();
     return ab;
   }
 
@@ -40,21 +40,21 @@ export class AddressBook {
       Object.assign(contacts, ab.contacts);
     }
     let ret = new AddressBook("All Contacts", contacts, "all-contacts");
-    ret.build();
+    ret.#build();
     return ret;
   }
 
-  build() {
+  #build() {
     for (const id in this.contacts) {
       const contact = this.contacts[id];
       for (const category of contact.categories) {
-        this.addContactToCategory(contact, category);
+        this.#addContactToCategoryWhenBuildingTree(contact, category);
       }
     }
-    this.buildUncategorized();
+    this.#buildUncategorized();
   }
 
-  buildUncategorized() {
+  #buildUncategorized() {
     // only call this method once
     let contacts = {};
     for (const cat in this.categories) {
@@ -69,7 +69,7 @@ export class AddressBook {
     this.uncategorized = new Category("Uncategorized", filtered, {}, true);
   }
 
-  addContactToCategory(contact, category) {
+  #addContactToCategoryWhenBuildingTree(contact, category) {
     let rootName = category[0];
     this.categories[rootName] ??= new Category(rootName);
     let cur = this.categories[rootName];
@@ -79,6 +79,53 @@ export class AddressBook {
       cur = cur.categories[cat];
       cur.contacts[contact.id] = null;
     });
+  }
+
+  addContactToCategory(contact, category) {
+    // Several cases.
+    // 1. If there are no new categories, it's easy.
+    // 2. If there are some new categories:
+    //    a. one old leaf node is no longer a leaf
+    //     | we need to deal with uncategorized category
+    //    b. the entire category path doesn't contain any old categories
+    //     | this is a new path which only contains one contact, we don't need to deal with uncategorized category
+    // state: a string that represents current state
+    //        1, 2a, 2b, done(which means we already found the old leaf node)
+    const rootName = category[0];
+    // Assume there are no new categories first.
+    let state = "1";
+    if (this.categories[rootName] == null) {
+      // Case 2.b
+      this.categories[rootName] = new Category(rootName);
+      state = "2b";
+    }
+
+    let cur = this.categories[rootName];
+    cur.contacts[contact.id] = null;
+    let oldLeaf;
+    category.slice(1).forEach((cat, idx, arr) => {
+      if (cur.categories[cat] == null && state == "1") {
+        // Case 2.a
+        // this leaf node is no longer a leaf after this update
+        state = "2a";
+      }
+      cur.categories[cat] ??= new Category(cat);
+      cur.categories[cat].contacts[contact.id] = null;
+      if (state == "2a") {
+        oldLeaf = cur;
+        state = "done";
+      }
+      cur = cur.categories[cat];
+      if (idx == arr.length - 1 && state == "1") {
+        // If the last category is not a leaf, add this contact to uncategorized
+        cur.uncategorized[contact.id] = null;
+      }
+    });
+    if (state === "done") {
+      // Actually we do not need to recurse here.
+      // TODO: optimize this.
+      oldLeaf.buildUncategorized();
+    }
   }
 
   lookup(categoryKey, isUncategorized = false) {
@@ -159,4 +206,13 @@ export function updateContact(addressBook, contactNode, changedProperties) {
     // TODO: update the category tree.
   }
   addressBook.contacts[id] = newContact;
+}
+
+export function createContact(addressBook, contactNode) {
+  const id = contactNode.id;
+  const contact = parseContact(contactNode);
+  this.contacts[id] = contact;
+  for (const category of contact.categories) {
+    addressBook.addContactToCategory(contact, category);
+  }
 }
