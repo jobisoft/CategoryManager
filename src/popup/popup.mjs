@@ -155,7 +155,10 @@ let addressBookList = createAddressBookList({
     currentAddressBook = addressBooks.get(addressBookId);
     categoryTitle.innerText = currentAddressBook.name;
     categoryTree.update(currentAddressBook);
-    contactList.update(currentAddressBook.contacts);
+    contactList.update({
+      addressBook: currentAddressBook,
+      contacts: currentAddressBook.contacts,
+    });
   },
 });
 
@@ -166,6 +169,7 @@ contactList.render();
 let myPort = browser.runtime.connect({ name: "sync" });
 myPort.postMessage({ type: "fullUpdate" });
 myPort.onMessage.addListener(({ type, args }) => {
+  console.log(`Received ${type}`, args);
   messageHandlers[type](args);
 });
 
