@@ -1,4 +1,3 @@
-import { uncategorized } from "../modules/category.mjs";
 import { escapeHtml, Component } from "../modules/ui.mjs";
 import { isEmptyObject } from "../modules/utils.mjs";
 
@@ -23,10 +22,10 @@ export function writeTreeNode(prefix, category) {
       ? writeTreeLeaf(newPrefix, subCategory)
       : writeTreeNode(newPrefix, subCategory);
   });
-  const uncategorizedCategory = category.categories[uncategorized];
+  const uncategorizedCategory = category.uncategorized;
   if (uncategorizedCategory != null) {
     children.push(
-      // symbol `uncategorized` is always the last one and needs special handling
+      // `uncategorized` is always the last one and needs special handling
       writeTreeLeaf(newPrefix, uncategorizedCategory)
     );
   }
@@ -51,7 +50,7 @@ export function createCategoryTree({ data, click, doubleClick }) {
       let roots = Object.keys(data.categories).map((key) =>
         writeTreeNode("", data.categories[key])
       );
-      const uncategorizedCategory = data.categories[uncategorized];
+      const uncategorizedCategory = data.uncategorized;
       if (uncategorizedCategory != null) {
         roots.push(writeTreeLeaf("", uncategorizedCategory));
       }

@@ -1,12 +1,11 @@
 import { isEmptyObject } from "./utils.mjs";
 
-export const uncategorized = Symbol("Uncategorized");
-
 class Category {
   categories;
   name;
   contacts;
   isUncategorized;
+  uncategorized;
   constructor(
     name,
     contacts = [],
@@ -32,12 +31,7 @@ class Category {
     }
     const filtered = this.contacts.filter((x) => !contacts.has(x));
     if (filtered.length > 0) {
-      this.categories[uncategorized] = new Category(
-        "Uncategorized",
-        filtered,
-        {},
-        true
-      );
+      this.uncategorized = new Category("Uncategorized", filtered, {}, true);
     }
     return this.contacts;
   }

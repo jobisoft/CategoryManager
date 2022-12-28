@@ -1,8 +1,9 @@
-import { uncategorized, Category } from "./category.mjs";
+import { Category } from "./category.mjs";
 import { parseContact } from "./contact.mjs";
 
 class AddressBook {
   categories = {};
+  uncategorized;
   contacts;
   name;
   id;
@@ -15,6 +16,7 @@ class AddressBook {
 
   static fromFakeData(addressBook) {
     let ab = new AddressBook(addressBook.name, addressBook.contacts);
+    console.log(ab)
     ab.build();
     return ab;
   }
@@ -61,7 +63,7 @@ class AddressBook {
     }
     const filtered = this.contacts.filter((x) => !contacts.has(x));
     if (filtered.length === 0) return;
-    this.categories[uncategorized] = new Category(
+    this.uncategorized = new Category(
       "Uncategorized",
       filtered,
       {},
@@ -93,7 +95,7 @@ class AddressBook {
       if (cur.categories[cat] == null) return null;
       cur = cur.categories[cat];
     }
-    return isUncategorized ? cur.categories[uncategorized] : cur;
+    return isUncategorized ? cur.uncategorized : cur;
   }
 }
 
