@@ -59,15 +59,12 @@ export class AddressBook {
     let contacts = {};
     for (const cat in this.categories) {
       this.categories[cat].buildUncategorized();
-      console.log("assigning", this.categories[cat].contacts);
       Object.assign(contacts, this.categories[cat].contacts);
     }
-    console.log(contacts);
     const filtered = filterObjectByKeyToNull(
       this.contacts,
       (x) => !(x in contacts)
     );
-    console.log(filtered);
     if (isEmptyObject(filtered)) return;
     this.uncategorized = new Category("Uncategorized", filtered, {}, true);
   }
