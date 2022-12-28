@@ -1,5 +1,6 @@
 import { Category } from "./category.mjs";
 import { parseContact } from "./contact.mjs";
+import { filterObject, isEmptyObject } from "./utils.mjs";
 
 export class AddressBook {
   categories = {};
@@ -22,31 +23,30 @@ export class AddressBook {
 
   static async fromTBAddressBook({ name, id }) {
     const rawContacts = await browser.contacts.list(id);
-    const contacts = rawContacts.map(parseContact);
+    const contacts = Object.fromEntries(
+      rawContacts.map((contact) => {
+        const parsed = parseContact(contact);
+        return [parsed.id, parsed];
+      })
+    );
     let ab = new AddressBook(name, contacts, id);
     ab.build();
     return ab;
   }
 
   static fromAllContacts(addressBooks) {
-    let contacts = new Map();
+    let contacts = {};
     for (const ab of addressBooks) {
-      for (const contact of ab.contacts) {
-        // unique contacts from all address books
-        contacts.set(contact.id, contact);
-      }
+      Object.assign(contacts, ab.contacts);
     }
-    let ret = new AddressBook(
-      "All Contacts",
-      [...contacts.values()],
-      "all-contacts"
-    );
+    let ret = new AddressBook("All Contacts", contacts, "all-contacts");
     ret.build();
     return ret;
   }
 
   build() {
-    for (const contact of this.contacts) {
+    for (const id in this.contacts) {
+      const contact = this.contacts[id];
       for (const category of contact.categories) {
         this.addContactToCategory(contact, category);
       }
@@ -56,12 +56,13 @@ export class AddressBook {
 
   buildUncategorized() {
     // only call this method once
-    let contacts = new Set();
+    let contacts = {};
     for (const cat in this.categories) {
-      this.categories[cat].buildUncategorized().forEach(contacts.add, contacts);
+      this.categories[cat].buildUncategorized();
+      Object.assign(contacts, this.categories[cat]);
     }
-    const filtered = this.contacts.filter((x) => !contacts.has(x));
-    if (filtered.length === 0) return;
+    const filtered = filterObject(this.contacts, (x) => !(x in contacts));
+    if (isEmptyObject(filtered)) return;
     this.uncategorized = new Category("Uncategorized", filtered, {}, true);
   }
 
@@ -69,11 +70,11 @@ export class AddressBook {
     let rootName = category[0];
     this.categories[rootName] ??= new Category(rootName);
     let cur = this.categories[rootName];
-    cur.contacts.push(contact);
+    cur.contacts[contact.id] = null;
     category.slice(1).forEach((cat) => {
       cur.categories[cat] ??= new Category(cat);
       cur = cur.categories[cat];
-      cur.contacts.push(contact);
+      cur.contacts[contact.id] = null;
     });
   }
 
@@ -99,4 +100,8 @@ export function lookupCategory(
     cur = cur.categories[cat];
   }
   return isUncategorized ? cur.uncategorized : cur;
+}
+
+export function id2contact(addressBook, contactId) {
+  return addressBook.contacts[contactId];
 }

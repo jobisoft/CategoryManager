@@ -1,15 +1,17 @@
 import { Component, escapeHtml } from "../modules/ui.mjs";
 
-export function createContactList(data = null) {
+export function createContactList(data) {
   return new Component({
     element: "#contacts",
     data,
     template(data) {
       return `<ul>
-            ${data
-              .map(
-                ({ name, email }) =>
-                  `<li class="contact-row">
+            ${
+              data?.addressBook != null
+                ? Object.keys(data.contacts)
+                    .map((id) => {
+                      const { name, email } = data.addressBook.contacts[id];
+                      return `<li class="contact-row">
                       <p class="contact-row__name">
                         ${escapeHtml(name)}
                       </p>
@@ -20,9 +22,11 @@ export function createContactList(data = null) {
                             : '<span class="no-email">No email available</span>'
                         }
                       </p>
-                  </li>`
-              )
-              .join("\n")}
+                  </li>`;
+                    })
+                    .join("\n")
+                : ""
+            }
             </ul>`;
     },
   });

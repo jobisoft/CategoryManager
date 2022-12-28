@@ -1,4 +1,4 @@
-import { isEmptyObject } from "./utils.mjs";
+import { isEmptyObject, filterObject } from "./utils.mjs";
 
 class Category {
   categories;
@@ -8,7 +8,7 @@ class Category {
   uncategorized;
   constructor(
     name,
-    contacts = [],
+    contacts = {},
     subCategories = {},
     isUncategorized = false
   ) {
@@ -21,19 +21,20 @@ class Category {
     // only call this method once
     if (isEmptyObject(this.categories)) {
       // recursion base case
-      return this.contacts;
+      return;
     }
-    let contacts = new Set();
+    let contacts = {};
     for (let cat in this.categories) {
-      this.categories[cat]
-        .buildUncategorized() // 1. build uncategorized for sub category
-        .forEach(contacts.add, contacts); // 2. add contacts from subcategory to `contacts`
+      // 1. build uncategorized for sub category
+      this.categories[cat].buildUncategorized();
+      // 2. add contacts from subcategory to `contacts`
+      Object.assign(contacts, this.categories[cat]);
     }
-    const filtered = this.contacts.filter((x) => !contacts.has(x));
-    if (filtered.length > 0) {
+    // Get the contacts that doesn't appear in any categories
+    const filtered = filterObject(this.contacts, (x) => !(x in contacts));
+    if (!isEmptyObject(filtered)) {
       this.uncategorized = new Category("Uncategorized", filtered, {}, true);
     }
-    return this.contacts;
   }
 }
 

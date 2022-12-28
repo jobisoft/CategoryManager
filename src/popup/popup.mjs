@@ -1,4 +1,8 @@
-import { AddressBook, lookupCategory } from "../modules/address-book.mjs";
+import {
+  AddressBook,
+  lookupCategory,
+  id2contact,
+} from "../modules/address-book.mjs";
 import { createContactList } from "./contact-list.mjs";
 import { createCategoryTree } from "./category-tree.mjs";
 import { createAddressBookList } from "./address-book-list.mjs";
@@ -26,7 +30,10 @@ function fullUpdateUI() {
   categoryTitle.innerText = currentAddressBook?.name ?? "";
   addressBookList.update([...addressBooks.values()]);
   categoryTree.update(currentAddressBook);
-  contactList.update(currentAddressBook?.contacts ?? []);
+  contactList.update({
+    addressBook: currentAddressBook,
+    contacts: currentAddressBook?.contacts ?? {},
+  });
 }
 
 function lookupContactsByCategoryElement(element) {
@@ -45,9 +52,10 @@ function makeMenuEventHandler(fieldName) {
     } else {
       // Do a filterMap(using a flatMap) to remove contacts that do not have an email address
       // and map the filtered contacts to rfc 5322 email address format.
-      const emailList = contacts.flatMap((c) =>
-        c.email == null ? [] : [toRFC5322EmailAddress(c)]
-      );
+      const emailList = Object.keys(contacts).flatMap((c) => {
+        const contact = id2contact(currentAddressBook, c);
+        return contact.email == null ? [] : [toRFC5322EmailAddress(contact)];
+      });
       await browser.compose.beginNew(null, { [fieldName]: emailList });
     }
     window.close();
@@ -84,7 +92,11 @@ browser.menus.onClicked.addListener(async ({ menuItemId }, tab) => {
   }
 });
 
-let contactList = createContactList(currentAddressBook?.contacts ?? []);
+let contactList = createContactList({
+  addressBook: currentAddressBook,
+  contacts: currentAddressBook?.contacts ?? {},
+});
+
 const categoryTitle = document.getElementById("category-title");
 categoryTitle.innerText = currentAddressBook?.name ?? "";
 let categoryTree = createCategoryTree({
@@ -109,7 +121,10 @@ let categoryTree = createCategoryTree({
       currentCategoryElement.classList.remove("active");
     currentCategoryElement = event.target;
     currentCategoryElement.classList.add("active");
-    const newData = lookupContactsByCategoryElement(currentCategoryElement);
+    const newData = {
+      addressBook: currentAddressBook,
+      contacts: lookupContactsByCategoryElement(currentCategoryElement),
+    };
     categoryTitle.innerText = categoryKey;
     contactList.update(newData);
   },
@@ -122,9 +137,10 @@ let categoryTree = createCategoryTree({
     } else {
       // open a new messageCompose window
       await browser.compose.beginNew(null, {
-        bcc: contacts.flatMap((c) =>
-          c.email == null ? [] : [toRFC5322EmailAddress(c)]
-        ),
+        bcc: Object.keys(contacts).flatMap((c) => {
+          const contact = id2contact(currentAddressBook, c);
+          return contact.email == null ? [] : [toRFC5322EmailAddress(contact)];
+        }),
       });
     }
     window.close();
