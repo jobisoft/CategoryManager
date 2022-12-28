@@ -1,5 +1,9 @@
-import { AddressBook } from "../modules/address-book.mjs";
-import data from "../modules/fake-data-provider.mjs"
+import {
+  AddressBook,
+  deleteContact,
+  updateContact,
+} from "../modules/address-book.mjs";
+// import data from "../modules/fake-data-provider.mjs";
 
 // Populating Cache
 
@@ -9,13 +13,33 @@ let abInfos = await browser.addressBooks.list();
 let abValues = await Promise.all(
   abInfos.map((ab) => AddressBook.fromTBAddressBook(ab))
 );
-abValues.unshift(AddressBook.fromFakeData(data[2]));
+// abValues.unshift(AddressBook.fromFakeData(data[2]));
 // Make "All Contacts" the first one
 abValues.unshift(AddressBook.fromAllContacts(abValues));
 // Map guarantees the order of keys is the insertion order
 let addressBooks = new Map(abValues.map((ab) => [ab.id, ab]));
 
 console.info("Done populating cache!");
+
+console.log(abValues);
+
+// Synchronization
+
+browser.contacts.onCreated.addListener((node) => {
+  console.log(node);
+});
+
+browser.contacts.onUpdated.addListener((node, changedProperties) => {
+  let addressBookId = node.parentId;
+  console.log(node, changedProperties);
+  updateContact(addressBooks.get(addressBookId), node.id, changedProperties);
+});
+
+browser.contacts.onDeleted.addListener((addressBookId, id) => {
+  let ab = addressBooks.get(addressBookId);
+  deleteContact(ab, id);
+  port.postMessage({ type: "contactDeleted", args: { addressBookId, id } });
+});
 
 // Communication
 
