@@ -1,4 +1,8 @@
-import { Component, escapeHtmlContent } from "../modules/ui.mjs";
+import {
+  Component,
+  escapeHtmlContent,
+  escapeHtmlAttr,
+} from "../modules/ui.mjs";
 
 export function createContactList(data) {
   return new Component({
@@ -11,7 +15,9 @@ export function createContactList(data) {
                 ? Object.keys(data.contacts)
                     .map((id) => {
                       const { name, email } = data.addressBook.contacts[id];
-                      return `<li class="contact-row" draggable="true">
+                      return `<li class="contact-row" draggable="true" data-id="${escapeHtmlAttr(
+                        id
+                      )}">
                       <p class="contact-row__name">
                         ${escapeHtmlContent(name)}
                       </p>
