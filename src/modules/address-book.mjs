@@ -116,7 +116,7 @@ export class AddressBook {
         state = "done";
       }
       cur = cur.categories[cat];
-      if (idx == arr.length - 1 && state == "1") {
+      if (idx == arr.length - 1 && !cur.isLeaf()) {
         // If the last category is not a leaf, add this contact to uncategorized
         cur.uncategorized[contact.id] = null;
       }
@@ -212,6 +212,11 @@ export function createContact(addressBook, contactNode) {
   const id = contactNode.id;
   const contact = parseContact(contactNode);
   this.contacts[id] = contact;
+  if (contact.categories.length == 0) {
+    // No category info. Just add it to uncategorized and return.
+    this.uncategorized[id] = null;
+    return;
+  }
   for (const category of contact.categories) {
     addressBook.addContactToCategory(contact, category);
   }

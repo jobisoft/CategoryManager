@@ -1,6 +1,6 @@
 import { isEmptyObject, filterObjectByKeyToNull } from "./utils.mjs";
 
-class Category {
+export class Category {
   categories;
   name;
   contacts;
@@ -43,5 +43,3 @@ class Category {
     return isEmptyObject(this.categories);
   }
 }
-
-export { Category };

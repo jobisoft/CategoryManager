@@ -1,5 +1,6 @@
 import {
   AddressBook,
+  createContact,
   deleteContact,
   updateContact,
 } from "../modules/address-book.mjs";
@@ -26,19 +27,20 @@ console.log(abValues);
 // Synchronization
 
 browser.contacts.onCreated.addListener((node) => {
-  console.log(node);
+  console.log("Create", node);
+  let addressBookId = node.parentId;
+  createContact(addressBooks.get(addressBookId), node);
 });
 
 browser.contacts.onUpdated.addListener((node, changedProperties) => {
   let addressBookId = node.parentId;
   console.log(node, changedProperties);
-  updateContact(addressBooks.get(addressBookId), node.id, changedProperties);
+  updateContact(addressBooks.get(addressBookId), node, changedProperties);
 });
 
 browser.contacts.onDeleted.addListener((addressBookId, id) => {
   let ab = addressBooks.get(addressBookId);
   deleteContact(ab, id);
-  port.postMessage({ type: "contactDeleted", args: { addressBookId, id } });
 });
 
 // Communication
