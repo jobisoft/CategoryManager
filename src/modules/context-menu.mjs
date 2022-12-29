@@ -53,26 +53,45 @@ export function createMenuForCategoryTree() {
   });
 }
 
+const NEW_CATEGORY_TEXT = "<New Category Here>";
+
 function createCategoryEditingMenuRecursively(
   category,
   contactId,
+  prefix = "",
   parentId = undefined
 ) {
-  const id = createCheckBoxMenu({
-    id: "#" + category.name,
+  const menuId = prefix + category.name;
+  console.log(category, menuId);
+  createCheckBoxMenu({
+    id: menuId,
     title: category.name,
     checked: contactId in category.contacts,
     parentId,
   });
+  createMenu({
+    id: "$" + menuId.slice(1),
+    title: NEW_CATEGORY_TEXT,
+    parentId: menuId,
+  });
   for (const catName in category.categories) {
     const subcategory = category.categories[catName];
-    createCategoryEditingMenuRecursively(subcategory, contactId, id);
+    createCategoryEditingMenuRecursively(
+      subcategory,
+      contactId,
+      menuId + " / ",
+      menuId
+    );
   }
 }
 
 export function createMenuForContactList(addressBook, contactId) {
+  // #: existing category
+  // $: create new category
+  createMenu({ id: "$", title: NEW_CATEGORY_TEXT });
   for (const catName in addressBook.categories) {
     const category = addressBook.categories[catName];
-    createCategoryEditingMenuRecursively(category, contactId);
+    // Add # prefix to avoid id conflicts
+    createCategoryEditingMenuRecursively(category, contactId, "#");
   }
 }
