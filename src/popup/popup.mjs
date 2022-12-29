@@ -10,6 +10,11 @@ import {
   toRFC5322EmailAddress,
   addContactsToComposeDetails,
 } from "../modules/contact.mjs";
+import {
+  createMenuForCategoryTree,
+  createMenuForContactList,
+  destroyAllMenus,
+} from "../modules/context-menu.mjs";
 // global object: emailAddresses, ICAL from popup.html
 
 let addressBooks = new Map();
@@ -62,9 +67,34 @@ function makeMenuEventHandler(fieldName) {
   };
 }
 
+function overrideMenuForCategoryTree() {
+  destroyAllMenus();
+  createMenuForCategoryTree();
+}
+
+function overrideMenuForContactList() {
+  destroyAllMenus();
+  createMenuForContactList();
+}
+
 document.addEventListener("contextmenu", (e) => {
   browser.menus.overrideContext({ context: "tab", tabId: tab.id });
   elementForContextMenu = e.target;
+  console.log(elementForContextMenu);
+  // Check if the right click originates from contact list
+  if (elementForContextMenu.parentNode.dataset.id != null) {
+    // Right click on contact info
+    console.log("CONTACT");
+    elementForContextMenu = elementForContextMenu.parentNode;
+    overrideMenuForContactList();
+    return;
+  } else if (elementForContextMenu.dataset.id != null) {
+    console.log("CONTACT");
+    overrideMenuForContactList();
+    return;
+  }
+  overrideMenuForCategoryTree();
+  // Check if the right click originates from category tree
   if (elementForContextMenu.nodeName === "I")
     // Right click on the expander icon. Use the parent element
     elementForContextMenu = elementForContextMenu.parentNode;
@@ -102,6 +132,7 @@ categoryTitle.innerText = currentAddressBook?.name ?? "";
 let categoryTree = createCategoryTree({
   data: currentAddressBook,
   click(event) {
+    console.log("Click", event);
     if (event.detail > 1) {
       // Disable click event on double click
       event.preventDefault();
