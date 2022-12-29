@@ -2,34 +2,18 @@
 // the entries defined here.
 // When viewTypes is present, the document's URL is matched instead.
 
-let { version } = await browser.runtime.getBrowserInfo();
+import { createNormalMenu } from "../modules/context-menu.mjs";
 
-let major = parseInt(version.split(".")[0], 10);
-
-// Fixed by bug 1793790.
-
-let viewTypes = major < 107 ? ["tab"] : ["popup"];
-
-browser.menus.create({
+createNormalMenu({
   id: "add_to",
   title: "Add to TO",
-  contexts: ["tab"],
-  viewTypes,
-  documentUrlPatterns: ["moz-extension://*/popup/popup.html"],
 });
-
-browser.menus.create({
+createNormalMenu({
   id: "add_cc",
   title: "Add to CC",
-  contexts: ["tab"],
-  viewTypes,
-  documentUrlPatterns: ["moz-extension://*/popup/popup.html"],
 });
 
-browser.menus.create({
+createNormalMenu({
   id: "add_bcc",
   title: "Add to BCC",
-  contexts: ["tab"],
-  viewTypes,
-  documentUrlPatterns: ["moz-extension://*/popup/popup.html"],
 });
