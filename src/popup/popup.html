@@ -12,6 +12,12 @@
     <link href="../external/fontawesome/css/regular.min.css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="../styles.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="popup.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      media="screen"
+      href="context-menu.css"
+    />
     <script src="../external/email-addresses/lib/email-addresses.min.js"></script>
     <script src="../external/ical.js"></script>
     <script type="module" src="popup.mjs"></script>
@@ -25,5 +31,11 @@
       <h2 id="category-title"></h2>
       <div id="contacts"></div>
     </div>
+    <ul id="custom-menu" class="custom-menu">
+      <li data-action="add">Add to this category</li>
+      <li data-action="add-new">Add to a new subcategory</li>
+      <li data-action="move">Move to this category</li>
+      <li data-action="move">Move to a new subcategory</li>
+    </ul>
   </body>
 </html>

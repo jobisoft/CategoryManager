@@ -143,6 +143,10 @@
   color: var(--catman-highlight);
 }
 
+.tree-nav__item-title.drag-over {
+  color: var(--catman-hover);
+}
+
 .tree-nav__item > p.tree-nav__item-title::before {
   /* Leaf element marker */
   position: absolute;

@@ -5,7 +5,7 @@ import {
 } from "../modules/ui.mjs";
 
 export function createContactList(data) {
-  return new Component({
+  let component = new Component({
     element: "#contacts",
     data,
     template(data) {
@@ -36,4 +36,8 @@ export function createContactList(data) {
             </ul>`;
     },
   });
+  component.element.addEventListener("dragstart", (e) => {
+    e.dataTransfer.setData("category-manager/contact", e.target.dataset.id);
+  });
+  return component;
 }

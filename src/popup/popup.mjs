@@ -23,7 +23,9 @@ const [tab] = await browser.tabs.query({ currentWindow: true, active: true });
 const isComposeAction = tab.type == "messageCompose";
 
 // currentCategoryElement is only used for highlighting current selection
-let elementForContextMenu, currentCategoryElement;
+let elementForContextMenu,
+  currentCategoryElement,
+  currentDraggingOverCategoryElement;
 
 // Default to all contacts
 let currentAddressBook = addressBooks.get("all-contacts");
@@ -176,6 +178,49 @@ let categoryTree = createCategoryTree({
     }
     window.close();
   },
+  dragEnter(e) {
+    e.preventDefault();
+  },
+  dragOver(e) {
+    if (currentDraggingOverCategoryElement != null) {
+      currentDraggingOverCategoryElement.classList.remove("drag-over");
+    }
+    if (e.target.nodeName === "I") {
+      // Dragging over the expander.
+      currentDraggingOverCategoryElement = e.target.parentNode;
+    } else if (e.target.nodeName === "DIV") {
+      // Dragging over the container of a leaf category
+      currentDraggingOverCategoryElement = e.target.children[0];
+    } else if (e.target.nodeName === "DETAILS") {
+      console.warn("Dragging over details!");
+      return;
+    } else {
+      currentDraggingOverCategoryElement = e.target;
+      if (currentDraggingOverCategoryElement.nodeName === "SUMMARY") {
+        currentDraggingOverCategoryElement.parentNode.open = true;
+      }
+    }
+    currentDraggingOverCategoryElement.classList.add("drag-over");
+    console.log(e);
+    console.warn(`Dragging onto`, currentDraggingOverCategoryElement);
+    e.preventDefault();
+  },
+  dragDrop(e) {
+    if (currentDraggingOverCategoryElement != null) {
+      currentDraggingOverCategoryElement.classList.remove("drag-over");
+      currentDraggingOverCategoryElement = null;
+    }
+    customMenu.classList.add("show");
+    customMenu.style.top = e.pageY + "px";
+    customMenu.style.left = e.pageX + "px";
+    console.log(e.dataTransfer.items[0]);
+  },
+  dragLeave(e) {
+    if (currentDraggingOverCategoryElement != null) {
+      currentDraggingOverCategoryElement.classList.remove("drag-over");
+      currentDraggingOverCategoryElement = null;
+    }
+  },
 });
 
 let addressBookList = createAddressBookList({
@@ -214,3 +259,30 @@ let messageHandlers = {
     fullUpdateUI();
   },
 };
+
+// Custom Context Menu for drag and drop on category tree
+
+let customMenu = document.getElementById("custom-menu");
+
+document.addEventListener("mousedown", (e) => {
+  let element = e.target;
+  while (element !== customMenu && element != null) {
+    element = element.parentElement;
+  }
+  if (element == null) customMenu.classList.remove("show");
+});
+
+customMenu.addEventListener("click", (e) => {
+  switch (e.target.dataset.action) {
+    case "add":
+      break;
+    case "move":
+      break;
+    case "add-new":
+      break;
+    default:
+      e.preventDefault();
+      return;
+  }
+  customMenu.classList.remove("show");
+});

@@ -45,7 +45,15 @@ export function writeTreeNode(prefix, category) {
   </details>`;
 }
 
-export function createCategoryTree({ data, click, doubleClick }) {
+export function createCategoryTree({
+  data,
+  click,
+  doubleClick,
+  dragEnter,
+  dragOver,
+  dragLeave,
+  dragDrop,
+}) {
   let component = new Component({
     element: "#tree",
     data,
@@ -63,5 +71,9 @@ export function createCategoryTree({ data, click, doubleClick }) {
   });
   click && component.element.addEventListener("click", click);
   doubleClick && component.element.addEventListener("dblclick", doubleClick);
+  dragEnter && component.element.addEventListener("dragenter", dragEnter);
+  dragOver && component.element.addEventListener("dragover", dragOver);
+  dragLeave && component.element.addEventListener("dragleave", dragLeave);
+  dragDrop && component.element.addEventListener("drop", dragDrop);
   return component;
 }
