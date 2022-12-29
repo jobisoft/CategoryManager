@@ -1,20 +1,8 @@
-// In the html file, we override the contextmenu with the "tab" context and show
-// the entries defined here.
-// When viewTypes is present, the document's URL is matched instead.
-
-let { version } = await browser.runtime.getBrowserInfo();
-
-let major = parseInt(version.split(".")[0], 10);
-
-// Fixed by bug 1793790.
-
-let viewTypes = major < 107 ? ["tab"] : ["popup"];
-
 function createMenu(properties) {
   return browser.menus.create({
     ...properties,
     contexts: ["tab"],
-    viewTypes,
+    viewTypes: ["popup"],
     documentUrlPatterns: ["moz-extension://*/popup/popup.html"],
   });
 }
