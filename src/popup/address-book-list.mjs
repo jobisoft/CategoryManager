@@ -1,7 +1,7 @@
-import { escapeHtml, Component } from "../modules/ui.mjs";
+import { escapeHtmlAttr, Component } from "../modules/ui.mjs";
 
 function writeAddressBookElement(addressBook, index) {
-  let name = escapeHtml(addressBook.name);
+  let name = escapeHtmlAttr(addressBook.name);
   let className = index === 0 ? 'class="selected"' : "";
   return `<li data-address-book="${addressBook.id}" ${className}>${name}</li>`;
 }

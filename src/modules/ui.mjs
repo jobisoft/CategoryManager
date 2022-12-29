@@ -16,7 +16,7 @@ export class Component {
   }
 }
 
-export function escapeHtml(unsafe) {
+export function escapeHtmlAttr(unsafe) {
   // taken from https://stackoverflow.com/questions/6234773/can-i-escape-html-special-chars-in-javascript
   return unsafe
     .replaceAll("&", "&amp;")
@@ -24,4 +24,8 @@ export function escapeHtml(unsafe) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+export function escapeHtmlContent(input) {
+  return escapeHtmlAttr(input).replaceAll(" ", "&nbsp;");
 }

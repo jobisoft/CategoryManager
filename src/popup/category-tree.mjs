@@ -1,4 +1,8 @@
-import { escapeHtml, Component } from "../modules/ui.mjs";
+import {
+  escapeHtmlAttr,
+  escapeHtmlContent,
+  Component,
+} from "../modules/ui.mjs";
 import { isEmptyObject } from "../modules/utils.mjs";
 
 function writeTreeLeaf(prefix, category) {
@@ -6,10 +10,10 @@ function writeTreeLeaf(prefix, category) {
     ? 'data-uncategorized=""'
     : "";
   return `<div class="tree-nav__item">
-    <p class="tree-nav__item-title" data-category="${escapeHtml(
+    <p class="tree-nav__item-title" data-category="${escapeHtmlAttr(
       prefix + category.name
     )}" ${uncategorizedAttr}>
-      ${escapeHtml(category.name)}
+      ${escapeHtmlContent(category.name)}
     </p>
   </div>`;
 }
@@ -33,9 +37,9 @@ export function writeTreeNode(prefix, category) {
     ? writeTreeLeaf(prefix, category)
     : `<details class="tree-nav__item is-expandable">
   <summary class="tree-nav__item-title" 
-           data-category="${escapeHtml(prefix + category.name)}">
+           data-category="${escapeHtmlAttr(prefix + category.name)}">
     <i class="tree-nav__expander fa-solid fa-chevron-right"></i>
-    ${escapeHtml(category.name)}
+    ${escapeHtmlContent(category.name)}
   </summary>
   ${children.join("\n")}
   </details>`;

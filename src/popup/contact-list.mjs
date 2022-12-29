@@ -1,4 +1,4 @@
-import { Component, escapeHtml } from "../modules/ui.mjs";
+import { Component, escapeHtmlContent } from "../modules/ui.mjs";
 
 export function createContactList(data) {
   return new Component({
@@ -13,12 +13,12 @@ export function createContactList(data) {
                       const { name, email } = data.addressBook.contacts[id];
                       return `<li class="contact-row">
                       <p class="contact-row__name">
-                        ${escapeHtml(name)}
+                        ${escapeHtmlContent(name)}
                       </p>
                       <p class="contact-row__email">
                         ${
                           email != null
-                            ? escapeHtml(email)
+                            ? escapeHtmlContent(email)
                             : '<span class="no-email">No email available</span>'
                         }
                       </p>
