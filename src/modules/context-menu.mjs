@@ -55,6 +55,11 @@ export function createMenuForCategoryTree() {
 
 const NEW_CATEGORY_TEXT = "<New Category Here>";
 
+function debug(x) {
+  console.log(x);
+  return x;
+}
+
 function createCategoryEditingMenuRecursively(
   category,
   contactId,
@@ -62,18 +67,18 @@ function createCategoryEditingMenuRecursively(
   parentId = undefined
 ) {
   const menuId = prefix + category.name;
-  console.log(category, menuId);
+  console.log(menuId, contactId);
   createCheckBoxMenu({
     id: menuId,
     title: category.name,
-    checked: contactId in category.contacts,
+    checked: debug(contactId in category.contacts),
     parentId,
   });
-  createMenu({
-    id: "$" + menuId.slice(1),
-    title: NEW_CATEGORY_TEXT,
-    parentId: menuId,
-  });
+  // createCheckBoxMenu({
+  //   id: "$" + menuId.slice(1),
+  //   title: NEW_CATEGORY_TEXT,
+  //   parentId: menuId,
+  // });
   for (const catName in category.categories) {
     const subcategory = category.categories[catName];
     createCategoryEditingMenuRecursively(
@@ -88,7 +93,7 @@ function createCategoryEditingMenuRecursively(
 export function createMenuForContactList(addressBook, contactId) {
   // #: existing category
   // $: create new category
-  createMenu({ id: "$", title: NEW_CATEGORY_TEXT });
+  // createMenu({ id: "$", title: NEW_CATEGORY_TEXT });
   for (const catName in addressBook.categories) {
     const category = addressBook.categories[catName];
     // Add # prefix to avoid id conflicts
