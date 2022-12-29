@@ -17,6 +17,10 @@ import {
 } from "../modules/context-menu.mjs";
 // global object: emailAddresses, ICAL from popup.html
 
+// ------------------------------------
+//  Initialization & Global Variables
+// ------------------------------------
+
 let addressBooks = new Map();
 
 const [tab] = await browser.tabs.query({ currentWindow: true, active: true });
@@ -29,6 +33,10 @@ let elementForContextMenu,
 
 // Default to all contacts
 let currentAddressBook = addressBooks.get("all-contacts");
+
+// ---------------
+//  helper funcs
+// ---------------
 
 function fullUpdateUI() {
   currentAddressBook = addressBooks.get("all-contacts");
@@ -50,6 +58,10 @@ function lookupContactsByCategoryElement(element) {
   return lookupCategory(currentAddressBook, categoryKey, isUncategorized)
     .contacts;
 }
+
+// -------------------
+// Native Context Menu
+// -------------------
 
 function makeMenuEventHandler(fieldName) {
   return async () => {
@@ -76,7 +88,10 @@ function overrideMenuForCategoryTree() {
 
 function overrideMenuForContactList() {
   destroyAllMenus();
-  createMenuForContactList();
+  createMenuForContactList(
+    currentAddressBook,
+    elementForContextMenu.dataset.id
+  );
 }
 
 document.addEventListener("contextmenu", (e) => {
@@ -123,6 +138,11 @@ browser.menus.onClicked.addListener(async ({ menuItemId }, tab) => {
     console.error("No handler for", menuItemId);
   }
 });
+
+// -------------------
+//    UI Elements
+// and event handlers
+// -------------------
 
 let contactList = createContactList({
   addressBook: currentAddressBook,
@@ -242,6 +262,10 @@ addressBookList.render();
 categoryTree.render();
 contactList.render();
 
+// ---------------------------
+//  Communication with cache
+// ---------------------------
+
 let myPort = browser.runtime.connect({ name: "sync" });
 myPort.postMessage({ type: "fullUpdate" });
 myPort.onMessage.addListener(({ type, args }) => {
@@ -260,7 +284,9 @@ let messageHandlers = {
   },
 };
 
+// -------------------------------------------------------
 // Custom Context Menu for drag and drop on category tree
+// -------------------------------------------------------
 
 let customMenu = document.getElementById("custom-menu");
 

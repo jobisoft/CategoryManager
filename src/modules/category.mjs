@@ -40,6 +40,10 @@ export class Category {
     }
   }
   isLeaf() {
-    return isEmptyObject(this.categories);
+    return isLeafCategory(this);
   }
+}
+
+export function isLeafCategory(cat) {
+  return isEmptyObject(cat.categories);
 }
