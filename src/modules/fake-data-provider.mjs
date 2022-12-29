@@ -1,6 +1,6 @@
 export default [
   {
-    name: "Personal Address Book",
+    name: "Fake Address Book",
     contacts: [
       {
         name: "B A",
