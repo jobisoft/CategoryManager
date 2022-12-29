@@ -19,6 +19,21 @@ function createMenu(properties) {
   });
 }
 
+function createCheckBoxMenu({
+  id,
+  title,
+  checked = false,
+  parentId = undefined,
+}) {
+  return createMenu({
+    id,
+    title,
+    checked,
+    type: "checkbox",
+    parentId,
+  });
+}
+
 export function destroyAllMenus() {
   browser.menus.removeAll();
 }
@@ -38,11 +53,26 @@ export function createMenuForCategoryTree() {
   });
 }
 
-export function createMenuForContactList() {
-  createMenu({
-    id: "edit",
-    title: "Edit contact",
-    checked: true,
-    type: "checkbox",
+function createCategoryEditingMenuRecursively(
+  category,
+  contactId,
+  parentId = undefined
+) {
+  const id = createCheckBoxMenu({
+    id: "#" + category.name,
+    title: category.name,
+    checked: contactId in category.contacts,
+    parentId,
   });
+  for (const catName in category.categories) {
+    const subcategory = category.categories[catName];
+    createCategoryEditingMenuRecursively(subcategory, contactId, id);
+  }
+}
+
+export function createMenuForContactList(addressBook, contactId) {
+  for (const catName in addressBook.categories) {
+    const category = addressBook.categories[catName];
+    createCategoryEditingMenuRecursively(category, contactId);
+  }
 }
