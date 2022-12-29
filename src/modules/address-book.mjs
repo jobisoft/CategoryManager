@@ -139,6 +139,7 @@ export function lookupCategory(
   isUncategorized = false
 ) {
   // look up a category using a key like `A / B`
+  console.log("Looking up", categoryKey);
   let category = categoryKey.split(" / ");
   if (isUncategorized) {
     // remove the last sub category
@@ -211,10 +212,10 @@ export function updateContact(addressBook, contactNode, changedProperties) {
 export function createContact(addressBook, contactNode) {
   const id = contactNode.id;
   const contact = parseContact(contactNode);
-  this.contacts[id] = contact;
+  addressBook.contacts[id] = contact;
   if (contact.categories.length == 0) {
     // No category info. Just add it to uncategorized and return.
-    this.uncategorized[id] = null;
+    addressBook.uncategorized[id] = null;
     return;
   }
   for (const category of contact.categories) {
