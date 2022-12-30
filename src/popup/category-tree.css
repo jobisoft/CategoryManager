@@ -1,0 +1,98 @@
+/* Tree component */
+
+#tree > summary {
+  display: block;
+  cursor: pointer;
+  outline: 0;
+}
+
+.tree-nav__item {
+  display: block;
+  white-space: nowrap;
+  position: relative;
+}
+
+.tree-nav__item.is-expandable::before {
+  /* vertical line */
+  border-left: 0.1rem solid #333;
+  content: "";
+  height: 100%;
+  left: 0.9rem;
+  position: absolute;
+  top: 2rem;
+  height: calc(100% - 2rem);
+}
+
+.tree-nav__item > p.tree-nav__item-title {
+  /* Leaf element */
+  display: inline;
+  line-height: 2rem;
+}
+
+.tree-nav__item-title {
+  cursor: pointer;
+  display: block;
+  outline: 0;
+  font-size: 1rem;
+  line-height: 2rem;
+  transition: color 0.2s;
+}
+
+.tree-nav__item-title[data-uncategorized] {
+  font-style: italic;
+  font-weight: bold;
+}
+
+.tree-nav__item-title:hover {
+  color: var(--catman-hover);
+}
+
+.tree-nav__item-title.active {
+  color: var(--catman-highlight);
+}
+
+.tree-nav__item-title.drag-over {
+  color: var(--catman-hover);
+}
+
+.tree-nav__item > p.tree-nav__item-title::before {
+  /* Leaf element marker */
+  position: absolute;
+  display: inline-block;
+  font: var(--fa-font-regular);
+  content: "\f111";
+  text-align: center;
+  top: 0;
+  left: 0;
+  padding: 0.5rem;
+}
+
+.tree-nav__item .tree-nav__item {
+  margin-left: 2rem;
+}
+
+.tree-nav__item > .tree-nav__item-title {
+  padding-left: 2rem;
+}
+
+.tree-nav__item.is-expandable[open]
+  > .tree-nav__item-title
+  > .tree-nav__expander {
+  /* rotate the icon on expand */
+  transform: rotate(90deg);
+}
+
+.tree-nav__item.is-expandable > .tree-nav__item-title > .tree-nav__expander {
+  /* icon: expand */
+  position: absolute;
+  will-change: transform;
+  transition: transform 300ms ease;
+  font-size: 1rem;
+  text-align: center;
+  display: inline-block;
+  top: 0;
+  left: 0;
+  /* Make the clickable area larger */
+  padding-inline: 0.5rem;
+  padding-block: 0.5rem;
+}

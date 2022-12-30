@@ -1,0 +1,57 @@
+/* Grid layout */
+
+#container {
+  display: grid;
+  /* TODO: determine the max width of tree view in JS. use 15rem for now */
+  grid-template-columns: auto 15rem 14rem;
+  grid-template-rows: 2rem auto;
+  gap: 0.5rem 2rem;
+  /* No idea why `calc(100vh - 2rem)` doesn't work */
+  height: calc(600px - 2rem);
+  color: var(--catman-foreground);
+}
+
+#address-books {
+  grid-column: 1;
+  grid-row: 2;
+  overflow: auto;
+  margin: 0;
+}
+
+#tree {
+  grid-column: 2;
+  grid-row: 2;
+  user-select: none;
+  overflow: auto;
+}
+
+#contacts {
+  grid-column: 3;
+  grid-row: 2;
+  grid-row-end: 3;
+  position: relative;
+  overflow: auto;
+}
+
+#category-title {
+  grid-column: 2;
+  grid-row: 1;
+  grid-column-end: 4;
+  margin: 0;
+  font-size: 1rem;
+  text-align: right;
+  line-height: 2rem;
+  background: var(--catman-background);
+}
+
+/* Text when no address book is available */
+#info-text {
+  display: none;
+  position: absolute;
+  text-align: center;
+  margin: auto;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3rem;
+}
