@@ -101,12 +101,10 @@ document.addEventListener("contextmenu", (e) => {
   // Check if the right click originates from contact list
   if (elementForContextMenu.parentNode.dataset.id != null) {
     // Right click on contact info
-    console.log("CONTACT");
     elementForContextMenu = elementForContextMenu.parentNode;
     overrideMenuForContactList();
     return;
   } else if (elementForContextMenu.dataset.id != null) {
-    console.log("CONTACT");
     overrideMenuForContactList();
     return;
   }
@@ -221,12 +219,10 @@ let categoryTree = createCategoryTree({
     } else if (e.target.nodeName === "DIV") {
       // Dragging over the container of a leaf category
       currentDraggingOverCategoryElement = e.target.children[0];
-      console.log("???", currentDraggingOverCategoryElement);
     } else if (e.target.nodeName === "DETAILS") {
       console.warn("Dragging over details!");
       return;
     } else {
-      console.log("!!!", currentDraggingOverCategoryElement);
       currentDraggingOverCategoryElement = e.target;
       if (currentDraggingOverCategoryElement.nodeName === "SUMMARY") {
         currentDraggingOverCategoryElement.parentElement.open = true;
