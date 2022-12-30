@@ -25,6 +25,10 @@ export class Category {
   }
 }
 
+export function categoryArrToString(cat) {
+  return cat.join(" / ");
+}
+
 export function isLeafCategory(cat) {
   return isEmptyObject(cat.categories);
 }
