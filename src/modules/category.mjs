@@ -18,26 +18,7 @@ export class Category {
     this.isUncategorized = isUncategorized;
   }
   buildUncategorized() {
-    // only call this method once
-    if (this.isLeaf()) {
-      // recursion base case
-      return;
-    }
-    let contacts = {};
-    for (let cat in this.categories) {
-      // 1. build uncategorized for sub category
-      this.categories[cat].buildUncategorized();
-      // 2. add contacts from subcategory to `contacts`
-      Object.assign(contacts, this.categories[cat].contacts);
-    }
-    // Get the contacts that doesn't appear in any categories
-    const filtered = filterObjectByKeyToNull(
-      this.contacts,
-      (x) => !(x in contacts)
-    );
-    if (!isEmptyObject(filtered)) {
-      this.uncategorized = new Category("Uncategorized", filtered, {}, true);
-    }
+    buildUncategorizedCategory(this);
   }
   isLeaf() {
     return isLeafCategory(this);
@@ -46,4 +27,27 @@ export class Category {
 
 export function isLeafCategory(cat) {
   return isEmptyObject(cat.categories);
+}
+
+export function buildUncategorizedCategory(cat) {
+  // only call this method once
+  if (isLeafCategory(cat)) {
+    // recursion base case
+    return;
+  }
+  let contacts = {};
+  for (let cat in cat.categories) {
+    // 1. build uncategorized for sub category
+    buildUncategorizedCategory(cat.categories[cat]);
+    // 2. add contacts from subcategory to `contacts`
+    Object.assign(contacts, cat.categories[cat].contacts);
+  }
+  // Get the contacts that doesn't appear in any categories
+  const filtered = filterObjectByKeyToNull(
+    cat.contacts,
+    (x) => !(x in contacts)
+  );
+  if (!isEmptyObject(filtered)) {
+    cat.uncategorized = new Category("Uncategorized", filtered, {}, true);
+  }
 }

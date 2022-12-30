@@ -1,4 +1,8 @@
-import { Category, isLeafCategory } from "./category.mjs";
+import {
+  Category,
+  isLeafCategory,
+  buildUncategorizedCategory,
+} from "./category.mjs";
 import { parseContact } from "./contact.mjs";
 import { filterObjectByKeyToNull, isEmptyObject } from "./utils.mjs";
 
@@ -81,53 +85,6 @@ export class AddressBook {
     });
   }
 
-  addContactToCategory(contact, category) {
-    // Several cases.
-    // 1. If there are no new categories, it's easy.
-    // 2. If there are some new categories:
-    //    a. one old leaf node is no longer a leaf
-    //     | we need to deal with uncategorized category
-    //    b. the entire category path doesn't contain any old categories
-    //     | this is a new path which only contains one contact, we don't need to deal with uncategorized category
-    // state: a string that represents current state
-    //        1, 2a, 2b, done(which means we already found the old leaf node)
-    const rootName = category[0];
-    // Assume there are no new categories first.
-    let state = "1";
-    if (this.categories[rootName] == null) {
-      // Case 2.b
-      this.categories[rootName] = new Category(rootName);
-      state = "2b";
-    }
-
-    let cur = this.categories[rootName];
-    cur.contacts[contact.id] = null;
-    let oldLeaf;
-    category.slice(1).forEach((cat, idx, arr) => {
-      if (cur.categories[cat] == null && state == "1") {
-        // Case 2.a
-        // this leaf node is no longer a leaf after this update
-        state = "2a";
-      }
-      cur.categories[cat] ??= new Category(cat);
-      cur.categories[cat].contacts[contact.id] = null;
-      if (state == "2a") {
-        oldLeaf = cur;
-        state = "done";
-      }
-      cur = cur.categories[cat];
-      if (idx == arr.length - 1 && !cur.isLeaf()) {
-        // If the last category is not a leaf, add this contact to uncategorized
-        cur.uncategorized[contact.id] = null;
-      }
-    });
-    if (state === "done") {
-      // Actually we do not need to recurse here.
-      // TODO: optimize this.
-      oldLeaf.buildUncategorized();
-    }
-  }
-
   lookup(categoryKey, isUncategorized = false) {
     return lookupCategory(this, categoryKey, isUncategorized);
   }
@@ -204,6 +161,7 @@ export function deleteContact(addressBook, contactId) {
   const contact = addressBook.contacts[contactId];
   delete addressBook.contacts[contactId];
   for (const cat of contact.categories) {
+    console.log("Delete", contact.name, "from", cat);
     deleteContactRecursively(addressBook, cat, contactId);
   }
 }
@@ -215,7 +173,7 @@ export function updateContact(addressBook, contactNode, changedProperties) {
   // }
 
   // changedProperties only tells us whether Primary/SecondaryEmail changes.
-  // it won't tell us if other email address got updated.
+  // it won't tell us if categories or other email address got updated.
   // Let's just parse the vCard again so that nothing is left behind!
   const id = contactNode.id;
   const newContact = parseContact(contactNode);
@@ -226,6 +184,16 @@ export function updateContact(addressBook, contactNode, changedProperties) {
     console.log("Old categories: ", oldContact.categories);
     console.log("New categories: ", newContact.categories);
     // TODO: update the category tree.
+    const newCategories = new Set(newContact.categories);
+    const oldCategories = new Set(oldContact.categories);
+    const addition = new Set(
+      [...newCategories].filter((x) => !oldCategories.has(x))
+    );
+    const deletion = new Set(
+      [...oldCategories].filter((x) => !newCategories.has(x))
+    );
+    console.log("Addition", [...addition]);
+    console.log("Deletion", [...deletion]);
   }
   addressBook.contacts[id] = newContact;
 }
@@ -240,6 +208,116 @@ export function createContact(addressBook, contactNode) {
     return;
   }
   for (const category of contact.categories) {
-    addressBook.addContactToCategory(contact, category);
+    addContactToCategory(addressBook, contact, category);
+  }
+}
+
+function removeContactFromCategoryRecursively(
+  categoryObj,
+  remainingCategoryPath,
+  contactId,
+  firstLevelDeletionEnabled = true
+) {
+  // See the docs of `removeContactFromCategory`
+  let shouldDelete = true;
+  if (remainingCategoryPath.length === 0) {
+    // Recursion base case
+    delete categoryObj.contacts[contactId];
+    if (!isLeafCategory(categoryObj)) {
+      delete categoryObj.uncategorized.contacts[contactId];
+    }
+  } else {
+    const nextCategoryName = remainingCategoryPath.shift();
+    for (const catName in categoryObj.categories) {
+      if (catName == nextCategoryName) continue;
+      if (contactId in categoryObj.categories[contactId]) {
+        shouldDelete = false;
+        break;
+      }
+    }
+    console.log(
+      "Should I remove contact for",
+      categoryObj.name,
+      ":",
+      shouldDelete
+    );
+    if (firstLevelDeletionEnabled && shouldDelete)
+      delete categoryObj.contacts[contactId];
+    const shouldDeleteCategory = removeContactFromCategoryRecursively(
+      categoryObj.categories[nextCategoryName],
+      remainingCategoryPath,
+      contactId
+    );
+    if (shouldDeleteCategory) {
+      delete categoryObj.categories[nextCategoryName];
+      // Do we need to update uncategorized category?
+      if (isLeafCategory(categoryObj)) {
+        // This category becomes a leaf.
+        // Uncategorized category is no longer needed
+        categoryObj.uncategorized = undefined;
+      }
+    }
+  }
+  // returns: if this category should be deleted
+  // Note that empty contacts imply a leaf node.
+  return isEmptyObject(categoryObj.contacts);
+}
+
+export function removeContactFromCategory(addressBook, contactId, category) {
+  // Note that this function is different from `deleteContactRecursively`.
+  // Consider this case:
+  //     Contact AAA belongs to a/b/c and a/b/d. Now we delete a/b/d.
+  // `deleteContactRecursively` would remove this contact from a, b and d.
+  // But `removeContactFromCategory` should only remove this contact from d.
+  //
+  // Implementation Note:
+  // If there are no other subcategories containing this contact, we can remove it from this category.
+  removeContactFromCategoryRecursively(addressBook, category, contactId, false);
+}
+
+export function addContactToCategory(addressBook, contact, category) {
+  // Several cases.
+  // 1. If there are no new categories, it's easy.
+  // 2. If there are some new categories:
+  //    a. one old leaf node is no longer a leaf
+  //     | we need to deal with uncategorized category
+  //    b. the entire category path doesn't contain any old categories
+  //     | this is a new path which only contains one contact, we don't need to deal with uncategorized category
+  // state: a string that represents current state
+  //        1, 2a, 2b, done(which means we already found the old leaf node)
+  const rootName = category[0];
+  // Assume there are no new categories first.
+  let state = "1";
+  if (addressBook.categories[rootName] == null) {
+    // Case 2.b
+    addressBook.categories[rootName] = new Category(rootName);
+    state = "2b";
+  }
+
+  let cur = addressBook.categories[rootName];
+  cur.contacts[contact.id] = null;
+  let oldLeaf;
+  category.slice(1).forEach((cat, idx, arr) => {
+    if (cur.categories[cat] == null && state == "1") {
+      // Case 2.a
+      // this leaf node is no longer a leaf after this update
+      state = "2a";
+    }
+    cur.categories[cat] ??= new Category(cat);
+    cur.categories[cat].contacts[contact.id] = null;
+    if (state === "2a") {
+      oldLeaf = cur;
+      state = "done";
+    }
+    cur = cur.categories[cat];
+    if (idx === arr.length - 1 && !isLeafCategory(cur)) {
+      // If the last category is not a leaf, add this contact to uncategorized
+      cur.uncategorized[contact.id] = null;
+    }
+  });
+  if (state === "done") {
+    // Actually we do not need to recurse here.
+    // TODO: optimize this.
+    buildUncategorizedCategory(oldLeaf);
   }
 }
