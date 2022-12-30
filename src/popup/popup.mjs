@@ -249,18 +249,35 @@ let categoryTree = createCategoryTree({
     customMenu.style.left = e.pageX + "px";
     console.log(e.dataTransfer.items[0]);
   },
-  foldRecursivelyFrom(element) {
+
+  getParentDetailsElement(element) {
     while (element != this.element) {
-      if (element.nodeName == "DETAILS" && element.open) element.open = false;
+      if (element.nodeName == "DETAILS") {
+        return element;
+      }
       element = element.parentElement;
     }
+    return null;
   },
   dragLeave(e) {
     if (e.target == this.element) {
       console.warn("Leaving tree!");
       this.hideNewCategory();
     }
-    this.foldRecursivelyFrom(e.target);
+    const parentDetails = this.getParentDetailsElement(e.target);
+    if (parentDetails != null) {
+      // Let's fold the category if the mouses leaves it.
+      const boundingRect = parentDetails.getBoundingClientRect();
+      if (
+        !(
+          boundingRect.x <= e.pageX &&
+          e.pageX <= boundingRect.x + boundingRect.width &&
+          boundingRect.y <= e.pageY &&
+          e.pageY <= boundingRect.y + boundingRect.height
+        )
+      )
+        parentDetails.open = false;
+    }
     this.hideDragOverHighlight();
   },
 });
