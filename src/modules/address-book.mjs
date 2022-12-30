@@ -114,11 +114,7 @@ export function id2contact(addressBook, contactId) {
   return addressBook.contacts[contactId];
 }
 
-function deleteContactRecursively(
-  categoryObj,
-  remainingCategoryPath,
-  contactId
-) {
+function deleteContactHelper(categoryObj, remainingCategoryPath, contactId) {
   // Cases for cleaning up empty categories:
   // 1. A leaf category
   //   I.  Becomes empty(no contacts, which implies no sub categories).
@@ -137,7 +133,7 @@ function deleteContactRecursively(
   } else {
     delete categoryObj.categories[remainingCategoryPath[0]].contacts[contactId];
     const nextCategoryName = remainingCategoryPath.shift();
-    const shouldDelete = deleteContactRecursively(
+    const shouldDelete = deleteContactHelper(
       categoryObj.categories[nextCategoryName],
       remainingCategoryPath,
       contactId
@@ -162,7 +158,7 @@ export function deleteContact(addressBook, contactId) {
   delete addressBook.contacts[contactId];
   for (const cat of contact.categories) {
     console.log("Delete", contact.name, "from", cat);
-    deleteContactRecursively(addressBook, cat, contactId);
+    deleteContactHelper(addressBook, cat, contactId);
   }
 }
 
@@ -183,7 +179,6 @@ export function updateContact(addressBook, contactNode, changedProperties) {
     console.log("changed contact:", newContact, changedProperties);
     console.log("Old categories: ", oldContact.categories);
     console.log("New categories: ", newContact.categories);
-    // TODO: update the category tree.
     const newCategories = new Set(newContact.categories);
     const oldCategories = new Set(oldContact.categories);
     const addition = new Set(
@@ -193,7 +188,9 @@ export function updateContact(addressBook, contactNode, changedProperties) {
       [...oldCategories].filter((x) => !newCategories.has(x))
     );
     console.log("Addition", [...addition]);
+    addition.forEach((cat) => addContactToCategory(addressBook, id, cat));
     console.log("Deletion", [...deletion]);
+    deletion.forEach((cat) => removeContactFromCategory(addressBook, id, cat));
   }
   addressBook.contacts[id] = newContact;
 }
@@ -208,11 +205,11 @@ export function createContact(addressBook, contactNode) {
     return;
   }
   for (const category of contact.categories) {
-    addContactToCategory(addressBook, contact, category);
+    addContactToCategory(addressBook, id, category);
   }
 }
 
-function removeContactFromCategoryRecursively(
+function removeContactFromCategoryHelper(
   categoryObj,
   remainingCategoryPath,
   contactId,
@@ -243,7 +240,7 @@ function removeContactFromCategoryRecursively(
     );
     if (firstLevelDeletionEnabled && shouldDelete)
       delete categoryObj.contacts[contactId];
-    const shouldDeleteCategory = removeContactFromCategoryRecursively(
+    const shouldDeleteCategory = removeContactFromCategoryHelper(
       categoryObj.categories[nextCategoryName],
       remainingCategoryPath,
       contactId
@@ -272,10 +269,10 @@ export function removeContactFromCategory(addressBook, contactId, category) {
   //
   // Implementation Note:
   // If there are no other subcategories containing this contact, we can remove it from this category.
-  removeContactFromCategoryRecursively(addressBook, category, contactId, false);
+  removeContactFromCategoryHelper(addressBook, category, contactId, false);
 }
 
-export function addContactToCategory(addressBook, contact, category) {
+export function addContactToCategory(addressBook, contactId, category) {
   // Several cases.
   // 1. If there are no new categories, it's easy.
   // 2. If there are some new categories:
@@ -295,7 +292,7 @@ export function addContactToCategory(addressBook, contact, category) {
   }
 
   let cur = addressBook.categories[rootName];
-  cur.contacts[contact.id] = null;
+  cur.contacts[contactId] = null;
   let oldLeaf;
   category.slice(1).forEach((cat, idx, arr) => {
     if (cur.categories[cat] == null && state == "1") {
@@ -304,7 +301,7 @@ export function addContactToCategory(addressBook, contact, category) {
       state = "2a";
     }
     cur.categories[cat] ??= new Category(cat);
-    cur.categories[cat].contacts[contact.id] = null;
+    cur.categories[cat].contacts[contactId] = null;
     if (state === "2a") {
       oldLeaf = cur;
       state = "done";
@@ -312,7 +309,7 @@ export function addContactToCategory(addressBook, contact, category) {
     cur = cur.categories[cat];
     if (idx === arr.length - 1 && !isLeafCategory(cur)) {
       // If the last category is not a leaf, add this contact to uncategorized
-      cur.uncategorized[contact.id] = null;
+      cur.uncategorized[contactId] = null;
     }
   });
   if (state === "done") {
