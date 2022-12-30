@@ -14,3 +14,8 @@ export function filterObjectByKeyToNull(obj, predicate) {
     .filter((key) => predicate(key))
     .reduce((res, key) => ((res[key] = null), res), {});
 }
+
+// Set intersection for ES6 Set.
+export function setIntersection(a, b) {
+  return new Set([...a].filter((x) => b.has(x)));
+}

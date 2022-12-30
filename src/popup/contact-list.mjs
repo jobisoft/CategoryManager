@@ -37,6 +37,7 @@ export function createContactList(data) {
     },
   });
   component.element.addEventListener("dragstart", (e) => {
+    e.dataTransfer.effectAllowed = "copy";
     e.dataTransfer.setData("category-manager/contact", e.target.dataset.id);
   });
   return component;

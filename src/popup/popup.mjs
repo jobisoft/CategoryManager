@@ -15,6 +15,7 @@ import {
   createMenuForContactList,
   destroyAllMenus,
 } from "../modules/context-menu.mjs";
+import { setIntersection } from "../modules/utils.mjs";
 // global object: emailAddresses, ICAL from popup.html
 
 // ------------------------------------
@@ -26,7 +27,6 @@ let addressBooks = new Map();
 const [tab] = await browser.tabs.query({ currentWindow: true, active: true });
 const isComposeAction = tab.type == "messageCompose";
 
-// currentCategoryElement is only used for highlighting current selection
 let elementForContextMenu,
   currentCategoryElement,
   currentDraggingOverCategoryElement;
@@ -208,11 +208,7 @@ let categoryTree = createCategoryTree({
     document.getElementsByClassName("new-category")[0].classList.remove("show");
   },
   dragOver(e) {
-    if (currentDraggingOverCategoryElement != null) {
-      console.log(currentDraggingOverCategoryElement);
-      currentDraggingOverCategoryElement.classList.remove("drag-over");
-    }
-    console.log("TARGET", e.target);
+    this.hideDragOverHighlight();
     if (e.target.nodeName === "I" || e.target.nodeName === "#text") {
       // Dragging over the expander or text.
       currentDraggingOverCategoryElement = e.target.parentElement;
@@ -229,7 +225,12 @@ let categoryTree = createCategoryTree({
       }
     }
     currentDraggingOverCategoryElement.classList.add("drag-over");
-    console.log(e);
+    // Do not allow dragging onto uncategorized because it's not a real category.
+    e.dataTransfer.dropEffect =
+      "uncategorized" in currentDraggingOverCategoryElement.dataset
+        ? "none"
+        : "copy";
+
     console.warn(`Dragging onto`, currentDraggingOverCategoryElement);
     e.preventDefault();
   },
@@ -240,9 +241,8 @@ let categoryTree = createCategoryTree({
     }
   },
   dragDrop(e) {
-    customMenu.classList.add("show");
-    customMenu.style.top = e.pageY + "px";
-    customMenu.style.left = e.pageX + "px";
+    showCustomMenu(e.pageX, e.pageY);
+
     console.log(e.dataTransfer.items[0]);
   },
 
@@ -284,6 +284,7 @@ let addressBookList = createAddressBookList({
     const addressBookId = event.target.dataset.addressBook;
     if (addressBookId == null) return;
     currentAddressBook = addressBooks.get(addressBookId);
+    currentCategoryElement = null;
     categoryTitle.innerText = currentAddressBook.name;
     categoryTree.update(currentAddressBook);
     contactList.update({
@@ -336,6 +337,44 @@ document.addEventListener("mousedown", (e) => {
     categoryTree.hideDragOverHighlight();
   }
 });
+
+function updateCustomMenu(allowedActions) {
+  for (const item of customMenu.children) {
+    item.style.display = allowedActions.has(item.id) ? "block" : "none";
+  }
+}
+
+const ALLOWED_ACTIONS_ON_NEW_CATEGORY = new Set(["menu-add", "menu-move"]);
+const ALLOWED_ACTIONS_DEFAULT = new Set([
+  "menu-add",
+  "menu-add-sub",
+  "menu-move",
+  "menu-move-sub",
+]);
+const ALLOWED_ACTIONS_FROM_NOWHERE = new Set(["menu-add", "menu-add-sub"]);
+
+function showCustomMenu(x, y) {
+  customMenu.style.top = y + "px";
+  customMenu.style.left = x + "px";
+  let allowedActions = ALLOWED_ACTIONS_DEFAULT;
+  console.log(currentDraggingOverCategoryElement);
+  if (
+    currentDraggingOverCategoryElement.classList.contains("new-category-title")
+  ) {
+    allowedActions = setIntersection(
+      allowedActions,
+      ALLOWED_ACTIONS_ON_NEW_CATEGORY
+    );
+  }
+  if (currentCategoryElement == null) {
+    allowedActions = setIntersection(
+      allowedActions,
+      ALLOWED_ACTIONS_FROM_NOWHERE
+    );
+  }
+  updateCustomMenu(allowedActions);
+  customMenu.classList.add("show");
+}
 
 customMenu.addEventListener("click", (e) => {
   switch (e.target.dataset.action) {
