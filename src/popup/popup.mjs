@@ -199,25 +199,37 @@ let categoryTree = createCategoryTree({
     window.close();
   },
   dragEnter(e) {
+    console.log("Drag Enter");
+    this.showNewCategory();
     e.preventDefault();
+  },
+  showNewCategory() {
+    document.getElementsByClassName("new-category")[0].classList.add("show");
+  },
+  hideNewCategory() {
+    document.getElementsByClassName("new-category")[0].classList.remove("show");
   },
   dragOver(e) {
     if (currentDraggingOverCategoryElement != null) {
+      console.log(currentDraggingOverCategoryElement);
       currentDraggingOverCategoryElement.classList.remove("drag-over");
     }
-    if (e.target.nodeName === "I") {
-      // Dragging over the expander.
-      currentDraggingOverCategoryElement = e.target.parentNode;
+    console.log("TARGET", e.target);
+    if (e.target.nodeName === "I" || e.target.nodeName === "#text") {
+      // Dragging over the expander or text.
+      currentDraggingOverCategoryElement = e.target.parentElement;
     } else if (e.target.nodeName === "DIV") {
       // Dragging over the container of a leaf category
       currentDraggingOverCategoryElement = e.target.children[0];
+      console.log("???", currentDraggingOverCategoryElement);
     } else if (e.target.nodeName === "DETAILS") {
       console.warn("Dragging over details!");
       return;
     } else {
+      console.log("!!!", currentDraggingOverCategoryElement);
       currentDraggingOverCategoryElement = e.target;
       if (currentDraggingOverCategoryElement.nodeName === "SUMMARY") {
-        currentDraggingOverCategoryElement.parentNode.open = true;
+        currentDraggingOverCategoryElement.parentElement.open = true;
       }
     }
     currentDraggingOverCategoryElement.classList.add("drag-over");
@@ -225,21 +237,31 @@ let categoryTree = createCategoryTree({
     console.warn(`Dragging onto`, currentDraggingOverCategoryElement);
     e.preventDefault();
   },
-  dragDrop(e) {
+  hideDragOverHighlight() {
     if (currentDraggingOverCategoryElement != null) {
       currentDraggingOverCategoryElement.classList.remove("drag-over");
       currentDraggingOverCategoryElement = null;
     }
+  },
+  dragDrop(e) {
     customMenu.classList.add("show");
     customMenu.style.top = e.pageY + "px";
     customMenu.style.left = e.pageX + "px";
     console.log(e.dataTransfer.items[0]);
   },
-  dragLeave(e) {
-    if (currentDraggingOverCategoryElement != null) {
-      currentDraggingOverCategoryElement.classList.remove("drag-over");
-      currentDraggingOverCategoryElement = null;
+  foldRecursivelyFrom(element) {
+    while (element != this.element) {
+      if (element.nodeName == "DETAILS" && element.open) element.open = false;
+      element = element.parentElement;
     }
+  },
+  dragLeave(e) {
+    if (e.target == this.element) {
+      console.warn("Leaving tree!");
+      this.hideNewCategory();
+    }
+    this.foldRecursivelyFrom(e.target);
+    this.hideDragOverHighlight();
   },
 });
 
@@ -295,7 +317,11 @@ document.addEventListener("mousedown", (e) => {
   while (element !== customMenu && element != null) {
     element = element.parentElement;
   }
-  if (element == null) customMenu.classList.remove("show");
+  if (element == null) {
+    customMenu.classList.remove("show");
+    categoryTree.hideNewCategory();
+    categoryTree.hideDragOverHighlight();
+  }
 });
 
 customMenu.addEventListener("click", (e) => {
@@ -311,4 +337,6 @@ customMenu.addEventListener("click", (e) => {
       return;
   }
   customMenu.classList.remove("show");
+  categoryTree.hideNewCategory();
+  categoryTree.hideDragOverHighlight();
 });

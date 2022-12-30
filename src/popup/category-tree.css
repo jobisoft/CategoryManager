@@ -43,6 +43,16 @@
   font-weight: bold;
 }
 
+.tree-nav__item.new-category {
+  display: none;
+  font-weight: bold;
+  color: fuchsia;
+}
+
+.tree-nav__item.new-category.show {
+  display: block !important;
+}
+
 .tree-nav__item-title:hover {
   color: var(--catman-hover);
 }

@@ -53,12 +53,14 @@ export function createCategoryTree({
   dragOver,
   dragLeave,
   dragDrop,
+  ...rest
 }) {
   let component = new Component({
     element: "#tree",
     data,
     template(data) {
-      if (data == null) return "";
+      let res = `<div class="tree-nav__item new-category"><p class="tree-nav__item-title new-category-title">[ New Category ]</p></div>\n`;
+      if (data == null) return res;
       let roots = Object.keys(data.categories).map((key) =>
         writeTreeNode("", data.categories[key])
       );
@@ -66,14 +68,20 @@ export function createCategoryTree({
       if (uncategorizedCategory != null) {
         roots.push(writeTreeLeaf("", uncategorizedCategory));
       }
-      return roots.join("\n");
+      return res + roots.join("\n");
     },
+    ...rest,
   });
-  click && component.element.addEventListener("click", click);
-  doubleClick && component.element.addEventListener("dblclick", doubleClick);
-  dragEnter && component.element.addEventListener("dragenter", dragEnter);
-  dragOver && component.element.addEventListener("dragover", dragOver);
-  dragLeave && component.element.addEventListener("dragleave", dragLeave);
-  dragDrop && component.element.addEventListener("drop", dragDrop);
+  click && component.element.addEventListener("click", click.bind(component));
+  doubleClick &&
+    component.element.addEventListener("dblclick", doubleClick.bind(component));
+  dragEnter &&
+    component.element.addEventListener("dragenter", dragEnter.bind(component));
+  dragOver &&
+    component.element.addEventListener("dragover", dragOver.bind(component));
+  dragLeave &&
+    component.element.addEventListener("dragleave", dragLeave.bind(component));
+  dragDrop &&
+    component.element.addEventListener("drop", dragDrop.bind(component));
   return component;
 }
