@@ -8,7 +8,6 @@ export class Component {
     this.template = template;
     for (const key in rest) {
       let value = rest[key];
-      console.log(value, typeof value);
       if (typeof value === "function") {
         value = value.bind(this);
       }
