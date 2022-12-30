@@ -282,6 +282,7 @@ export function addContactToCategory(addressBook, contactId, category) {
   //     | this is a new path which only contains one contact, we don't need to deal with uncategorized category
   // state: a string that represents current state
   //        1, 2a, 2b, done(which means we already found the old leaf node)
+  console.info("Adding", addressBook.contacts[contactId], "to", category);
   const rootName = category[0];
   // Assume there are no new categories first.
   let state = "1";
@@ -290,7 +291,13 @@ export function addContactToCategory(addressBook, contactId, category) {
     addressBook.categories[rootName] = new Category(rootName);
     state = "2b";
   }
-
+  // Handle Corner case:
+  //   add to uncategorized when category.length == 1, which skips the forEach loop
+  const root = addressBook.categories[rootName];
+  if (category.length === 1 && !isLeafCategory(root)) {
+    console.log("The end node is not a leaf, adding to uncategorized!");
+    root.uncategorized.contacts[contactId] = null;
+  }
   let cur = addressBook.categories[rootName];
   cur.contacts[contactId] = null;
   let oldLeaf;
@@ -309,7 +316,8 @@ export function addContactToCategory(addressBook, contactId, category) {
     cur = cur.categories[cat];
     if (idx === arr.length - 1 && !isLeafCategory(cur)) {
       // If the last category is not a leaf, add this contact to uncategorized
-      cur.uncategorized[contactId] = null;
+      console.log("The end node is not a leaf, adding to uncategorized!");
+      cur.uncategorized.contacts[contactId] = null;
     }
   });
   if (state === "done") {

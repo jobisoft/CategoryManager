@@ -2,6 +2,7 @@ import {
   AddressBook,
   lookupCategory,
   id2contact,
+  addContactToCategory,
 } from "../modules/address-book.mjs";
 import { createContactList } from "./contact-list.mjs";
 import { createCategoryTree } from "./category-tree.mjs";
@@ -29,7 +30,8 @@ const isComposeAction = tab.type == "messageCompose";
 
 let elementForContextMenu,
   currentCategoryElement,
-  currentDraggingOverCategoryElement;
+  currentDraggingOverCategoryElement,
+  currentContactIdFromDragAndDrop;
 
 // Default to all contacts
 let currentAddressBook = addressBooks.get("all-contacts");
@@ -49,6 +51,15 @@ function fullUpdateUI() {
     addressBook: currentAddressBook,
     contacts: currentAddressBook?.contacts ?? {},
   });
+}
+
+function updateUI() {
+  categoryTree.update(currentAddressBook);
+  contactList.update({
+    addressBook: currentAddressBook,
+    contacts: currentAddressBook?.contacts ?? {},
+  });
+  categoryTitle.innerText = currentAddressBook?.name ?? "";
 }
 
 function lookupContactsByCategoryElement(element) {
@@ -242,8 +253,12 @@ let categoryTree = createCategoryTree({
   },
   dragDrop(e) {
     showCustomMenu(e.pageX, e.pageY);
-
-    console.log(e.dataTransfer.items[0]);
+    const item = e.dataTransfer.items[0];
+    if (item.type !== "category-manager/contact") {
+      console.error("Invalid item for drag and drop: ", item);
+      return;
+    }
+    item.getAsString((x) => (currentContactIdFromDragAndDrop = x));
   },
 
   getParentDetailsElement(element) {
@@ -335,6 +350,7 @@ document.addEventListener("mousedown", (e) => {
     customMenu.classList.remove("show");
     categoryTree.hideNewCategory();
     categoryTree.hideDragOverHighlight();
+    currentContactIdFromDragAndDrop = null;
   }
 });
 
@@ -377,18 +393,31 @@ function showCustomMenu(x, y) {
 }
 
 customMenu.addEventListener("click", (e) => {
-  switch (e.target.dataset.action) {
-    case "add":
+  if (currentContactIdFromDragAndDrop == null) {
+    console.error("No contact info from drag & drop!");
+    return;
+  }
+  switch (e.target.id) {
+    case "menu-add":
+      addContactToCategory(
+        currentAddressBook,
+        currentContactIdFromDragAndDrop,
+        currentDraggingOverCategoryElement.dataset.category.split(" / ")
+      );
       break;
-    case "move":
+    case "menu-add-sub":
       break;
-    case "add-new":
+    case "menu-move":
+      break;
+    case "menu-move-sub":
       break;
     default:
-      e.preventDefault();
-      return;
+      console.error("Unknown action! from", e.target);
+      break;
   }
+  currentContactIdFromDragAndDrop = null;
   customMenu.classList.remove("show");
   categoryTree.hideNewCategory();
   categoryTree.hideDragOverHighlight();
+  updateUI();
 });

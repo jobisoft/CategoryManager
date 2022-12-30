@@ -29,25 +29,25 @@ export function isLeafCategory(cat) {
   return isEmptyObject(cat.categories);
 }
 
-export function buildUncategorizedCategory(cat) {
+export function buildUncategorizedCategory(category) {
   // only call this method once
-  if (isLeafCategory(cat)) {
+  if (isLeafCategory(category)) {
     // recursion base case
     return;
   }
   let contacts = {};
-  for (let cat in cat.categories) {
+  for (let cat in category.categories) {
     // 1. build uncategorized for sub category
-    buildUncategorizedCategory(cat.categories[cat]);
+    buildUncategorizedCategory(category.categories[cat]);
     // 2. add contacts from subcategory to `contacts`
-    Object.assign(contacts, cat.categories[cat].contacts);
+    Object.assign(contacts, category.categories[cat].contacts);
   }
   // Get the contacts that doesn't appear in any categories
   const filtered = filterObjectByKeyToNull(
-    cat.contacts,
+    category.contacts,
     (x) => !(x in contacts)
   );
   if (!isEmptyObject(filtered)) {
-    cat.uncategorized = new Category("Uncategorized", filtered, {}, true);
+    category.uncategorized = new Category("Uncategorized", filtered, {}, true);
   }
 }
