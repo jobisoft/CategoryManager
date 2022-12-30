@@ -91,21 +91,33 @@ function createSeparator(parentId = undefined) {
 const MENU_NUMBER_LIMIT = 15;
 
 export function createMenuForContactList(addressBook, contactId) {
-  // Menu for deletion
+  // Symbols:
+  //   Menu for deletion
   //    @: for flattened category items
-  // Menu for addition
+  //   Menu for addition
   //    #: existing category
   //    $: create new category
+
+  // Menu:
+  // - Manage belonging categories
+  // - Add to ...
   const contact = addressBook.contacts[contactId];
-  for (const catArr of contact.categories) {
-    const catName = catArr.join(" / ");
-    createCheckBoxMenu({
-      id: "@" + catName,
-      title: catName,
-      checked: true,
+  if (contact.categories.length > 0) {
+    createMenu({
+      id: "header",
+      title: "Manage existing categories:",
+      enabled: false,
     });
+    for (const catArr of contact.categories) {
+      const catName = catArr.join(" / ");
+      createCheckBoxMenu({
+        id: "@" + catName,
+        title: catName,
+        checked: true,
+      });
+    }
+    createSeparator();
   }
-  createSeparator();
   let parentId = undefined;
 
   // I didn't found an O(1)/O(1) method to read the length of an object.
