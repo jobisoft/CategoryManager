@@ -1,4 +1,4 @@
-import { Category } from "./category.mjs";
+import { Category, isLeafCategory } from "./category.mjs";
 import { parseContact } from "./contact.mjs";
 import { filterObjectByKeyToNull, isEmptyObject } from "./utils.mjs";
 
@@ -162,21 +162,42 @@ function deleteContactRecursively(
   remainingCategoryPath,
   contactId
 ) {
-  // todo: clean up empty categories
+  // Cases for cleaning up empty categories:
+  // 1. A leaf category
+  //   I.  Becomes empty(no contacts, which implies no sub categories).
+  //     Remove it, then recurse:
+  //     a. its parent becomes a leaf (We need to update uncategorized category)
+  //     b. its parent does not become a leaf.
+  //   II. Is still non-empty. Nothing needs to be done.
+  // 2. Not a leaf category. It won't become an empty node. Nothing needs to be done
   if (remainingCategoryPath.length === 0) {
     // Recursion base case
     // If the category is a leaf, do nothing
     // Otherwise, delete the contact in uncategorized category
-    if (!isEmptyObject(categoryObj.categories))
+    if (!isLeafCategory(categoryObj)) {
       delete categoryObj.uncategorized.contacts[contactId];
-    return;
+    }
+  } else {
+    delete categoryObj.categories[remainingCategoryPath[0]].contacts[contactId];
+    const nextCategoryName = remainingCategoryPath.shift();
+    const shouldDelete = deleteContactRecursively(
+      categoryObj.categories[nextCategoryName],
+      remainingCategoryPath,
+      contactId
+    );
+    if (shouldDelete) {
+      delete categoryObj.categories[nextCategoryName];
+      // Do we need to update uncategorized category?
+      if (isLeafCategory(categoryObj)) {
+        // This category becomes a leaf.
+        // Uncategorized category is no longer needed
+        categoryObj.uncategorized = undefined;
+      }
+    }
   }
-  delete categoryObj.categories[remainingCategoryPath[0]].contacts[contactId];
-  deleteContactRecursively(
-    categoryObj.categories[remainingCategoryPath.shift()],
-    remainingCategoryPath,
-    contactId
-  );
+  // returns: if this category should be deleted
+  // Note that empty contacts imply a leaf node.
+  return isEmptyObject(categoryObj.contacts);
 }
 
 export function deleteContact(addressBook, contactId) {
