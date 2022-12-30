@@ -15,6 +15,7 @@
   margin: 0;
   border-radius: 5px;
   list-style-type: none;
+  user-select: none;
 }
 
 .custom-menu.show {
