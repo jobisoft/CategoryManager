@@ -161,6 +161,7 @@ let contactList = createContactList({
 
 const categoryTitle = document.getElementById("category-title");
 categoryTitle.innerText = currentAddressBook?.name ?? "";
+
 let categoryTree = createCategoryTree({
   data: currentAddressBook,
   click(event) {
@@ -337,8 +338,6 @@ let messageHandlers = {
 //   Modal
 // ----------
 
-let categoryInputNotCanceled = false;
-
 MicroModal.init({
   onClose: (modal) => {
     console.info(`${modal.id} is hidden`);
@@ -358,7 +357,6 @@ async function showCategoryInputModalAsync() {
     MicroModal.show("modal-category-input");
     function onConfirmClick() {
       if (validateCategoryUserInput()) {
-        categoryInputNotCanceled = true;
         MicroModal.close("modal-category-input");
         cleanUp();
         resolve(categoryInput.value);
@@ -371,7 +369,6 @@ async function showCategoryInputModalAsync() {
     }
     function onKeyPress(ev) {
       if (ev.key === "Enter" && validateCategoryUserInput()) {
-        categoryInputNotCanceled = true;
         MicroModal.close("modal-category-input");
         cleanUp();
         resolve(categoryInput.value);
@@ -437,6 +434,14 @@ function updateCustomMenu(allowedActions) {
   for (const item of customMenu.children) {
     item.style.display = allowedActions.has(item.id) ? "block" : "none";
   }
+  // Update the text
+  if(currentDraggingOverCategoryElement.nodeName == "NAV") {
+    customMenu.children[0].innerText = "Add to a new category";
+    customMenu.children[2].innerText = "Move to a new category";
+  } else {
+    customMenu.children[0].innerText = "Add to this category";
+    customMenu.children[2].innerText = "Move to this category";
+  }
 }
 
 const ALLOWED_ACTIONS_ON_NEW_CATEGORY = new Set(["menu-add", "menu-move"]);
@@ -454,7 +459,9 @@ function showCustomMenu(x, y) {
   let allowedActions = ALLOWED_ACTIONS_DEFAULT;
   console.log(currentDraggingOverCategoryElement);
   if (
+    // Dragging over new category or empty area
     currentDraggingOverCategoryElement.classList.contains("new-category-title")
+    || currentDraggingOverCategoryElement.nodeName == "NAV"
   ) {
     allowedActions = setIntersection(
       allowedActions,
