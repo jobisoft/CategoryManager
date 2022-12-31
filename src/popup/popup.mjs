@@ -350,33 +350,44 @@ MicroModal.init({
 
 const categoryInput = document.getElementById("category-input");
 const categoryInputError = document.getElementById("category-input-error");
+const categoryInputConfirmBtn = document.getElementById(
+  "category-input-confirm"
+);
+const categoryInputCancelBtn = document.getElementById("category-input-cancel");
 
 async function showCategoryInputModalAsync() {
   return new Promise((resolve) => {
     categoryInput.value = null;
     MicroModal.show("modal-category-input");
-    document
-      .getElementById("category-input-confirm")
-      .addEventListener("click", () => {
-        if (validateCategoryUserInput()) {
-          categoryInputNotCanceled = true;
-          MicroModal.close("modal-category-input");
-          resolve(categoryInput.value);
-        }
-      });
-    document
-      .getElementById("category-input-cancel")
-      .addEventListener("click", () => {
+    function onConfirmClick() {
+      if (validateCategoryUserInput()) {
+        categoryInputNotCanceled = true;
         MicroModal.close("modal-category-input");
-        resolve(null);
-      });
-    categoryInput.addEventListener("keypress", (ev) => {
+        cleanUp();
+        resolve(categoryInput.value);
+      }
+    }
+    function onCancelClick() {
+      MicroModal.close("modal-category-input");
+      cleanUp();
+      resolve(null);
+    }
+    function onKeyPress(ev) {
       if (ev.key === "Enter" && validateCategoryUserInput()) {
         categoryInputNotCanceled = true;
         MicroModal.close("modal-category-input");
+        cleanUp();
         resolve(categoryInput.value);
       }
-    });
+    }
+    function cleanUp() {
+      categoryInputConfirmBtn.removeEventListener("click", onConfirmClick);
+      categoryInputCancelBtn.removeEventListener("click", onCancelClick);
+      categoryInput.removeEventListener("keypress", onKeyPress);
+    }
+    categoryInputConfirmBtn.addEventListener("click", onConfirmClick);
+    categoryInputCancelBtn.addEventListener("click", onCancelClick);
+    categoryInput.addEventListener("keypress", onKeyPress);
   });
 }
 
