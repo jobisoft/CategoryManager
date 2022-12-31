@@ -15,7 +15,6 @@ export function createContactList(data) {
                 ? Object.keys(data.contacts)
                     .map((id) => {
                       const { name, email } = data.addressBook.contacts[id];
-                      console.log(data.addressBook.contacts[id]);
                       return `<li class="contact-row" draggable="true" data-id="${escapeHtmlAttr(
                         id
                       )}">
