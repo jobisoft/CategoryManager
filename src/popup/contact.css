@@ -28,6 +28,11 @@
   font-size: 0.95rem;
 }
 
+.contact-row__name .no-name{
+  font-style: italic;
+  color: red;
+}
+
 .contact-row__email .no-email {
   color: orangered;
 }
