@@ -1,8 +1,13 @@
+import { render } from "./reef.mjs";
+
 export class Component {
-  element;
+  element; // The DOM element
+  elem; // Element selector, for Reef
   data;
   template;
+  debounce = null;
   constructor({ element, data, template, ...rest }) {
+    this.elem = element;
     this.element = document.querySelector(element);
     this.data = data;
     this.template = template;
@@ -15,7 +20,17 @@ export class Component {
     }
   }
   render() {
-    this.element.innerHTML = this.template(this.data);
+    const templated = this.template(this.data);
+    // Cache instance
+    let self = this;
+    // If there's a pending render, cancel it
+    if (self.debounce) {
+      window.cancelAnimationFrame(self.debounce);
+    }
+    // Setup the new render to run at the next animation frame
+    self.debounce = window.requestAnimationFrame(function () {
+      render(self.elem, templated, false);
+    });
   }
   update(data) {
     this.data = data;
