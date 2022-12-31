@@ -272,8 +272,9 @@ let categoryTree = createCategoryTree({
     return null;
   },
   dragLeave(e) {
-    if (e.target == this.element) {
-      console.warn("Leaving tree!");
+    if (e.target == this.element && !'uncategorized' in e.relatedTarget.dataset) {
+      // We are leaving the tree, but not entering an uncategroized category.
+      console.warn("Leaving tree!", e);
       this.hideNewCategory();
     }
     const parentDetails = this.getParentDetailsElement(e.target);
