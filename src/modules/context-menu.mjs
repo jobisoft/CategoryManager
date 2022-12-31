@@ -43,10 +43,6 @@ export function createMenuForCategoryTree() {
 
 const NEW_CATEGORY_TEXT = "<New Category Here>";
 
-function debug(x) {
-  console.log(x);
-  return x;
-}
 
 function createCategoryEditingMenuRecursively(
   category,
@@ -55,11 +51,11 @@ function createCategoryEditingMenuRecursively(
   parentId = undefined
 ) {
   const menuId = prefix + category.name;
-  console.log(menuId, contactId);
+  // console.log(menuId, contactId);
   createCheckBoxMenu({
     id: menuId,
     title: category.name,
-    checked: debug(contactId in category.contacts),
+    checked: contactId in category.contacts,
     parentId,
   });
   createCheckBoxMenu({
