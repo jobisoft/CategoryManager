@@ -2,12 +2,10 @@ import { render } from "./reef.mjs";
 
 export class Component {
   element; // The DOM element
-  elem; // Element selector, for Reef
   data;
   template;
   debounce = null;
   constructor({ element, data, template, ...rest }) {
-    this.elem = element;
     this.element = document.querySelector(element);
     this.data = data;
     this.template = template;
@@ -29,7 +27,7 @@ export class Component {
     }
     // Setup the new render to run at the next animation frame
     self.debounce = window.requestAnimationFrame(function () {
-      render(self.elem, templated, false);
+      render(self.element, templated, false);
     });
   }
   update(data) {
