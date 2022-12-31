@@ -58,7 +58,7 @@
       id="modal-category-input"
       aria-hidden="true"
     >
-      <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+      <div class="modal__overlay" tabindex="-1">
         <div
           class="modal__container"
           role="dialog"
@@ -67,26 +67,31 @@
         >
           <header class="modal__header">
             <h2 class="modal__title" id="modal-category-input-title">
-              Micromodal
+              Please enter a (sub)category
             </h2>
-            <button
-              class="modal__close"
-              aria-label="Close modal"
-              data-micromodal-close
-            ></button>
           </header>
           <main class="modal__content" id="modal-category-input-content">
             <p>
-              Try hitting the <code>tab</code> key and notice how the focus
-              stays within the modal itself. Also, <code>esc</code> to close
-              modal.
+              You can use <code>'&nbsp;/&nbsp;'</code> (Space, Forward Slash,
+              Space) as a delimiter for creating subcategories.
+              <br />
+              e.g.
+              <code>CategoryA&nbsp;/&nbsp;CategoryB&nbsp;/&nbsp;CategoryC</code>
             </p>
+            <input type="text" id="category-input" />
+            <p id="category-input-error">&nbsp;</p>
           </main>
           <footer class="modal__footer">
-            <button class="modal__btn modal__btn-primary">OK</button>
+            <button
+              id="category-input-confirm"
+              class="modal__btn modal__btn-primary"
+              aria-label="OK"
+            >
+              OK
+            </button>
             <button
               class="modal__btn"
-              data-micromodal-close
+              id="category-input-cancel"
               aria-label="Cancel the operation"
             >
               Cancel

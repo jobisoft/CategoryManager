@@ -17,6 +17,7 @@ import {
   destroyAllMenus,
 } from "../modules/context-menu.mjs";
 import { setIntersection } from "../modules/utils.mjs";
+import { validateCategoryString } from "../modules/category.mjs";
 // global object: emailAddresses, ICAL, MicroModal from popup.html
 
 // ------------------------------------
@@ -313,26 +314,6 @@ addressBookList.render();
 categoryTree.render();
 contactList.render();
 
-function getCategoryStringFromInput(parentCategory = null) {
-  MicroModal.show("modal-category-input");
-  //   const result = prompt(
-  //     `Please enter a (sub)category.
-  // You can use ' / '(Space, Forward Slash, Space) as a delimiter for creating subcategories.`
-  //   );
-  const result = null;
-  if (result === null) {
-    return null;
-  } else if (result.trim() === "") {
-    // Whitespace or no input!
-    // TODO: Validate user input. e.g. ' / asdasd /  / cxv'
-    alert(
-      "You have inputted an empty/whitespace string! I don't know what to do!"
-    );
-    return null;
-  }
-  return parentCategory == null ? result : parentCategory + " / " + result;
-}
-
 // ---------------------------
 //  Communication with cache
 // ---------------------------
@@ -359,7 +340,71 @@ let messageHandlers = {
 //   Modal
 // ----------
 
-MicroModal.init();
+let categoryInputNotCanceled = false;
+
+MicroModal.init({
+  onClose: (modal) => {
+    console.info(`${modal.id} is hidden`);
+  },
+});
+
+const categoryInput = document.getElementById("category-input");
+const categoryInputError = document.getElementById("category-input-error");
+
+async function showCategoryInputModalAsync() {
+  return new Promise((resolve) => {
+    categoryInput.value = null;
+    MicroModal.show("modal-category-input");
+    document
+      .getElementById("category-input-confirm")
+      .addEventListener("click", () => {
+        if (validateCategoryUserInput()) {
+          categoryInputNotCanceled = true;
+          MicroModal.close("modal-category-input");
+          resolve(categoryInput.value);
+        }
+      });
+    document
+      .getElementById("category-input-cancel")
+      .addEventListener("click", () => {
+        MicroModal.close("modal-category-input");
+        resolve(null);
+      });
+    categoryInput.addEventListener("keypress", (ev) => {
+      if (ev.key === "Enter" && validateCategoryUserInput()) {
+        categoryInputNotCanceled = true;
+        MicroModal.close("modal-category-input");
+        resolve(categoryInput.value);
+      }
+    });
+  });
+}
+
+async function getCategoryStringFromInput(parentCategory = null) {
+  const result = await showCategoryInputModalAsync();
+  console.log(categoryInput);
+  console.log(result);
+  return parentCategory == null ? result : parentCategory + " / " + result;
+}
+
+function validateCategoryUserInput() {
+  const validationResult = validateCategoryString(categoryInput.value);
+  if (validationResult == "LGTM") {
+    categoryInputError.style.visibility = "hidden";
+    categoryInput.setCustomValidity("");
+    return true;
+  }
+  categoryInputError.style.visibility = "visible";
+  categoryInputError.innerText = validationResult;
+  categoryInput.setCustomValidity(validationResult);
+  return false;
+}
+
+categoryInput.addEventListener("input", validateCategoryUserInput);
+
+document
+  .getElementsByClassName("modal__overlay")[0]
+  .addEventListener("mousedown", (e) => e.stopPropagation());
 
 // -------------------------------------------------------
 // Custom Context Menu for drag and drop on category tree
@@ -418,18 +463,24 @@ function showCustomMenu(x, y) {
   customMenu.classList.add("show");
 }
 
-customMenu.addEventListener("click", (e) => {
+function hideCustomMenu() {
+  customMenu.classList.remove("show");
+}
+
+customMenu.addEventListener("click", async (e) => {
   if (currentContactIdFromDragAndDrop == null) {
     console.error("No contact info from drag & drop!");
     return;
   }
   let category;
+  hideCustomMenu();
   switch (e.target.id) {
     case "menu-add":
       // Get user input if dragging onto [ New Category ]
       category =
         currentDraggingOverCategoryElement.dataset.category ??
-        getCategoryStringFromInput();
+        (await getCategoryStringFromInput());
+      if (category == null) break;
       addContactToCategory(
         currentAddressBook,
         currentContactIdFromDragAndDrop,
@@ -437,9 +488,10 @@ customMenu.addEventListener("click", (e) => {
       );
       break;
     case "menu-add-sub":
-      category = getCategoryStringFromInput(
+      category = await getCategoryStringFromInput(
         currentDraggingOverCategoryElement.dataset.category
       );
+      if (category == null) break;
       addContactToCategory(
         currentAddressBook,
         currentContactIdFromDragAndDrop,
@@ -455,7 +507,6 @@ customMenu.addEventListener("click", (e) => {
       break;
   }
   currentContactIdFromDragAndDrop = null;
-  customMenu.classList.remove("show");
   categoryTree.hideNewCategory();
   categoryTree.hideDragOverHighlight();
   updateUI();

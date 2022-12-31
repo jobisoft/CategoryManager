@@ -55,3 +55,16 @@ export function buildUncategorizedCategory(category) {
     category.uncategorized = new Category("Uncategorized", filtered, {}, true);
   }
 }
+
+export function validateCategoryString(s) {
+  if (s == null || s.trim() === "") {
+    return "Category should not be empty.";
+  }
+  const splitted = s.split(" / ");
+  for (const cat of splitted) {
+    if (cat.trim() == "") {
+      return "Subcategory should not be empty.";
+    }
+  }
+  return "LGTM";
+}
