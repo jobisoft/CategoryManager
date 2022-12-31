@@ -328,10 +328,6 @@ myPort.onMessage.addListener(({ type, args }) => {
 let messageHandlers = {
   fullUpdate(args) {
     addressBooks = args;
-    // The addressBooks lose their prototype in communication
-    for (let value of addressBooks.values()) {
-      Object.setPrototypeOf(value, AddressBook.prototype);
-    }
     fullUpdateUI();
   },
 };
