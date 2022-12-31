@@ -17,7 +17,7 @@ import {
   destroyAllMenus,
 } from "../modules/context-menu.mjs";
 import { setIntersection } from "../modules/utils.mjs";
-// global object: emailAddresses, ICAL from popup.html
+// global object: emailAddresses, ICAL, MicroModal from popup.html
 
 // ------------------------------------
 //  Initialization & Global Variables
@@ -313,6 +313,24 @@ addressBookList.render();
 categoryTree.render();
 contactList.render();
 
+function getCategoryStringFromInput(parentCategory = null) {
+  const result = prompt(
+    `Please enter a (sub)category. 
+You can use ' / '(Space, Forward Slash, Space) as a delimiter for creating subcategories.`
+  );
+  if (result === null) {
+    return null;
+  } else if (result.trim() === "") {
+    // Whitespace or no input!
+    // TODO: Validate user input. e.g. ' / asdasd /  / cxv'
+    alert(
+      "You have inputted an empty/whitespace string! I don't know what to do!"
+    );
+    return null;
+  }
+  return parentCategory == null ? result : parentCategory + " / " + result;
+}
+
 // ---------------------------
 //  Communication with cache
 // ---------------------------
@@ -397,15 +415,28 @@ customMenu.addEventListener("click", (e) => {
     console.error("No contact info from drag & drop!");
     return;
   }
+  let category;
   switch (e.target.id) {
     case "menu-add":
+      // Get user input if dragging onto [ New Category ]
+      category =
+        currentDraggingOverCategoryElement.dataset.category ??
+        getCategoryStringFromInput();
       addContactToCategory(
         currentAddressBook,
         currentContactIdFromDragAndDrop,
-        currentDraggingOverCategoryElement.dataset.category.split(" / ")
+        category.split(" / ")
       );
       break;
     case "menu-add-sub":
+      category = getCategoryStringFromInput(
+        currentDraggingOverCategoryElement.dataset.category
+      );
+      addContactToCategory(
+        currentAddressBook,
+        currentContactIdFromDragAndDrop,
+        category.split(" / ")
+      );
       break;
     case "menu-move":
       break;
