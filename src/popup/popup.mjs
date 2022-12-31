@@ -1,8 +1,8 @@
 import {
-  AddressBook,
   lookupCategory,
   id2contact,
   addContactToCategory,
+  removeContactFromCategory,
 } from "../modules/address-book.mjs";
 import { createContactList } from "./contact-list.mjs";
 import { createCategoryTree } from "./category-tree.mjs";
@@ -12,8 +12,9 @@ import {
   addContactsToComposeDetails,
 } from "../modules/contact.mjs";
 import {
+  createDispatcherForContactListContextMenu,
   createMenuForCategoryTree,
-  createMenuForContactList,
+  createMenuForContact,
   destroyAllMenus,
 } from "../modules/context-menu.mjs";
 import { setIntersection } from "../modules/utils.mjs";
@@ -55,6 +56,7 @@ function fullUpdateUI() {
 }
 
 function updateUI() {
+  // TODO: restore active category
   categoryTree.update(currentAddressBook);
   contactList.update({
     addressBook: currentAddressBook,
@@ -100,10 +102,7 @@ function overrideMenuForCategoryTree() {
 
 function overrideMenuForContactList() {
   destroyAllMenus();
-  createMenuForContactList(
-    currentAddressBook,
-    elementForContextMenu.dataset.id
-  );
+  createMenuForContact(currentAddressBook, elementForContextMenu.dataset.id);
 }
 
 document.addEventListener("contextmenu", (e) => {
@@ -140,12 +139,44 @@ browser.menus.onShown.addListener((info, tab) => {
   console.log(info, elementForContextMenu);
 });
 
+const dispatchMenuEventsForContactList =
+  createDispatcherForContactListContextMenu({
+    async onDeletion(categoryStr) {
+      const contactId = elementForContextMenu.dataset.id;
+      const addressBookId = elementForContextMenu.dataset.addressbook;
+      const addressBook = addressBooks.get(addressBookId);
+      const category = categoryStr.split(" / ");
+      removeContactFromCategory(addressBook, contactId, category, true, true);
+      removeContactFromCategory(
+        allContactsVirtualAddressBook,
+        contactId,
+        category
+      );
+      updateUI();
+    },
+    async onAddition(categoryStr, createSubCategory) {
+      const contactId = elementForContextMenu.dataset.id;
+      const addressBookId = elementForContextMenu.dataset.addressbook;
+      const addressBook = addressBooks.get(addressBookId);
+      if (createSubCategory) {
+        const subcategory = await getCategoryStringFromInput();
+        if (subcategory == null) return;
+        if (categoryStr === "") categoryStr = subcategory;
+        else categoryStr += ` / ${subcategory}`;
+      }
+      const category = categoryStr.split(" / ");
+      addContactToCategory(addressBook, contactId, category, true, true);
+      addContactToCategory(allContactsVirtualAddressBook, contactId, category);
+      updateUI();
+    },
+  });
+
 browser.menus.onClicked.addListener(async ({ menuItemId }, tab) => {
   const handler = contextMenuHandlers[menuItemId];
   if (handler != null) {
     handler();
   } else {
-    console.error("No handler for", menuItemId);
+    dispatchMenuEventsForContactList(menuItemId);
   }
 });
 
@@ -505,8 +536,18 @@ customMenu.addEventListener("click", async (e) => {
         (await getCategoryStringFromInput());
       if (category == null) break;
       category = category.split(" / ");
-      addContactToCategory(currentAddressBook, currentContact, category, true, true);
-      addContactToCategory(allContactsVirtualAddressBook, currentContact, category);
+      addContactToCategory(
+        currentAddressBook,
+        currentContact,
+        category,
+        true,
+        true
+      );
+      addContactToCategory(
+        allContactsVirtualAddressBook,
+        currentContact,
+        category
+      );
       break;
     case "menu-add-sub":
       category = await getCategoryStringFromInput(
@@ -514,8 +555,18 @@ customMenu.addEventListener("click", async (e) => {
       );
       if (category == null) break;
       category = category.split(" / ");
-      addContactToCategory(currentAddressBook, currentContact, category, true, true);
-      addContactToCategory(allContactsVirtualAddressBook, currentContact, category);
+      addContactToCategory(
+        currentAddressBook,
+        currentContact,
+        category,
+        true,
+        true
+      );
+      addContactToCategory(
+        allContactsVirtualAddressBook,
+        currentContact,
+        category
+      );
       break;
     case "menu-move":
       break;

@@ -91,7 +91,32 @@ function createSeparator(parentId = undefined) {
 
 const MENU_NUMBER_LIMIT = 15;
 
-export function createMenuForContactList(addressBook, contactId) {
+export function createDispatcherForContactListContextMenu({
+  onDeletion,
+  onAddition,
+}) {
+  return async function (menuId) {
+    switch (menuId.charAt(0)) {
+      case "@":
+        await onDeletion(menuId.slice(1));
+        break;
+      case "$":
+        await onAddition(menuId.slice(1), true);
+        break;
+      case "%":
+        await onAddition(menuId.slice(1), false);
+        break;
+      case "#":
+        console.error("This menu item should not be clickable!");
+        break;
+      default:
+        console.error("Unknown menu id:", menuId);
+        break;
+    }
+  };
+}
+
+export function createMenuForContact(addressBook, contactId) {
   // Symbols:
   //   Menu for deletion
   //    @: for managing existing categories
@@ -104,6 +129,7 @@ export function createMenuForContactList(addressBook, contactId) {
   // - Manage belonging categories
   // - Add to ...
   const contact = addressBook.contacts[contactId];
+  console.log(contact);
   if (contact.categories.length > 0) {
     createMenu({
       id: "header",
