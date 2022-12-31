@@ -314,10 +314,12 @@ categoryTree.render();
 contactList.render();
 
 function getCategoryStringFromInput(parentCategory = null) {
-  const result = prompt(
-    `Please enter a (sub)category. 
-You can use ' / '(Space, Forward Slash, Space) as a delimiter for creating subcategories.`
-  );
+  MicroModal.show("modal-category-input");
+  //   const result = prompt(
+  //     `Please enter a (sub)category.
+  // You can use ' / '(Space, Forward Slash, Space) as a delimiter for creating subcategories.`
+  //   );
+  const result = null;
   if (result === null) {
     return null;
   } else if (result.trim() === "") {
@@ -352,6 +354,12 @@ let messageHandlers = {
     fullUpdateUI();
   },
 };
+
+// ----------
+//   Modal
+// ----------
+
+MicroModal.init();
 
 // -------------------------------------------------------
 // Custom Context Menu for drag and drop on category tree

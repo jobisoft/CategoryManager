@@ -15,5 +15,6 @@ module.exports = {
     ICAL: "readonly",
     emailAddresses: "readonly",
     browser: true,
+    MicroModal: "readonly",
   },
 };
