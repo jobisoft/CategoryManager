@@ -14,12 +14,17 @@ export function createContactList(data) {
               data?.addressBook != null
                 ? Object.keys(data.contacts)
                     .map((id) => {
-                      const { name, email } = data.addressBook.contacts[id];
+                      const { name, email, addressBookId } =
+                        data.addressBook.contacts[id];
                       return `<li class="contact-row" draggable="true" data-id="${escapeHtmlAttr(
                         id
-                      )}">
+                      )}" data-addressbook="${escapeHtmlAttr(addressBookId)}">
                       <p class="contact-row__name">
-                        ${name != null ? escapeHtmlContent(name) : '<span class="no-name">Unnamed</span>'}
+                        ${
+                          name != null
+                            ? escapeHtmlContent(name)
+                            : '<span class="no-name">Unnamed</span>'
+                        }
                       </p>
                       <p class="contact-row__email">
                         ${
@@ -38,7 +43,10 @@ export function createContactList(data) {
   });
   component.element.addEventListener("dragstart", (e) => {
     e.dataTransfer.effectAllowed = "copy";
-    e.dataTransfer.setData("category-manager/contact", e.target.dataset.id);
+    e.dataTransfer.setData(
+      "category-manager/contact",
+      e.target.dataset.addressbook + "\n" + e.target.dataset.id
+    );
   });
   return component;
 }

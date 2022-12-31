@@ -32,7 +32,7 @@ const isComposeAction = tab.type == "messageCompose";
 let elementForContextMenu,
   currentCategoryElement,
   currentDraggingOverCategoryElement,
-  currentContactIdFromDragAndDrop;
+  currentContactDataFromDragAndDrop;
 
 // Default to all contacts
 let currentAddressBook = addressBooks.get("all-contacts");
@@ -260,7 +260,7 @@ let categoryTree = createCategoryTree({
       console.error("Invalid item for drag and drop: ", item);
       return;
     }
-    item.getAsString((x) => (currentContactIdFromDragAndDrop = x));
+    item.getAsString((x) => (currentContactDataFromDragAndDrop = x));
   },
 
   getParentDetailsElement(element) {
@@ -273,7 +273,10 @@ let categoryTree = createCategoryTree({
     return null;
   },
   dragLeave(e) {
-    if (e.target == this.element && !'uncategorized' in e.relatedTarget.dataset) {
+    if (
+      e.target == this.element &&
+      !"uncategorized" in e.relatedTarget.dataset
+    ) {
       // We are leaving the tree, but not entering an uncategroized category.
       console.warn("Leaving tree!", e);
       this.hideNewCategory();
@@ -426,7 +429,7 @@ document.addEventListener("mousedown", (e) => {
     customMenu.classList.remove("show");
     categoryTree.hideNewCategory();
     categoryTree.hideDragOverHighlight();
-    currentContactIdFromDragAndDrop = null;
+    currentContactDataFromDragAndDrop = null;
   }
 });
 
@@ -435,7 +438,7 @@ function updateCustomMenu(allowedActions) {
     item.style.display = allowedActions.has(item.id) ? "block" : "none";
   }
   // Update the text
-  if(currentDraggingOverCategoryElement.nodeName == "NAV") {
+  if (currentDraggingOverCategoryElement.nodeName == "NAV") {
     customMenu.children[0].innerText = "Add to a new category";
     customMenu.children[2].innerText = "Move to a new category";
   } else {
@@ -460,8 +463,10 @@ function showCustomMenu(x, y) {
   console.log(currentDraggingOverCategoryElement);
   if (
     // Dragging over new category or empty area
-    currentDraggingOverCategoryElement.classList.contains("new-category-title")
-    || currentDraggingOverCategoryElement.nodeName == "NAV"
+    currentDraggingOverCategoryElement.classList.contains(
+      "new-category-title"
+    ) ||
+    currentDraggingOverCategoryElement.nodeName == "NAV"
   ) {
     allowedActions = setIntersection(
       allowedActions,
@@ -483,12 +488,15 @@ function hideCustomMenu() {
 }
 
 customMenu.addEventListener("click", async (e) => {
-  if (currentContactIdFromDragAndDrop == null) {
+  if (currentContactDataFromDragAndDrop == null) {
     console.error("No contact info from drag & drop!");
     return;
   }
   let category;
   hideCustomMenu();
+  const [currentAddressBookId, currentContact] =
+    currentContactDataFromDragAndDrop.split("\n");
+  const currentAddressBook = addressBooks.get(currentAddressBookId);
   switch (e.target.id) {
     case "menu-add":
       // Get user input if dragging onto [ New Category ]
@@ -496,22 +504,16 @@ customMenu.addEventListener("click", async (e) => {
         currentDraggingOverCategoryElement.dataset.category ??
         (await getCategoryStringFromInput());
       if (category == null) break;
-      addContactToCategory(
-        currentAddressBook,
-        currentContactIdFromDragAndDrop,
-        category.split(" / ")
-      );
+      category = category.split(" / ");
+      addContactToCategory(currentAddressBook, currentContact, category);
       break;
     case "menu-add-sub":
       category = await getCategoryStringFromInput(
         currentDraggingOverCategoryElement.dataset.category
       );
       if (category == null) break;
-      addContactToCategory(
-        currentAddressBook,
-        currentContactIdFromDragAndDrop,
-        category.split(" / ")
-      );
+      category = category.split(" / ");
+      addContactToCategory(currentAddressBook, currentContact, category);
       break;
     case "menu-move":
       break;
@@ -521,7 +523,7 @@ customMenu.addEventListener("click", async (e) => {
       console.error("Unknown action! from", e.target);
       break;
   }
-  currentContactIdFromDragAndDrop = null;
+  currentContactDataFromDragAndDrop = null;
   categoryTree.hideNewCategory();
   categoryTree.hideDragOverHighlight();
   updateUI();
