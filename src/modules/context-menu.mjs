@@ -42,7 +42,7 @@ export function createMenuForCategoryTree() {
 }
 
 const NEW_CATEGORY_TEXT = "<New Category Here>";
-
+const THIS_CATEGORY_TEXT = "<This Category>";
 
 function createCategoryEditingMenuRecursively(
   category,
@@ -57,6 +57,11 @@ function createCategoryEditingMenuRecursively(
     title: category.name,
     checked: contactId in category.contacts,
     parentId,
+  });
+  createCheckBoxMenu({
+    id: "%" + menuId.slice(1),
+    title: THIS_CATEGORY_TEXT,
+    parentId: menuId,
   });
   createCheckBoxMenu({
     id: "$" + menuId.slice(1),
@@ -89,10 +94,11 @@ const MENU_NUMBER_LIMIT = 15;
 export function createMenuForContactList(addressBook, contactId) {
   // Symbols:
   //   Menu for deletion
-  //    @: for flattened category items
+  //    @: for managing existing categories
   //   Menu for addition
-  //    #: existing category
-  //    $: create new category
+  //    #: normal category
+  //    $: <new category>
+  //    %: <this category>
 
   // Menu:
   // - Manage belonging categories
