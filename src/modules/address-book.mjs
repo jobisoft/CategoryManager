@@ -265,7 +265,31 @@ function removeContactFromCategoryHelper(
   return isEmptyObject(categoryObj.contacts);
 }
 
-export function removeContactFromCategory(addressBook, contactId, category) {
+export function removeContactFromCategory(
+  addressBook,
+  contactId,
+  category,
+  writeToThunderbird = false,
+  updateContact = false
+) {
+  // update contact data
+  const contact = addressBook.contacts[contactId];
+  if (updateContact) {
+    // remove category from contact.
+    // convert it to string for easy comparison
+    const categoryStr = categoryArrToString(category);
+    let found = false;
+    for (let i = 0; i < contact.categories.length; i++) {
+      if (categoryArrToString(contact.categories[i]) === categoryStr) {
+        contact.categories.splice(i, 1);
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      console.error("Category not found in contact", category, contact);
+    }
+  }
   // Note that this function is different from `deleteContactRecursively`.
   // Consider this case:
   //     Contact AAA belongs to a/b/c and a/b/d. Now we delete a/b/d.
@@ -277,7 +301,27 @@ export function removeContactFromCategory(addressBook, contactId, category) {
   removeContactFromCategoryHelper(addressBook, category, contactId, false);
 }
 
-export function addContactToCategory(addressBook, contactId, category) {
+export function addContactToCategory(
+  addressBook,
+  contactId,
+  category,
+  writeToThunderbird = false,
+  updateContact = false
+) {
+  // update contact data
+  const contact = addressBook.contacts[contactId];
+  if (updateContact) {
+    // check if the category is already in the contact
+    const categoryStr = categoryArrToString(category);
+    for (const cat of contact.categories) {
+      if (categoryArrToString(cat) === categoryStr) {
+        // already in the contact.
+        return;
+      }
+      contact.categories.push(category);
+    }
+  }
+
   // Several cases.
   // 1. If there are no new categories, it's easy.
   // 2. If there are some new categories:

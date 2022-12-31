@@ -32,17 +32,17 @@ const isComposeAction = tab.type == "messageCompose";
 let elementForContextMenu,
   currentCategoryElement,
   currentDraggingOverCategoryElement,
-  currentContactDataFromDragAndDrop;
-
-// Default to all contacts
-let currentAddressBook = addressBooks.get("all-contacts");
+  currentContactDataFromDragAndDrop,
+  allContactsVirtualAddressBook,
+  currentAddressBook;
 
 // ---------------
 //  helper funcs
 // ---------------
 
 function fullUpdateUI() {
-  currentAddressBook = addressBooks.get("all-contacts");
+  allContactsVirtualAddressBook = addressBooks.get("all-contacts");
+  currentAddressBook = allContactsVirtualAddressBook;
   if (currentAddressBook == null)
     document.getElementById("info-text").style.display = "initial";
   categoryTitle.innerText = currentAddressBook?.name ?? "";
@@ -275,7 +275,7 @@ let categoryTree = createCategoryTree({
   dragLeave(e) {
     if (
       e.target == this.element &&
-      !"uncategorized" in e.relatedTarget.dataset
+      !("uncategorized" in e.relatedTarget.dataset)
     ) {
       // We are leaving the tree, but not entering an uncategroized category.
       console.warn("Leaving tree!", e);
@@ -505,7 +505,8 @@ customMenu.addEventListener("click", async (e) => {
         (await getCategoryStringFromInput());
       if (category == null) break;
       category = category.split(" / ");
-      addContactToCategory(currentAddressBook, currentContact, category);
+      addContactToCategory(currentAddressBook, currentContact, category, true, true);
+      addContactToCategory(allContactsVirtualAddressBook, currentContact, category);
       break;
     case "menu-add-sub":
       category = await getCategoryStringFromInput(
@@ -513,7 +514,8 @@ customMenu.addEventListener("click", async (e) => {
       );
       if (category == null) break;
       category = category.split(" / ");
-      addContactToCategory(currentAddressBook, currentContact, category);
+      addContactToCategory(currentAddressBook, currentContact, category, true, true);
+      addContactToCategory(allContactsVirtualAddressBook, currentContact, category);
       break;
     case "menu-move":
       break;
