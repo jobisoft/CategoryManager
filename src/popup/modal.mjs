@@ -70,9 +70,5 @@ export function initModal() {
   document
     .getElementsByClassName("modal__overlay")[0]
     .addEventListener("mousedown", (e) => e.stopPropagation());
-  MicroModal.init({
-    onClose: (modal) => {
-      console.info(`${modal.id} is hidden`);
-    },
-  });
+  MicroModal.init();
 }

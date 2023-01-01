@@ -4,7 +4,6 @@ import {
   deleteContact,
   updateContact,
 } from "../modules/address-book/index.mjs";
-// import data from "../modules/fake-data-provider.mjs";
 
 // Populating Cache
 
@@ -14,7 +13,6 @@ let abInfos = await browser.addressBooks.list();
 let abValues = await Promise.all(
   abInfos.map((ab) => AddressBook.fromTBAddressBook(ab))
 );
-// abValues.unshift(AddressBook.fromFakeData(data[2]));
 // Make "All Contacts" the first one
 abValues.unshift(AddressBook.fromAllContacts(abValues));
 // Map guarantees the order of keys is the insertion order
