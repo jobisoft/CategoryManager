@@ -13,14 +13,15 @@ export async function updateCategoriesForContact(contact, addition, deletion) {
   const component = new ICAL.Component(ICAL.parse(vCard));
   const oldCategories = component
     .getAllProperties("categories")
-    .flatMap((x) => x.getValues())
-    .sort();
+    .flatMap((x) => x.getValues());
   const oldCategoriesFromInput = contact.categories.map(categoryArrToString);
   if (
     oldCategories.length !== oldCategoriesFromInput.length ||
     oldCategories.some((x) => !oldCategoriesFromInput.includes(x))
   ) {
     console.error("Categories have been changed outside category manager!");
+    console.log("Old Categories", oldCategories);
+    console.log("Old Categories From Input", oldCategoriesFromInput);
     return false;
   }
   const newCategories = new Set(

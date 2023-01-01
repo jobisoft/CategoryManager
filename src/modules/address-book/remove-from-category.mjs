@@ -1,5 +1,6 @@
 import { isLeafCategory, categoryArrToString } from "./category.mjs";
 import { isEmptyObject } from "../utils.mjs";
+import { updateCategoriesForContact } from "../contact.mjs";
 
 function removeContactFromCategoryHelper(
   addressBook,
@@ -73,12 +74,19 @@ export async function removeContactFromCategory(
     writeToThunderbird,
     updateContact
   );
-  // update contact data
+
   const contact = addressBook.contacts[contactId];
+  const categoryStr = categoryArrToString(category);
+  if (writeToThunderbird) {
+    const ok = await updateCategoriesForContact(contact, [], [categoryStr]);
+    if (!ok) throw new Error("Operation Canceled. Failed to update contact!");
+  }
   if (updateContact) {
+    // update contact data
+
     // remove category from contact.
     // convert it to string for easy comparison
-    const categoryStr = categoryArrToString(category);
+
     let found = false;
     for (let i = 0; i < contact.categories.length; i++) {
       if (categoryArrToString(contact.categories[i]) === categoryStr) {

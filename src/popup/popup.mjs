@@ -55,7 +55,6 @@ async function updateUI() {
     categoryTitle.innerText = state.currentAddressBook?.name ?? "";
     contacts = state.currentAddressBook?.contacts ?? {};
   }
-  console.log("Update contact list using", contacts);
   await contactList.update({
     addressBook: state.currentAddressBook,
     contacts,

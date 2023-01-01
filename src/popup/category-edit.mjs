@@ -9,16 +9,18 @@ export async function removeContactFromCategory({
   virtualAddressBook,
   category,
 }) {
-  return Promise.all([
-    removeContactFromCategoryHelper(
-      addressBook,
-      contactId,
-      category,
-      true,
-      true
-    ),
-    removeContactFromCategoryHelper(virtualAddressBook, contactId, category),
-  ]);
+  await removeContactFromCategoryHelper(
+    addressBook,
+    contactId,
+    category,
+    true,
+    true
+  );
+  return removeContactFromCategoryHelper(
+    virtualAddressBook,
+    contactId,
+    category
+  );
 }
 
 export async function addContactToCategory({
@@ -27,14 +29,18 @@ export async function addContactToCategory({
   virtualAddressBook,
   category,
 }) {
-  return Promise.all([
-    addContactToCategoryHelper(addressBook, contactId, category, true, true),
-    addContactToCategoryHelper(
-      virtualAddressBook,
-      contactId,
-      category,
-      false,
-      true
-    ),
-  ]);
+  await addContactToCategoryHelper(
+    addressBook,
+    contactId,
+    category,
+    true,
+    true
+  );
+  return addContactToCategoryHelper(
+    virtualAddressBook,
+    contactId,
+    category,
+    false,
+    true
+  );
 }
