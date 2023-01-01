@@ -2,7 +2,10 @@
 //   Modal
 // ----------
 
-import { validateCategoryString } from "../modules/address-book/index.mjs";
+import {
+  SUBCATEGORY_SEPARATOR,
+  validateCategoryString,
+} from "../modules/address-book/index.mjs";
 
 const categoryInput = document.getElementById("category-input");
 const categoryInputError = document.getElementById("category-input-error");
@@ -49,7 +52,9 @@ export async function getCategoryStringFromInput(parentCategory = null) {
   const result = await showCategoryInputModalAsync();
   console.log(categoryInput);
   console.log(result);
-  return parentCategory == null ? result : parentCategory + " / " + result;
+  return parentCategory == null
+    ? result
+    : parentCategory + SUBCATEGORY_SEPARATOR + result;
 }
 
 function validateCategoryUserInput() {

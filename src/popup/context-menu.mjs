@@ -8,7 +8,7 @@ import {
   toRFC5322EmailAddress,
 } from "../modules/contact.mjs";
 import { lookupContactsByCategoryElement } from "./utils.mjs";
-import { id2contact } from "../modules/address-book/index.mjs";
+import { id2contact, SUBCATEGORY_SEPARATOR } from "../modules/address-book/index.mjs";
 import {
   createMenuForCategoryTree,
   createMenuForContact,
@@ -66,7 +66,7 @@ export function initContextMenu(state, updateUI) {
         const contactId = state.elementForContextMenu.dataset.id;
         const addressBookId = state.elementForContextMenu.dataset.addressbook;
         const addressBook = state.addressBooks.get(addressBookId);
-        const category = categoryStr.split(" / ");
+        const category = categoryStr.split(SUBCATEGORY_SEPARATOR);
         await removeContactFromCategory({
           addressBook,
           contactId,
@@ -85,7 +85,7 @@ export function initContextMenu(state, updateUI) {
           if (categoryStr === "") categoryStr = subcategory;
           else categoryStr += ` / ${subcategory}`;
         }
-        const category = categoryStr.split(" / ");
+        const category = categoryStr.split(SUBCATEGORY_SEPARATOR);
         await addContactToCategory({
           addressBook,
           contactId,

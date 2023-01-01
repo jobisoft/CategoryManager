@@ -3,6 +3,7 @@ import {
   isLeafCategory,
   buildUncategorizedCategory,
   categoryArrToString,
+  SUBCATEGORY_SEPARATOR,
 } from "./category.mjs";
 import { updateCategoriesForContact } from "../contact.mjs";
 
@@ -65,7 +66,7 @@ export async function addContactToCategory(
   let oldLeaf;
   let path = rootName;
   category.slice(1).forEach((cat, idx, arr) => {
-    path += " / " + cat;
+    path += SUBCATEGORY_SEPARATOR + cat;
     if (cur.categories[cat] == null && state == "1") {
       // Case 2.a
       // this leaf node is no longer a leaf after this update

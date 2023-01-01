@@ -1,5 +1,7 @@
 import { isEmptyObject, filterObjectByKeyToNull } from "../utils.mjs";
 
+export const SUBCATEGORY_SEPARATOR = " / ";
+
 export class Category {
   categories;
   name;
@@ -29,7 +31,7 @@ export class Category {
 }
 
 export function categoryArrToString(cat) {
-  return cat.join(" / ");
+  return cat.join(SUBCATEGORY_SEPARATOR);
 }
 
 export function isLeafCategory(cat) {
@@ -57,7 +59,7 @@ export function buildUncategorizedCategory(category) {
   if (!isEmptyObject(filtered)) {
     category.uncategorized = new Category(
       "Uncategorized",
-      category.path + " / " + "Uncategorized",
+      category.path + SUBCATEGORY_SEPARATOR + "Uncategorized",
       filtered,
       {},
       true
@@ -69,7 +71,7 @@ export function validateCategoryString(s) {
   if (s == null || s.trim() === "") {
     return "Category should not be empty.";
   }
-  const splitted = s.split(" / ");
+  const splitted = s.split(SUBCATEGORY_SEPARATOR);
   for (const cat of splitted) {
     if (cat.trim() == "") {
       return "Subcategory should not be empty.";

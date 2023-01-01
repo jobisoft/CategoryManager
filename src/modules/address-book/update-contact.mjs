@@ -1,4 +1,4 @@
-import { categoryArrToString } from "./category.mjs";
+import { categoryArrToString, SUBCATEGORY_SEPARATOR } from "./category.mjs";
 import { parseContact } from "../contact.mjs";
 import { addContactToCategory } from "./add-to-category.mjs";
 import { removeContactFromCategory } from "./remove-from-category.mjs";
@@ -31,10 +31,10 @@ export async function updateContact(
     // Categories changed.
     console.log("changed contact:", newContact, changedProperties);
     const addition = [...newCategories].flatMap((x) =>
-      !oldCategories.has(x) ? [x.split(" / ")] : []
+      !oldCategories.has(x) ? [x.split(SUBCATEGORY_SEPARATOR)] : []
     );
     const deletion = [...oldCategories].flatMap((x) =>
-      !newCategories.has(x) ? [x.split(" / ")] : []
+      !newCategories.has(x) ? [x.split(SUBCATEGORY_SEPARATOR)] : []
     );
     console.log("Addition", addition);
     await Promise.all(

@@ -5,6 +5,7 @@
 import { setIntersection } from "../modules/utils.mjs";
 import { getCategoryStringFromInput } from "./modal.mjs";
 import { addContactToCategory } from "./category-edit.mjs";
+import { SUBCATEGORY_SEPARATOR } from "../modules/address-book/index.mjs";
 
 const customMenu = document.getElementById("custom-menu");
 
@@ -88,7 +89,7 @@ export function initCustomMenu(state, categoryTree, updateUI) {
           state.currentDraggingOverCategoryElement.dataset.category ??
           (await getCategoryStringFromInput());
         if (category == null) break;
-        category = category.split(" / ");
+        category = category.split(SUBCATEGORY_SEPARATOR);
         await addContactToCategory({
           addressBook,
           contactId,
@@ -101,7 +102,7 @@ export function initCustomMenu(state, categoryTree, updateUI) {
           state.currentDraggingOverCategoryElement.dataset.category
         );
         if (category == null) break;
-        category = category.split(" / ");
+        category = category.split(SUBCATEGORY_SEPARATOR);
         await addContactToCategory({
           addressBook,
           contactId,

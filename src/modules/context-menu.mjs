@@ -1,3 +1,5 @@
+import { SUBCATEGORY_SEPARATOR } from "./address-book/index.mjs";
+
 function createMenu(properties) {
   return browser.menus.create({
     ...properties,
@@ -73,7 +75,7 @@ function createCategoryEditingMenuRecursively(
     createCategoryEditingMenuRecursively(
       subcategory,
       contactId,
-      menuId + " / ",
+      menuId + SUBCATEGORY_SEPARATOR,
       menuId
     );
   }
@@ -138,7 +140,7 @@ export function createMenuForContact(addressBook, contactId) {
       enabled: false,
     });
     for (const catArr of contact.categories) {
-      const catName = catArr.join(" / ");
+      const catName = catArr.join(SUBCATEGORY_SEPARATOR);
       createCheckBoxMenu({
         id: "@" + catName,
         title: catName,

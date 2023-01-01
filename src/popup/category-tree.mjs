@@ -3,7 +3,7 @@ import {
   escapeHtmlContent,
   Component,
 } from "../modules/ui.mjs";
-import { isLeafCategory } from "../modules/address-book/index.mjs";
+import { isLeafCategory, SUBCATEGORY_SEPARATOR } from "../modules/address-book/index.mjs";
 import { lookupContactsByCategoryElement } from "./utils.mjs";
 import { id2contact } from "../modules/address-book/index.mjs";
 import {
@@ -56,12 +56,12 @@ export function writeTreeNode(category, activeCategory) {
     : "";
   let activeCategoryBasePath;
   if (activeCategory?.isUncategorized) {
-    const idx = activeCategory.path.lastIndexOf(" / ");
+    const idx = activeCategory.path.lastIndexOf(SUBCATEGORY_SEPARATOR);
     activeCategoryBasePath =
       idx !== -1
         ? activeCategory.path.substring(
             0,
-            activeCategory.path.lastIndexOf(" / ")
+            activeCategory.path.lastIndexOf(SUBCATEGORY_SEPARATOR)
           )
         : activeCategory.path;
   } else activeCategoryBasePath = activeCategory?.path;

@@ -1,4 +1,4 @@
-import { Category } from "./category.mjs";
+import { Category, SUBCATEGORY_SEPARATOR } from "./category.mjs";
 import { parseContact } from "../contact.mjs";
 import { filterObjectByKeyToNull, isEmptyObject } from "../utils.mjs";
 
@@ -82,7 +82,7 @@ export class AddressBook {
     cur.contacts[contact.id] = null;
     let path = rootName;
     category.slice(1).forEach((cat) => {
-      path += " / " + cat;
+      path += SUBCATEGORY_SEPARATOR + cat;
       cur.categories[cat] ??= new Category(cat, path);
       cur = cur.categories[cat];
       cur.contacts[contact.id] = null;
@@ -101,7 +101,7 @@ export function lookupCategory(
 ) {
   // look up a category using a key like `A / B`
   console.log("Looking up", categoryKey);
-  let category = categoryKey.split(" / ");
+  let category = categoryKey.split(SUBCATEGORY_SEPARATOR);
   if (isUncategorized) {
     // remove the last sub category
     category.pop();

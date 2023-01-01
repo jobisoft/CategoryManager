@@ -1,9 +1,9 @@
 import { mapIterator } from "./utils.mjs";
-import { categoryArrToString } from "./address-book/index.mjs";
+import { categoryArrToString, SUBCATEGORY_SEPARATOR } from "./address-book/index.mjs";
 // global object: ICAL from external ical.js
 
 function parseCategory(str) {
-  return str.split(" / ");
+  return str.split(SUBCATEGORY_SEPARATOR);
 }
 
 function getError(id) {
