@@ -31,10 +31,17 @@ const addressBookList = createAddressBookList({
 });
 
 async function updateUI() {
-  console.log("Active category:", categoryTitle.innerText);
+  console.log("Active category:", state.currentCategoryElement);
   await categoryTree.update({
     addressBook: state.currentAddressBook,
-    activeCategory: categoryTitle.innerText,
+    activeCategory:
+      state.currentCategoryElement != null
+        ? {
+            path: state.currentCategoryElement.dataset.category,
+            isUncategorized:
+              "uncategorized" in state.currentCategoryElement.dataset,
+          }
+        : null,
   });
   let activeElement = document.getElementsByClassName("active")[0];
   console.log("Active Element after UI update:", activeElement);

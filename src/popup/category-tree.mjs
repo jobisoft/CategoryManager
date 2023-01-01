@@ -12,15 +12,24 @@ import {
 } from "../modules/contact.mjs";
 import { showCustomMenu } from "./custom-menu.mjs";
 
+function isActiveCategory(category, activeCategory) {
+  return (
+    activeCategory != null &&
+    category.path === activeCategory.path &&
+    category.isUncategorized === activeCategory.isUncategorized
+  );
+}
+
 function writeTreeLeaf(category, activeCategory) {
   let uncategorizedAttr = category.isUncategorized
     ? 'data-uncategorized=""'
     : "";
-  let categoryStr = category.path;
-  let activeClass = categoryStr === activeCategory ? "active" : "";
+  const activeClass = isActiveCategory(category, activeCategory)
+    ? "active"
+    : "";
   return `<div class="tree-nav__item">
     <p class="tree-nav__item-title ${activeClass}" data-category="${escapeHtmlAttr(
-    categoryStr
+    category.path
   )}" ${uncategorizedAttr}>
       ${escapeHtmlContent(category.name)}
     </p>
@@ -42,12 +51,26 @@ export function writeTreeNode(category, activeCategory) {
     );
   }
   if (isLeafCategory(category)) return writeTreeLeaf(category, activeCategory);
-  const categoryStr = category.path;
-  const activeClass = categoryStr === activeCategory ? "active" : "";
-  const openAttr = activeCategory?.startsWith(categoryStr) ? "open" : "";
+  const activeClass = isActiveCategory(category, activeCategory)
+    ? "active"
+    : "";
+  let activeCategoryBasePath;
+  if (activeCategory?.isUncategorized) {
+    const idx = activeCategory.path.lastIndexOf(" / ");
+    activeCategoryBasePath =
+      idx !== -1
+        ? activeCategory.path.substring(
+            0,
+            activeCategory.path.lastIndexOf(" / ")
+          )
+        : activeCategory.path;
+  } else activeCategoryBasePath = activeCategory?.path;
+  const openAttr = activeCategoryBasePath?.startsWith(category.path)
+    ? "open"
+    : "";
   return `<details class="tree-nav__item is-expandable" ${openAttr}>
   <summary class="tree-nav__item-title ${activeClass}" 
-           data-category="${escapeHtmlAttr(categoryStr)}">
+           data-category="${escapeHtmlAttr(category.path)}">
     <i class="tree-nav__expander fa-solid fa-chevron-right"></i>
     ${escapeHtmlContent(category.name)}
   </summary>
