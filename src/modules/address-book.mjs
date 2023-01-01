@@ -224,12 +224,13 @@ function removeContactFromCategoryHelper(
   let shouldDelete = true;
   if (remainingCategoryPath.length === 0) {
     // Recursion base case
+    console.log("Delete", contactId, "from", categoryObj);
     delete categoryObj.contacts[contactId];
     if (!isLeafCategory(categoryObj)) {
       delete categoryObj.uncategorized.contacts[contactId];
     }
   } else {
-    const nextCategoryName = remainingCategoryPath.shift();
+    const nextCategoryName = remainingCategoryPath[0];
     for (const catName in categoryObj.categories) {
       if (catName == nextCategoryName) continue;
       if (contactId in categoryObj.categories[catName].contacts) {
@@ -238,16 +239,18 @@ function removeContactFromCategoryHelper(
       }
     }
     console.log(
-      "Should I remove contact for",
-      categoryObj.name,
+      "Should I remove",
+      contactId,
+      "from",
+      categoryObj,
       ":",
-      shouldDelete
+      firstLevelDeletionEnabled && shouldDelete
     );
     if (firstLevelDeletionEnabled && shouldDelete)
       delete categoryObj.contacts[contactId];
     const shouldDeleteCategory = removeContactFromCategoryHelper(
       categoryObj.categories[nextCategoryName],
-      remainingCategoryPath,
+      remainingCategoryPath.slice(1),
       contactId
     );
     if (shouldDeleteCategory) {
@@ -272,6 +275,14 @@ export function removeContactFromCategory(
   writeToThunderbird = false,
   updateContact = false
 ) {
+  console.info(
+    "removeContactFromCategory",
+    addressBook,
+    contactId,
+    category,
+    writeToThunderbird,
+    updateContact
+  );
   // update contact data
   const contact = addressBook.contacts[contactId];
   if (updateContact) {
