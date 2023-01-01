@@ -117,10 +117,6 @@ export function initCustomMenu(state, categoryTree, updateUI) {
           virtualAddressBook: state.allContactsVirtualAddressBook,
         });
         break;
-      case "menu-move":
-        break;
-      case "menu-move-sub":
-        break;
       default:
         console.error("Unknown action! from", e.target);
         break;
