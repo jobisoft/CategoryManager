@@ -15,20 +15,13 @@ function updateCustomMenu(allowedActions, currentDraggingOverCategoryElement) {
   // Update the text
   if (currentDraggingOverCategoryElement.nodeName == "NAV") {
     customMenu.children[0].innerText = "Add to a new category";
-    customMenu.children[2].innerText = "Move to a new category";
   } else {
     customMenu.children[0].innerText = "Add to this category";
-    customMenu.children[2].innerText = "Move to this category";
   }
 }
 
-const ALLOWED_ACTIONS_ON_NEW_CATEGORY = new Set(["menu-add", "menu-move"]);
-const ALLOWED_ACTIONS_DEFAULT = new Set([
-  "menu-add",
-  "menu-add-sub",
-  "menu-move",
-  "menu-move-sub",
-]);
+const ALLOWED_ACTIONS_ON_NEW_CATEGORY = new Set(["menu-add"]);
+const ALLOWED_ACTIONS_DEFAULT = new Set(["menu-add", "menu-add-sub"]);
 const ALLOWED_ACTIONS_FROM_NOWHERE = new Set(["menu-add", "menu-add-sub"]);
 
 export function showCustomMenu(
