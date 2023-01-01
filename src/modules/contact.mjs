@@ -1,10 +1,9 @@
 import { mapIterator } from "./utils.mjs";
-import { categoryArrToString, SUBCATEGORY_SEPARATOR } from "./address-book/index.mjs";
+import {
+  categoryArrToString,
+  categoryStringToArr,
+} from "./address-book/index.mjs";
 // global object: ICAL from external ical.js
-
-function parseCategory(str) {
-  return str.split(SUBCATEGORY_SEPARATOR);
-}
 
 function getError(id) {
   return new Error(`Operation Canceled. Failed to update contact!
@@ -63,7 +62,7 @@ export function parseContact({
     name: DisplayName,
     categories: component
       .getAllProperties("categories")
-      .flatMap((x) => x.getValues().map(parseCategory)),
+      .flatMap((x) => x.getValues().map(categoryStringToArr)),
   };
 }
 

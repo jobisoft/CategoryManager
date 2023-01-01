@@ -1,4 +1,4 @@
-import { Category, SUBCATEGORY_SEPARATOR } from "./category.mjs";
+import { Category, categoryStringToArr, SUBCATEGORY_SEPARATOR } from "./category.mjs";
 import { parseContact } from "../contact.mjs";
 import { filterObjectByKeyToNull, isEmptyObject } from "../utils.mjs";
 
@@ -101,7 +101,7 @@ export function lookupCategory(
 ) {
   // look up a category using a key like `A / B`
   console.log("Looking up", categoryKey);
-  let category = categoryKey.split(SUBCATEGORY_SEPARATOR);
+  let category = categoryStringToArr(categoryKey);
   if (isUncategorized) {
     // remove the last sub category
     category.pop();

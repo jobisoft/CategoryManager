@@ -34,6 +34,10 @@ export function categoryArrToString(cat) {
   return cat.join(SUBCATEGORY_SEPARATOR);
 }
 
+export function categoryStringToArr(cat) {
+  return cat.split(SUBCATEGORY_SEPARATOR);
+}
+
 export function isLeafCategory(cat) {
   return isEmptyObject(cat.categories);
 }
@@ -71,7 +75,7 @@ export function validateCategoryString(s) {
   if (s == null || s.trim() === "") {
     return "Category should not be empty.";
   }
-  const splitted = s.split(SUBCATEGORY_SEPARATOR);
+  const splitted = categoryStringToArr(s);
   for (const cat of splitted) {
     if (cat.trim() == "") {
       return "Subcategory should not be empty.";
