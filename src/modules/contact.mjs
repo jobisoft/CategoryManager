@@ -1,14 +1,50 @@
 import { mapIterator } from "./utils.mjs";
+import { categoryArrToString } from "./address-book/index.mjs";
 // global object: ICAL from external ical.js
 
 function parseCategory(str) {
   return str.split(" / ");
 }
 
-export function parseContact({ id, properties: { vCard, DisplayName } }) {
+export async function updateCategoriesForContact(contact, addition, deletion) {
+  const {
+    properties: { vCard },
+  } = await browser.contacts.get(contact.id);
+  const component = new ICAL.Component(ICAL.parse(vCard));
+  const oldCategories = component
+    .getAllProperties("categories")
+    .flatMap((x) => x.getValues())
+    .sort();
+  const oldCategoriesFromInput = contact.categories.map(categoryArrToString);
+  if (
+    oldCategories.length !== oldCategoriesFromInput.length ||
+    oldCategories.some((x) => !oldCategoriesFromInput.includes(x))
+  ) {
+    console.error("Categories have been changed outside category manager!");
+    return false;
+  }
+  const newCategories = new Set(
+    [...oldCategories, ...addition].filter((x) => !deletion.includes(x))
+  );
+  component.removeAllProperties("categories");
+  for (const cat of newCategories) {
+    component.addPropertyWithValue("categories", cat);
+  }
+  const newVCard = component.toString();
+  console.log("new vCard:", newVCard);
+  await browser.contacts.update(contact.id, { vCard: newVCard });
+  return true;
+}
+
+export function parseContact({
+  id,
+  parentId,
+  properties: { vCard, DisplayName },
+}) {
   const component = new ICAL.Component(ICAL.parse(vCard));
   return {
     id,
+    addressBookId: parentId,
     email: component.getFirstPropertyValue("email"),
     name: DisplayName,
     categories: component

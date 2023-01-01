@@ -1,4 +1,4 @@
-import { lookupCategory, id2contact } from "../modules/address-book.mjs";
+import { lookupCategory, id2contact } from "../modules/address-book/address-book.mjs";
 import { createContactList } from "./contact-list.mjs";
 import { createCategoryTree } from "./category-tree.mjs";
 import { createAddressBookList } from "./address-book-list.mjs";
@@ -13,7 +13,7 @@ import {
   destroyAllMenus,
 } from "../modules/context-menu.mjs";
 import { setIntersection } from "../modules/utils.mjs";
-import { validateCategoryString } from "../modules/category.mjs";
+import { validateCategoryString } from "../modules/address-book/category.mjs";
 import {
   addContactToCategory,
   removeContactFromCategory,

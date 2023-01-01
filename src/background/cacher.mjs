@@ -3,7 +3,7 @@ import {
   createContact,
   deleteContact,
   updateContact,
-} from "../modules/address-book.mjs";
+} from "../modules/address-book/index.mjs";
 // import data from "../modules/fake-data-provider.mjs";
 
 // Populating Cache

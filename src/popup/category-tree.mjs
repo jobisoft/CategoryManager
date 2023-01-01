@@ -3,7 +3,7 @@ import {
   escapeHtmlContent,
   Component,
 } from "../modules/ui.mjs";
-import { isLeafCategory } from "../modules/category.mjs";
+import { isLeafCategory } from "../modules/address-book/index.mjs";
 
 function writeTreeLeaf(category, activeCategory) {
   let uncategorizedAttr = category.isUncategorized

@@ -1,7 +1,7 @@
 import {
   addContactToCategory as addContactToCategoryHelper,
   removeContactFromCategory as removeContactFromCategoryHelper,
-} from "../modules/address-book.mjs";
+} from "../modules/address-book/index.mjs";
 
 export async function removeContactFromCategory({
   contactId,
@@ -29,6 +29,12 @@ export async function addContactToCategory({
 }) {
   return Promise.all([
     addContactToCategoryHelper(addressBook, contactId, category, true, true),
-    addContactToCategoryHelper(virtualAddressBook, contactId, category),
+    addContactToCategoryHelper(
+      virtualAddressBook,
+      contactId,
+      category,
+      false,
+      true
+    ),
   ]);
 }

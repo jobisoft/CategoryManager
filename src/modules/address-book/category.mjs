@@ -1,4 +1,4 @@
-import { isEmptyObject, filterObjectByKeyToNull } from "./utils.mjs";
+import { isEmptyObject, filterObjectByKeyToNull } from "../utils.mjs";
 
 export class Category {
   categories;
