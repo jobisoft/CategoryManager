@@ -14,7 +14,8 @@ let abValues = await Promise.all(
   abInfos.map((ab) => AddressBook.fromTBAddressBook(ab))
 );
 // Make "All Contacts" the first one
-abValues.unshift(AddressBook.fromAllContacts(abValues));
+const allContactsVirtualAddressBook = AddressBook.fromAllContacts(abValues);
+abValues.unshift(allContactsVirtualAddressBook);
 // Map guarantees the order of keys is the insertion order
 let addressBooks = new Map(abValues.map((ab) => [ab.id, ab]));
 
@@ -24,21 +25,24 @@ console.log(abValues);
 
 // Synchronization
 
-browser.contacts.onCreated.addListener((node) => {
+browser.contacts.onCreated.addListener(async (node) => {
   console.log("Create", node);
   let addressBookId = node.parentId;
-  createContact(addressBooks.get(addressBookId), node);
+  await createContact(addressBooks.get(addressBookId), node);
+  await createContact(allContactsVirtualAddressBook, node);
 });
 
-browser.contacts.onUpdated.addListener((node, changedProperties) => {
+browser.contacts.onUpdated.addListener(async (node, changedProperties) => {
   let addressBookId = node.parentId;
   console.log(node, changedProperties);
-  updateContact(addressBooks.get(addressBookId), node, changedProperties);
+  await updateContact(addressBooks.get(addressBookId), node, changedProperties);
+  await updateContact(allContactsVirtualAddressBook, node, changedProperties);
 });
 
-browser.contacts.onDeleted.addListener((addressBookId, id) => {
+browser.contacts.onDeleted.addListener(async (addressBookId, id) => {
   let ab = addressBooks.get(addressBookId);
-  deleteContact(ab, id);
+  await deleteContact(ab, id);
+  await deleteContact(allContactsVirtualAddressBook, id);
 });
 
 // Communication
