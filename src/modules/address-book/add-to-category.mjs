@@ -46,7 +46,7 @@ export async function addContactToCategory(
   let state = "1";
   if (addressBook.categories[rootName] == null) {
     // Case 2.b
-    addressBook.categories[rootName] = new Category(rootName);
+    addressBook.categories[rootName] = new Category(rootName, rootName);
     state = "2b";
   }
   // Handle Corner case:
@@ -59,13 +59,15 @@ export async function addContactToCategory(
   let cur = addressBook.categories[rootName];
   cur.contacts[contactId] = null;
   let oldLeaf;
+  let path = rootName;
   category.slice(1).forEach((cat, idx, arr) => {
+    path += " / " + cat;
     if (cur.categories[cat] == null && state == "1") {
       // Case 2.a
       // this leaf node is no longer a leaf after this update
       state = "2a";
     }
-    cur.categories[cat] ??= new Category(cat);
+    cur.categories[cat] ??= new Category(cat, path);
     cur.categories[cat].contacts[contactId] = null;
     if (state === "2a") {
       oldLeaf = cur;
