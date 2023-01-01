@@ -4,6 +4,13 @@ import {
   Component,
 } from "../modules/ui.mjs";
 import { isLeafCategory } from "../modules/address-book/index.mjs";
+import { lookupContactsByCategoryElement } from "./utils.mjs";
+import { id2contact } from "../modules/address-book/index.mjs";
+import {
+  addContactsToComposeDetails,
+  toRFC5322EmailAddress,
+} from "../modules/contact.mjs";
+import { showCustomMenu } from "./custom-menu.mjs";
 
 function writeTreeLeaf(category, activeCategory) {
   let uncategorizedAttr = category.isUncategorized
@@ -51,12 +58,8 @@ export function writeTreeNode(category, activeCategory) {
 export function createCategoryTree({
   addressBook,
   activeCategory,
-  click,
-  doubleClick,
-  dragEnter,
-  dragOver,
-  dragLeave,
-  dragDrop,
+  state,
+  components: { categoryTitle, contactList },
   ...rest
 }) {
   let component = new Component({
@@ -75,18 +78,151 @@ export function createCategoryTree({
       return res + roots.join("\n");
     },
     ...rest,
-    activeCategory,
+    showNewCategory() {
+      document.getElementsByClassName("new-category")[0].classList.add("show");
+    },
+    hideNewCategory() {
+      document
+        .getElementsByClassName("new-category")[0]
+        .classList.remove("show");
+    },
+    getParentDetailsElement(element) {
+      while (element != this.element) {
+        if (element.nodeName == "DETAILS") {
+          return element;
+        }
+        element = element.parentElement;
+      }
+      return null;
+    },
+    hideDragOverHighlight() {
+      if (state.currentDraggingOverCategoryElement != null) {
+        state.currentDraggingOverCategoryElement.classList.remove("drag-over");
+        state.currentDraggingOverCategoryElement = null;
+      }
+    },
   });
-  click && component.element.addEventListener("click", click.bind(component));
-  doubleClick &&
-    component.element.addEventListener("dblclick", doubleClick.bind(component));
-  dragEnter &&
-    component.element.addEventListener("dragenter", dragEnter.bind(component));
-  dragOver &&
-    component.element.addEventListener("dragover", dragOver.bind(component));
-  dragLeave &&
-    component.element.addEventListener("dragleave", dragLeave.bind(component));
-  dragDrop &&
-    component.element.addEventListener("drop", dragDrop.bind(component));
+  async function click(event) {
+    console.log("Click", event);
+    if (event.detail > 1) {
+      // Disable click event on double click
+      event.preventDefault();
+      return false;
+    }
+    if (event.target.nodeName === "I")
+      // A click on the expander
+      return;
+    event.preventDefault();
+
+    const categoryKey = event.target.dataset.category;
+    if (categoryKey == null)
+      // Not a click on category
+      return;
+
+    if (state.currentCategoryElement != null)
+      state.currentCategoryElement.classList.remove("active");
+    state.currentCategoryElement = event.target;
+    state.currentCategoryElement.classList.add("active");
+    const newData = {
+      addressBook: state.currentAddressBook,
+      contacts: lookupContactsByCategoryElement(state.currentCategoryElement),
+    };
+    categoryTitle.innerText = categoryKey;
+    return contactList.update(newData);
+  }
+  async function doubleClick(event) {
+    const categoryKey = event.target.dataset.category;
+    if (categoryKey == null) return;
+    const contacts = lookupContactsByCategoryElement(event.target);
+    if (state.isComposeAction) {
+      await addContactsToComposeDetails("bcc", state.tab, contacts);
+    } else {
+      // open a new messageCompose window
+      await browser.compose.beginNew(null, {
+        bcc: Object.keys(contacts).flatMap((c) => {
+          const contact = id2contact(state.currentAddressBook, c);
+          return contact.email == null ? [] : [toRFC5322EmailAddress(contact)];
+        }),
+      });
+    }
+    window.close();
+  }
+  function dragEnter(e) {
+    console.log("Drag Enter");
+    this.showNewCategory();
+    e.preventDefault();
+  }
+
+  function dragOver(e) {
+    this.hideDragOverHighlight();
+    if (e.target.nodeName === "I" || e.target.nodeName === "#text") {
+      // Dragging over the expander or text.
+      state.currentDraggingOverCategoryElement = e.target.parentElement;
+    } else if (e.target.nodeName === "DIV") {
+      // Dragging over the container of a leaf category
+      state.currentDraggingOverCategoryElement = e.target.children[0];
+    } else if (e.target.nodeName === "DETAILS") {
+      console.warn("Dragging over details!");
+      return;
+    } else {
+      state.currentDraggingOverCategoryElement = e.target;
+      if (state.currentDraggingOverCategoryElement.nodeName === "SUMMARY") {
+        state.currentDraggingOverCategoryElement.parentElement.open = true;
+      }
+    }
+    state.currentDraggingOverCategoryElement.classList.add("drag-over");
+    // Do not allow dragging onto uncategorized because it's not a real category.
+    e.dataTransfer.dropEffect =
+      "uncategorized" in state.currentDraggingOverCategoryElement.dataset
+        ? "none"
+        : "copy";
+
+    console.warn(`Dragging onto`, state.currentDraggingOverCategoryElement);
+    e.preventDefault();
+  }
+  function dragDrop(e) {
+    showCustomMenu(e.pageX, e.pageY, {
+      currentDraggingOverCategoryElement:
+        state.currentDraggingOverCategoryElement,
+      currentCategoryElement: state.currentCategoryElement,
+    });
+    const item = e.dataTransfer.items[0];
+    if (item.type !== "category-manager/contact") {
+      console.error("Invalid item for drag and drop: ", item);
+      return;
+    }
+    item.getAsString((x) => (state.currentContactDataFromDragAndDrop = x));
+  }
+  function dragLeave(e) {
+    if (
+      e.target == this.element &&
+      !("uncategorized" in e.relatedTarget.dataset)
+    ) {
+      // We are leaving the tree, but not entering an uncategorized category.
+      console.warn("Leaving tree!", e);
+      this.hideNewCategory();
+    }
+    const parentDetails = this.getParentDetailsElement(e.target);
+    if (parentDetails != null) {
+      // Let's fold the category if the mouses leaves it.
+      const boundingRect = parentDetails.getBoundingClientRect();
+      if (
+        !(
+          boundingRect.x <= e.pageX &&
+          e.pageX <= boundingRect.x + boundingRect.width &&
+          boundingRect.y <= e.pageY &&
+          e.pageY <= boundingRect.y + boundingRect.height
+        )
+      )
+        parentDetails.open = false;
+    }
+    this.hideDragOverHighlight();
+  }
+  component.element.addEventListener("click", click.bind(component));
+  component.element.addEventListener("dblclick", doubleClick.bind(component));
+  component.element.addEventListener("dragenter", dragEnter.bind(component));
+  component.element.addEventListener("dragover", dragOver.bind(component));
+  component.element.addEventListener("dragleave", dragLeave.bind(component));
+  component.element.addEventListener("drop", dragDrop.bind(component));
   return component;
 }

@@ -1,597 +1,63 @@
-import { lookupCategory, id2contact } from "../modules/address-book/address-book.mjs";
 import { createContactList } from "./contact-list.mjs";
 import { createCategoryTree } from "./category-tree.mjs";
 import { createAddressBookList } from "./address-book-list.mjs";
-import {
-  toRFC5322EmailAddress,
-  addContactsToComposeDetails,
-} from "../modules/contact.mjs";
-import {
-  createDispatcherForContactListContextMenu,
-  createMenuForCategoryTree,
-  createMenuForContact,
-  destroyAllMenus,
-} from "../modules/context-menu.mjs";
-import { setIntersection } from "../modules/utils.mjs";
-import { validateCategoryString } from "../modules/address-book/category.mjs";
-import {
-  addContactToCategory,
-  removeContactFromCategory,
-} from "./category-edit.mjs";
+import { lookupContactsByCategoryElement } from "./utils.mjs";
+import { initCustomMenu } from "./custom-menu.mjs";
+import { initContextMenu } from "./context-menu.mjs";
+import { initModal } from "./modal.mjs";
+import state from "./state.mjs";
 // global object: emailAddresses, ICAL, MicroModal from popup.html
 
-// ------------------------------------
-//  Initialization & Global Variables
-// ------------------------------------
+initModal();
 
-let addressBooks = new Map();
+const categoryTitle = document.getElementById("category-title");
 
-const [tab] = await browser.tabs.query({ currentWindow: true, active: true });
-const isComposeAction = tab.type == "messageCompose";
+const contactList = createContactList({
+  addressBook: state.currentAddressBook,
+  contacts: state.currentAddressBook?.contacts ?? {},
+});
 
-let elementForContextMenu,
-  currentCategoryElement,
-  currentDraggingOverCategoryElement,
-  currentContactDataFromDragAndDrop,
-  allContactsVirtualAddressBook,
-  currentAddressBook;
+const categoryTree = createCategoryTree({
+  addressBook: state.currentAddressBook,
+  activeCategory: null,
+  state,
+  components: { categoryTitle, contactList },
+});
 
-// ---------------
-//  helper funcs
-// ---------------
-
-async function fullUpdateUI() {
-  allContactsVirtualAddressBook = addressBooks.get("all-contacts");
-  currentAddressBook = allContactsVirtualAddressBook;
-  if (currentAddressBook == null)
-    document.getElementById("info-text").style.display = "initial";
-  categoryTitle.innerText = currentAddressBook?.name ?? "";
-  await Promise.all([
-    addressBookList.update([...addressBooks.values()]),
-    categoryTree.update({
-      addressBook: currentAddressBook,
-      activeCategory: null,
-    }),
-    contactList.update({
-      addressBook: currentAddressBook,
-      contacts: currentAddressBook?.contacts ?? {},
-    }),
-  ]);
-}
+const addressBookList = createAddressBookList({
+  data: [...state.addressBooks.values()],
+  state,
+  components: { categoryTitle, categoryTree, contactList },
+});
 
 async function updateUI() {
-  // TODO: restore active category
   console.log("Active category:", categoryTitle.innerText);
   await categoryTree.update({
-    addressBook: currentAddressBook,
+    addressBook: state.currentAddressBook,
     activeCategory: categoryTitle.innerText,
   });
   let activeElement = document.getElementsByClassName("active")[0];
   console.log("Active Element after UI update:", activeElement);
   let contacts;
   if (activeElement != null) {
-    currentCategoryElement = activeElement;
+    state.currentCategoryElement = activeElement;
     categoryTitle.innerText = activeElement.dataset.category;
-    contacts = lookupContactsByCategoryElement(currentCategoryElement);
+    contacts = lookupContactsByCategoryElement(state.currentCategoryElement);
   } else {
-    currentCategoryElement = null;
-    categoryTitle.innerText = currentAddressBook?.name ?? "";
-    contacts = currentAddressBook?.contacts ?? {};
+    state.currentCategoryElement = null;
+    categoryTitle.innerText = state.currentAddressBook?.name ?? "";
+    contacts = state.currentAddressBook?.contacts ?? {};
   }
   console.log("Update contact list using", contacts);
   await contactList.update({
-    addressBook: currentAddressBook,
+    addressBook: state.currentAddressBook,
     contacts,
   });
 }
 
-function lookupContactsByCategoryElement(element) {
-  // find contacts by an category html element
-  const categoryKey = element.dataset.category;
-  const isUncategorized = element.dataset.uncategorized != null;
-  return lookupCategory(currentAddressBook, categoryKey, isUncategorized)
-    .contacts;
-}
+initCustomMenu(state, categoryTree, updateUI);
+initContextMenu(state, updateUI);
 
-// -------------------
-// Native Context Menu
-// -------------------
-
-function makeMenuEventHandler(fieldName) {
-  return async () => {
-    const contacts = lookupContactsByCategoryElement(elementForContextMenu);
-    if (isComposeAction) {
-      await addContactsToComposeDetails(fieldName, tab, contacts);
-    } else {
-      // Do a filterMap(using a flatMap) to remove contacts that do not have an email address
-      // and map the filtered contacts to rfc 5322 email address format.
-      const emailList = Object.keys(contacts).flatMap((c) => {
-        const contact = id2contact(currentAddressBook, c);
-        return contact.email == null ? [] : [toRFC5322EmailAddress(contact)];
-      });
-      await browser.compose.beginNew(null, { [fieldName]: emailList });
-    }
-    window.close();
-  };
-}
-
-function overrideMenuForCategoryTree() {
-  destroyAllMenus();
-  createMenuForCategoryTree();
-}
-
-function overrideMenuForContactList() {
-  destroyAllMenus();
-  createMenuForContact(currentAddressBook, elementForContextMenu.dataset.id);
-}
-
-document.addEventListener("contextmenu", (e) => {
-  browser.menus.overrideContext({ context: "tab", tabId: tab.id });
-  elementForContextMenu = e.target;
-  console.log(elementForContextMenu);
-  // Check if the right click originates from contact list
-  if (elementForContextMenu.parentNode.dataset.id != null) {
-    // Right click on contact info
-    elementForContextMenu = elementForContextMenu.parentNode;
-    overrideMenuForContactList();
-    return;
-  } else if (elementForContextMenu.dataset.id != null) {
-    overrideMenuForContactList();
-    return;
-  }
-  overrideMenuForCategoryTree();
-  // Check if the right click originates from category tree
-  if (elementForContextMenu.nodeName === "I")
-    // Right click on the expander icon. Use the parent element
-    elementForContextMenu = elementForContextMenu.parentNode;
-  if (elementForContextMenu.dataset.category == null)
-    // No context menu outside category tree
-    e.preventDefault();
-});
-
-const contextMenuHandlers = {
-  add_to: makeMenuEventHandler("to"),
-  add_cc: makeMenuEventHandler("cc"),
-  add_bcc: makeMenuEventHandler("bcc"),
-};
-
-browser.menus.onShown.addListener((info, tab) => {
-  console.log(info, elementForContextMenu);
-});
-
-const dispatchMenuEventsForContactList =
-  createDispatcherForContactListContextMenu({
-    async onDeletion(categoryStr) {
-      const contactId = elementForContextMenu.dataset.id;
-      const addressBookId = elementForContextMenu.dataset.addressbook;
-      const addressBook = addressBooks.get(addressBookId);
-      const category = categoryStr.split(" / ");
-      await removeContactFromCategory({
-        addressBook,
-        contactId,
-        category,
-        virtualAddressBook: allContactsVirtualAddressBook,
-      });
-      return updateUI();
-    },
-    async onAddition(categoryStr, createSubCategory) {
-      const contactId = elementForContextMenu.dataset.id;
-      const addressBookId = elementForContextMenu.dataset.addressbook;
-      const addressBook = addressBooks.get(addressBookId);
-      if (createSubCategory) {
-        const subcategory = await getCategoryStringFromInput();
-        if (subcategory == null) return;
-        if (categoryStr === "") categoryStr = subcategory;
-        else categoryStr += ` / ${subcategory}`;
-      }
-      const category = categoryStr.split(" / ");
-      await addContactToCategory({
-        addressBook,
-        contactId,
-        category,
-        virtualAddressBook: allContactsVirtualAddressBook,
-      });
-      return updateUI();
-    },
-  });
-
-browser.menus.onClicked.addListener(async ({ menuItemId }, tab) => {
-  const handler = contextMenuHandlers[menuItemId];
-  if (handler != null) {
-    handler();
-  } else {
-    dispatchMenuEventsForContactList(menuItemId);
-  }
-});
-
-// -------------------
-//    UI Elements
-// and event handlers
-// -------------------
-
-let contactList = createContactList({
-  addressBook: currentAddressBook,
-  contacts: currentAddressBook?.contacts ?? {},
-});
-
-const categoryTitle = document.getElementById("category-title");
-categoryTitle.innerText = currentAddressBook?.name ?? "";
-
-let categoryTree = createCategoryTree({
-  addressBook: currentAddressBook,
-  activeCategory: null,
-  async click(event) {
-    console.log("Click", event);
-    if (event.detail > 1) {
-      // Disable click event on double click
-      event.preventDefault();
-      return false;
-    }
-    if (event.target.nodeName === "I")
-      // A click on the expander
-      return;
-    event.preventDefault();
-
-    const categoryKey = event.target.dataset.category;
-    if (categoryKey == null)
-      // Not a click on category
-      return;
-
-    if (currentCategoryElement != null)
-      currentCategoryElement.classList.remove("active");
-    currentCategoryElement = event.target;
-    currentCategoryElement.classList.add("active");
-    const newData = {
-      addressBook: currentAddressBook,
-      contacts: lookupContactsByCategoryElement(currentCategoryElement),
-    };
-    categoryTitle.innerText = categoryKey;
-    return contactList.update(newData);
-  },
-  async doubleClick(event) {
-    const categoryKey = event.target.dataset.category;
-    if (categoryKey == null) return;
-    const contacts = lookupContactsByCategoryElement(event.target);
-    if (isComposeAction) {
-      await addContactsToComposeDetails("bcc", tab, contacts);
-    } else {
-      // open a new messageCompose window
-      await browser.compose.beginNew(null, {
-        bcc: Object.keys(contacts).flatMap((c) => {
-          const contact = id2contact(currentAddressBook, c);
-          return contact.email == null ? [] : [toRFC5322EmailAddress(contact)];
-        }),
-      });
-    }
-    window.close();
-  },
-  dragEnter(e) {
-    console.log("Drag Enter");
-    this.showNewCategory();
-    e.preventDefault();
-  },
-  showNewCategory() {
-    document.getElementsByClassName("new-category")[0].classList.add("show");
-  },
-  hideNewCategory() {
-    document.getElementsByClassName("new-category")[0].classList.remove("show");
-  },
-  dragOver(e) {
-    this.hideDragOverHighlight();
-    if (e.target.nodeName === "I" || e.target.nodeName === "#text") {
-      // Dragging over the expander or text.
-      currentDraggingOverCategoryElement = e.target.parentElement;
-    } else if (e.target.nodeName === "DIV") {
-      // Dragging over the container of a leaf category
-      currentDraggingOverCategoryElement = e.target.children[0];
-    } else if (e.target.nodeName === "DETAILS") {
-      console.warn("Dragging over details!");
-      return;
-    } else {
-      currentDraggingOverCategoryElement = e.target;
-      if (currentDraggingOverCategoryElement.nodeName === "SUMMARY") {
-        currentDraggingOverCategoryElement.parentElement.open = true;
-      }
-    }
-    currentDraggingOverCategoryElement.classList.add("drag-over");
-    // Do not allow dragging onto uncategorized because it's not a real category.
-    e.dataTransfer.dropEffect =
-      "uncategorized" in currentDraggingOverCategoryElement.dataset
-        ? "none"
-        : "copy";
-
-    console.warn(`Dragging onto`, currentDraggingOverCategoryElement);
-    e.preventDefault();
-  },
-  hideDragOverHighlight() {
-    if (currentDraggingOverCategoryElement != null) {
-      currentDraggingOverCategoryElement.classList.remove("drag-over");
-      currentDraggingOverCategoryElement = null;
-    }
-  },
-  dragDrop(e) {
-    showCustomMenu(e.pageX, e.pageY);
-    const item = e.dataTransfer.items[0];
-    if (item.type !== "category-manager/contact") {
-      console.error("Invalid item for drag and drop: ", item);
-      return;
-    }
-    item.getAsString((x) => (currentContactDataFromDragAndDrop = x));
-  },
-
-  getParentDetailsElement(element) {
-    while (element != this.element) {
-      if (element.nodeName == "DETAILS") {
-        return element;
-      }
-      element = element.parentElement;
-    }
-    return null;
-  },
-  dragLeave(e) {
-    if (
-      e.target == this.element &&
-      !("uncategorized" in e.relatedTarget.dataset)
-    ) {
-      // We are leaving the tree, but not entering an uncategroized category.
-      console.warn("Leaving tree!", e);
-      this.hideNewCategory();
-    }
-    const parentDetails = this.getParentDetailsElement(e.target);
-    if (parentDetails != null) {
-      // Let's fold the category if the mouses leaves it.
-      const boundingRect = parentDetails.getBoundingClientRect();
-      if (
-        !(
-          boundingRect.x <= e.pageX &&
-          e.pageX <= boundingRect.x + boundingRect.width &&
-          boundingRect.y <= e.pageY &&
-          e.pageY <= boundingRect.y + boundingRect.height
-        )
-      )
-        parentDetails.open = false;
-    }
-    this.hideDragOverHighlight();
-  },
-});
-
-let addressBookList = createAddressBookList({
-  data: [...addressBooks.values()],
-  async click(event) {
-    const addressBookId = event.target.dataset.addressBook;
-    if (addressBookId == null) return;
-    currentAddressBook = addressBooks.get(addressBookId);
-    currentCategoryElement = null;
-    categoryTitle.innerText = currentAddressBook.name;
-    return Promise.all([
-      categoryTree.update({
-        addressBook: currentAddressBook,
-        activeCategory: null,
-      }),
-      contactList.update({
-        addressBook: currentAddressBook,
-        contacts: currentAddressBook.contacts,
-      }),
-    ]);
-  },
-});
-
-// ---------------------------
-//  Communication with cache
-// ---------------------------
-
-let myPort = browser.runtime.connect({ name: "sync" });
-myPort.postMessage({ type: "fullUpdate" });
-myPort.onMessage.addListener(({ type, args }) => {
-  console.log(`Received ${type}`, args);
-  messageHandlers[type](args);
-});
-
-let messageHandlers = {
-  async fullUpdate(args) {
-    addressBooks = args;
-    return fullUpdateUI();
-  },
-};
-
-// ----------
-//   Modal
-// ----------
-
-MicroModal.init({
-  onClose: (modal) => {
-    console.info(`${modal.id} is hidden`);
-  },
-});
-
-const categoryInput = document.getElementById("category-input");
-const categoryInputError = document.getElementById("category-input-error");
-const categoryInputConfirmBtn = document.getElementById(
-  "category-input-confirm"
-);
-const categoryInputCancelBtn = document.getElementById("category-input-cancel");
-
-async function showCategoryInputModalAsync() {
-  return new Promise((resolve) => {
-    categoryInput.value = null;
-    MicroModal.show("modal-category-input");
-    function onConfirmClick() {
-      if (validateCategoryUserInput()) {
-        MicroModal.close("modal-category-input");
-        cleanUp();
-        resolve(categoryInput.value);
-      }
-    }
-    function onCancelClick() {
-      MicroModal.close("modal-category-input");
-      cleanUp();
-      resolve(null);
-    }
-    function onKeyPress(ev) {
-      if (ev.key === "Enter" && validateCategoryUserInput()) {
-        MicroModal.close("modal-category-input");
-        cleanUp();
-        resolve(categoryInput.value);
-      }
-    }
-    function cleanUp() {
-      categoryInputConfirmBtn.removeEventListener("click", onConfirmClick);
-      categoryInputCancelBtn.removeEventListener("click", onCancelClick);
-      categoryInput.removeEventListener("keypress", onKeyPress);
-    }
-    categoryInputConfirmBtn.addEventListener("click", onConfirmClick);
-    categoryInputCancelBtn.addEventListener("click", onCancelClick);
-    categoryInput.addEventListener("keypress", onKeyPress);
-  });
-}
-
-async function getCategoryStringFromInput(parentCategory = null) {
-  const result = await showCategoryInputModalAsync();
-  console.log(categoryInput);
-  console.log(result);
-  return parentCategory == null ? result : parentCategory + " / " + result;
-}
-
-function validateCategoryUserInput() {
-  const validationResult = validateCategoryString(categoryInput.value);
-  if (validationResult == "LGTM") {
-    categoryInputError.style.visibility = "hidden";
-    categoryInput.setCustomValidity("");
-    return true;
-  }
-  categoryInputError.style.visibility = "visible";
-  categoryInputError.innerText = validationResult;
-  categoryInput.setCustomValidity(validationResult);
-  return false;
-}
-
-categoryInput.addEventListener("input", validateCategoryUserInput);
-
-document
-  .getElementsByClassName("modal__overlay")[0]
-  .addEventListener("mousedown", (e) => e.stopPropagation());
-
-// -------------------------------------------------------
-// Custom Context Menu for drag and drop on category tree
-// -------------------------------------------------------
-
-let customMenu = document.getElementById("custom-menu");
-
-document.addEventListener("mousedown", (e) => {
-  let element = e.target;
-  while (element !== customMenu && element != null) {
-    element = element.parentElement;
-  }
-  if (element == null) {
-    customMenu.classList.remove("show");
-    categoryTree.hideNewCategory();
-    categoryTree.hideDragOverHighlight();
-    currentContactDataFromDragAndDrop = null;
-  }
-});
-
-function updateCustomMenu(allowedActions) {
-  for (const item of customMenu.children) {
-    item.style.display = allowedActions.has(item.id) ? "block" : "none";
-  }
-  // Update the text
-  if (currentDraggingOverCategoryElement.nodeName == "NAV") {
-    customMenu.children[0].innerText = "Add to a new category";
-    customMenu.children[2].innerText = "Move to a new category";
-  } else {
-    customMenu.children[0].innerText = "Add to this category";
-    customMenu.children[2].innerText = "Move to this category";
-  }
-}
-
-const ALLOWED_ACTIONS_ON_NEW_CATEGORY = new Set(["menu-add", "menu-move"]);
-const ALLOWED_ACTIONS_DEFAULT = new Set([
-  "menu-add",
-  "menu-add-sub",
-  "menu-move",
-  "menu-move-sub",
-]);
-const ALLOWED_ACTIONS_FROM_NOWHERE = new Set(["menu-add", "menu-add-sub"]);
-
-function showCustomMenu(x, y) {
-  customMenu.style.top = y + "px";
-  customMenu.style.left = x + "px";
-  let allowedActions = ALLOWED_ACTIONS_DEFAULT;
-  console.log(currentDraggingOverCategoryElement);
-  if (
-    // Dragging over new category or empty area
-    currentDraggingOverCategoryElement.classList.contains(
-      "new-category-title"
-    ) ||
-    currentDraggingOverCategoryElement.nodeName == "NAV"
-  ) {
-    allowedActions = setIntersection(
-      allowedActions,
-      ALLOWED_ACTIONS_ON_NEW_CATEGORY
-    );
-  }
-  if (currentCategoryElement == null) {
-    allowedActions = setIntersection(
-      allowedActions,
-      ALLOWED_ACTIONS_FROM_NOWHERE
-    );
-  }
-  updateCustomMenu(allowedActions);
-  customMenu.classList.add("show");
-}
-
-function hideCustomMenu() {
-  customMenu.classList.remove("show");
-}
-
-customMenu.addEventListener("click", async (e) => {
-  if (currentContactDataFromDragAndDrop == null) {
-    console.error("No contact info from drag & drop!");
-    return;
-  }
-  let category;
-  hideCustomMenu();
-  const [addressBookId, contactId] =
-    currentContactDataFromDragAndDrop.split("\n");
-  const addressBook = addressBooks.get(addressBookId);
-  switch (e.target.id) {
-    case "menu-add":
-      // Get user input if dragging onto [ New Category ]
-      category =
-        currentDraggingOverCategoryElement.dataset.category ??
-        (await getCategoryStringFromInput());
-      if (category == null) break;
-      category = category.split(" / ");
-      await addContactToCategory({
-        addressBook,
-        contactId,
-        category,
-        virtualAddressBook: allContactsVirtualAddressBook,
-      });
-      break;
-    case "menu-add-sub":
-      category = await getCategoryStringFromInput(
-        currentDraggingOverCategoryElement.dataset.category
-      );
-      if (category == null) break;
-      category = category.split(" / ");
-      await addContactToCategory({
-        addressBook,
-        contactId,
-        category,
-        virtualAddressBook: allContactsVirtualAddressBook,
-      });
-      break;
-    case "menu-move":
-      break;
-    case "menu-move-sub":
-      break;
-    default:
-      console.error("Unknown action! from", e.target);
-      break;
-  }
-  currentContactDataFromDragAndDrop = null;
-  categoryTree.hideNewCategory();
-  categoryTree.hideDragOverHighlight();
-  updateUI();
-});
+addressBookList.render();
+categoryTree.render();
+contactList.render();
