@@ -189,4 +189,11 @@
 
 #modal-error-title {
   color: red;
+  display: inline-flex;
+  align-items: center;
+  font-size: 2rem;
+}
+
+#modal-error-title i {
+  margin-right: 1rem;
 }
