@@ -48,7 +48,10 @@ function fullUpdateUI() {
     document.getElementById("info-text").style.display = "initial";
   categoryTitle.innerText = currentAddressBook?.name ?? "";
   addressBookList.update([...addressBooks.values()]);
-  categoryTree.update(currentAddressBook);
+  categoryTree.update({
+    addressBook: currentAddressBook,
+    activeCategory: null,
+  });
   contactList.update({
     addressBook: currentAddressBook,
     contacts: currentAddressBook?.contacts ?? {},
@@ -57,12 +60,26 @@ function fullUpdateUI() {
 
 function updateUI() {
   // TODO: restore active category
-  categoryTree.update(currentAddressBook);
+  console.log("Active", categoryTitle.innerText);
+  categoryTree.update({
+    addressBook: currentAddressBook,
+    activeCategory: categoryTitle.innerText,
+  });
+  let activeElement = document.getElementsByClassName("active")[0];
+  let contacts;
+  if (activeElement != null) {
+    currentCategoryElement = activeElement;
+    categoryTitle.innerText = activeElement.dataset.category;
+    contacts = lookupContactsByCategoryElement(currentCategoryElement);
+  } else {
+    currentCategoryElement = null;
+    categoryTitle.innerText = currentAddressBook?.name ?? "";
+    contacts = currentAddressBook?.contacts ?? {};
+  }
   contactList.update({
     addressBook: currentAddressBook,
-    contacts: currentAddressBook?.contacts ?? {},
+    contacts,
   });
-  categoryTitle.innerText = currentAddressBook?.name ?? "";
 }
 
 function lookupContactsByCategoryElement(element) {
@@ -194,7 +211,8 @@ const categoryTitle = document.getElementById("category-title");
 categoryTitle.innerText = currentAddressBook?.name ?? "";
 
 let categoryTree = createCategoryTree({
-  data: currentAddressBook,
+  addressBook: currentAddressBook,
+  activeCategory: null,
   click(event) {
     console.log("Click", event);
     if (event.detail > 1) {
@@ -338,7 +356,10 @@ let addressBookList = createAddressBookList({
     currentAddressBook = addressBooks.get(addressBookId);
     currentCategoryElement = null;
     categoryTitle.innerText = currentAddressBook.name;
-    categoryTree.update(currentAddressBook);
+    categoryTree.update({
+      addressBook: currentAddressBook,
+      activeCategory: null,
+    });
     contactList.update({
       addressBook: currentAddressBook,
       contacts: currentAddressBook.contacts,
