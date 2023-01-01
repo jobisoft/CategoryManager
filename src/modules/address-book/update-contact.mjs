@@ -3,7 +3,11 @@ import { parseContact } from "../contact.mjs";
 import { addContactToCategory } from "./add-to-category.mjs";
 import { removeContactFromCategory } from "./remove-from-category.mjs";
 
-export function updateContact(addressBook, contactNode, changedProperties) {
+export async function updateContact(
+  addressBook,
+  contactNode,
+  changedProperties
+) {
   // We only care about email, name and categories
   // if (changedProperties.DisplayName != null) {
   //   addressBook.contacts[contactNode.id].name = changedProperties.DisplayName.newValue;
@@ -33,9 +37,13 @@ export function updateContact(addressBook, contactNode, changedProperties) {
       !newCategories.has(x) ? [x.split(" / ")] : []
     );
     console.log("Addition", addition);
-    addition.forEach((cat) => addContactToCategory(addressBook, id, cat));
+    await Promise.all(
+      addition.map((cat) => addContactToCategory(addressBook, id, cat))
+    );
     console.log("Deletion", deletion);
-    deletion.forEach((cat) => removeContactFromCategory(addressBook, id, cat));
+    await Promise.all(
+      deletion.map((cat) => removeContactFromCategory(addressBook, id, cat))
+    );
   }
   addressBook.contacts[id] = newContact;
 }

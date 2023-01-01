@@ -1,7 +1,7 @@
 import { parseContact } from "../contact.mjs";
 import { addContactToCategory } from "./add-to-category.mjs";
 
-export function createContact(addressBook, contactNode) {
+export async function createContact(addressBook, contactNode) {
   const id = contactNode.id;
   const contact = parseContact(contactNode);
   addressBook.contacts[id] = contact;
@@ -10,7 +10,9 @@ export function createContact(addressBook, contactNode) {
     addressBook.uncategorized[id] = null;
     return;
   }
-  for (const category of contact.categories) {
-    addContactToCategory(addressBook, id, category);
-  }
+  return Promise.all(
+    contact.categories.map((category) =>
+      addContactToCategory(addressBook, id, category, false, true)
+    )
+  );
 }
