@@ -96,15 +96,16 @@ export function createDispatcherForContactListContextMenu({
   onAddition,
 }) {
   return async function (menuId) {
+    const categoryStr = menuId.slice(1);
     switch (menuId.charAt(0)) {
       case "@":
-        await onDeletion(menuId.slice(1));
+        await onDeletion(categoryStr);
         break;
       case "$":
-        await onAddition(menuId.slice(1), true);
+        await onAddition(categoryStr, true);
         break;
       case "%":
-        await onAddition(menuId.slice(1), false);
+        await onAddition(categoryStr, false);
         break;
       case "#":
         console.error("This menu item should not be clickable!");

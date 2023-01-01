@@ -120,10 +120,6 @@ export function initContextMenu(state, updateUI) {
       e.preventDefault();
   });
 
-  browser.menus.onShown.addListener((info, tab) => {
-    console.log(info, state.elementForContextMenu);
-  });
-
   browser.menus.onClicked.addListener(async ({ menuItemId }, tab) => {
     const handler = contextMenuHandlers[menuItemId];
     if (handler != null) {

@@ -32,7 +32,6 @@ export function showCustomMenu(
   customMenu.style.top = y + "px";
   customMenu.style.left = x + "px";
   let allowedActions = ALLOWED_ACTIONS_DEFAULT;
-  console.log(currentDraggingOverCategoryElement);
   if (
     // Dragging over new category or empty area
     currentDraggingOverCategoryElement.classList.contains(
