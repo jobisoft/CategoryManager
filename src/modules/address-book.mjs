@@ -71,16 +71,24 @@ export class AddressBook {
       (x) => !(x in contacts)
     );
     if (isEmptyObject(filtered)) return;
-    this.uncategorized = new Category("Uncategorized", filtered, {}, true);
+    this.uncategorized = new Category(
+      "Uncategorized",
+      "Uncategorized",
+      filtered,
+      {},
+      true
+    );
   }
 
   #addContactToCategoryWhenBuildingTree(contact, category) {
     let rootName = category[0];
-    this.categories[rootName] ??= new Category(rootName);
+    this.categories[rootName] ??= new Category(rootName, rootName);
     let cur = this.categories[rootName];
     cur.contacts[contact.id] = null;
+    let path = rootName;
     category.slice(1).forEach((cat) => {
-      cur.categories[cat] ??= new Category(cat);
+      path += " / " + cat;
+      cur.categories[cat] ??= new Category(cat, path);
       cur = cur.categories[cat];
       cur.contacts[contact.id] = null;
     });
@@ -215,6 +223,7 @@ export function createContact(addressBook, contactNode) {
 }
 
 function removeContactFromCategoryHelper(
+  addressBook,
   categoryObj,
   remainingCategoryPath,
   contactId,
@@ -230,10 +239,11 @@ function removeContactFromCategoryHelper(
       delete categoryObj.uncategorized.contacts[contactId];
     }
   } else {
+    // Delete contact from this node only if
+    // it does not belong to this category and any sub category.
     const nextCategoryName = remainingCategoryPath[0];
-    for (const catName in categoryObj.categories) {
-      if (catName == nextCategoryName) continue;
-      if (contactId in categoryObj.categories[catName].contacts) {
+    for (const catArr of addressBook.contacts[contactId].categories) {
+      if (categoryArrToString(catArr).startsWith(TODO)) {
         shouldDelete = false;
         break;
       }
@@ -249,6 +259,7 @@ function removeContactFromCategoryHelper(
     if (firstLevelDeletionEnabled && shouldDelete)
       delete categoryObj.contacts[contactId];
     const shouldDeleteCategory = removeContactFromCategoryHelper(
+      addressBook,
       categoryObj.categories[nextCategoryName],
       remainingCategoryPath.slice(1),
       contactId
@@ -309,7 +320,13 @@ export async function removeContactFromCategory(
   //
   // Implementation Note:
   // If there are no other subcategories containing this contact, we can remove it from this category.
-  removeContactFromCategoryHelper(addressBook, category, contactId, false);
+  removeContactFromCategoryHelper(
+    addressBook,
+    addressBook,
+    category,
+    contactId,
+    false
+  );
 }
 
 export async function addContactToCategory(
@@ -327,10 +344,18 @@ export async function addContactToCategory(
     for (const cat of contact.categories) {
       if (categoryArrToString(cat) === categoryStr) {
         // already in the contact.
+        console.log(
+          "Category",
+          category,
+          "is already in",
+          contact,
+          addressBook
+        );
         return;
       }
-      contact.categories.push(category);
     }
+    contact.categories.push(category);
+    console.log("Categories data updated: ", contact.categories);
   }
 
   // Several cases.

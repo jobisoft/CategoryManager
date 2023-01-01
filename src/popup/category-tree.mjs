@@ -5,11 +5,11 @@ import {
 } from "../modules/ui.mjs";
 import { isLeafCategory } from "../modules/category.mjs";
 
-function writeTreeLeaf(prefix, category, activeCategory) {
+function writeTreeLeaf(category, activeCategory) {
   let uncategorizedAttr = category.isUncategorized
     ? 'data-uncategorized=""'
     : "";
-  let categoryStr = prefix + category.name;
+  let categoryStr = category.path;
   let activeClass = categoryStr === activeCategory ? "active" : "";
   return `<div class="tree-nav__item">
     <p class="tree-nav__item-title ${activeClass}" data-category="${escapeHtmlAttr(
@@ -20,24 +20,22 @@ function writeTreeLeaf(prefix, category, activeCategory) {
   </div>`;
 }
 
-export function writeTreeNode(prefix, category, activeCategory) {
-  const newPrefix = prefix + category.name + " / ";
+export function writeTreeNode(category, activeCategory) {
   let children = Object.keys(category.categories).map((key) => {
     const subCategory = category.categories[key];
     return isLeafCategory(subCategory)
-      ? writeTreeLeaf(newPrefix, subCategory, activeCategory)
-      : writeTreeNode(newPrefix, subCategory, activeCategory);
+      ? writeTreeLeaf(subCategory, activeCategory)
+      : writeTreeNode(subCategory, activeCategory);
   });
   const uncategorizedCategory = category.uncategorized;
   if (uncategorizedCategory != null) {
     children.push(
       // `uncategorized` is always the last one and needs special handling
-      writeTreeLeaf(newPrefix, uncategorizedCategory, activeCategory)
+      writeTreeLeaf(uncategorizedCategory, activeCategory)
     );
   }
-  if (isLeafCategory(category))
-    return writeTreeLeaf(prefix, category, activeCategory);
-  const categoryStr = prefix + category.name;
+  if (isLeafCategory(category)) return writeTreeLeaf(category, activeCategory);
+  const categoryStr = category.path;
   const activeClass = categoryStr === activeCategory ? "active" : "";
   const openAttr = activeCategory?.startsWith(categoryStr) ? "open" : "";
   return `<details class="tree-nav__item is-expandable" ${openAttr}>
@@ -68,11 +66,11 @@ export function createCategoryTree({
       let res = `<div class="tree-nav__item new-category"><p class="tree-nav__item-title new-category-title">[ New Category ]</p></div>\n`;
       if (addressBook == null) return res;
       let roots = Object.keys(addressBook.categories).map((key) =>
-        writeTreeNode("", addressBook.categories[key], activeCategory)
+        writeTreeNode(addressBook.categories[key], activeCategory)
       );
       const uncategorizedCategory = addressBook.uncategorized;
       if (uncategorizedCategory != null) {
-        roots.push(writeTreeLeaf("", uncategorizedCategory, activeCategory));
+        roots.push(writeTreeLeaf(uncategorizedCategory, activeCategory));
       }
       return res + roots.join("\n");
     },

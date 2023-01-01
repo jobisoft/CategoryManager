@@ -3,16 +3,19 @@ import { isEmptyObject, filterObjectByKeyToNull } from "./utils.mjs";
 export class Category {
   categories;
   name;
+  path;
   contacts;
   isUncategorized;
   uncategorized;
   constructor(
     name,
+    path,
     contacts = {},
     subCategories = {},
     isUncategorized = false
   ) {
     this.name = name;
+    this.path = path;
     this.categories = subCategories;
     this.contacts = contacts;
     this.isUncategorized = isUncategorized;
@@ -52,7 +55,13 @@ export function buildUncategorizedCategory(category) {
     (x) => !(x in contacts)
   );
   if (!isEmptyObject(filtered)) {
-    category.uncategorized = new Category("Uncategorized", filtered, {}, true);
+    category.uncategorized = new Category(
+      "Uncategorized",
+      category.path + " / " + "Uncategorized",
+      filtered,
+      {},
+      true
+    );
   }
 }
 
