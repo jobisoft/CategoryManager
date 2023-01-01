@@ -268,7 +268,7 @@ function removeContactFromCategoryHelper(
   return isEmptyObject(categoryObj.contacts);
 }
 
-export function removeContactFromCategory(
+export async function removeContactFromCategory(
   addressBook,
   contactId,
   category,
@@ -312,7 +312,7 @@ export function removeContactFromCategory(
   removeContactFromCategoryHelper(addressBook, category, contactId, false);
 }
 
-export function addContactToCategory(
+export async function addContactToCategory(
   addressBook,
   contactId,
   category,

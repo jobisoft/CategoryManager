@@ -1,9 +1,4 @@
-import {
-  lookupCategory,
-  id2contact,
-  addContactToCategory,
-  removeContactFromCategory,
-} from "../modules/address-book.mjs";
+import { lookupCategory, id2contact } from "../modules/address-book.mjs";
 import { createContactList } from "./contact-list.mjs";
 import { createCategoryTree } from "./category-tree.mjs";
 import { createAddressBookList } from "./address-book-list.mjs";
@@ -19,6 +14,10 @@ import {
 } from "../modules/context-menu.mjs";
 import { setIntersection } from "../modules/utils.mjs";
 import { validateCategoryString } from "../modules/category.mjs";
+import {
+  addContactToCategory,
+  removeContactFromCategory,
+} from "./category-edit.mjs";
 // global object: emailAddresses, ICAL, MicroModal from popup.html
 
 // ------------------------------------
@@ -67,7 +66,6 @@ async function updateUI() {
     addressBook: currentAddressBook,
     activeCategory: categoryTitle.innerText,
   });
-  debugger;
   let activeElement = document.getElementsByClassName("active")[0];
   console.log("Active Element after UI update:", activeElement);
   let contacts;
@@ -168,12 +166,12 @@ const dispatchMenuEventsForContactList =
       const addressBookId = elementForContextMenu.dataset.addressbook;
       const addressBook = addressBooks.get(addressBookId);
       const category = categoryStr.split(" / ");
-      removeContactFromCategory(addressBook, contactId, category, true, true);
-      removeContactFromCategory(
-        allContactsVirtualAddressBook,
+      await removeContactFromCategory({
+        addressBook,
         contactId,
-        category
-      );
+        category,
+        virtualAddressBook: allContactsVirtualAddressBook,
+      });
       return updateUI();
     },
     async onAddition(categoryStr, createSubCategory) {
@@ -187,8 +185,12 @@ const dispatchMenuEventsForContactList =
         else categoryStr += ` / ${subcategory}`;
       }
       const category = categoryStr.split(" / ");
-      addContactToCategory(addressBook, contactId, category, true, true);
-      addContactToCategory(allContactsVirtualAddressBook, contactId, category);
+      await addContactToCategory({
+        addressBook,
+        contactId,
+        category,
+        virtualAddressBook: allContactsVirtualAddressBook,
+      });
       return updateUI();
     },
   });
@@ -549,9 +551,9 @@ customMenu.addEventListener("click", async (e) => {
   }
   let category;
   hideCustomMenu();
-  const [currentAddressBookId, currentContact] =
+  const [addressBookId, contactId] =
     currentContactDataFromDragAndDrop.split("\n");
-  const currentAddressBook = addressBooks.get(currentAddressBookId);
+  const addressBook = addressBooks.get(addressBookId);
   switch (e.target.id) {
     case "menu-add":
       // Get user input if dragging onto [ New Category ]
@@ -560,18 +562,12 @@ customMenu.addEventListener("click", async (e) => {
         (await getCategoryStringFromInput());
       if (category == null) break;
       category = category.split(" / ");
-      addContactToCategory(
-        currentAddressBook,
-        currentContact,
+      await addContactToCategory({
+        addressBook,
+        contactId,
         category,
-        true,
-        true
-      );
-      addContactToCategory(
-        allContactsVirtualAddressBook,
-        currentContact,
-        category
-      );
+        virtualAddressBook: allContactsVirtualAddressBook,
+      });
       break;
     case "menu-add-sub":
       category = await getCategoryStringFromInput(
@@ -579,18 +575,12 @@ customMenu.addEventListener("click", async (e) => {
       );
       if (category == null) break;
       category = category.split(" / ");
-      addContactToCategory(
-        currentAddressBook,
-        currentContact,
+      await addContactToCategory({
+        addressBook,
+        contactId,
         category,
-        true,
-        true
-      );
-      addContactToCategory(
-        allContactsVirtualAddressBook,
-        currentContact,
-        category
-      );
+        virtualAddressBook: allContactsVirtualAddressBook,
+      });
       break;
     case "menu-move":
       break;
