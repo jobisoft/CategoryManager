@@ -6,6 +6,14 @@ function parseCategory(str) {
   return str.split(" / ");
 }
 
+function getError(id) {
+  return new Error(`Operation Canceled. Failed to update contact!
+  Common reasons for this error are:
+  1. ${id === 1 ? "(Most Likely)" : ""}The address book is readonly.
+  2. ${
+    id === 2 ? "(Most Likely)" : ""
+  }The contact has been changed outside Category Manager.`);
+}
 export async function updateCategoriesForContact(contact, addition, deletion) {
   const {
     properties: { vCard },
@@ -22,7 +30,7 @@ export async function updateCategoriesForContact(contact, addition, deletion) {
     console.error("Categories have been changed outside category manager!");
     console.log("Old Categories", oldCategories);
     console.log("Old Categories From Input", oldCategoriesFromInput);
-    return false;
+    throw getError(2);
   }
   const newCategories = new Set(
     [...oldCategories, ...addition].filter((x) => !deletion.includes(x))
@@ -33,8 +41,13 @@ export async function updateCategoriesForContact(contact, addition, deletion) {
   }
   const newVCard = component.toString();
   console.log("new vCard:", newVCard);
-  await browser.contacts.update(contact.id, { vCard: newVCard });
-  return true;
+  try {
+    await browser.contacts.update(contact.id, { vCard: newVCard });
+  } catch (e) {
+    console.error("Error when updating contact: ", e);
+    throw getError(1);
+  }
+  return null;
 }
 
 export function parseContact({

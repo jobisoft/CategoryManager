@@ -98,5 +98,38 @@
         </div>
       </div>
     </div>
+    <div class="modal micromodal-slide" id="modal-error" aria-hidden="true">
+      <div class="modal__overlay" tabindex="-1">
+        <div
+          class="modal__container"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-error-title"
+        >
+          <header class="modal__header">
+            <h2 class="modal__title" id="modal-error-title">Error</h2>
+          </header>
+          <main class="modal__content" id="modal-error-content">
+            <p id="error-content"></p>
+            <p style="font-weight: bold">
+              If you think this is a bug of Category Manager, Please file an
+              issue at
+              <a href="https://github.com/jobisoft/CategoryManager/issues"
+                >https://github.com/jobisoft/CategoryManager/issues</a
+              >
+            </p>
+          </main>
+          <footer class="modal__footer">
+            <button
+              class="modal__btn modal__btn-primary"
+              aria-label="Close"
+              data-micromodal-close
+            >
+              Close
+            </button>
+          </footer>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

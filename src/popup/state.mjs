@@ -1,3 +1,7 @@
+import { initErrorHandler } from "./error-handler.mjs";
+
+initErrorHandler();
+
 let addressBooks = new Map();
 
 const [tab] = await browser.tabs.query({ currentWindow: true, active: true });

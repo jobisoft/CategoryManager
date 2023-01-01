@@ -72,3 +72,10 @@ export function initModal() {
     .addEventListener("mousedown", (e) => e.stopPropagation());
   MicroModal.init();
 }
+
+const errorContent = document.getElementById("error-content");
+
+export function showErrorModal(errorMessage) {
+  errorContent.innerText = errorMessage;
+  MicroModal.show("modal-error");
+}

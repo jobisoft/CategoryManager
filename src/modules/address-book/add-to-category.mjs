@@ -16,8 +16,7 @@ export async function addContactToCategory(
   const contact = addressBook.contacts[contactId];
   const categoryStr = categoryArrToString(category);
   if (writeToThunderbird) {
-    const ok = await updateCategoriesForContact(contact, [categoryStr], []);
-    if (!ok) throw new Error("Operation Canceled. Failed to update contact!");
+    await updateCategoriesForContact(contact, [categoryStr], []);
   }
   if (updateContact) {
     // update contact data

@@ -67,3 +67,4 @@ initContextMenu(state, updateUI);
 addressBookList.render();
 categoryTree.render();
 contactList.render();
+categoryTitle.innerText = state.currentAddressBook?.name ?? "";
