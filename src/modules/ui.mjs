@@ -17,7 +17,7 @@ export class Component {
       this[key] = value;
     }
   }
-  render() {
+  async render() {
     const templated = this.template(this.data);
     // Cache instance
     let self = this;
@@ -25,14 +25,17 @@ export class Component {
     if (self.debounce) {
       window.cancelAnimationFrame(self.debounce);
     }
-    // Setup the new render to run at the next animation frame
-    self.debounce = window.requestAnimationFrame(function () {
-      render(self.element, templated, false);
+    return new Promise((resolve) => {
+      // Setup the new render to run at the next animation frame
+      self.debounce = window.requestAnimationFrame(function () {
+        render(self.element, templated, false);
+        resolve();
+      });
     });
   }
   update(data) {
     this.data = data;
-    this.render();
+    return this.render();
   }
 }
 

@@ -41,31 +41,35 @@ let elementForContextMenu,
 //  helper funcs
 // ---------------
 
-function fullUpdateUI() {
+async function fullUpdateUI() {
   allContactsVirtualAddressBook = addressBooks.get("all-contacts");
   currentAddressBook = allContactsVirtualAddressBook;
   if (currentAddressBook == null)
     document.getElementById("info-text").style.display = "initial";
   categoryTitle.innerText = currentAddressBook?.name ?? "";
-  addressBookList.update([...addressBooks.values()]);
-  categoryTree.update({
-    addressBook: currentAddressBook,
-    activeCategory: null,
-  });
-  contactList.update({
-    addressBook: currentAddressBook,
-    contacts: currentAddressBook?.contacts ?? {},
-  });
+  await Promise.all([
+    addressBookList.update([...addressBooks.values()]),
+    categoryTree.update({
+      addressBook: currentAddressBook,
+      activeCategory: null,
+    }),
+    contactList.update({
+      addressBook: currentAddressBook,
+      contacts: currentAddressBook?.contacts ?? {},
+    }),
+  ]);
 }
 
-function updateUI() {
+async function updateUI() {
   // TODO: restore active category
-  console.log("Active", categoryTitle.innerText);
-  categoryTree.update({
+  console.log("Active category:", categoryTitle.innerText);
+  await categoryTree.update({
     addressBook: currentAddressBook,
     activeCategory: categoryTitle.innerText,
   });
+  debugger;
   let activeElement = document.getElementsByClassName("active")[0];
+  console.log("Active Element after UI update:", activeElement);
   let contacts;
   if (activeElement != null) {
     currentCategoryElement = activeElement;
@@ -76,7 +80,8 @@ function updateUI() {
     categoryTitle.innerText = currentAddressBook?.name ?? "";
     contacts = currentAddressBook?.contacts ?? {};
   }
-  contactList.update({
+  console.log("Update contact list using", contacts);
+  await contactList.update({
     addressBook: currentAddressBook,
     contacts,
   });
@@ -169,7 +174,7 @@ const dispatchMenuEventsForContactList =
         contactId,
         category
       );
-      updateUI();
+      return updateUI();
     },
     async onAddition(categoryStr, createSubCategory) {
       const contactId = elementForContextMenu.dataset.id;
@@ -184,7 +189,7 @@ const dispatchMenuEventsForContactList =
       const category = categoryStr.split(" / ");
       addContactToCategory(addressBook, contactId, category, true, true);
       addContactToCategory(allContactsVirtualAddressBook, contactId, category);
-      updateUI();
+      return updateUI();
     },
   });
 
@@ -213,7 +218,7 @@ categoryTitle.innerText = currentAddressBook?.name ?? "";
 let categoryTree = createCategoryTree({
   addressBook: currentAddressBook,
   activeCategory: null,
-  click(event) {
+  async click(event) {
     console.log("Click", event);
     if (event.detail > 1) {
       // Disable click event on double click
@@ -239,7 +244,7 @@ let categoryTree = createCategoryTree({
       contacts: lookupContactsByCategoryElement(currentCategoryElement),
     };
     categoryTitle.innerText = categoryKey;
-    contactList.update(newData);
+    return contactList.update(newData);
   },
   async doubleClick(event) {
     const categoryKey = event.target.dataset.category;
@@ -350,26 +355,24 @@ let categoryTree = createCategoryTree({
 
 let addressBookList = createAddressBookList({
   data: [...addressBooks.values()],
-  click(event) {
+  async click(event) {
     const addressBookId = event.target.dataset.addressBook;
     if (addressBookId == null) return;
     currentAddressBook = addressBooks.get(addressBookId);
     currentCategoryElement = null;
     categoryTitle.innerText = currentAddressBook.name;
-    categoryTree.update({
-      addressBook: currentAddressBook,
-      activeCategory: null,
-    });
-    contactList.update({
-      addressBook: currentAddressBook,
-      contacts: currentAddressBook.contacts,
-    });
+    return Promise.all([
+      categoryTree.update({
+        addressBook: currentAddressBook,
+        activeCategory: null,
+      }),
+      contactList.update({
+        addressBook: currentAddressBook,
+        contacts: currentAddressBook.contacts,
+      }),
+    ]);
   },
 });
-
-addressBookList.render();
-categoryTree.render();
-contactList.render();
 
 // ---------------------------
 //  Communication with cache
@@ -383,9 +386,9 @@ myPort.onMessage.addListener(({ type, args }) => {
 });
 
 let messageHandlers = {
-  fullUpdate(args) {
+  async fullUpdate(args) {
     addressBooks = args;
-    fullUpdateUI();
+    return fullUpdateUI();
   },
 };
 

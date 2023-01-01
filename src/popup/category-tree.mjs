@@ -11,10 +11,10 @@ function writeTreeLeaf(prefix, category, activeCategory) {
     : "";
   let categoryStr = prefix + category.name;
   let activeClass = categoryStr === activeCategory ? "active" : "";
-  return `<div class="tree-nav__item ${activeClass}">
-    <p class="tree-nav__item-title" data-category="${escapeHtmlAttr(
-      categoryStr
-    )}" ${uncategorizedAttr}>
+  return `<div class="tree-nav__item">
+    <p class="tree-nav__item-title ${activeClass}" data-category="${escapeHtmlAttr(
+    categoryStr
+  )}" ${uncategorizedAttr}>
       ${escapeHtmlContent(category.name)}
     </p>
   </div>`;
@@ -38,7 +38,7 @@ export function writeTreeNode(prefix, category, activeCategory) {
   if (isLeafCategory(category))
     return writeTreeLeaf(prefix, category, activeCategory);
   const categoryStr = prefix + category.name;
-  const activeClass = categoryStr === activeCategory;
+  const activeClass = categoryStr === activeCategory ? "active" : "";
   const openAttr = activeCategory?.startsWith(categoryStr) ? "open" : "";
   return `<details class="tree-nav__item is-expandable" ${openAttr}>
   <summary class="tree-nav__item-title ${activeClass}" 
