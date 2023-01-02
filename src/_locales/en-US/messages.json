@@ -1,4 +1,44 @@
 {
+    "manage_categories_of_contact": {
+        "message": "Manage categories of this contact"
+    },
+    "new_category_here": {
+      "message": "Add to new category"
+    },
+    "remove_from_category": {
+      "message": "Remove from '$CATEGORY$'",
+      "placeholders": {
+        "category" : {
+          "content" : "$1"
+        }
+      }
+    },
+    "remove_from_category_recursively": {
+      "message": "Remove from '$CATEGORY$' and all its sub-categories",
+      "placeholders": {
+        "category" : {
+          "content" : "$1"
+        }
+      }
+    },
+    "add_to_category": {
+      "message": "Add to '$CATEGORY$'",
+      "placeholders": {
+        "category" : {
+          "content" : "$1"
+        }
+      }
+    },
+    "add_to_sub_category": {
+      "message": "Add to new sub-category in '$CATEGORY$'",
+      "placeholders": {
+        "category" : {
+          "content" : "$1"
+        }
+      }
+    },
+
+
     "button_addMainCat": {
         "message": "Add top level category"
     },
