@@ -1,4 +1,8 @@
-import { Category, categoryStringToArr, SUBCATEGORY_SEPARATOR } from "./category.mjs";
+import {
+  Category,
+  categoryStringToArr,
+  SUBCATEGORY_SEPARATOR,
+} from "./category.mjs";
 import { parseContact } from "../contact.mjs";
 import { filterObjectByKeyToNull, isEmptyObject } from "../utils.mjs";
 
@@ -101,7 +105,7 @@ export function lookupCategory(
 ) {
   // look up a category using a key like `A / B`
   console.log("Looking up", categoryKey);
-  let category = categoryStringToArr(categoryKey);
+  const category = categoryStringToArr(categoryKey);
   if (isUncategorized) {
     // remove the last sub category
     category.pop();
@@ -111,7 +115,8 @@ export function lookupCategory(
     if (cur.categories[cat] == null) return null;
     cur = cur.categories[cat];
   }
-  return isUncategorized ? cur.uncategorized : cur;
+  const categoryResult = isUncategorized ? cur.uncategorized : cur;
+  return categoryResult;
 }
 
 export function id2contact(addressBook, contactId) {

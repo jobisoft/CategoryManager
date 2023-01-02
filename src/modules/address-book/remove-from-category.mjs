@@ -1,17 +1,21 @@
-import { isLeafCategory, categoryArrToString } from "./category.mjs";
+import {
+  isLeafCategory,
+  categoryArrToString,
+  categoryStringToArr,
+} from "./category.mjs";
 import { isEmptyObject } from "../utils.mjs";
 import { updateCategoriesForContact } from "../contact.mjs";
 
 function removeContactFromCategoryHelper(
   addressBook,
   categoryObj,
-  remainingCategoryPath,
+  remainingCategoryArr,
   contactId,
   firstLevelDeletionEnabled = true
 ) {
   // See the docs of `removeContactFromCategory`
   let shouldDelete = true;
-  if (remainingCategoryPath.length === 0) {
+  if (remainingCategoryArr.length === 0) {
     // Recursion base case
     console.log("Delete", contactId, "from", categoryObj);
     delete categoryObj.contacts[contactId];
@@ -21,7 +25,7 @@ function removeContactFromCategoryHelper(
   } else {
     // Delete contact from this node only if
     // it does not belong to this category and any sub category.
-    const nextCategoryName = remainingCategoryPath[0];
+    const nextCategoryName = remainingCategoryArr[0];
     for (const catArr of addressBook.contacts[contactId].categories) {
       if (categoryArrToString(catArr).startsWith(categoryObj.name)) {
         shouldDelete = false;
@@ -41,7 +45,7 @@ function removeContactFromCategoryHelper(
     const shouldDeleteCategory = removeContactFromCategoryHelper(
       addressBook,
       categoryObj.categories[nextCategoryName],
-      remainingCategoryPath.slice(1),
+      remainingCategoryArr.slice(1),
       contactId
     );
     if (shouldDeleteCategory) {
@@ -62,7 +66,7 @@ function removeContactFromCategoryHelper(
 export async function removeContactFromCategory(
   addressBook,
   contactId,
-  category,
+  categoryStr,
   writeToThunderbird = false,
   updateContact = false
 ) {
@@ -70,13 +74,12 @@ export async function removeContactFromCategory(
     "removeContactFromCategory",
     addressBook,
     contactId,
-    category,
+    categoryStr,
     writeToThunderbird,
     updateContact
   );
 
   const contact = addressBook.contacts[contactId];
-  const categoryStr = categoryArrToString(category);
   if (writeToThunderbird) {
     await updateCategoriesForContact(contact, [], [categoryStr]);
   }
@@ -95,7 +98,7 @@ export async function removeContactFromCategory(
       }
     }
     if (!found) {
-      console.error("Category not found in contact", category, contact);
+      console.error("Category not found in contact", categoryStr, contact);
     }
   }
   // Note that this function is different from `deleteContactRecursively`.
@@ -109,7 +112,7 @@ export async function removeContactFromCategory(
   removeContactFromCategoryHelper(
     addressBook,
     addressBook,
-    category,
+    categoryStringToArr(categoryStr),
     contactId,
     false
   );

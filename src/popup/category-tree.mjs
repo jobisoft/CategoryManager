@@ -3,7 +3,10 @@ import {
   escapeHtmlContent,
   Component,
 } from "../modules/ui.mjs";
-import { isLeafCategory, SUBCATEGORY_SEPARATOR } from "../modules/address-book/index.mjs";
+import {
+  categoryPathToString,
+  isLeafCategory,
+} from "../modules/address-book/index.mjs";
 import { lookupContactsByCategoryElement } from "./utils.mjs";
 import { id2contact } from "../modules/address-book/index.mjs";
 import {
@@ -54,17 +57,10 @@ export function writeTreeNode(category, activeCategory) {
   const activeClass = isActiveCategory(category, activeCategory)
     ? "active"
     : "";
-  let activeCategoryBasePath;
-  if (activeCategory?.isUncategorized) {
-    const idx = activeCategory.path.lastIndexOf(SUBCATEGORY_SEPARATOR);
-    activeCategoryBasePath =
-      idx !== -1
-        ? activeCategory.path.substring(
-            0,
-            activeCategory.path.lastIndexOf(SUBCATEGORY_SEPARATOR)
-          )
-        : activeCategory.path;
-  } else activeCategoryBasePath = activeCategory?.path;
+  const activeCategoryBasePath = categoryPathToString(
+    activeCategory?.path,
+    activeCategory?.isUncategorized
+  );
   const openAttr = activeCategoryBasePath?.startsWith(category.path)
     ? "open"
     : "";

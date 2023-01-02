@@ -77,7 +77,7 @@ export function initCustomMenu(state, categoryTree, updateUI) {
       console.error("No contact info from drag & drop!");
       return;
     }
-    let category;
+    let categoryStr;
     hideCustomMenu();
     const [addressBookId, contactId] =
       state.currentContactDataFromDragAndDrop.split("\n");
@@ -85,28 +85,26 @@ export function initCustomMenu(state, categoryTree, updateUI) {
     switch (e.target.id) {
       case "menu-add":
         // Get user input if dragging onto [ New Category ]
-        category =
+        categoryStr =
           state.currentDraggingOverCategoryElement.dataset.category ??
           (await getCategoryStringFromInput());
-        if (category == null) break;
-        category = categoryStringToArr(category);
+        if (categoryStr == null) break;
         await addContactToCategory({
           addressBook,
           contactId,
-          category,
+          categoryStr,
           virtualAddressBook: state.allContactsVirtualAddressBook,
         });
         break;
       case "menu-add-sub":
-        category = await getCategoryStringFromInput(
+        categoryStr = await getCategoryStringFromInput(
           state.currentDraggingOverCategoryElement.dataset.category
         );
-        if (category == null) break;
-        category = categoryStringToArr(category);
+        if (categoryStr == null) break;
         await addContactToCategory({
           addressBook,
           contactId,
-          category,
+          categoryStr,
           virtualAddressBook: state.allContactsVirtualAddressBook,
         });
         break;

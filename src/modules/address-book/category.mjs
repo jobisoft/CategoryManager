@@ -42,6 +42,14 @@ export function isLeafCategory(cat) {
   return isEmptyObject(cat.categories);
 }
 
+export function categoryPathToString(categoryPath, isUncategorized) {
+  if (!isUncategorized) return categoryPath;
+  const idx = categoryPath.lastIndexOf(SUBCATEGORY_SEPARATOR);
+  return idx !== -1
+    ? categoryPath.substring(0, categoryPath.lastIndexOf(SUBCATEGORY_SEPARATOR))
+    : categoryPath; // Top Level Uncategorized category
+}
+
 export function buildUncategorizedCategory(category) {
   // only call this method once
   if (isLeafCategory(category)) {

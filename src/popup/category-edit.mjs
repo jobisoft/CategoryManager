@@ -7,19 +7,19 @@ export async function removeContactFromCategory({
   contactId,
   addressBook,
   virtualAddressBook,
-  category,
+  categoryStr,
 }) {
   await removeContactFromCategoryHelper(
     addressBook,
     contactId,
-    category,
+    categoryStr,
     true,
     true
   );
   return removeContactFromCategoryHelper(
     virtualAddressBook,
     contactId,
-    category
+    categoryStr
   );
 }
 
@@ -27,19 +27,19 @@ export async function addContactToCategory({
   contactId,
   addressBook,
   virtualAddressBook,
-  category,
+  categoryStr,
 }) {
   await addContactToCategoryHelper(
     addressBook,
     contactId,
-    category,
+    categoryStr,
     true,
     true
   );
   return addContactToCategoryHelper(
     virtualAddressBook,
     contactId,
-    category,
+    categoryStr,
     false,
     true
   );

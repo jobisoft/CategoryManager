@@ -49,20 +49,28 @@ export async function updateCategoriesForContact(contact, addition, deletion) {
   return null;
 }
 
+const identity = (x) => x;
+
 export function parseContact({
   id,
   parentId,
   properties: { vCard, DisplayName },
+  categoryFormat = "array",
 }) {
   const component = new ICAL.Component(ICAL.parse(vCard));
+  const categories = component
+    .getAllProperties("categories")
+    .flatMap((x) =>
+      x
+        .getValues()
+        .map(categoryFormat == "string" ? identity : categoryStringToArr)
+    );
   return {
     id,
     addressBookId: parentId,
     email: component.getFirstPropertyValue("email"),
     name: DisplayName,
-    categories: component
-      .getAllProperties("categories")
-      .flatMap((x) => x.getValues().map(categoryStringToArr)),
+    categories,
   };
 }
 

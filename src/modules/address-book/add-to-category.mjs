@@ -4,18 +4,19 @@ import {
   buildUncategorizedCategory,
   categoryArrToString,
   SUBCATEGORY_SEPARATOR,
+  categoryStringToArr,
 } from "./category.mjs";
 import { updateCategoriesForContact } from "../contact.mjs";
 
 export async function addContactToCategory(
   addressBook,
   contactId,
-  category,
+  categoryStr,
   writeToThunderbird = false,
   updateContact = false
 ) {
+  const categoryArr = categoryStringToArr(categoryStr);
   const contact = addressBook.contacts[contactId];
-  const categoryStr = categoryArrToString(category);
   if (writeToThunderbird) {
     await updateCategoriesForContact(contact, [categoryStr], []);
   }
@@ -31,7 +32,7 @@ export async function addContactToCategory(
       }
     }
     if (!exist) {
-      contact.categories.push(category);
+      contact.categories.push(categoryArr);
       console.log("Categories data updated: ", contact.categories);
     }
   }
@@ -45,8 +46,8 @@ export async function addContactToCategory(
   //     | this is a new path which only contains one contact, we don't need to deal with uncategorized category
   // state: a string that represents current state
   //        1, 2a, 2b, done(which means we already found the old leaf node)
-  console.info("Adding", addressBook.contacts[contactId], "to", category);
-  const rootName = category[0];
+  console.info("Adding", addressBook.contacts[contactId], "to", categoryArr);
+  const rootName = categoryArr[0];
   // Assume there are no new categories first.
   let state = "1";
   if (addressBook.categories[rootName] == null) {
@@ -57,7 +58,7 @@ export async function addContactToCategory(
   // Handle Corner case:
   //   add to uncategorized when category.length == 1, which skips the forEach loop
   const root = addressBook.categories[rootName];
-  if (category.length === 1 && !isLeafCategory(root)) {
+  if (categoryArr.length === 1 && !isLeafCategory(root)) {
     console.log("The end node is not a leaf, adding to uncategorized!");
     root.uncategorized.contacts[contactId] = null;
   }
@@ -65,7 +66,7 @@ export async function addContactToCategory(
   cur.contacts[contactId] = null;
   let oldLeaf;
   let path = rootName;
-  category.slice(1).forEach((cat, idx, arr) => {
+  categoryArr.slice(1).forEach((cat, idx, arr) => {
     path += SUBCATEGORY_SEPARATOR + cat;
     if (cur.categories[cat] == null && state == "1") {
       // Case 2.a
