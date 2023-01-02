@@ -58,13 +58,16 @@ export function initContextMenu(state, updateUI) {
     addToCC: makeCategoryMenuHandler("cc", state),
     addToBCC: makeCategoryMenuHandler("bcc", state),
     async deleteCategory(categoryElement) {
-      await deleteCategory({
-        categoryPath: categoryElement.dataset.category,
-        isUncategorized: "uncategorized" in categoryElement.dataset,
-        addressBook: state.currentAddressBook,
-        addressBooks: state.addressBooks,
-      });
-      updateUI();
+      try {
+        await deleteCategory({
+          categoryPath: categoryElement.dataset.category,
+          isUncategorized: "uncategorized" in categoryElement.dataset,
+          addressBook: state.currentAddressBook,
+          addressBooks: state.addressBooks,
+        });
+      } finally {
+        updateUI();
+      }
     },
   };
   const dispatchMenuEventsForContactList =
