@@ -58,9 +58,10 @@ function overrideMenuForContactList(state) {
 
 export function initContextMenu(state, updateUI) {
   const contextMenuHandlers = {
-    add_to: makeCategoryMenuHandler("to", state),
-    add_cc: makeCategoryMenuHandler("cc", state),
-    add_bcc: makeCategoryMenuHandler("bcc", state),
+    addToTO: makeCategoryMenuHandler("to", state),
+    addToCC: makeCategoryMenuHandler("cc", state),
+    addToBCC: makeCategoryMenuHandler("bcc", state),
+    deleteCategory() {},
   };
   const dispatchMenuEventsForContactList =
     createDispatcherForContactListContextMenu({

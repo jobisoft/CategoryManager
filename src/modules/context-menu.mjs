@@ -28,19 +28,24 @@ export function destroyAllMenus() {
   browser.menus.removeAll();
 }
 
-export function createMenuForCategoryTree() {
+export function createMenuForCategoryTree(categoryElement) {
   createMenu({
-    id: "add_to",
+    id: "addToTO",
     title: "Add to TO",
   });
   createMenu({
-    id: "add_cc",
+    id: "addToCC",
     title: "Add to CC",
   });
   createMenu({
-    id: "add_bcc",
+    id: "addToBCC",
     title: "Add to BCC",
   });
+  if (!("uncategorized" in categoryElement.dataset)) {
+    // Add an option to delete this category
+    createSeparator();
+    createMenu({ id: "deleteCategory", title: "Delete this category" });
+  }
 }
 
 const NEW_CATEGORY_TEXT = "<New Category Here>";
