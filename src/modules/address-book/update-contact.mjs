@@ -5,6 +5,7 @@ import { removeContactFromCategory } from "./remove-from-category.mjs";
 
 export async function updateContact(
   addressBook,
+  virtualAddressBook,
   contactNode,
   changedProperties
 ) {
@@ -22,28 +23,26 @@ export async function updateContact(
   // TODO: we could do some optimization here:
   const newCategories = new Set(newContact.categories.map(categoryArrToString));
   const oldCategories = new Set(oldContact.categories.map(categoryArrToString));
-  console.log("Old categories: ", JSON.stringify([...oldCategories]));
-  console.log("New categories: ", JSON.stringify([...newCategories]));
+  console.debug("Old categories: ", JSON.stringify([...oldCategories]));
+  console.debug("New categories: ", JSON.stringify([...newCategories]));
   if (
     newCategories.size != oldCategories.size ||
     [...newCategories].some((value) => !oldCategories.has(value))
   ) {
     // Categories changed.
-    console.log("changed contact:", newContact, changedProperties);
+    console.debug("changed contact:", newContact, changedProperties);
     const addition = [...newCategories].filter((x) => !oldCategories.has(x));
     const deletion = [...oldCategories].filter((x) => !newCategories.has(x));
-    console.log("Addition", addition);
-    await Promise.all(
-      addition.map((cat) =>
-        addContactToCategory(addressBook, id, cat, false, true)
-      )
-    );
-    console.log("Deletion", deletion);
-    await Promise.all(
-      deletion.map((cat) =>
-        removeContactFromCategory(addressBook, id, cat, false, true)
-      )
-    );
+    console.debug("Addition", addition);
+    for (const cat of addition) {
+      await addContactToCategory(addressBook, id, cat, false, true);
+      await addContactToCategory(virtualAddressBook, id, cat, false, true);
+    }
+    console.debug("Deletion", deletion);
+    for (const cat of deletion) {
+      await removeContactFromCategory(addressBook, id, cat, false, true);
+      await removeContactFromCategory(virtualAddressBook, id, cat, false, true);
+    }
   }
   addressBook.contacts[id] = newContact;
 }

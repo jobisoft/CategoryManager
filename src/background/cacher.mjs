@@ -34,9 +34,14 @@ browser.contacts.onCreated.addListener(async (node) => {
 
 browser.contacts.onUpdated.addListener(async (node, changedProperties) => {
   let addressBookId = node.parentId;
-  console.log(node, changedProperties);
-  await updateContact(addressBooks.get(addressBookId), node, changedProperties);
-  await updateContact(allContactsVirtualAddressBook, node, changedProperties);
+  console.debug(node, changedProperties);
+  await updateContact(
+    addressBooks.get(addressBookId),
+    allContactsVirtualAddressBook,
+    node,
+    changedProperties
+  );
+  console.debug("Updated cache", addressBooks);
 });
 
 browser.contacts.onDeleted.addListener(async (addressBookId, id) => {
