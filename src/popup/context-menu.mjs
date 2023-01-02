@@ -125,9 +125,9 @@ export function initContextMenu(state, updateUI) {
   browser.menus.onClicked.addListener(async ({ menuItemId }) => {
     const handler = contextMenuHandlers[menuItemId];
     if (handler != null) {
-      handler();
+      await handler();
     } else {
-      dispatchMenuEventsForContactList(menuItemId);
+      await dispatchMenuEventsForContactList(menuItemId);
     }
   });
 }
