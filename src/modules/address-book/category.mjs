@@ -59,7 +59,7 @@ export function categoryPathToString(categoryPath, isUncategorized) {
 
 export function buildUncategorizedCategory(category) {
   // only call this method once
-  if (isLeafCategory(category)) {
+  if (isLeafCategory(category) && category.path != null) {
     // recursion base case
     return;
   }
