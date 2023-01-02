@@ -56,23 +56,39 @@ export async function deleteCategory({
   if (addressBook === virtualAddressBook) {
     // delete a category in "All contacts"
     // Delete it for every addressBook.
-
     await deleteCategoryHelper(
       virtualAddressBook,
       categoryPath,
       isUncategorized,
-      true
+      false,
+      false
     );
     for (const ab of addressBooks.values()) {
-      if (ab !== virtualAddressBook)
-        await deleteCategoryHelper(ab, categoryPath, isUncategorized, false);
+      if (ab !== virtualAddressBook) {
+        await deleteCategoryHelper(
+          ab,
+          categoryPath,
+          isUncategorized,
+          true,
+          true
+        );
+      }
     }
   }
-  await deleteCategoryHelper(addressBook, categoryPath, isUncategorized, true);
-  return deleteCategoryHelper(
+  // The order matters! deleteCategoryHelper relies on the category info stored in contact
+  // So we can't update the categories in contact when
+  await deleteCategoryHelper(
     virtualAddressBook,
     categoryPath,
     isUncategorized,
+    false,
+    false
+  );
+  return deleteCategoryHelper(
+    addressBook,
+    categoryPath,
+    isUncategorized,
+    true,
     true
   );
 }

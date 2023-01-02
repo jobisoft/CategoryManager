@@ -31,8 +31,11 @@ export async function updateCategoriesForContact(contact, addition, deletion) {
     oldCategories.some((x) => !oldCategoriesFromInput.includes(x))
   ) {
     console.error("Categories have been changed outside category manager!");
-    console.log("Old Categories", oldCategories);
-    console.log("Old Categories From Input", oldCategoriesFromInput);
+    console.log("Old Categories", JSON.stringify(oldCategories));
+    console.log(
+      "Old Categories From Input",
+      JSON.stringify(oldCategoriesFromInput)
+    );
     throw getError(ERR_OPERATION_CANCEL, 2);
   }
   const newCategories = new Set(

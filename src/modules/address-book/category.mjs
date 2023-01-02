@@ -109,6 +109,18 @@ export function isContactInCategory(categoryObj, contactId) {
   return contactId in categoryObj.contacts;
 }
 
+export function isContactInAnySubcategory(categoryObj, contactId) {
+  let result = false;
+  for (const categoryName in categoryObj.categories) {
+    const subcategory = categoryObj.categories[categoryName];
+    if (isContactInCategory(subcategory, contactId)) {
+      result = true;
+      break;
+    }
+  }
+  return result;
+}
+
 export function shouldContactBeUncategorized(categoryObj, contactId) {
   let uncategorized = true;
   for (const catName in categoryObj) {

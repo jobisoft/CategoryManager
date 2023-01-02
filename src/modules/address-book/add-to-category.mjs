@@ -59,8 +59,13 @@ export async function addContactToCategory(
   // Handle Corner case:
   //   add to uncategorized when category.length == 1, which skips the forEach loop
   const root = addressBook.categories[rootName];
-  if (categoryArr.length === 1 && !isLeafCategory(root)) {
+  if (
+    categoryArr.length === 1 &&
+    !isLeafCategory(root) &&
+    shouldContactBeUncategorized(root, contactId)
+  ) {
     console.log("The end node is not a leaf, adding to uncategorized!");
+    root.uncategorized ??= Category.createUncategorizedCategory(null);
     root.uncategorized.contacts[contactId] = null;
   }
   let cur = addressBook.categories[rootName];
@@ -83,6 +88,7 @@ export async function addContactToCategory(
     cur = cur.categories[cat];
     if (
       idx === arr.length - 1 &&
+      cur != null && // The last iteration makes cur undefined.
       !isLeafCategory(cur) &&
       shouldContactBeUncategorized(cur, contactId)
     ) {

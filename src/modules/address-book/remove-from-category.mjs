@@ -2,6 +2,7 @@ import {
   isLeafCategory,
   categoryArrToString,
   categoryStringToArr,
+  isContactInAnySubcategory,
 } from "./category.mjs";
 import { isEmptyObject } from "../utils.mjs";
 import { updateCategoriesForContact } from "../contact.mjs";
@@ -11,10 +12,9 @@ function removeContactFromCategoryHelper(
   categoryObj,
   remainingCategoryArr,
   contactId,
-  firstLevelDeletionEnabled = true
+  contactDeletionEnabled = true
 ) {
   // See the docs of `removeContactFromCategory`
-  let shouldDelete = true;
   if (remainingCategoryArr.length === 0) {
     // Recursion base case
     console.log("Delete", contactId, "from", categoryObj);
@@ -26,35 +26,44 @@ function removeContactFromCategoryHelper(
     // Delete contact from this node only if
     // it does not belong to this category and any sub category.
     const nextCategoryName = remainingCategoryArr[0];
-    for (const catArr of addressBook.contacts[contactId].categories) {
-      if (categoryArrToString(catArr).startsWith(categoryObj.name)) {
-        shouldDelete = false;
-        break;
-      }
-    }
-    console.log(
-      "Should I remove",
-      contactId,
-      "from",
-      categoryObj,
-      ":",
-      firstLevelDeletionEnabled && shouldDelete
-    );
-    if (firstLevelDeletionEnabled && shouldDelete)
-      delete categoryObj.contacts[contactId];
+    // for (const catArr of addressBook.contacts[contactId].categories) {
+    //   if (categoryArrToString(catArr).startsWith(categoryObj.name)) {
+    //     shouldDelete = false;
+    //     break;
+    //   }
+    // }
     const shouldDeleteCategory = removeContactFromCategoryHelper(
       addressBook,
       categoryObj.categories[nextCategoryName],
       remainingCategoryArr.slice(1),
       contactId
     );
+    const shouldDelete =
+      contactDeletionEnabled &&
+      !isContactInAnySubcategory(categoryObj, contactId);
+    console.log(
+      "Should I remove",
+      contactId,
+      "from",
+      categoryObj,
+      ":",
+      shouldDelete
+    );
+    if (shouldDelete) delete categoryObj.contacts[contactId];
+    console.warn(
+      "Should I delete category",
+      categoryObj.categories[nextCategoryName],
+      ":",
+      shouldDeleteCategory
+    );
     if (shouldDeleteCategory) {
       delete categoryObj.categories[nextCategoryName];
+      console.log("Deleted category", nextCategoryName, "from", categoryObj);
       // Do we need to update uncategorized category?
       if (isLeafCategory(categoryObj)) {
         // This category becomes a leaf.
         // Uncategorized category is no longer needed
-        categoryObj.uncategorized = undefined;
+        categoryObj.uncategorized = null;
       }
     }
   }

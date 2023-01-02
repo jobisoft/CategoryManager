@@ -22,8 +22,8 @@ export async function updateContact(
   // TODO: we could do some optimization here:
   const newCategories = new Set(newContact.categories.map(categoryArrToString));
   const oldCategories = new Set(oldContact.categories.map(categoryArrToString));
-  console.log("Old categories: ", JSON.stringify([...newCategories]));
-  console.log("New categories: ", JSON.stringify([...oldCategories]));
+  console.log("Old categories: ", JSON.stringify([...oldCategories]));
+  console.log("New categories: ", JSON.stringify([...newCategories]));
   if (
     newCategories.size != oldCategories.size ||
     [...newCategories].some((value) => !oldCategories.has(value))

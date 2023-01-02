@@ -10,8 +10,17 @@ export async function deleteCategory(
   addressBook,
   categoryPath,
   isUncategorized,
-  writeToThunderBird = false
+  writeToThunderBird = false,
+  updateContact = false
 ) {
+  console.debug(
+    "deleteCategory",
+    addressBook,
+    categoryPath,
+    isUncategorized,
+    writeToThunderBird,
+    updateContact
+  );
   // delete this category and all of its subcategories
   // Implementation note:
   //   Instead of traversing the category tree recursively,
@@ -39,7 +48,7 @@ export async function deleteCategory(
       const contact = addressBook.contacts[contactId];
 
       const categoryStrs = contact.categories.map(categoryArrToString);
-      // Note: the following for loop modifies `contact.categories` so we can't directly
+      // Note: the following for loop might modifies `contact.categories` so we can't directly
       //       loop over it.
       for (const currentCategoryStr of categoryStrs) {
         if (currentCategoryStr.startsWith(categoryStr)) {
@@ -48,7 +57,7 @@ export async function deleteCategory(
             contactId,
             currentCategoryStr,
             writeToThunderBird,
-            true
+            updateContact
           );
         }
       }
