@@ -34,11 +34,15 @@ export async function updateContact(
     const deletion = [...oldCategories].filter((x) => !newCategories.has(x));
     console.log("Addition", addition);
     await Promise.all(
-      addition.map((cat) => addContactToCategory(addressBook, id, cat))
+      addition.map((cat) =>
+        addContactToCategory(addressBook, id, cat, false, true)
+      )
     );
     console.log("Deletion", deletion);
     await Promise.all(
-      deletion.map((cat) => removeContactFromCategory(addressBook, id, cat))
+      deletion.map((cat) =>
+        removeContactFromCategory(addressBook, id, cat, false, true)
+      )
     );
   }
   addressBook.contacts[id] = newContact;

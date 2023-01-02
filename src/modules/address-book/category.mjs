@@ -80,6 +80,8 @@ export function buildUncategorizedCategory(category) {
       {},
       true
     );
+  } else {
+    category.uncategorized = null;
   }
 }
 

@@ -18,12 +18,20 @@ function deleteContactHelper(categoryObj, remainingCategoryPath, contactId) {
       delete categoryObj.uncategorized.contacts[contactId];
     }
   } else {
-    delete categoryObj.categories[remainingCategoryPath[0]].contacts[contactId];
-    const nextCategoryName = remainingCategoryPath.shift();
+    const nextCategoryName = remainingCategoryPath[0];
+    delete categoryObj.categories[nextCategoryName].contacts[contactId];
     const shouldDelete = deleteContactHelper(
       categoryObj.categories[nextCategoryName],
-      remainingCategoryPath,
+      remainingCategoryPath.slice(1),
       contactId
+    );
+    console.log(
+      "Should I remove",
+      contactId,
+      "from",
+      categoryObj,
+      ":",
+      shouldDelete
     );
     if (shouldDelete) {
       delete categoryObj.categories[nextCategoryName];

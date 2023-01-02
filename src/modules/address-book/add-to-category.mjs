@@ -17,6 +17,7 @@ export async function addContactToCategory(
 ) {
   const categoryArr = categoryStringToArr(categoryStr);
   const contact = addressBook.contacts[contactId];
+  console.info("add", contact, "to", categoryArr, "in", addressBook);
   if (writeToThunderbird) {
     await updateCategoriesForContact(contact, [categoryStr], []);
   }
