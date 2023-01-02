@@ -36,7 +36,8 @@ function removeContactFromCategoryHelper(
       addressBook,
       categoryObj.categories[nextCategoryName],
       remainingCategoryArr.slice(1),
-      contactId
+      contactId,
+      true
     );
     const shouldDelete =
       contactDeletionEnabled &&
@@ -53,6 +54,8 @@ function removeContactFromCategoryHelper(
     console.warn(
       "Should I delete category",
       categoryObj.categories[nextCategoryName],
+      "from",
+      addressBook,
       ":",
       shouldDeleteCategory
     );
