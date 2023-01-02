@@ -1,0 +1,6 @@
+{ 
+    "typeAcquisition": { 
+        // Well, I didn't found type definitions for thunderbird.
+        "include": ["firefox-webext-browser"] 
+    } 
+}

@@ -11,8 +11,30 @@
     <link href="../external/fontawesome/css/solid.min.css" rel="stylesheet" />
     <link href="../external/fontawesome/css/regular.min.css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="../styles.css" />
-    <link rel="stylesheet" type="text/css" media="screen" href="popup.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="layout.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      media="screen"
+      href="address-book.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      media="screen"
+      href="category-tree.css"
+    />
+    <link rel="stylesheet" type="text/css" media="screen" href="modal.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="contact.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      media="screen"
+      href="custom-menu.css"
+    />
     <script src="../external/email-addresses/lib/email-addresses.min.js"></script>
+    <script src="../external/ical.js"></script>
+    <script src="../external/micromodal.min.js"></script>
     <script type="module" src="popup.mjs"></script>
   </head>
   <body>
@@ -23,6 +45,94 @@
       <nav id="tree"></nav>
       <h2 id="category-title"></h2>
       <div id="contacts"></div>
+    </div>
+    <ul id="custom-menu" class="custom-menu">
+      <li id="menu-add">Add to this category</li>
+      <li id="menu-add-sub">Add to a new subcategory</li>
+    </ul>
+
+    <div
+      class="modal micromodal-slide"
+      id="modal-category-input"
+      aria-hidden="true"
+    >
+      <div class="modal__overlay" tabindex="-1">
+        <div
+          class="modal__container"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-category-input-title"
+        >
+          <header class="modal__header">
+            <h2 class="modal__title" id="modal-category-input-title">
+              Please enter a (sub)category
+            </h2>
+          </header>
+          <main class="modal__content" id="modal-category-input-content">
+            <p>
+              You can use <code>'&nbsp;/&nbsp;'</code> (Space, Forward Slash,
+              Space) as a delimiter for creating subcategories.
+              <br />
+              e.g.
+              <code>CategoryA&nbsp;/&nbsp;CategoryB&nbsp;/&nbsp;CategoryC</code>
+            </p>
+            <input type="text" id="category-input" autofocus />
+            <p id="category-input-error">&nbsp;</p>
+          </main>
+          <footer class="modal__footer">
+            <button
+              id="category-input-confirm"
+              class="modal__btn modal__btn-primary"
+              aria-label="OK"
+            >
+              OK
+            </button>
+            <button
+              class="modal__btn"
+              id="category-input-cancel"
+              aria-label="Cancel the operation"
+            >
+              Cancel
+            </button>
+          </footer>
+        </div>
+      </div>
+    </div>
+    <div class="modal micromodal-slide" id="modal-error" aria-hidden="true">
+      <div class="modal__overlay" tabindex="-1">
+        <div
+          class="modal__container"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-error-title"
+        >
+          <header class="modal__header">
+            <h2 class="modal__title" id="modal-error-title">
+              <i class="fa-solid fa-circle-exclamation fa-2x"></i>
+              <span> Error </span>
+            </h2>
+          </header>
+          <main class="modal__content" id="modal-error-content">
+            <p id="error-content"></p>
+            <p style="font-weight: bold">
+              If you think this is a bug of Category Manager, Please file an
+              issue at
+              <a href="https://github.com/jobisoft/CategoryManager/issues"
+                >https://github.com/jobisoft/CategoryManager/issues</a
+              >
+            </p>
+          </main>
+          <footer class="modal__footer">
+            <button
+              class="modal__btn modal__btn-primary"
+              aria-label="Close"
+              data-micromodal-close
+            >
+              Close
+            </button>
+          </footer>
+        </div>
+      </div>
     </div>
   </body>
 </html>

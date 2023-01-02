@@ -1,154 +1,73 @@
-import data from "../modules/fake-data-provider.mjs";
-import { AddressBook } from "../modules/category.mjs";
 import { createContactList } from "./contact-list.mjs";
 import { createCategoryTree } from "./category-tree.mjs";
 import { createAddressBookList } from "./address-book-list.mjs";
-import { mapIterator } from "../modules/utils.mjs";
-import { toRFC5322EmailAddress } from "../modules/contact.mjs";
-// global object: emailAddresses from popup.html
+import { lookupContactsByCategoryElement } from "./utils.mjs";
+import { initCustomMenu } from "./custom-menu.mjs";
+import { initContextMenu } from "./context-menu.mjs";
+import { initModal } from "./modal.mjs";
+import state from "./state.mjs";
+// global object: emailAddresses, ICAL, MicroModal from popup.html
 
-let addressBooks = Object.fromEntries(
-  data.map((d) => [d.name, AddressBook.fromFakeData(d)])
+initModal();
+
+const categoryTitle = document.getElementById("category-title");
+
+const contactList = createContactList(
+  {
+    addressBook: state.currentAddressBook,
+    contacts: state.currentAddressBook?.contacts ?? {},
+  },
+  state
 );
 
-const [tab] = await browser.tabs.query({ currentWindow: true, active: true });
-const isComposeAction = tab.type == "messageCompose";
-
-// currentCategoryElement is only used for highlighting current selection
-let elementForContextMenu, currentCategoryElement;
-
-let currentAddressBook = Object.values(addressBooks)[0];
-
-if (currentAddressBook == null)
-  document.getElementById("info-text").style.display = "initial";
-
-function lookupContactsByCategoryElement(element) {
-  // find contacts by an category html element
-  const categoryKey = element.dataset.category;
-  const isUncategorized = element.dataset.uncategorized != null;
-  return currentAddressBook.lookup(categoryKey, isUncategorized).contacts;
-}
-
-function makeMenuEventHandler(fieldName) {
-  return async () => {
-    const contacts = lookupContactsByCategoryElement(elementForContextMenu);
-    if (isComposeAction) {
-      await addContactsToComposeDetails(fieldName, contacts);
-    } else {
-      const emailList = contacts.map(toRFC5322EmailAddress);
-      await browser.compose.beginNew(null, { [fieldName]: emailList });
-    }
-    window.close();
-  };
-}
-
-document.addEventListener("contextmenu", (e) => {
-  browser.menus.overrideContext({ context: "tab", tabId: tab.id });
-  elementForContextMenu = e.target;
-  if (elementForContextMenu.nodeName === "I")
-    // Right click on the expander icon. Use the parent element
-    elementForContextMenu = elementForContextMenu.parentNode;
-  if (elementForContextMenu.dataset.category == null)
-    // No context menu outside category tree
-    e.preventDefault();
+const categoryTree = createCategoryTree({
+  addressBook: state.currentAddressBook,
+  activeCategory: null,
+  state,
+  components: { categoryTitle, contactList },
 });
 
-const contextMenuHandlers = {
-  add_to: makeMenuEventHandler("to"),
-  add_cc: makeMenuEventHandler("cc"),
-  add_bcc: makeMenuEventHandler("bcc"),
-};
-
-browser.menus.onShown.addListener((info, tab) => {
-  console.log(info, elementForContextMenu);
+const addressBookList = createAddressBookList({
+  data: [...state.addressBooks.values()],
+  state,
+  components: { categoryTitle, categoryTree, contactList },
 });
 
-browser.menus.onClicked.addListener(async ({ menuItemId }, tab) => {
-  const handler = contextMenuHandlers[menuItemId];
-  if (handler != null) {
-    handler();
+async function updateUI() {
+  console.log("Active category:", state.currentCategoryElement);
+  await categoryTree.update({
+    addressBook: state.currentAddressBook,
+    activeCategory:
+      state.currentCategoryElement != null
+        ? {
+            path: state.currentCategoryElement.dataset.category,
+            isUncategorized:
+              "uncategorized" in state.currentCategoryElement.dataset,
+          }
+        : null,
+  });
+  let activeElement = document.getElementsByClassName("active")[0];
+  console.log("Active Element after UI update:", activeElement);
+  let contacts;
+  if (activeElement != null) {
+    state.currentCategoryElement = activeElement;
+    categoryTitle.innerText = activeElement.dataset.category;
+    contacts = lookupContactsByCategoryElement(state.currentCategoryElement);
   } else {
-    console.error("No handler for", menuItemId);
+    state.currentCategoryElement = null;
+    categoryTitle.innerText = state.currentAddressBook?.name ?? "";
+    contacts = state.currentAddressBook?.contacts ?? {};
   }
-});
-
-let contactList = createContactList(currentAddressBook?.contacts ?? []);
-const categoryTitle = document.getElementById("category-title");
-categoryTitle.innerText = currentAddressBook?.name ?? "";
-let categoryTree = createCategoryTree({
-  data: currentAddressBook,
-  click(event) {
-    if (event.detail > 1) {
-      // Disable click event on double click
-      event.preventDefault();
-      return false;
-    }
-    if (event.target.nodeName === "I")
-      // A click on the expander
-      return;
-    event.preventDefault();
-
-    const categoryKey = event.target.dataset.category;
-    if (categoryKey == null)
-      // Not a click on category
-      return;
-
-    if (currentCategoryElement != null)
-      currentCategoryElement.classList.remove("active");
-    currentCategoryElement = event.target;
-    currentCategoryElement.classList.add("active");
-    const newData = lookupContactsByCategoryElement(currentCategoryElement);
-    categoryTitle.innerText = categoryKey;
-    contactList.update(newData);
-  },
-  async doubleClick(event) {
-    const categoryKey = event.target.dataset.category;
-    if (categoryKey == null) return;
-    const contacts = lookupContactsByCategoryElement(event.target);
-    if (isComposeAction) {
-      await addContactsToComposeDetails("bcc", contacts);
-    } else {
-      // open a new messageCompose window
-      await browser.compose.beginNew(null, {
-        bcc: contacts.map(toRFC5322EmailAddress),
-      });
-    }
-    window.close();
-  },
-});
-
-let addressBookList = createAddressBookList({
-  data: Object.values(addressBooks),
-  click(event) {
-    const addressBookName = event.target.dataset.addressBook;
-    if (addressBookName == null) return;
-    currentAddressBook = addressBooks[addressBookName];
-    categoryTitle.innerText = currentAddressBook.name;
-    categoryTree.update(currentAddressBook);
-    contactList.update(currentAddressBook.contacts);
-  },
-});
-
-async function addContactsToComposeDetails(fieldName, contacts) {
-  const details = await browser.compose.getComposeDetails(tab.id);
-  const addresses = details[fieldName];
-  let map = new Map();
-  addresses.forEach((addr) => {
-    const { address, name } = emailAddresses.parseOneAddress(addr);
-    map.set(address, name);
-  });
-  contacts.forEach(({ email, name }) => {
-    // Add this contact if it doesn't exist in the map
-    if (!map.has(email)) map.set(email, name);
-  });
-  const emailList = [...mapIterator(map.entries(), toRFC5322EmailAddress)];
-  // set compose details
-  await browser.compose.setComposeDetails(tab.id, {
-    ...details,
-    [fieldName]: emailList,
+  await contactList.update({
+    addressBook: state.currentAddressBook,
+    contacts,
   });
 }
+
+initCustomMenu(state, categoryTree, updateUI);
+initContextMenu(state, updateUI);
 
 addressBookList.render();
 categoryTree.render();
 contactList.render();
+categoryTitle.innerText = state.currentAddressBook?.name ?? "";

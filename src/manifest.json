@@ -9,7 +9,7 @@
   "applications": {
     "gecko": {
       "id": "sendtocategory@jobisoft.de",
-      "strict_min_version": "102.0"
+      "strict_min_version": "102.6"
     }
   },
   "icons": {
@@ -18,7 +18,7 @@
     "16": "images/icon-16px.png"
   },
   "background": {
-    "scripts": ["background.js"]
+    "page": "background/background.html"
   },
   "permissions": [
     "addressBooks",

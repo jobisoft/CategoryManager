@@ -1,13 +1,16 @@
-import { escapeHtml, Component } from "../modules/ui.mjs";
+import { escapeHtmlAttr, Component } from "../modules/ui.mjs";
 
 function writeAddressBookElement(addressBook, index) {
-  // todo: use address book id here. There might be duplicates in names
-  let name = escapeHtml(addressBook.name);
+  let name = escapeHtmlAttr(addressBook.name);
   let className = index === 0 ? 'class="selected"' : "";
-  return `<li data-address-book="${name}" ${className}>${name}</li>`;
+  return `<li data-address-book="${addressBook.id}" ${className}>${name}</li>`;
 }
 
-export function createAddressBookList({ data, click }) {
+export function createAddressBookList({
+  data,
+  state,
+  components: { categoryTitle, contactList, categoryTree },
+}) {
   let component = new Component({
     element: "#address-books",
     data,
@@ -16,12 +19,27 @@ export function createAddressBookList({ data, click }) {
       return elements;
     },
   });
-  click && component.element.addEventListener("click", click);
-  component.element.addEventListener("click", ({ target }) => {
+  async function click({ target }) {
+    const addressBookId = target.dataset.addressBook;
+    if (addressBookId == null) return;
+    state.currentAddressBook = state.addressBooks.get(addressBookId);
+    state.currentCategoryElement = null;
+    categoryTitle.innerText = state.currentAddressBook.name;
     for (const e of target.parentElement.children) {
       e.classList.remove("selected");
     }
     target.classList.toggle("selected");
-  });
+    return Promise.all([
+      categoryTree.update({
+        addressBook: state.currentAddressBook,
+        activeCategory: null,
+      }),
+      contactList.update({
+        addressBook: state.currentAddressBook,
+        contacts: state.currentAddressBook.contacts,
+      }),
+    ]);
+  }
+  component.element.addEventListener("click", click);
   return component;
 }
