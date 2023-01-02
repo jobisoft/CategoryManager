@@ -40,12 +40,11 @@ export async function addContactToCategory(
   // Several cases.
   // 1. If there are no new categories, it's easy.
   // 2. If there are some new categories:
-  //    a. one old leaf node is no longer a leaf
-  //     | we need to deal with uncategorized category
-  //    b. the entire category path doesn't contain any old categories
-  //     | this is a new path which only contains one contact, we don't need to deal with uncategorized category
+  //    one old leaf node is no longer a leaf. (Consider the address book as a virtual category)
+  //    2a. a leaf is no longer a leaf.
+  //    2b. the root Uncategorized category need to be updated.
   // state: a string that represents current state
-  //        1, 2a, 2b, done(which means we already found the old leaf node)
+  //        1, 2, done(which means we already found the old leaf node)
   console.info("Adding", addressBook.contacts[contactId], "to", categoryArr);
   const rootName = categoryArr[0];
   // Assume there are no new categories first.
@@ -90,5 +89,7 @@ export async function addContactToCategory(
     // Actually we do not need to recurse here.
     // TODO: optimize this.
     buildUncategorizedCategory(oldLeaf);
+  } else if (state === "2b") {
+    buildUncategorizedCategory(addressBook);
   }
 }

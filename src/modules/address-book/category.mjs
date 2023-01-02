@@ -68,10 +68,14 @@ export function buildUncategorizedCategory(category) {
     category.contacts,
     (x) => !(x in contacts)
   );
+  const newPath =
+    category.path === null
+      ? "Uncategorized"
+      : category.path + SUBCATEGORY_SEPARATOR + "Uncategorized";
   if (!isEmptyObject(filtered)) {
     category.uncategorized = new Category(
       "Uncategorized",
-      category.path + SUBCATEGORY_SEPARATOR + "Uncategorized",
+      newPath,
       filtered,
       {},
       true

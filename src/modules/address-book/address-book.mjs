@@ -1,10 +1,10 @@
 import {
+  buildUncategorizedCategory,
   Category,
   categoryStringToArr,
   SUBCATEGORY_SEPARATOR,
 } from "./category.mjs";
 import { parseContact } from "../contact.mjs";
-import { filterObjectByKeyToNull, isEmptyObject } from "../utils.mjs";
 
 export class AddressBook {
   categories = {};
@@ -12,6 +12,8 @@ export class AddressBook {
   contacts;
   name;
   id;
+  path = null; // For compatibility with class Category,
+  // especially when building uncategorized category
 
   constructor(name, contacts, id) {
     this.name = name;
@@ -55,28 +57,7 @@ export class AddressBook {
         this.#addContactToCategoryWhenBuildingTree(contact, category);
       }
     }
-    this.#buildUncategorized();
-  }
-
-  #buildUncategorized() {
-    // only call this method once
-    let contacts = {};
-    for (const cat in this.categories) {
-      this.categories[cat].buildUncategorized();
-      Object.assign(contacts, this.categories[cat].contacts);
-    }
-    const filtered = filterObjectByKeyToNull(
-      this.contacts,
-      (x) => !(x in contacts)
-    );
-    if (isEmptyObject(filtered)) return;
-    this.uncategorized = new Category(
-      "Uncategorized",
-      "Uncategorized",
-      filtered,
-      {},
-      true
-    );
+    buildUncategorizedCategory(this);
   }
 
   #addContactToCategoryWhenBuildingTree(contact, category) {
