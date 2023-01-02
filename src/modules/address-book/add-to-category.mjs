@@ -5,6 +5,7 @@ import {
   categoryArrToString,
   SUBCATEGORY_SEPARATOR,
   categoryStringToArr,
+  shouldContactBeUncategorized,
 } from "./category.mjs";
 import { updateCategoriesForContact } from "../contact.mjs";
 
@@ -80,9 +81,16 @@ export async function addContactToCategory(
       state = "done";
     }
     cur = cur.categories[cat];
-    if (idx === arr.length - 1 && !isLeafCategory(cur)) {
-      // If the last category is not a leaf, add this contact to uncategorized
+    if (
+      idx === arr.length - 1 &&
+      !isLeafCategory(cur) &&
+      shouldContactBeUncategorized(cur, contactId)
+    ) {
+      // If the last category is not a leaf
+      // and this contact does not appear in any of the subcategories,
+      // then add this contact to uncategorized
       console.log("The end node is not a leaf, adding to uncategorized!");
+      cur.uncategorized ??= Category.createUncategorizedCategory(cur.path);
       cur.uncategorized.contacts[contactId] = null;
     }
   });

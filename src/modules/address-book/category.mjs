@@ -28,6 +28,13 @@ export class Category {
   isLeaf() {
     return isLeafCategory(this);
   }
+  static createUncategorizedCategory(baseCategoryStr, contacts = {}) {
+    const newPath =
+      baseCategoryStr == null
+        ? "Uncategorized"
+        : baseCategoryStr + SUBCATEGORY_SEPARATOR + "Uncategorized";
+    return new Category("Uncategorized", newPath, contacts, {}, true);
+  }
 }
 
 export function categoryArrToString(cat) {
@@ -96,4 +103,20 @@ export function validateCategoryString(s) {
     }
   }
   return "LGTM";
+}
+
+export function isContactInCategory(categoryObj, contactId) {
+  return contactId in categoryObj.contacts;
+}
+
+export function shouldContactBeUncategorized(categoryObj, contactId) {
+  let uncategorized = true;
+  for (const catName in categoryObj) {
+    const subcategory = categoryObj.categories[catName];
+    if (isContactInCategory(subcategory, contactId)) {
+      uncategorized = false;
+      break;
+    }
+  }
+  return uncategorized;
 }
