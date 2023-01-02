@@ -4,7 +4,7 @@ import {
   escapeHtmlAttr,
 } from "../modules/ui.mjs";
 
-export function createContactList(data) {
+export function createContactList(data, state) {
   let component = new Component({
     element: "#contacts",
     data,
@@ -42,6 +42,10 @@ export function createContactList(data) {
     },
   });
   component.element.addEventListener("dragstart", (e) => {
+    if (!state.allowEdit) {
+      e.preventDefault();
+      return;
+    }
     e.dataTransfer.effectAllowed = "copy";
     e.dataTransfer.setData(
       "category-manager/contact",

@@ -12,10 +12,13 @@ initModal();
 
 const categoryTitle = document.getElementById("category-title");
 
-const contactList = createContactList({
-  addressBook: state.currentAddressBook,
-  contacts: state.currentAddressBook?.contacts ?? {},
-});
+const contactList = createContactList(
+  {
+    addressBook: state.currentAddressBook,
+    contacts: state.currentAddressBook?.contacts ?? {},
+  },
+  state
+);
 
 const categoryTree = createCategoryTree({
   addressBook: state.currentAddressBook,

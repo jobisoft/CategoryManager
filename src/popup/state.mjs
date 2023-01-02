@@ -12,7 +12,8 @@ let elementForContextMenu,
   currentDraggingOverCategoryElement,
   currentContactDataFromDragAndDrop,
   allContactsVirtualAddressBook,
-  currentAddressBook;
+  currentAddressBook,
+  allowEdit = false;
 
 // ---------------------------
 //  Communication with cache
@@ -25,6 +26,7 @@ let messageHandlers = {
     currentAddressBook = allContactsVirtualAddressBook;
     if (currentAddressBook == null)
       document.getElementById("info-text").style.display = "initial";
+    allowEdit = true;
   },
 };
 
@@ -49,4 +51,5 @@ export default {
   currentContactDataFromDragAndDrop,
   allContactsVirtualAddressBook,
   currentAddressBook,
+  allowEdit,
 };

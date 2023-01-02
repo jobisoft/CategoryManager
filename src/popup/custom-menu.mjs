@@ -82,6 +82,7 @@ export function initCustomMenu(state, categoryTree, updateUI) {
     const [addressBookId, contactId] =
       state.currentContactDataFromDragAndDrop.split("\n");
     const addressBook = state.addressBooks.get(addressBookId);
+    state.allowEdit = false;
     switch (e.target.id) {
       case "menu-add":
         // Get user input if dragging onto [ New Category ]
@@ -116,5 +117,6 @@ export function initCustomMenu(state, categoryTree, updateUI) {
     categoryTree.hideNewCategory();
     categoryTree.hideDragOverHighlight();
     updateUI();
+    state.allowEdit = true;
   });
 }

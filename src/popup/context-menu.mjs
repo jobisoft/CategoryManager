@@ -105,6 +105,10 @@ export function initContextMenu(state, updateUI) {
     });
 
   document.addEventListener("contextmenu", (e) => {
+    if (!state.allowEdit) {
+      e.preventDefault();
+      return;
+    }
     browser.menus.overrideContext({ context: "tab", tabId: state.tab.id });
     state.elementForContextMenu = e.target;
     console.log(state.elementForContextMenu);
@@ -130,10 +134,15 @@ export function initContextMenu(state, updateUI) {
 
   browser.menus.onClicked.addListener(async ({ menuItemId }) => {
     const handler = contextMenuHandlers[menuItemId];
-    if (handler != null) {
-      await handler(state.elementForContextMenu);
-    } else {
-      await dispatchMenuEventsForContactList(menuItemId);
+    try {
+      state.allowEdit = false;
+      if (handler != null) {
+        await handler(state.elementForContextMenu);
+      } else {
+        await dispatchMenuEventsForContactList(menuItemId);
+      }
+    } finally {
+      state.allowEdit = true;
     }
   });
 }
