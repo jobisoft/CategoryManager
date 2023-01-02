@@ -37,8 +37,11 @@ export async function deleteCategory(
   try {
     for (const contactId in categoryObj.contacts) {
       const contact = addressBook.contacts[contactId];
-      for (const categoryArr of contact.categories) {
-        const currentCategoryStr = categoryArrToString(categoryArr);
+
+      const categoryStrs = contact.categories.map(categoryArrToString);
+      // Note: the following for loop modifies `contact.categories` so we can't directly
+      //       loop over it.
+      for (const currentCategoryStr of categoryStrs) {
         if (currentCategoryStr.startsWith(categoryStr)) {
           await removeContactFromCategory(
             addressBook,
