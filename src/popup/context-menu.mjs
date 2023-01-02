@@ -43,9 +43,9 @@ function makeCategoryMenuHandler(fieldName, state) {
   };
 }
 
-function overrideMenuForCategoryTree() {
+function overrideMenuForCategoryTree(categoryElement) {
   destroyAllMenus();
-  createMenuForCategoryTree();
+  createMenuForCategoryTree(categoryElement);
 }
 
 function overrideMenuForContactList(state) {
@@ -56,13 +56,12 @@ function overrideMenuForContactList(state) {
   );
 }
 
-const contextMenuHandlers = {
-  add_to: makeCategoryMenuHandler("to"),
-  add_cc: makeCategoryMenuHandler("cc"),
-  add_bcc: makeCategoryMenuHandler("bcc"),
-};
-
 export function initContextMenu(state, updateUI) {
+  const contextMenuHandlers = {
+    add_to: makeCategoryMenuHandler("to", state),
+    add_cc: makeCategoryMenuHandler("cc", state),
+    add_bcc: makeCategoryMenuHandler("bcc", state),
+  };
   const dispatchMenuEventsForContactList =
     createDispatcherForContactListContextMenu({
       async onDeletion(categoryStr) {
@@ -113,7 +112,7 @@ export function initContextMenu(state, updateUI) {
       overrideMenuForContactList(state);
       return;
     }
-    overrideMenuForCategoryTree();
+    overrideMenuForCategoryTree(state.elementForContextMenu);
     // Check if the right click originates from category tree
     if (state.elementForContextMenu.nodeName === "I")
       // Right click on the expander icon. Use the parent element
@@ -123,7 +122,7 @@ export function initContextMenu(state, updateUI) {
       e.preventDefault();
   });
 
-  browser.menus.onClicked.addListener(async ({ menuItemId }, tab) => {
+  browser.menus.onClicked.addListener(async ({ menuItemId }) => {
     const handler = contextMenuHandlers[menuItemId];
     if (handler != null) {
       handler();
