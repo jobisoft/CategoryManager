@@ -5,13 +5,17 @@ import {
 } from "./address-book/index.mjs";
 // global object: ICAL from external ical.js
 
-function getError(id) {
-  return new Error(`Operation Canceled. Failed to update contact!
+const ERR_OPERATION_CANCEL = "Operation Canceled. Failed to update contact!";
+
+export function getError(str, id) {
+  const error = new Error(`${str}
   Common reasons for this error are:
   1. ${id === 1 ? "(Most Likely)" : ""}The address book is readonly.
   2. ${
     id === 2 ? "(Most Likely)" : ""
   }The contact has been changed outside Category Manager.`);
+  error.id = id;
+  return error;
 }
 export async function updateCategoriesForContact(contact, addition, deletion) {
   const {
@@ -29,7 +33,7 @@ export async function updateCategoriesForContact(contact, addition, deletion) {
     console.error("Categories have been changed outside category manager!");
     console.log("Old Categories", oldCategories);
     console.log("Old Categories From Input", oldCategoriesFromInput);
-    throw getError(2);
+    throw getError(ERR_OPERATION_CANCEL, 2);
   }
   const newCategories = new Set(
     [...oldCategories, ...addition].filter((x) => !deletion.includes(x))
@@ -44,7 +48,7 @@ export async function updateCategoriesForContact(contact, addition, deletion) {
     await browser.contacts.update(contact.id, { vCard: newVCard });
   } catch (e) {
     console.error("Error when updating contact: ", e);
-    throw getError(1);
+    throw getError(ERR_OPERATION_CANCEL, 1);
   }
   return null;
 }

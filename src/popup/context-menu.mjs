@@ -17,14 +17,13 @@ import {
 import { getCategoryStringFromInput } from "./modal.mjs";
 import {
   addContactToCategory,
+  deleteCategory,
   removeContactFromCategory,
 } from "./category-edit.mjs";
 
 function makeCategoryMenuHandler(fieldName, state) {
-  return async () => {
-    const contacts = lookupContactsByCategoryElement(
-      state.elementForContextMenu
-    );
+  return async (categoryElement) => {
+    const contacts = lookupContactsByCategoryElement(categoryElement);
     if (state.isComposeAction) {
       await addContactsToComposeDetails(fieldName, state.tab, contacts);
     } else {
@@ -58,7 +57,15 @@ export function initContextMenu(state, updateUI) {
     addToTO: makeCategoryMenuHandler("to", state),
     addToCC: makeCategoryMenuHandler("cc", state),
     addToBCC: makeCategoryMenuHandler("bcc", state),
-    deleteCategory() {},
+    async deleteCategory(categoryElement) {
+      await deleteCategory({
+        categoryPath: categoryElement.dataset.category,
+        isUncategorized: "uncategorized" in categoryElement.dataset,
+        addressBook: state.currentAddressBook,
+        addressBooks: state.addressBooks,
+      });
+      updateUI();
+    },
   };
   const dispatchMenuEventsForContactList =
     createDispatcherForContactListContextMenu({
@@ -121,7 +128,7 @@ export function initContextMenu(state, updateUI) {
   browser.menus.onClicked.addListener(async ({ menuItemId }) => {
     const handler = contextMenuHandlers[menuItemId];
     if (handler != null) {
-      await handler();
+      await handler(state.elementForContextMenu);
     } else {
       await dispatchMenuEventsForContactList(menuItemId);
     }
