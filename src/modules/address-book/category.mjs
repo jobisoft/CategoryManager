@@ -67,7 +67,7 @@ export function categoryPathToString(categoryPath, isUncategorized) {
     : categoryPath; // Top Level Uncategorized category
 }
 
-export function buildUncategorizedCategory(category) {
+export function buildUncategorizedCategory(category, recursive = true) {
   // only call this method once
   if (isLeafCategory(category) && category.path != null) {
     // recursion base case
@@ -76,7 +76,7 @@ export function buildUncategorizedCategory(category) {
   let contacts = {};
   for (let cat in category.categories) {
     // 1. build uncategorized for sub category
-    buildUncategorizedCategory(category.categories[cat]);
+    if (recursive) buildUncategorizedCategory(category.categories[cat]);
     // 2. add contacts from subcategory to `contacts`
     Object.assign(contacts, category.categories[cat].contacts);
   }
