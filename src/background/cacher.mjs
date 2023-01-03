@@ -4,6 +4,7 @@ import {
   deleteContact,
   updateContact,
 } from "../modules/address-book/index.mjs";
+import { expose } from "./utils.mjs";
 
 // Populating Cache
 
@@ -18,6 +19,7 @@ const allContactsVirtualAddressBook = AddressBook.fromAllContacts(abValues);
 abValues.unshift(allContactsVirtualAddressBook);
 // Map guarantees the order of keys is the insertion order
 let addressBooks = new Map(abValues.map((ab) => [ab.id, ab]));
+expose("addressBooks", addressBooks);
 
 console.info("Done populating cache!");
 
@@ -52,19 +54,16 @@ browser.contacts.onDeleted.addListener(async (addressBookId, id) => {
 
 // Communication
 
-let port;
+let a = "2314234234234";
 
-let messageHandlers = {
-  fullUpdate() {
-    return addressBooks;
-  },
+globalThis.xa = () => {
+  console.log(a);
+  a = "234124";
 };
 
-function connected(p) {
-  port = p;
-  port.onMessage.addListener(({ type, args }) => {
-    port.postMessage({ type, args: messageHandlers[type](args) });
-  });
+function ya() {
+  console.log(a);
+  a = "-----";
 }
 
-browser.runtime.onConnect.addListener(connected);
+globalThis.ya = ya;

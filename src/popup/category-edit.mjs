@@ -1,49 +1,76 @@
+import { updateCategoriesForContact } from "../modules/contact.mjs";
 import {
-  addContactToCategory as addContactToCategoryHelper,
-  removeContactFromCategory as removeContactFromCategoryHelper,
-  deleteCategory as deleteCategoryHelper,
+  lookupCategory,
+  categoryPathToString,
+  categoryArrToString,
 } from "../modules/address-book/index.mjs";
+import { getError } from "../modules/contact.mjs";
 
 export async function removeContactFromCategory({
   contactId,
   addressBook,
-  virtualAddressBook,
   categoryStr,
 }) {
-  await removeContactFromCategoryHelper(
-    addressBook,
-    contactId,
-    categoryStr,
-    true,
-    true
-  );
-  return removeContactFromCategoryHelper(
-    virtualAddressBook,
-    contactId,
-    categoryStr
+  return updateCategoriesForContact(
+    addressBook.contacts[contactId],
+    [categoryStr],
+    []
   );
 }
 
 export async function addContactToCategory({
   contactId,
   addressBook,
-  virtualAddressBook,
   categoryStr,
 }) {
-  await addContactToCategoryHelper(
+  return updateCategoriesForContact(
+    addressBook.contacts[contactId],
+    [],
+    [categoryStr]
+  );
+}
+
+const ERR_PARTIAL_DELETION =
+  "An error occurred while deleting this category. Some contacts are still in this category.";
+
+async function deleteCategoryHelper(
+  addressBook,
+  categoryPath,
+  isUncategorized
+) {
+  console.debug("deleteCategory", addressBook, categoryPath, isUncategorized);
+  // delete this category and all of its subcategories
+  // Implementation note:
+  //   Instead of traversing the category tree recursively,
+  //   we can use the info from contact.categories and thus
+  //   reuse `removeContactFromCategory`.
+  const categoryObj = lookupCategory(
     addressBook,
-    contactId,
-    categoryStr,
-    true,
-    true
+    categoryPath,
+    isUncategorized
   );
-  return addContactToCategoryHelper(
-    virtualAddressBook,
-    contactId,
-    categoryStr,
-    false,
-    true
-  );
+  if (categoryObj == null) {
+    console.error(
+      "Not found: category path:",
+      categoryPath,
+      ",isUncategorized:",
+      isUncategorized,
+      "in",
+      addressBook
+    );
+  }
+  const categoryStr = categoryPathToString(categoryPath, isUncategorized);
+  try {
+    for (const contactId in categoryObj.contacts) {
+      const contact = addressBook.contacts[contactId];
+      const categoryStrs = contact.categories.map(categoryArrToString);
+      const toBeDeleted = categoryStrs.filter((x) => x.startsWith(categoryStr));
+      await updateCategoriesForContact(contact, [], toBeDeleted);
+    }
+  } catch (e) {
+    console.error("Error occurred when deleting category", categoryStr, e);
+    throw getError(ERR_PARTIAL_DELETION, e.id);
+  }
 }
 
 export async function deleteCategory({
@@ -56,13 +83,6 @@ export async function deleteCategory({
   if (addressBook === virtualAddressBook) {
     // delete a category in "All contacts"
     // Delete it for every addressBook.
-    await deleteCategoryHelper(
-      virtualAddressBook,
-      categoryPath,
-      isUncategorized,
-      false,
-      false
-    );
     for (const ab of addressBooks.values()) {
       if (ab !== virtualAddressBook) {
         await deleteCategoryHelper(
@@ -75,15 +95,6 @@ export async function deleteCategory({
       }
     }
   }
-  // The order matters! deleteCategoryHelper relies on the category info stored in contact
-  // So we can't update the categories in contact when
-  await deleteCategoryHelper(
-    virtualAddressBook,
-    categoryPath,
-    isUncategorized,
-    false,
-    false
-  );
   return deleteCategoryHelper(
     addressBook,
     categoryPath,

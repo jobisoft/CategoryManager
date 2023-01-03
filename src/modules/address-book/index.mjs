@@ -5,4 +5,3 @@ export * from "./remove-from-category.mjs";
 export * from "./create-contact.mjs";
 export * from "./delete-contact.mjs";
 export * from "./update-contact.mjs";
-export * from "./delete-category.mjs";

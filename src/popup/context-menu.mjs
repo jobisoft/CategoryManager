@@ -80,7 +80,6 @@ export function initContextMenu(state, updateUI) {
           addressBook,
           contactId,
           categoryStr,
-          virtualAddressBook: state.allContactsVirtualAddressBook,
         });
         return updateUI();
       },
@@ -98,7 +97,6 @@ export function initContextMenu(state, updateUI) {
           addressBook,
           contactId,
           categoryStr,
-          virtualAddressBook: state.allContactsVirtualAddressBook,
         });
         return updateUI();
       },
