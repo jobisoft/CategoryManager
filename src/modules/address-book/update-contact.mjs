@@ -18,11 +18,11 @@ export async function updateContact(
   // it won't tell us if categories or other email address got updated.
   // Let's just parse the vCard again so that nothing is left behind!
   const id = contactNode.id;
-  const newContact = parseContact(contactNode);
+  const newContact = parseContact(contactNode, "set");
   const oldContact = addressBook.contacts[id];
   // TODO: we could do some optimization here:
-  const newCategories = new Set(newContact.categories.map(categoryArrToString));
-  const oldCategories = new Set(oldContact.categories.map(categoryArrToString));
+  const newCategories = newContact.categories;
+  const oldCategories = oldContact.categories;
   console.debug("Old categories: ", JSON.stringify([...oldCategories]));
   console.debug("New categories: ", JSON.stringify([...newCategories]));
   if (

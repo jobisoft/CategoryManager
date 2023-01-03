@@ -2,9 +2,9 @@ import { updateCategoriesForContact } from "../modules/contact.mjs";
 import {
   lookupCategory,
   categoryPathToString,
-  categoryArrToString,
 } from "../modules/address-book/index.mjs";
 import { getError } from "../modules/contact.mjs";
+import { filterIter } from "../modules/iter.mjs";
 
 export async function removeContactFromCategory({
   contactId,
@@ -40,10 +40,6 @@ async function deleteCategoryHelper(
 ) {
   console.debug("deleteCategory", addressBook, categoryPath, isUncategorized);
   // delete this category and all of its subcategories
-  // Implementation note:
-  //   Instead of traversing the category tree recursively,
-  //   we can use the info from contact.categories and thus
-  //   reuse `removeContactFromCategory`.
   const categoryObj = lookupCategory(
     addressBook,
     categoryPath,
@@ -58,13 +54,15 @@ async function deleteCategoryHelper(
       "in",
       addressBook
     );
+    return;
   }
   const categoryStr = categoryPathToString(categoryPath, isUncategorized);
   try {
     for (const contactId in categoryObj.contacts) {
       const contact = addressBook.contacts[contactId];
-      const categoryStrs = contact.categories.map(categoryArrToString);
-      const toBeDeleted = categoryStrs.filter((x) => x.startsWith(categoryStr));
+      const toBeDeleted = [
+        ...filterIter(contact.categories, (x) => x.startsWith(categoryStr)),
+      ];
       await updateCategoriesForContact(contact, [], toBeDeleted);
     }
   } catch (e) {

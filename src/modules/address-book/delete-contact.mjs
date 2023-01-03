@@ -1,4 +1,4 @@
-import { isLeafCategory } from "./category.mjs";
+import { categoryStringToArr, isLeafCategory } from "./category.mjs";
 import { isEmptyObject } from "../utils.mjs";
 
 function deleteContactHelper(categoryObj, remainingCategoryPath, contactId) {
@@ -53,6 +53,6 @@ export function deleteContact(addressBook, contactId) {
   delete addressBook.contacts[contactId];
   for (const cat of contact.categories) {
     console.log("Delete", contact.name, "from", cat);
-    deleteContactHelper(addressBook, cat, contactId);
+    deleteContactHelper(addressBook, categoryStringToArr(cat), contactId);
   }
 }

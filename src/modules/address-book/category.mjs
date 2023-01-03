@@ -28,6 +28,9 @@ export class Category {
   isLeaf() {
     return isLeafCategory(this);
   }
+  categoryStr() {
+    return categoryPathToString(this.path, this.isUncategorized);
+  }
   static createUncategorizedCategory(baseCategoryStr, contacts = {}) {
     const newPath =
       baseCategoryStr == null

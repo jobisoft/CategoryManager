@@ -1,11 +1,7 @@
 import {
   Category,
-  isLeafCategory,
   buildUncategorizedCategory,
-  categoryArrToString,
-  SUBCATEGORY_SEPARATOR,
   categoryStringToArr,
-  shouldContactBeUncategorized,
 } from "./category.mjs";
 import { updateCategoriesForContact } from "../contact.mjs";
 
@@ -26,14 +22,14 @@ export async function addContactToCategory(
     // check if the category is already in the contact
     let exist = false;
     for (const cat of contact.categories) {
-      if (categoryArrToString(cat) === categoryStr) {
+      if (cat === categoryStr) {
         // already in the contact.
         exist = true;
         break;
       }
     }
     if (!exist) {
-      contact.categories.push(categoryArr);
+      contact.categories.add(categoryStr);
       console.log("Categories data updated: ", contact.categories);
     }
   }
@@ -69,15 +65,6 @@ export async function addContactToCategory(
     cur.contacts[contactId] = null;
   });
   // Now cur points to the last category in the path.
-  // console.debug("???", shouldContactBeUncategorized(cur, contactId));
-  // if (!isLeafCategory(cur) && shouldContactBeUncategorized(cur, contactId)) {
-  //   // If the last category is not a leaf
-  //   // and this contact does not appear in any of the subcategories,
-  //   // then add this contact to uncategorized
-  //   console.log("The end node is not a leaf, adding to uncategorized!");
-  //   cur.uncategorized ??= Category.createUncategorizedCategory(cur.path);
-  //   cur.uncategorized.contacts[contactId] = null;
-  // }
   if (state === "2") {
     buildUncategorizedCategory(categoryNeedingUpdate);
   } else if (state === "1") {

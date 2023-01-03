@@ -1,8 +1,6 @@
 import { mapIterator } from "./utils.mjs";
-import {
-  categoryArrToString,
-  categoryStringToArr,
-} from "./address-book/index.mjs";
+import { categoryStringToArr } from "./address-book/index.mjs";
+import { setEqual } from "./set.mjs";
 // global object: ICAL from external ical.js
 
 const ERR_OPERATION_CANCEL = "Operation Canceled. Failed to update contact!";
@@ -22,15 +20,13 @@ export async function updateCategoriesForContact(contact, addition, deletion) {
     properties: { vCard },
   } = await browser.contacts.get(contact.id);
   const component = new ICAL.Component(ICAL.parse(vCard));
-  const oldCategories = component
-    .getAllProperties("categories")
-    .flatMap((x) => x.getValues());
-  const oldCategoriesFromInput = contact.categories.map(categoryArrToString);
-  if (
-    oldCategories.length !== oldCategoriesFromInput.length ||
-    oldCategories.some((x) => !oldCategoriesFromInput.includes(x))
-  ) {
+  const oldCategories = new Set(
+    component.getAllProperties("categories").flatMap((x) => x.getValues())
+  );
+  const oldCategoriesFromInput = contact.categories;
+  if (!setEqual(oldCategories, oldCategoriesFromInput)) {
     console.error("Categories have been changed outside category manager!");
+    debugger;
     console.log("Old Categories", JSON.stringify(oldCategories));
     console.log(
       "Old Categories From Input",
@@ -58,26 +54,24 @@ export async function updateCategoriesForContact(contact, addition, deletion) {
 
 const identity = (x) => x;
 
-export function parseContact({
-  id,
-  parentId,
-  properties: { vCard, DisplayName },
-  categoryFormat = "array",
-}) {
+export function parseContact(
+  { id, parentId, properties: { vCard, DisplayName } },
+  categoryFormat = "array"
+) {
   const component = new ICAL.Component(ICAL.parse(vCard));
   const categories = component
     .getAllProperties("categories")
     .flatMap((x) =>
       x
         .getValues()
-        .map(categoryFormat == "string" ? identity : categoryStringToArr)
+        .map(categoryFormat === "array" ? categoryStringToArr : identity)
     );
   return {
     id,
     addressBookId: parentId,
     email: component.getFirstPropertyValue("email"),
     name: DisplayName,
-    categories,
+    categories: categoryFormat === "set" ? new Set(categories) : categories,
   };
 }
 

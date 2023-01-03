@@ -31,7 +31,7 @@ export class AddressBook {
     const rawContacts = await browser.contacts.list(id);
     const contacts = Object.fromEntries(
       rawContacts.map((contact) => {
-        const parsed = parseContact(contact);
+        const parsed = parseContact(contact, "set");
         return [parsed.id, parsed];
       })
     );
@@ -62,7 +62,8 @@ export class AddressBook {
     buildUncategorizedCategory(this);
   }
 
-  #addContactToCategoryWhenBuildingTree(contact, category) {
+  #addContactToCategoryWhenBuildingTree(contact, categoryStr) {
+    const category = categoryStringToArr(categoryStr);
     let rootName = category[0];
     this.categories[rootName] ??= new Category(rootName, rootName);
     let cur = this.categories[rootName];
