@@ -35,6 +35,13 @@ export class Category {
         : baseCategoryStr + SUBCATEGORY_SEPARATOR + "Uncategorized";
     return new Category("Uncategorized", newPath, contacts, {}, true);
   }
+  static createSubcategory(parentCategoryObj, name, contacts = {}) {
+    const newPath =
+      parentCategoryObj.path == null
+        ? name
+        : parentCategoryObj.path + SUBCATEGORY_SEPARATOR + name;
+    return new Category(name, newPath, contacts);
+  }
 }
 
 export function categoryArrToString(cat) {
