@@ -43,7 +43,9 @@ export class AddressBook {
   static fromAllContacts(addressBooks) {
     let contacts = {};
     for (const ab of addressBooks) {
-      Object.assign(contacts, ab.contacts);
+      for (const contactId in ab.contacts) {
+        contacts[contactId] = structuredClone(ab.contacts[contactId]);
+      }
     }
     let ret = new AddressBook("All Contacts", contacts, "all-contacts");
     ret.#build();

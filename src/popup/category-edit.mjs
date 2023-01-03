@@ -13,8 +13,8 @@ export async function removeContactFromCategory({
 }) {
   return updateCategoriesForContact(
     addressBook.contacts[contactId],
-    [categoryStr],
-    []
+    [],
+    [categoryStr]
   );
 }
 
@@ -25,8 +25,8 @@ export async function addContactToCategory({
 }) {
   return updateCategoriesForContact(
     addressBook.contacts[contactId],
-    [],
-    [categoryStr]
+    [categoryStr],
+    []
   );
 }
 
