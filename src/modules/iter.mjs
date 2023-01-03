@@ -6,3 +6,10 @@ export function* filterIter(source, predicate) {
     }
   }
 }
+
+export function* mapIter(iterator, mapping) {
+  // map on an iterator without turning it into an array
+  for (let i of iterator) {
+    yield mapping(i);
+  }
+}

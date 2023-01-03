@@ -1,4 +1,4 @@
-import { mapIterator } from "./utils.mjs";
+import { mapIter } from "./iter.mjs";
 import { categoryStringToArr } from "./address-book/index.mjs";
 import { setEqual } from "./set.mjs";
 // global object: ICAL from external ical.js
@@ -98,7 +98,7 @@ export async function addContactsToComposeDetails(fieldName, tab, contacts) {
     // Add this contact if it doesn't exist in the map
     if (email != null && !map.has(email)) map.set(email, name);
   });
-  const emailList = [...mapIterator(map.entries(), toRFC5322EmailAddress)];
+  const emailList = [...mapIter(map.entries(), toRFC5322EmailAddress)];
   // set compose details
   await browser.compose.setComposeDetails(tab.id, {
     ...details,
