@@ -66,7 +66,7 @@ export function initContextMenu(state, updateUI) {
           addressBooks: state.addressBooks,
         });
       } finally {
-        updateUI();
+        await updateUI();
       }
     },
   };

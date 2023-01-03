@@ -24,25 +24,25 @@ function removeContactFromCategoryHelper(
     if (!isLeafCategory(categoryObj)) {
       delete categoryObj.uncategorized.contacts[contactId];
     }
-    return isEmptyObject(categoryObj.contacts);
+    return;
   }
+  const contact = addressBook.contacts[contactId];
   // Delete contact from this node only if
   // it does not belong to this category and any sub category.
   const nextCategoryName = remainingCategoryArr[0];
-  const shouldDeleteCategory = removeContactFromCategoryHelper(
+  const nextCategoryObj = categoryObj.categories[nextCategoryName];
+  removeContactFromCategoryHelper(
     addressBook,
-    categoryObj.categories[nextCategoryName],
+    nextCategoryObj,
     remainingCategoryArr.slice(1),
     contactId,
     true
   );
-  const isExplicitAssociated = addressBook.contacts[contactId].categories.has(
-    categoryObj.categoryStr()
-  );
+  const shouldDeleteCategory = isEmptyObject(nextCategoryObj.contacts);
   const shouldDeleteContact =
     contactDeletionEnabled &&
-    !isExplicitAssociated &&
-    !isContactInAnySubcategory(categoryObj, contactId);
+    !contact.categories.has(categoryObj.categoryStr()) && // not explicitly associated
+    !isContactInAnySubcategory(categoryObj, contactId); // not in any of the subcategories
   console.log(
     "Should I remove",
     contactId,
@@ -54,7 +54,7 @@ function removeContactFromCategoryHelper(
   if (shouldDeleteContact) delete categoryObj.contacts[contactId];
   console.warn(
     "Should I delete category",
-    categoryObj.categories[nextCategoryName],
+    nextCategoryObj,
     "from",
     addressBook,
     ":",
@@ -85,9 +85,6 @@ function removeContactFromCategoryHelper(
     // Uncategorized category is no longer needed
     categoryObj.uncategorized = null;
   }
-  // returns: if this category should be deleted
-  // Note that empty contacts imply a leaf node.
-  return isEmptyObject(categoryObj.contacts);
 }
 
 export async function removeContactFromCategory(
@@ -127,10 +124,11 @@ export async function removeContactFromCategory(
   //
   // Implementation Note:
   // If there are no other subcategories containing this contact, we can remove it from this category.
+  const categoryArr = categoryStringToArr(categoryStr);
   removeContactFromCategoryHelper(
     addressBook,
     addressBook,
-    categoryStringToArr(categoryStr),
+    categoryArr,
     contactId,
     false
   );

@@ -115,7 +115,7 @@ export function initCustomMenu(state, categoryTree, updateUI) {
     state.currentContactDataFromDragAndDrop = null;
     categoryTree.hideNewCategory();
     categoryTree.hideDragOverHighlight();
-    updateUI();
+    await updateUI();
     state.allowEdit = true;
   });
 }

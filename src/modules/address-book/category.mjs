@@ -133,7 +133,7 @@ export function isContactInAnySubcategory(categoryObj, contactId) {
 
 export function shouldContactBeUncategorized(categoryObj, contactId) {
   let uncategorized = true;
-  for (const catName in categoryObj) {
+  for (const catName in categoryObj.categories) {
     const subcategory = categoryObj.categories[catName];
     if (isContactInCategory(subcategory, contactId)) {
       uncategorized = false;
