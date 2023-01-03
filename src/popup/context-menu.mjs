@@ -44,9 +44,9 @@ function overrideMenuForCategoryTree(categoryElement) {
   createMenuForCategoryTree(categoryElement);
 }
 
-function overrideMenuForContactList(state) {
+async function overrideMenuForContactList(state) {
   destroyAllMenus();
-  createMenuForContact(
+  await createMenuForContact(
     state.currentAddressBook,
     state.elementForContextMenu.dataset.id
   );
@@ -104,7 +104,7 @@ export function initContextMenu(state, updateUI) {
       },
     });
 
-  document.addEventListener("contextmenu", (e) => {
+  document.addEventListener("contextmenu", async (e) => {
     if (!state.allowEdit) {
       e.preventDefault();
       return;
@@ -116,10 +116,10 @@ export function initContextMenu(state, updateUI) {
     if (state.elementForContextMenu.parentNode.dataset.id != null) {
       // Right click on contact info
       state.elementForContextMenu = state.elementForContextMenu.parentNode;
-      overrideMenuForContactList(state);
+      await overrideMenuForContactList(state);
       return;
     } else if (state.elementForContextMenu.dataset.id != null) {
-      overrideMenuForContactList(state);
+      await overrideMenuForContactList(state);
       return;
     }
     overrideMenuForCategoryTree(state.elementForContextMenu);
