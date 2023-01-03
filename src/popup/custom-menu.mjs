@@ -2,10 +2,9 @@
 // Custom Context Menu for drag and drop on category tree
 // -------------------------------------------------------
 
-import { setIntersection } from "../modules/utils.mjs";
+import { setIntersection } from "../modules/set.mjs";
 import { getCategoryStringFromInput } from "./modal.mjs";
 import { addContactToCategory } from "./category-edit.mjs";
-import { categoryStringToArr } from "../modules/address-book/index.mjs";
 
 const customMenu = document.getElementById("custom-menu");
 
