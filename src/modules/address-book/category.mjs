@@ -60,6 +60,10 @@ export function isLeafCategory(cat) {
   return isEmptyObject(cat.categories);
 }
 
+export function isSubcategoryOf(childStr, parentStr) {
+  return childStr.startsWith(parentStr + SUBCATEGORY_SEPARATOR);
+}
+
 export function categoryPathToString(categoryPath, isUncategorized) {
   if (!isUncategorized) return categoryPath;
   const idx = categoryPath.lastIndexOf(SUBCATEGORY_SEPARATOR);

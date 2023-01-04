@@ -2,6 +2,7 @@ import { updateCategoriesForContact } from "../modules/contact.mjs";
 import {
   lookupCategory,
   categoryPathToString,
+  isSubcategoryOf,
 } from "../modules/address-book/index.mjs";
 import { getError } from "../modules/contact.mjs";
 import { filterIter } from "../modules/iter.mjs";
@@ -61,7 +62,10 @@ async function deleteCategoryHelper(
     for (const contactId in categoryObj.contacts) {
       const contact = addressBook.contacts[contactId];
       const toBeDeleted = [
-        ...filterIter(contact.categories, (x) => x.startsWith(categoryStr)),
+        ...filterIter(
+          contact.categories,
+          (x) => x == categoryStr || isSubcategoryOf(x, categoryStr)
+        ),
       ];
       await updateCategoriesForContact(contact, [], toBeDeleted);
     }
