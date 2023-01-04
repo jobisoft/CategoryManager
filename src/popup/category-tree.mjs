@@ -149,13 +149,14 @@ export function createCategoryTree({
     return contactList.update(newData);
   }
   async function doubleClick(event) {
-    const categoryKey = event.target.dataset.category;
-    if (categoryKey == null) return;
-    const contacts = lookupContactsByCategoryElement(event.target);
+    const categoryElement = event.target;
+    const categoryPath = categoryElement.dataset.category;
+    if (categoryPath == null) return;
+    const contacts = lookupContactsByCategoryElement(categoryElement);
     if (state.isComposeAction) {
       await addContactsToComposeDetails("bcc", state, contacts);
     } else {
-      await openComposeWindowWithContacts("bcc", state, contacts);
+      await openComposeWindowWithContacts("bcc", state, contacts, categoryPath);
     }
     window.close();
   }

@@ -26,7 +26,12 @@ function makeCategoryMenuHandler(fieldName, state) {
     if (state.isComposeAction) {
       await addContactsToComposeDetails(fieldName, state, contacts);
     } else {
-      await openComposeWindowWithContacts(fieldName, state, contacts);
+      await openComposeWindowWithContacts(
+        fieldName,
+        state,
+        contacts,
+        categoryElement.dataset.category
+      );
     }
     window.close();
   };
