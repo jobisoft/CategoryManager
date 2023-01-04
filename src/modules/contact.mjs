@@ -52,10 +52,9 @@ export async function updateCategoriesForContact(contact, addition, deletion) {
     );
     throw getError(ERR_OPCANCEL_UPDATE_FAILURE, 2);
   }
-  const newCategories = reduceCategories([
-    ...oldCategories,
-    ...addition,
-  ]).filter((x) => !deletion.includes(x));
+  const newCategories = reduceCategories(
+    [...oldCategories, ...addition].filter((x) => !deletion.includes(x))
+  );
   if (
     newCategories.length === oldCategories.size &&
     newCategories.every((x) => oldCategories.has(x))

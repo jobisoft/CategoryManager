@@ -173,3 +173,10 @@ export function reduceCategories(categories) {
     return acc;
   }, []);
 }
+
+export function getParentCategoryStr(categoryStr) {
+  const idx = categoryStr.lastIndexOf(SUBCATEGORY_SEPARATOR);
+  return idx !== -1
+    ? categoryStr.substring(0, categoryStr.lastIndexOf(SUBCATEGORY_SEPARATOR))
+    : null; // Return null if no parent category
+}

@@ -3,11 +3,14 @@ import {
   lookupCategory,
   categoryPathToString,
   isSubcategoryOf,
+  getParentCategoryStr,
 } from "../modules/address-book/index.mjs";
 import { getError } from "../modules/contact.mjs";
 import { filterIter } from "../modules/iter.mjs";
 
-/** Remove the contact from this category and any subcategory recursively */
+/** Remove the contact from this category and any subcategory recursively
+ *  and add it to the parent category.
+ */
 export async function removeContactFromCategory({
   contactId,
   addressBook,
@@ -20,9 +23,13 @@ export async function removeContactFromCategory({
       (x) => x == categoryStr || isSubcategoryOf(x, categoryStr)
     ),
   ];
+  const parentCategoryStr = getParentCategoryStr(categoryStr);
+  const toBeAdded = parentCategoryStr == null ? [] : [parentCategoryStr];
+  // `updateCategoriesForContact` could handle duplicate categories.
+  console.log(toBeAdded, toBeDeleted);
   return updateCategoriesForContact(
     addressBook.contacts[contactId],
-    [],
+    toBeAdded,
     toBeDeleted
   );
 }

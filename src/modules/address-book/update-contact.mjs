@@ -10,10 +10,6 @@ export async function updateContact(
   changedProperties
 ) {
   // We only care about email, name and categories
-  // if (changedProperties.DisplayName != null) {
-  //   addressBook.contacts[contactNode.id].name = changedProperties.DisplayName.newValue;
-  // }
-
   // changedProperties only tells us whether Primary/SecondaryEmail changes.
   // it won't tell us if categories or other email address got updated.
   // Let's just parse the vCard again so that nothing is left behind!
