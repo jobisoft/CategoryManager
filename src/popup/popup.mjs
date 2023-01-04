@@ -6,6 +6,7 @@ import { initCustomMenu } from "./custom-menu.mjs";
 import { initContextMenu } from "./context-menu.mjs";
 import { initModal } from "./modal.mjs";
 import state from "./state.mjs";
+import { registerCacheUpdateCallback } from "../modules/address-book/cache.mjs";
 // global object: emailAddresses, ICAL, MicroModal from popup.html
 
 initModal();
@@ -63,6 +64,8 @@ async function updateUI() {
     contacts,
   });
 }
+
+registerCacheUpdateCallback(state.addressBooks, updateUI);
 
 initCustomMenu(state, categoryTree, updateUI);
 initContextMenu(state, updateUI);
