@@ -5,9 +5,15 @@ import { lookupContactsByCategoryElement } from "./utils.mjs";
 import { initCustomMenu } from "./custom-menu.mjs";
 import { initContextMenu } from "./context-menu.mjs";
 import { initModal } from "./modal.mjs";
-import state from "./state.mjs";
+import { initErrorHandler } from "./error-handler.mjs";
 import { registerCacheUpdateCallback } from "../modules/address-book/cache.mjs";
 // global object: emailAddresses, ICAL, MicroModal from popup.html
+
+import State from "./state.mjs";
+// Put the state object onto the window (it is our own popup window, so no risk of
+// namespace collisions).
+window.state = new State();
+await window.state.init();
 
 // i18n
 document.getElementById("info-text").innerText = await browser.i18n.getMessage(
@@ -17,40 +23,38 @@ document.getElementById("spinner-text").innerText =
   await browser.i18n.getMessage("info.spinner-text");
 
 initModal();
+initErrorHandler();
 
 const categoryTitle = document.getElementById("category-title");
 
 const contactList = createContactList(
   {
-    addressBook: state.currentAddressBook,
-    contacts: state.currentAddressBook?.contacts ?? {},
-  },
-  state
+    addressBook: window.state.currentAddressBook,
+    contacts: window.state.currentAddressBook?.contacts ?? {},
+  }
 );
 
 const categoryTree = createCategoryTree({
-  addressBook: state.currentAddressBook,
+  addressBook: window.state.currentAddressBook,
   activeCategory: null,
-  state,
   components: { categoryTitle, contactList },
 });
 
 const addressBookList = createAddressBookList({
-  data: [...state.addressBooks.values()],
-  state,
+  data: [...window.state.addressBooks.values()],
   components: { categoryTitle, categoryTree, contactList },
 });
 
 async function updateUI() {
-  console.log("Active category:", state.currentCategoryElement);
+  console.log("Active category:", window.state.currentCategoryElement);
   await categoryTree.update({
-    addressBook: state.currentAddressBook,
+    addressBook: window.state.currentAddressBook,
     activeCategory:
-      state.currentCategoryElement != null
+      window.state.currentCategoryElement != null
         ? {
-            path: state.currentCategoryElement.dataset.category,
+            path: window.state.currentCategoryElement.dataset.category,
             isUncategorized:
-              "uncategorized" in state.currentCategoryElement.dataset,
+              "uncategorized" in window.state.currentCategoryElement.dataset,
           }
         : null,
   });
@@ -58,26 +62,26 @@ async function updateUI() {
   console.log("Active Element after UI update:", activeElement);
   let contacts;
   if (activeElement != null) {
-    state.currentCategoryElement = activeElement;
+    window.state.currentCategoryElement = activeElement;
     categoryTitle.innerText = activeElement.dataset.category;
-    contacts = lookupContactsByCategoryElement(state.currentCategoryElement);
+    contacts = lookupContactsByCategoryElement(window.state.currentAddressBook, window.state.currentCategoryElement);
   } else {
-    state.currentCategoryElement = null;
-    categoryTitle.innerText = state.currentAddressBook?.name ?? "";
-    contacts = state.currentAddressBook?.contacts ?? {};
+    window.state.currentCategoryElement = null;
+    categoryTitle.innerText = window.state.currentAddressBook?.name ?? "";
+    contacts = window.state.currentAddressBook?.contacts ?? {};
   }
   await contactList.update({
-    addressBook: state.currentAddressBook,
+    addressBook: window.state.currentAddressBook,
     contacts,
   });
 }
 
-registerCacheUpdateCallback(state.addressBooks, updateUI);
+registerCacheUpdateCallback(window.state.addressBooks, updateUI);
 
-initCustomMenu(state, categoryTree, updateUI);
-initContextMenu(state, updateUI);
+initCustomMenu(categoryTree, updateUI);
+initContextMenu(updateUI);
 
 addressBookList.render();
 categoryTree.render();
 contactList.render();
-categoryTitle.innerText = state.currentAddressBook?.name ?? "";
+categoryTitle.innerText = window.state.currentAddressBook?.name ?? "";

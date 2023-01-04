@@ -8,7 +8,6 @@ function writeAddressBookElement(addressBook, index) {
 
 export function createAddressBookList({
   data,
-  state,
   components: { categoryTitle, contactList, categoryTree },
 }) {
   let component = new Component({
@@ -22,21 +21,21 @@ export function createAddressBookList({
   async function click({ target }) {
     const addressBookId = target.dataset.addressBook;
     if (addressBookId == null) return;
-    state.currentAddressBook = state.addressBooks.get(addressBookId);
-    state.currentCategoryElement = null;
-    categoryTitle.innerText = state.currentAddressBook.name;
+    window.state.currentAddressBook = window.state.addressBooks.get(addressBookId);
+    window.state.currentCategoryElement = null;
+    categoryTitle.innerText = window.state.currentAddressBook.name;
     for (const e of target.parentElement.children) {
       e.classList.remove("selected");
     }
     target.classList.toggle("selected");
     return Promise.all([
       categoryTree.update({
-        addressBook: state.currentAddressBook,
+        addressBook: window.state.currentAddressBook,
         activeCategory: null,
       }),
       contactList.update({
-        addressBook: state.currentAddressBook,
-        contacts: state.currentAddressBook.contacts,
+        addressBook: window.state.currentAddressBook,
+        contacts: window.state.currentAddressBook.contacts,
       }),
     ]);
   }

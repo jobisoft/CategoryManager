@@ -2,8 +2,8 @@ import { mapIter } from "../modules/iter.mjs";
 import { toRFC5322EmailAddress } from "../modules/contact.mjs";
 import { id2contact } from "../modules/address-book/index.mjs";
 
-export async function addContactsToComposeDetails(fieldName, state, contacts) {
-  const details = await browser.compose.getComposeDetails(state.tab.id);
+export async function addContactsToComposeDetails(fieldName, contacts) {
+  const details = await browser.compose.getComposeDetails(window.state.tab.id);
   const addresses = details[fieldName];
   let map = new Map();
   addresses.forEach((addr) => {
@@ -12,12 +12,12 @@ export async function addContactsToComposeDetails(fieldName, state, contacts) {
   });
   Object.keys(contacts).forEach((contactId) => {
     // Add this contact if it doesn't exist in the map
-    const { name, email } = state.currentAddressBook.contacts[contactId];
+    const { name, email } = window.state.currentAddressBook.contacts[contactId];
     if (email != null && !map.has(email)) map.set(email, name);
   });
   const emailList = [...mapIter(map.entries(), toRFC5322EmailAddress)];
   // set compose details
-  return browser.compose.setComposeDetails(state.tab.id, {
+  return browser.compose.setComposeDetails(window.state.tab.id, {
     ...details,
     [fieldName]: emailList,
   });
@@ -25,14 +25,13 @@ export async function addContactsToComposeDetails(fieldName, state, contacts) {
 
 export async function openComposeWindowWithContacts(
   fieldName,
-  state,
   contacts,
   categoryPath
 ) {
   // Do a filterMap(using a flatMap) to remove contacts that do not have an email address
   // and map the filtered contacts to rfc 5322 email address format.
   const emailList = Object.keys(contacts).flatMap((c) => {
-    const contact = id2contact(state.currentAddressBook, c);
+    const contact = id2contact(window.state.currentAddressBook, c);
     return contact.email == null ? [] : [toRFC5322EmailAddress(contact)];
   });
   return browser.compose.beginNew(null, {

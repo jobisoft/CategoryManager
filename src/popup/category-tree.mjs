@@ -76,7 +76,6 @@ export function writeTreeNode(category, activeCategory) {
 export function createCategoryTree({
   addressBook,
   activeCategory,
-  state,
   components: { categoryTitle, contactList },
   ...rest
 }) {
@@ -114,9 +113,9 @@ export function createCategoryTree({
       return null;
     },
     hideDragOverHighlight() {
-      if (state.currentDraggingOverCategoryElement != null) {
-        state.currentDraggingOverCategoryElement.classList.remove("drag-over");
-        state.currentDraggingOverCategoryElement = null;
+      if (window.state.currentDraggingOverCategoryElement != null) {
+        window.state.currentDraggingOverCategoryElement.classList.remove("drag-over");
+        window.state.currentDraggingOverCategoryElement = null;
       }
     },
   });
@@ -137,13 +136,13 @@ export function createCategoryTree({
       // Not a click on category
       return;
 
-    if (state.currentCategoryElement != null)
-      state.currentCategoryElement.classList.remove("active");
-    state.currentCategoryElement = event.target;
-    state.currentCategoryElement.classList.add("active");
+    if (window.state.currentCategoryElement != null)
+      window.state.currentCategoryElement.classList.remove("active");
+    window.state.currentCategoryElement = event.target;
+    window.state.currentCategoryElement.classList.add("active");
     const newData = {
-      addressBook: state.currentAddressBook,
-      contacts: lookupContactsByCategoryElement(state.currentCategoryElement),
+      addressBook: window.state.currentAddressBook,
+      contacts: lookupContactsByCategoryElement(window.state.currentAddressBook, window.state.currentCategoryElement),
     };
     categoryTitle.innerText = categoryKey;
     return contactList.update(newData);
@@ -152,11 +151,11 @@ export function createCategoryTree({
     const categoryElement = event.target;
     const categoryPath = categoryElement.dataset.category;
     if (categoryPath == null) return;
-    const contacts = lookupContactsByCategoryElement(categoryElement);
-    if (state.isComposeAction) {
-      await addContactsToComposeDetails("bcc", state, contacts);
+    const contacts = lookupContactsByCategoryElement(window.state.currentAddressBook, categoryElement);
+    if (window.state.isComposeAction) {
+      await addContactsToComposeDetails("bcc", contacts);
     } else {
-      await openComposeWindowWithContacts("bcc", state, contacts, categoryPath);
+      await openComposeWindowWithContacts("bcc", contacts, categoryPath);
     }
     window.close();
   }
@@ -170,41 +169,41 @@ export function createCategoryTree({
     this.hideDragOverHighlight();
     if (e.target.nodeName === "I" || e.target.nodeName === "#text") {
       // Dragging over the expander or text.
-      state.currentDraggingOverCategoryElement = e.target.parentElement;
+      window.state.currentDraggingOverCategoryElement = e.target.parentElement;
     } else if (e.target.nodeName === "DIV") {
       // Dragging over the container of a leaf category
-      state.currentDraggingOverCategoryElement = e.target.children[0];
+      window.state.currentDraggingOverCategoryElement = e.target.children[0];
     } else if (e.target.nodeName === "DETAILS") {
       console.warn("Dragging over details!");
       return;
     } else {
-      state.currentDraggingOverCategoryElement = e.target;
-      if (state.currentDraggingOverCategoryElement.nodeName === "SUMMARY") {
-        state.currentDraggingOverCategoryElement.parentElement.open = true;
+      window.state.currentDraggingOverCategoryElement = e.target;
+      if (window.state.currentDraggingOverCategoryElement.nodeName === "SUMMARY") {
+        window.state.currentDraggingOverCategoryElement.parentElement.open = true;
       }
     }
-    state.currentDraggingOverCategoryElement.classList.add("drag-over");
+    window.state.currentDraggingOverCategoryElement.classList.add("drag-over");
     // Do not allow dragging onto uncategorized because it's not a real category.
     e.dataTransfer.dropEffect =
-      "uncategorized" in state.currentDraggingOverCategoryElement.dataset
+      "uncategorized" in window.state.currentDraggingOverCategoryElement.dataset
         ? "none"
         : "copy";
 
-    console.warn(`Dragging onto`, state.currentDraggingOverCategoryElement);
+    console.warn(`Dragging onto`, window.state.currentDraggingOverCategoryElement);
     e.preventDefault();
   }
   async function dragDrop(e) {
     await showCustomMenu(e.pageX, e.pageY, {
       currentDraggingOverCategoryElement:
-        state.currentDraggingOverCategoryElement,
-      currentCategoryElement: state.currentCategoryElement,
+        window.state.currentDraggingOverCategoryElement,
+      currentCategoryElement: window.state.currentCategoryElement,
     });
     const item = e.dataTransfer.items[0];
     if (item.type !== "category-manager/contact") {
       console.error("Invalid item for drag and drop: ", item);
       return;
     }
-    item.getAsString((x) => (state.currentContactDataFromDragAndDrop = x));
+    item.getAsString((x) => (window.state.currentContactDataFromDragAndDrop = x));
   }
   function dragLeave(e) {
     if (
