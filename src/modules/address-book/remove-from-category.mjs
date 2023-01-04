@@ -5,6 +5,7 @@ import {
   shouldContactBeUncategorized,
   Category,
   buildUncategorizedCategory,
+  categoryObjToString,
 } from "./category.mjs";
 import { isEmptyObject } from "../utils.mjs";
 import { updateCategoriesForContact } from "../contact.mjs";
@@ -41,7 +42,7 @@ function removeContactFromCategoryHelper(
   const shouldDeleteCategory = isEmptyObject(nextCategoryObj.contacts);
   const shouldDeleteContact =
     contactDeletionEnabled &&
-    !contact.categories.has(categoryObj.categoryStr()) && // not explicitly associated
+    !contact.categories.has(categoryObjToString(categoryObj)) && // not explicitly associated
     !isContactInAnySubcategory(categoryObj, contactId); // not in any of the subcategories
   console.log(
     "Should I remove",

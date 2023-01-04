@@ -28,9 +28,6 @@ export class Category {
   isLeaf() {
     return isLeafCategory(this);
   }
-  categoryStr() {
-    return categoryPathToString(this.path, this.isUncategorized);
-  }
   static createUncategorizedCategory(baseCategoryStr, contacts = {}) {
     const newPath =
       baseCategoryStr == null
@@ -45,6 +42,10 @@ export class Category {
         : parentCategoryObj.path + SUBCATEGORY_SEPARATOR + name;
     return new Category(name, newPath, contacts);
   }
+}
+
+export function categoryObjToString(cat) {
+  return categoryPathToString(cat.path, cat.isUncategorized);
 }
 
 export function categoryArrToString(cat) {
