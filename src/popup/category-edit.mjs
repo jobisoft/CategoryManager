@@ -7,15 +7,23 @@ import {
 import { getError } from "../modules/contact.mjs";
 import { filterIter } from "../modules/iter.mjs";
 
+/** Remove the contact from this category and any subcategory recursively */
 export async function removeContactFromCategory({
   contactId,
   addressBook,
   categoryStr,
 }) {
+  const contact = addressBook.contacts[contactId];
+  const toBeDeleted = [
+    ...filterIter(
+      contact.categories,
+      (x) => x == categoryStr || isSubcategoryOf(x, categoryStr)
+    ),
+  ];
   return updateCategoriesForContact(
     addressBook.contacts[contactId],
     [],
-    [categoryStr]
+    toBeDeleted
   );
 }
 
@@ -24,6 +32,20 @@ export async function addContactToCategory({
   addressBook,
   categoryStr,
 }) {
+  const contact = addressBook.contacts[contactId];
+  for (const cat of contact.categories) {
+    if (isSubcategoryOf(cat, categoryStr)) {
+      // If this contact is already in a subcategory,
+      // do not add it to the ancestor categories.
+      console.warn(
+        "No-op! contact",
+        contact,
+        "is already in a subcategory of",
+        categoryStr
+      );
+      return;
+    }
+  }
   return updateCategoriesForContact(
     addressBook.contacts[contactId],
     [categoryStr],

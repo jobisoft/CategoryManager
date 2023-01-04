@@ -26,7 +26,6 @@ export async function updateCategoriesForContact(contact, addition, deletion) {
   const oldCategoriesFromInput = contact.categories;
   if (!setEqual(oldCategories, oldCategoriesFromInput)) {
     console.error("Categories have been changed outside category manager!");
-    debugger;
     console.log("Old Categories", JSON.stringify(oldCategories));
     console.log(
       "Old Categories From Input",
