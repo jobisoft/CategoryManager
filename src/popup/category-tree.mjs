@@ -8,9 +8,10 @@ import {
   isLeafCategory,
 } from "../modules/address-book/index.mjs";
 import { lookupContactsByCategoryElement } from "./utils.mjs";
-import { id2contact } from "../modules/address-book/index.mjs";
-import { toRFC5322EmailAddress } from "../modules/contact.mjs";
-import { addContactsToComposeDetails } from "./compose.mjs";
+import {
+  addContactsToComposeDetails,
+  openComposeWindowWithContacts,
+} from "./compose.mjs";
 import { showCustomMenu } from "./custom-menu.mjs";
 
 function isActiveCategory(category, activeCategory) {
@@ -154,13 +155,7 @@ export function createCategoryTree({
     if (state.isComposeAction) {
       await addContactsToComposeDetails("bcc", state, contacts);
     } else {
-      // open a new messageCompose window
-      await browser.compose.beginNew(null, {
-        bcc: Object.keys(contacts).flatMap((c) => {
-          const contact = id2contact(state.currentAddressBook, c);
-          return contact.email == null ? [] : [toRFC5322EmailAddress(contact)];
-        }),
-      });
+      await openComposeWindowWithContacts("bcc", state, contacts);
     }
     window.close();
   }
