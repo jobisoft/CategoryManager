@@ -1,4 +1,19 @@
 {
+    "custom_menu.add_to_category": {
+        "message": "Add to this category"
+    },
+    "custom_menu.add_to_new_category": {
+        "message": "Add to a new category"
+    },
+    "custom_menu.add_to_subcategory": {
+        "message": "Add to a new subcategory"
+    },
+    "modal-category-input.title": {
+        "message": "Please enter a (sub)category"
+    },
+    "modal-category-input.contentHTML": {
+        "message": "You can use <code>'&nbsp;/&nbsp;'</code> (Space, Forward Slash,Space) as a delimiter for creating subcategories.<br />e.g.<code>CategoryA&nbsp;/&nbsp;CategoryB&nbsp;/&nbsp;CategoryC</code>"
+    },
     "manage_categories_of_contact": {
         "message": "Manage categories of this contact"
     },

@@ -14,6 +14,19 @@ const categoryInputConfirmBtn = document.getElementById(
 );
 const categoryInputCancelBtn = document.getElementById("category-input-cancel");
 
+// I18N
+
+categoryInputConfirmBtn.innerText = await browser.i18n.getMessage(
+  "sendtocategory.ok.button"
+);
+categoryInputCancelBtn.innerText = await browser.i18n.getMessage(
+  "sendtocategory.cancel.button"
+);
+document.getElementById("modal-category-input-title").innerText =
+  await browser.i18n.getMessage("modal-category-input.title");
+document.getElementById("modal-category-input-content").children[0].innerHTML =
+  await browser.i18n.getMessage("modal-category-input.contentHTML");
+
 async function showCategoryInputModalAsync(initialValue) {
   return new Promise((resolve) => {
     categoryInput.value = initialValue;
