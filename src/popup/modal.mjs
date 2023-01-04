@@ -14,9 +14,9 @@ const categoryInputConfirmBtn = document.getElementById(
 );
 const categoryInputCancelBtn = document.getElementById("category-input-cancel");
 
-async function showCategoryInputModalAsync() {
+async function showCategoryInputModalAsync(initialValue) {
   return new Promise((resolve) => {
-    categoryInput.value = null;
+    categoryInput.value = initialValue;
     MicroModal.show("modal-category-input");
     function onConfirmClick() {
       if (validateCategoryUserInput()) {
@@ -49,12 +49,12 @@ async function showCategoryInputModalAsync() {
 }
 
 export async function getCategoryStringFromInput(parentCategory = null) {
-  const result = await showCategoryInputModalAsync();
+  const result = await showCategoryInputModalAsync(
+    parentCategory != null ? parentCategory + SUBCATEGORY_SEPARATOR : null
+  );
   console.log(categoryInput);
   console.log(result);
-  return parentCategory == null
-    ? result
-    : parentCategory + SUBCATEGORY_SEPARATOR + result;
+  return result;
 }
 
 function validateCategoryUserInput() {
