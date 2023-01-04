@@ -4,7 +4,7 @@ import { buildUncategorizedCategory, Category } from "./category.mjs";
 
 export async function createContact(addressBook, contactNode) {
   const id = contactNode.id;
-  const contact = parseContact(contactNode, "set");
+  const contact = parseContact(contactNode);
   addressBook.contacts[id] = contact;
   if (contact.categories.size == 0) {
     // No category info. Just add it to uncategorized and return.

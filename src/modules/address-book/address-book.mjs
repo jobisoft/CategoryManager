@@ -31,7 +31,7 @@ export class AddressBook {
     const rawContacts = await browser.contacts.list(id);
     const contacts = Object.fromEntries(
       rawContacts.map((contact) => {
-        const parsed = parseContact(contact, "set");
+        const parsed = parseContact(contact);
         return [parsed.id, parsed];
       })
     );
