@@ -67,7 +67,7 @@ export function hideCustomMenu() {
   customMenu.classList.remove("show");
 }
 
-export function initCustomMenu(categoryTree, updateUI) {
+export function initCustomMenu(state, categoryTree, updateUI) {
   document.addEventListener("mousedown", (e) => {
     let element = e.target;
     while (element !== customMenu && element != null) {
@@ -77,54 +77,54 @@ export function initCustomMenu(categoryTree, updateUI) {
       customMenu.classList.remove("show");
       categoryTree.hideNewCategory();
       categoryTree.hideDragOverHighlight();
-      window.state.currentContactDataFromDragAndDrop = null;
+      state.currentContactDataFromDragAndDrop = null;
     }
   });
   customMenu.addEventListener("click", async (e) => {
-    if (window.state.currentContactDataFromDragAndDrop == null) {
+    if (state.currentContactDataFromDragAndDrop == null) {
       console.error("No contact info from drag & drop!");
       return;
     }
     let categoryStr;
     hideCustomMenu();
     const [addressBookId, contactId] =
-      window.state.currentContactDataFromDragAndDrop.split("\n");
-    const addressBook = window.state.addressBooks.get(addressBookId);
-    window.state.allowEdit = false;
+      state.currentContactDataFromDragAndDrop.split("\n");
+    const addressBook = state.addressBooks.get(addressBookId);
+    state.allowEdit = false;
     switch (e.target.id) {
       case "menu-add":
         // Get user input if dragging onto [ New Category ]
         categoryStr =
-          window.state.currentDraggingOverCategoryElement.dataset.category ??
+          state.currentDraggingOverCategoryElement.dataset.category ??
           (await getCategoryStringFromInput());
         if (categoryStr == null) break;
         await addContactToCategory({
           addressBook,
           contactId,
           categoryStr,
-          virtualAddressBook: window.state.allContactsVirtualAddressBook,
+          virtualAddressBook: state.allContactsVirtualAddressBook,
         });
         break;
       case "menu-add-sub":
         categoryStr = await getCategoryStringFromInput(
-          window.state.currentDraggingOverCategoryElement.dataset.category
+          state.currentDraggingOverCategoryElement.dataset.category
         );
         if (categoryStr == null) break;
         await addContactToCategory({
           addressBook,
           contactId,
           categoryStr,
-          virtualAddressBook: window.state.allContactsVirtualAddressBook,
+          virtualAddressBook: state.allContactsVirtualAddressBook,
         });
         break;
       default:
         console.error("Unknown action! from", e.target);
         break;
     }
-    window.state.currentContactDataFromDragAndDrop = null;
+    state.currentContactDataFromDragAndDrop = null;
     categoryTree.hideNewCategory();
     categoryTree.hideDragOverHighlight();
     await updateUI();
-    window.state.allowEdit = true;
+    state.allowEdit = true;
   });
 }

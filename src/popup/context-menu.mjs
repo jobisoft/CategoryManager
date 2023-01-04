@@ -20,14 +20,15 @@ import {
   removeContactFromCategory,
 } from "./category-edit.mjs";
 
-function makeCategoryMenuHandler(fieldName) {
+function makeCategoryMenuHandler(fieldName, state) {
   return async (categoryElement) => {
-    const contacts = lookupContactsByCategoryElement(window.state.currentAddressBook, categoryElement);
-    if (window.state.isComposeAction) {
-      await addContactsToComposeDetails(fieldName, contacts);
+    const contacts = lookupContactsByCategoryElement(categoryElement);
+    if (state.isComposeAction) {
+      await addContactsToComposeDetails(fieldName, state, contacts);
     } else {
       await openComposeWindowWithContacts(
         fieldName,
+        state,
         contacts,
         categoryElement.dataset.category
       );
@@ -36,31 +37,31 @@ function makeCategoryMenuHandler(fieldName) {
   };
 }
 
-async function overrideMenuForCategoryTree(categoryElement) {
+function overrideMenuForCategoryTree(categoryElement) {
   destroyAllMenus();
-  await createMenuForCategoryTree(categoryElement);
+  createMenuForCategoryTree(categoryElement);
 }
 
-async function overrideMenuForContactList() {
+async function overrideMenuForContactList(state) {
   destroyAllMenus();
   await createMenuForContact(
-    window.state.currentAddressBook,
-    window.state.elementForContextMenu.dataset.id
+    state.currentAddressBook,
+    state.elementForContextMenu.dataset.id
   );
 }
 
-export function initContextMenu(updateUI) {
+export function initContextMenu(state, updateUI) {
   const contextMenuHandlers = {
-    addToTO: makeCategoryMenuHandler("to"),
-    addToCC: makeCategoryMenuHandler("cc"),
-    addToBCC: makeCategoryMenuHandler("bcc"),
+    addToTO: makeCategoryMenuHandler("to", state),
+    addToCC: makeCategoryMenuHandler("cc", state),
+    addToBCC: makeCategoryMenuHandler("bcc", state),
     async deleteCategory(categoryElement) {
       try {
         await deleteCategory({
           categoryPath: categoryElement.dataset.category,
           isUncategorized: "uncategorized" in categoryElement.dataset,
-          addressBook: window.state.currentAddressBook,
-          addressBooks: window.state.addressBooks,
+          addressBook: state.currentAddressBook,
+          addressBooks: state.addressBooks,
         });
       } finally {
         await updateUI();
@@ -70,9 +71,9 @@ export function initContextMenu(updateUI) {
   const dispatchMenuEventsForContactList =
     createDispatcherForContactListContextMenu({
       async onDeletion(categoryStr) {
-        const contactId = window.state.elementForContextMenu.dataset.id;
-        const addressBookId = window.state.elementForContextMenu.dataset.addressbook;
-        const addressBook = window.state.addressBooks.get(addressBookId);
+        const contactId = state.elementForContextMenu.dataset.id;
+        const addressBookId = state.elementForContextMenu.dataset.addressbook;
+        const addressBook = state.addressBooks.get(addressBookId);
         await removeContactFromCategory({
           addressBook,
           contactId,
@@ -81,9 +82,9 @@ export function initContextMenu(updateUI) {
         return updateUI();
       },
       async onAddition(categoryStr, createSubCategory) {
-        const contactId = window.state.elementForContextMenu.dataset.id;
-        const addressBookId = window.state.elementForContextMenu.dataset.addressbook;
-        const addressBook = window.state.addressBooks.get(addressBookId);
+        const contactId = state.elementForContextMenu.dataset.id;
+        const addressBookId = state.elementForContextMenu.dataset.addressbook;
+        const addressBook = state.addressBooks.get(addressBookId);
         if (createSubCategory) {
           const subcategory = await getCategoryStringFromInput();
           if (subcategory == null) return;
@@ -100,29 +101,29 @@ export function initContextMenu(updateUI) {
     });
 
   document.addEventListener("contextmenu", async (e) => {
-    if (!window.state.allowEdit) {
+    if (!state.allowEdit) {
       e.preventDefault();
       return;
     }
-    browser.menus.overrideContext({ context: "tab", tabId: window.state.tab.id });
-    window.state.elementForContextMenu = e.target;
-    console.log(window.state.elementForContextMenu);
+    browser.menus.overrideContext({ context: "tab", tabId: state.tab.id });
+    state.elementForContextMenu = e.target;
+    console.log(state.elementForContextMenu);
     // Check if the right click originates from contact list
-    if (window.state.elementForContextMenu.parentNode.dataset.id != null) {
+    if (state.elementForContextMenu.parentNode.dataset.id != null) {
       // Right click on contact info
-      window.state.elementForContextMenu = window.state.elementForContextMenu.parentNode;
-      await overrideMenuForContactList();
+      state.elementForContextMenu = state.elementForContextMenu.parentNode;
+      await overrideMenuForContactList(state);
       return;
-    } else if (window.state.elementForContextMenu.dataset.id != null) {
-      await overrideMenuForContactList();
+    } else if (state.elementForContextMenu.dataset.id != null) {
+      await overrideMenuForContactList(state);
       return;
     }
-    await overrideMenuForCategoryTree(window.state.elementForContextMenu);
+    overrideMenuForCategoryTree(state.elementForContextMenu);
     // Check if the right click originates from category tree
-    if (window.state.elementForContextMenu.nodeName === "I")
+    if (state.elementForContextMenu.nodeName === "I")
       // Right click on the expander icon. Use the parent element
-      window.state.elementForContextMenu = window.state.elementForContextMenu.parentNode;
-    if (window.state.elementForContextMenu.dataset.category == null)
+      state.elementForContextMenu = state.elementForContextMenu.parentNode;
+    if (state.elementForContextMenu.dataset.category == null)
       // No context menu outside category tree
       e.preventDefault();
   });
@@ -130,14 +131,14 @@ export function initContextMenu(updateUI) {
   browser.menus.onClicked.addListener(async ({ menuItemId }) => {
     const handler = contextMenuHandlers[menuItemId];
     try {
-      window.state.allowEdit = false;
+      state.allowEdit = false;
       if (handler != null) {
-        await handler(window.state.elementForContextMenu);
+        await handler(state.elementForContextMenu);
       } else {
         await dispatchMenuEventsForContactList(menuItemId);
       }
     } finally {
-      window.state.allowEdit = true;
+      state.allowEdit = true;
     }
   });
 }
