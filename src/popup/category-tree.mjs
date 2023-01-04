@@ -94,7 +94,7 @@ export function createCategoryTree({
       if (uncategorizedCategory != null) {
         roots.push(writeTreeLeaf(uncategorizedCategory, activeCategory));
       }
-      return res + roots.join("\n");
+      return roots.join("\n") + res;
     },
     ...rest,
     showNewCategory() {
