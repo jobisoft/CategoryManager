@@ -12,7 +12,7 @@
         "message": "Please enter a (sub)category"
     },
     "modal-category-input.contentHTML": {
-        "message": "You can use <code>'&nbsp;/&nbsp;'</code> (Space, Forward Slash,Space) as a delimiter for creating subcategories.<br />e.g.<code>CategoryA&nbsp;/&nbsp;CategoryB&nbsp;/&nbsp;CategoryC</code>"
+        "message": "You can use <code>'&nbsp;/&nbsp;'</code> (Space, Forward Slash,Space) as a delimiter for creating subcategories.<br />e.g. <code>CategoryA&nbsp;/&nbsp;CategoryB&nbsp;/&nbsp;CategoryC</code>"
     },
     "modal-error.title": {
         "message": "Error"
@@ -25,6 +25,12 @@
     },
     "new_category_here": {
         "message": "Add to new category"
+    },
+    "info.no-address-book": {
+        "message": "No address book is available"
+    },
+    "info.spinner-text": {
+        "message": "Updating..."
     },
     "remove_from_category": {
         "message": "Remove from '$CATEGORY$'",

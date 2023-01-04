@@ -9,6 +9,13 @@ import state from "./state.mjs";
 import { registerCacheUpdateCallback } from "../modules/address-book/cache.mjs";
 // global object: emailAddresses, ICAL, MicroModal from popup.html
 
+// i18n
+document.getElementById("info-text").innerText = await browser.i18n.getMessage(
+  "info.no-address-book"
+);
+document.getElementById("spinner-text").innerText =
+  await browser.i18n.getMessage("info.spinner-text");
+
 initModal();
 
 const categoryTitle = document.getElementById("category-title");
