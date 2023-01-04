@@ -1,6 +1,9 @@
 import { isEmptyObject, filterObjectByKeyToNull } from "../utils.mjs";
 
 export const SUBCATEGORY_SEPARATOR = " / ";
+export const UNCATEGORIZED_CATEGORY_NAME = await browser.i18n.getMessage(
+  "viewWithoutCategories"
+);
 
 export class Category {
   categories;
@@ -31,9 +34,15 @@ export class Category {
   static createUncategorizedCategory(baseCategoryStr, contacts = {}) {
     const newPath =
       baseCategoryStr == null
-        ? "Uncategorized"
-        : baseCategoryStr + SUBCATEGORY_SEPARATOR + "Uncategorized";
-    return new Category("Uncategorized", newPath, contacts, {}, true);
+        ? UNCATEGORIZED_CATEGORY_NAME
+        : baseCategoryStr + SUBCATEGORY_SEPARATOR + UNCATEGORIZED_CATEGORY_NAME;
+    return new Category(
+      UNCATEGORIZED_CATEGORY_NAME,
+      newPath,
+      contacts,
+      {},
+      true
+    );
   }
   static createSubcategory(parentCategoryObj, name, contacts = {}) {
     const newPath =
@@ -92,11 +101,11 @@ export function buildUncategorizedCategory(category, recursive = true) {
   );
   const newPath =
     category.path === null
-      ? "Uncategorized"
-      : category.path + SUBCATEGORY_SEPARATOR + "Uncategorized";
+      ? UNCATEGORIZED_CATEGORY_NAME
+      : category.path + SUBCATEGORY_SEPARATOR + UNCATEGORIZED_CATEGORY_NAME;
   if (!isEmptyObject(filtered)) {
     category.uncategorized = new Category(
-      "Uncategorized",
+      UNCATEGORIZED_CATEGORY_NAME,
       newPath,
       filtered,
       {},

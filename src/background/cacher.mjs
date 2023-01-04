@@ -13,7 +13,10 @@ let abValues = await Promise.all(
   abInfos.map((ab) => AddressBook.fromTBAddressBook(ab))
 );
 // Make "All Contacts" the first one
-const allContactsVirtualAddressBook = AddressBook.fromAllContacts(abValues);
+const allContactsVirtualAddressBook = AddressBook.fromAllContacts(
+  abValues,
+  await browser.i18n.getMessage("sendtocategory.category.all")
+);
 abValues.unshift(allContactsVirtualAddressBook);
 let addressBooks = new Map(abValues.map((ab) => [ab.id, ab]));
 

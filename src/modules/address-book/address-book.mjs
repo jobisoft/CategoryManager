@@ -40,14 +40,14 @@ export class AddressBook {
     return ab;
   }
 
-  static fromAllContacts(addressBooks) {
+  static fromAllContacts(addressBooks, name) {
     let contacts = {};
     for (const ab of addressBooks) {
       for (const contactId in ab.contacts) {
         contacts[contactId] = structuredClone(ab.contacts[contactId]);
       }
     }
-    let ret = new AddressBook("All Contacts", contacts, "all-contacts");
+    let ret = new AddressBook(name, contacts, "all-contacts");
     ret.#build();
     return ret;
   }
