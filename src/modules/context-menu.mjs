@@ -1,4 +1,8 @@
-import { SUBCATEGORY_SEPARATOR } from "./address-book/index.mjs";
+import {
+  SUBCATEGORY_SEPARATOR,
+  isContactInCategory,
+  isContactInAnySubcategory,
+} from "./address-book/index.mjs";
 
 function createMenu(properties) {
   return browser.menus.create({
@@ -17,7 +21,7 @@ function createCheckBoxMenu({
 }) {
   return createMenu({
     id,
-    title: `${checked ? '☑ ' : '☐ '} ${title}`,
+    title: `${checked ? "☑ " : "☐ "} ${title}`,
     type: "normal",
     parentId,
   });
@@ -54,7 +58,7 @@ async function createCategoryEditingMenuRecursively(
   parentId = undefined
 ) {
   const menuId = prefix + category.name;
-  const checked = contactId in category.contacts;
+  const checked = isContactInCategory(category, contactId);
   const subCategories = Object.keys(category.categories);
 
   createCheckBoxMenu({
@@ -66,20 +70,20 @@ async function createCategoryEditingMenuRecursively(
 
   // Add submenu entries.
   if (checked) {
-    let remove_string = Object.values(category.categories).find(category => contactId in category.contacts)
-      ? browser.i18n.getMessage("remove_from_category_recursively", category.name)
-      : browser.i18n.getMessage("remove_from_category", category.name)
+    let remove_string_key = isContactInAnySubcategory(category, contactId)
+      ? "remove_from_category_recursively"
+      : "remove_from_category";
     createMenu({
       id: "@" + menuId.slice(1),
-      title: await remove_string,
+      title: await browser.i18n.getMessage(remove_string_key, category.name),
       parentId: menuId,
-    }); 
+    });
   } else {
     createMenu({
       id: "%" + menuId.slice(1),
       title: await browser.i18n.getMessage("add_to_category", category.name),
       parentId: menuId,
-    }); 
+    });
   }
 
   if (subCategories.length) {
@@ -113,8 +117,6 @@ function createSeparator(parentId = undefined) {
   });
 }
 
-const MENU_NUMBER_LIMIT = 15;
-
 export function createDispatcherForContactListContextMenu({
   onDeletion,
   onAddition,
@@ -141,6 +143,10 @@ export function createDispatcherForContactListContextMenu({
   };
 }
 
+const MENU_HEADER_TEXT = await browser.i18n.getMessage(
+  "manage_categories_of_contact"
+);
+
 export async function createMenuForContact(addressBook, contactId) {
   // Symbols:
   //    @: remove from category
@@ -153,10 +159,9 @@ export async function createMenuForContact(addressBook, contactId) {
   // - Add to ...
   createMenu({
     id: "header",
-    title: await browser.i18n.getMessage("manage_categories_of_contact"),
+    title: MENU_HEADER_TEXT,
     enabled: false,
   });
-
 
   let categories = Object.keys(addressBook.categories);
   if (categories.length) {
@@ -172,5 +177,8 @@ export async function createMenuForContact(addressBook, contactId) {
 
   createSeparator();
 
-  createMenu({ id: "$", title: await browser.i18n.getMessage("new_category_here")});
+  createMenu({
+    id: "$",
+    title: await browser.i18n.getMessage("new_category_here"),
+  });
 }
