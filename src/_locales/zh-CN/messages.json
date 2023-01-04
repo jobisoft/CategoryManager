@@ -26,7 +26,10 @@
   "info.spinner-text": {
     "message": "正在更新..."
   },
-  "manifest.description": {
+  "manifest_action_title": {
+    "message": "Categories"
+  },
+  "manifest_description": {
     "message": "联系人类别管理器。你可以一次向整个类别的联系人发送邮件（基于类别的联系人群组）。"
   },
   "menu.category.add_members_to_current_message": {

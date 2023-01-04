@@ -31,6 +31,11 @@ export function destroyAllMenus() {
   browser.menus.removeAll();
 }
 
+let { type } = await browser.windows.getCurrent();
+const MENU_TITLE_LOCALE_KEY = type == "messageCompose"
+  ? "menu.category.add_members_to_current_message"
+  : "menu.category.add_members_to_new_message";
+const MENU_ADD_TITLE = await browser.i18n.getMessage(MENU_TITLE_LOCALE_KEY);
 const MENU_ADD_TO_TO = await browser.i18n.getMessage("menu.category.add_to_to");
 const MENU_ADD_TO_CC = await browser.i18n.getMessage("menu.category.add_to_cc");
 const MENU_ADD_TO_BCC = await browser.i18n.getMessage(
@@ -41,6 +46,11 @@ const MENU_DELETE_CATEGORY = await browser.i18n.getMessage(
 );
 
 export function createMenuForCategoryTree(categoryElement) {
+  createMenu({
+    id: "actionTitle",
+    enabled: false,
+    title: MENU_ADD_TITLE
+  })
   createMenu({
     id: "addToTO",
     title: MENU_ADD_TO_TO,

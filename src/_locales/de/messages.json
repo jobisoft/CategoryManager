@@ -26,7 +26,10 @@
     "info.spinner-text": {
         "message": "Aktualisierung ..."
     },
-    "manifest.description": {
+    "manifest_action_title": {
+        "message": "Kategorien"
+    },
+    "manifest_description": {
         "message": "Kategorie-Verwaltung für Thunderbird-Kontakte. Erlaubt auch das Senden einer E-Mail an alle Kategoriemitglieder, d.h. Kategorien können als Kontaktgruppen verwendet werden."
     },
     "menu.category.add_members_to_current_message": {

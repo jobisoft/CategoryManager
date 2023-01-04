@@ -26,7 +26,10 @@
     "info.spinner-text": {
         "message": "Updating..."
     },
-    "manifest.description": {
+    "manifest_action_title": {
+        "message": "Categories"
+    },
+    "manifest_description": {
         "message": "Менеджер категорий для контактов, также позволяет отправлять электронную почту всем членам категории (групп контактов, основанных на категории)."
     },
     "menu.category.add_members_to_current_message": {

@@ -26,7 +26,10 @@
     "info.spinner-text": {
         "message": "Updating..."
     },
-    "manifest.description": {
+    "manifest_action_title": {
+        "message": "Categories"
+    },
+    "manifest_description": {
         "message": "Category Manager pour contacts, permet aussi d'envoyer un email à tous les membres d'une catégorie."
     },
     "menu.category.add_members_to_current_message": {

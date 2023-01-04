@@ -26,7 +26,10 @@
     "info.spinner-text": {
         "message": "Updating..."
     },
-    "manifest.description": {
+    "manifest_action_title": {
+        "message": "Categories"
+    },
+    "manifest_description": {
         "message": "Administrador de categorias para contactos, que permite enviar un correo a todos los miembros de una categoria."
     },
     "menu.category.add_members_to_current_message": {
