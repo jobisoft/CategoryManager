@@ -2,7 +2,7 @@ import { parseContact } from "../contact.mjs";
 import { addContactToCategory } from "./add-to-category.mjs";
 import { buildUncategorizedCategory, Category } from "./category.mjs";
 
-export async function createContact(addressBook, contactNode) {
+export async function createContactInCache(addressBook, contactNode) {
   const id = contactNode.id;
   const contact = parseContact(contactNode);
   addressBook.contacts[id] = contact;

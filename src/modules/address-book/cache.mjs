@@ -1,11 +1,11 @@
-import { createContact } from "./create-contact.mjs";
-import { updateContact } from "./update-contact.mjs";
-import { deleteContact } from "./delete-contact.mjs";
+import { createContactInCache } from "./create-contact.mjs";
+import { updateContactInCache } from "./update-contact.mjs";
+import { deleteContactInCache } from "./delete-contact.mjs";
 
 export async function updateCacheOnContactCreation(addressBooks, node) {
   let addressBookId = node.parentId;
-  await createContact(addressBooks.get(addressBookId), node);
-  await createContact(addressBooks.get("all-contacts"), node);
+  await createContactInCache(addressBooks.get(addressBookId), node);
+  await createContactInCache(addressBooks.get("all-contacts"), node);
 }
 
 export async function updateCacheOnContactUpdate(
@@ -13,7 +13,7 @@ export async function updateCacheOnContactUpdate(
   node,
   changedProperties
 ) {
-  await updateContact(
+  await updateContactInCache(
     addressBooks.get(node.parentId),
     addressBooks.get("all-contacts"),
     node,
@@ -26,8 +26,8 @@ export async function updateCacheOnContactDeletion(
   addressBookId,
   contactId
 ) {
-  await deleteContact(addressBooks.get(addressBookId), contactId);
-  await deleteContact(addressBooks.get("all-contacts"), contactId);
+  await deleteContactInCache(addressBooks.get(addressBookId), contactId);
+  await deleteContactInCache(addressBooks.get("all-contacts"), contactId);
 }
 
 export function registerCacheUpdateCallback(addressBooks, callback) {

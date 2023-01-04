@@ -2,7 +2,7 @@ import { parseContact } from "../contact.mjs";
 import { addContactToCategory } from "./add-to-category.mjs";
 import { removeContactFromCategory } from "./remove-from-category.mjs";
 
-export async function updateContact(
+export async function updateContactInCache(
   addressBook,
   virtualAddressBook,
   contactNode,
