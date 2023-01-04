@@ -151,7 +151,6 @@ export async function createMenuForContact(addressBook, contactId) {
   // Menu:
   // - Manage belonging categories
   // - Add to ...
-  const contact = addressBook.contacts[contactId];
   createMenu({
     id: "header",
     title: await browser.i18n.getMessage("manage_categories_of_contact"),

@@ -4,23 +4,41 @@ initErrorHandler();
 
 const [tab] = await browser.tabs.query({ currentWindow: true, active: true });
 const isComposeAction = tab.type == "messageCompose";
+const spinnerElement = document.getElementById("spinner");
 
-let addressBooks, allContactsVirtualAddressBook, currentAddressBook;
-
-let elementForContextMenu,
-  currentCategoryElement,
-  currentDraggingOverCategoryElement,
-  currentContactDataFromDragAndDrop,
-  allowEdit = false;
+let state = {
+  addressBooks: undefined,
+  elementForContextMenu: undefined,
+  tab,
+  isComposeAction,
+  currentCategoryElement: undefined,
+  currentDraggingOverCategoryElement: undefined,
+  currentContactDataFromDragAndDrop: undefined,
+  allContactsVirtualAddressBook: undefined,
+  currentAddressBook: undefined,
+  __allowEdit: false,
+  get allowEdit() {
+    return this.__allowEdit;
+  },
+  set allowEdit(value) {
+    this.__allowEdit = value;
+    if (this.__allowEdit) {
+      spinnerElement.classList.remove("show");
+    } else {
+      spinnerElement.classList.add("show");
+    }
+  },
+};
 
 async function load() {
-  ({ addressBooks } = await browser.storage.local.get("addressBooks"));
+  const { addressBooks } = await browser.storage.local.get("addressBooks");
+  state.addressBooks = addressBooks;
   console.log(addressBooks);
-  allContactsVirtualAddressBook = addressBooks.get("all-contacts");
-  currentAddressBook = allContactsVirtualAddressBook;
-  if (currentAddressBook == null)
+  state.allContactsVirtualAddressBook = state.addressBooks.get("all-contacts");
+  state.currentAddressBook = state.allContactsVirtualAddressBook;
+  if (state.currentAddressBook == null)
     document.getElementById("info-text").style.display = "initial";
-  allowEdit = true;
+  state.allowEdit = true;
 }
 
 // ---------------------------
@@ -40,15 +58,4 @@ await new Promise((resolve) => {
   port.postMessage({ type: "requestCache" });
 });
 
-export default {
-  addressBooks,
-  elementForContextMenu,
-  tab,
-  isComposeAction,
-  currentCategoryElement,
-  currentDraggingOverCategoryElement,
-  currentContactDataFromDragAndDrop,
-  allContactsVirtualAddressBook,
-  currentAddressBook,
-  allowEdit,
-};
+export default state;
