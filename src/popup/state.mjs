@@ -31,6 +31,13 @@ let state = {
 };
 
 async function load() {
+  // TODO : Before loading the cache, ping the background if it has written the
+  //        cache already. The listener for the former port based communication
+  //        used here was created only after it was written, so if this script run
+  //        first, it would just fail to connect and die. Instead - if we want to
+  //        catch this case - we should set a flag in the background and simply
+  //        poll it here with runtime.sendMessage() and wait until it comes back
+  //        as true.
   const { addressBooks } = await browser.storage.local.get("addressBooks");
   state.addressBooks = addressBooks;
   console.log(addressBooks);
@@ -41,21 +48,6 @@ async function load() {
   state.allowEdit = true;
 }
 
-// ---------------------------
-//  Communication with cache
-// ---------------------------
-
-let port = await browser.runtime.connect({ name: "sync" });
-
-// Let the popup wait for the cache to be written into storage.local
-await new Promise((resolve) => {
-  async function requestCache() {
-    port.onMessage.removeListener(requestCache);
-    await load();
-    resolve();
-  }
-  port.onMessage.addListener(requestCache);
-  port.postMessage({ type: "requestCache" });
-});
+await load();
 
 export default state;

@@ -33,14 +33,14 @@ export async function updateCacheOnContactDeletion(
 export function registerCacheUpdateCallback(addressBooks, callback) {
   browser.contacts.onCreated.addListener(async (node) => {
     await updateCacheOnContactCreation(addressBooks, node);
-    await callback();
+    await callback(addressBooks);
   });
   browser.contacts.onUpdated.addListener(async (node, changedProperties) => {
     await updateCacheOnContactUpdate(addressBooks, node, changedProperties);
-    await callback();
+    await callback(addressBooks);
   });
   browser.contacts.onDeleted.addListener(async (addressBookId, contactId) => {
     await updateCacheOnContactDeletion(addressBooks, addressBookId, contactId);
-    await callback();
+    await callback(addressBooks);
   });
 }
