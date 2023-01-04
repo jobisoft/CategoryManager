@@ -21,7 +21,7 @@
 }
 
 .modal__container {
-  background-color: #fff;
+  background-color: var(--catman-background);
   padding: 30px;
   max-width: 500px;
   max-height: 100vh;
@@ -64,7 +64,7 @@
   margin-top: 2rem;
   margin-bottom: 2rem;
   line-height: 1.5;
-  color: rgba(0, 0, 0, 0.8);
+  color: var(--catman-foreground);
 }
 
 .modal__btn {
@@ -79,20 +79,14 @@
   border-style: none;
   border-width: 0;
   cursor: pointer;
-  -webkit-appearance: button;
   text-transform: none;
   overflow: visible;
   line-height: 1.15;
   margin: 0;
   will-change: transform;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  -webkit-transform: translateZ(0);
   transform: translateZ(0);
-  transition: -webkit-transform 0.25s ease-out;
   transition: transform 0.25s ease-out;
-  transition: transform 0.25s ease-out, -webkit-transform 0.25s ease-out;
   margin-inline-start: 1rem;
 }
 
@@ -180,7 +174,7 @@
 }
 
 #category-input:invalid {
-  background-color: rgba(255, 0, 0, 0.3);
+  background-color: rgb(212, 77, 77);
 }
 
 #category-input-error {
