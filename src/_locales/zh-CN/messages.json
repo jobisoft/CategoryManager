@@ -91,8 +91,20 @@
       }
     }
   },
+  "menu.category.add_to_to": {
+    "message": "添加到 TO"
+  },
+  "menu.category.add_to_cc": {
+    "message": "添加到 CC"
+  },
+  "menu.category.add_to_bcc": {
+    "message": "添加到 BCC"
+  },
+  "menu.category.delete": {
+    "message": "删除此类别"
+  },
   "extensionDescription": {
-    "message": "Category manager for contacts. Also allows to send an email to all members of a category (a.k.a category based contact groups)."
+    "message": "联系人类别管理器。你可以一次向整个类别的联系人发送邮件（基于类别的联系人群组）。"
   },
   "sendtocategory.ok.button": {
     "message": "确定"
