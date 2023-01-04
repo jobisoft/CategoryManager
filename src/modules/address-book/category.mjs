@@ -147,3 +147,12 @@ export function shouldContactBeUncategorized(categoryObj, contactId) {
   }
   return uncategorized;
 }
+
+export function reduceCategories(categories) {
+  return categories.reduce((acc, cur) => {
+    if (!categories.find((e) => e.trim().startsWith(cur + " /"))) {
+      acc.push(cur);
+    }
+    return acc;
+  }, []);
+}

@@ -1,5 +1,8 @@
 import { mapIter } from "./iter.mjs";
-import { categoryStringToArr } from "./address-book/index.mjs";
+import {
+  categoryStringToArr,
+  reduceCategories,
+} from "./address-book/index.mjs";
 import { setEqual } from "./set.mjs";
 // global object: ICAL from external ical.js
 
@@ -33,9 +36,18 @@ export async function updateCategoriesForContact(contact, addition, deletion) {
     );
     throw getError(ERR_OPERATION_CANCEL, 2);
   }
-  const newCategories = new Set(
-    [...oldCategories, ...addition].filter((x) => !deletion.includes(x))
-  );
+  const newCategories = reduceCategories([
+    ...oldCategories,
+    ...addition,
+  ]).filter((x) => !deletion.includes(x));
+  if (
+    newCategories.length === oldCategories.size &&
+    newCategories.every((x) => oldCategories.has(x))
+  ) {
+    // No change, return
+    console.warn("No change made to the vCard!");
+    return;
+  }
   component.removeAllProperties("categories");
   for (const cat of newCategories) {
     component.addPropertyWithValue("categories", cat);
