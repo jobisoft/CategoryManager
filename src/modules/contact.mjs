@@ -5,15 +5,32 @@ import {
 import { setEqual } from "./set.mjs";
 // global object: ICAL from external ical.js
 
-const ERR_OPERATION_CANCEL = "Operation Canceled. Failed to update contact!";
+const ERR_OPERATION_CANCEL = await browser.i18n.getMessage(
+  "errors.operation-cancel"
+);
+const ERR_CONTACT_UPDATE_FAILURE = await browser.i18n.getMessage(
+  "errors.contact-update-failure"
+);
+const ERR_OPCANCEL_UPDATE_FAILURE =
+  ERR_OPERATION_CANCEL + " " + ERR_CONTACT_UPDATE_FAILURE;
+const ERR_HINT_MOST_LIKELY = await browser.i18n.getMessage(
+  "errors.hint.most-likely"
+);
+const ERR_HINT_COMMON_REASONS = await browser.i18n.getMessage(
+  "errors.hint.common-reasons"
+);
+const ERR_REASON_ADDRESS_BOOK_READONLY = await browser.i18n.getMessage(
+  "errors.reason.address-book-readonly"
+);
+const ERR_REASON_CONTACT_CHANGED = await browser.i18n.getMessage(
+  "errors.reason.contact-changed"
+);
 
 export function getError(str, id) {
   const error = new Error(`${str}
-  Common reasons for this error are:
-  1. ${id === 1 ? "(Most Likely)" : ""}The address book is readonly.
-  2. ${
-    id === 2 ? "(Most Likely)" : ""
-  }The contact has been changed outside Category Manager.`);
+  ${ERR_HINT_COMMON_REASONS}
+  1. ${id === 1 ? ERR_HINT_MOST_LIKELY : ""}${ERR_REASON_ADDRESS_BOOK_READONLY}
+  2. ${id === 2 ? ERR_HINT_MOST_LIKELY : ""}${ERR_REASON_CONTACT_CHANGED}`);
   error.id = id;
   return error;
 }
@@ -33,7 +50,7 @@ export async function updateCategoriesForContact(contact, addition, deletion) {
       "Old Categories From Input",
       JSON.stringify(oldCategoriesFromInput)
     );
-    throw getError(ERR_OPERATION_CANCEL, 2);
+    throw getError(ERR_OPCANCEL_UPDATE_FAILURE, 2);
   }
   const newCategories = reduceCategories([
     ...oldCategories,
@@ -57,7 +74,7 @@ export async function updateCategoriesForContact(contact, addition, deletion) {
     await browser.contacts.update(contact.id, { vCard: newVCard });
   } catch (e) {
     console.error("Error when updating contact: ", e);
-    throw getError(ERR_OPERATION_CANCEL, 1);
+    throw getError(ERR_OPCANCEL_UPDATE_FAILURE, 1);
   }
   return null;
 }

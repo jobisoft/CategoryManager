@@ -39,8 +39,9 @@ export async function addContactToCategory({
   );
 }
 
-const ERR_PARTIAL_DELETION =
-  "An error occurred while deleting this category. Some contacts are still in this category.";
+const ERR_PARTIAL_DELETION = await browser.i18n.getMessage(
+  "errors.partial-deletion"
+);
 
 async function deleteCategoryHelper(
   addressBook,

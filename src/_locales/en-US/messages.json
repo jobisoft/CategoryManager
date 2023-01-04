@@ -20,6 +20,27 @@
     "validation-error.empty-subcategory": {
         "message": "Subcategory should not be empty."
     },
+    "errors.operation-cancel": {
+        "message": "Operation Canceled."
+    },
+    "errors.contact-update-failure": {
+        "message": "Failed to update contact!"
+    },
+    "errors.hint.most-likely": {
+        "message": "(Most Likely)"
+    },
+    "errors.hint.common-errors": {
+        "message": "Common reasons for this error are:"
+    },
+    "errors.reason.address-book-readonly": {
+        "message": "The address book is readonly."
+    },
+    "errors.reason.contact-changed": {
+        "message": "The contact has been changed outside Category Manager."
+    },
+    "errors.partial-deletion": {
+        "message": "An error occurred while deleting this category. Some contacts are still in this category."
+    },
     "modal-error.title": {
         "message": "Error"
     },
