@@ -3,10 +3,8 @@
 // -------------------
 
 import { createDispatcherForContactListContextMenu } from "../modules/context-menu.mjs";
-import {
-  addContactsToComposeDetails,
-  toRFC5322EmailAddress,
-} from "../modules/contact.mjs";
+import { toRFC5322EmailAddress } from "../modules/contact.mjs";
+import { addContactsToComposeDetails } from "./compose.mjs";
 import { lookupContactsByCategoryElement } from "./utils.mjs";
 import { id2contact } from "../modules/address-book/index.mjs";
 import {
@@ -25,7 +23,7 @@ function makeCategoryMenuHandler(fieldName, state) {
   return async (categoryElement) => {
     const contacts = lookupContactsByCategoryElement(categoryElement);
     if (state.isComposeAction) {
-      await addContactsToComposeDetails(fieldName, state.tab, contacts);
+      await addContactsToComposeDetails(fieldName, state, contacts);
     } else {
       // Do a filterMap(using a flatMap) to remove contacts that do not have an email address
       // and map the filtered contacts to rfc 5322 email address format.

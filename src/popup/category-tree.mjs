@@ -9,10 +9,8 @@ import {
 } from "../modules/address-book/index.mjs";
 import { lookupContactsByCategoryElement } from "./utils.mjs";
 import { id2contact } from "../modules/address-book/index.mjs";
-import {
-  addContactsToComposeDetails,
-  toRFC5322EmailAddress,
-} from "../modules/contact.mjs";
+import { toRFC5322EmailAddress } from "../modules/contact.mjs";
+import { addContactsToComposeDetails } from "./compose.mjs";
 import { showCustomMenu } from "./custom-menu.mjs";
 
 function isActiveCategory(category, activeCategory) {
@@ -154,7 +152,7 @@ export function createCategoryTree({
     if (categoryKey == null) return;
     const contacts = lookupContactsByCategoryElement(event.target);
     if (state.isComposeAction) {
-      await addContactsToComposeDetails("bcc", state.tab, contacts);
+      await addContactsToComposeDetails("bcc", state, contacts);
     } else {
       // open a new messageCompose window
       await browser.compose.beginNew(null, {
