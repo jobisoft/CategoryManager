@@ -92,7 +92,12 @@ export function initModal() {
 }
 
 const errorContent = document.getElementById("error-content");
-
+document.querySelector("#modal-error-title > span").innerText =
+  await browser.i18n.getMessage("modal-error.title");
+document.getElementById("modal-error-content-footer").innerText =
+  await browser.i18n.getMessage("modal-error.content.footer");
+document.querySelector("#modal-error .modal__footer button").innerText =
+  await browser.i18n.getMessage("sendtocategory.ok.button");
 export function showErrorModal(errorMessage) {
   errorContent.innerText = errorMessage;
   MicroModal.show("modal-error");
