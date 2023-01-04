@@ -116,14 +116,22 @@ export function buildUncategorizedCategory(category, recursive = true) {
   }
 }
 
+const VALIDATION_ERR_EMPTY_CATEGORY = await browser.i18n.getMessage(
+  "validation-error.empty-category"
+);
+
+const VALIDATION_ERR_EMPTY_SUBCATEGORY = await browser.i18n.getMessage(
+  "validation-error.empty-subcategory"
+);
+
 export function validateCategoryString(s) {
   if (s == null || s.trim() === "") {
-    return "Category should not be empty.";
+    return VALIDATION_ERR_EMPTY_CATEGORY;
   }
   const splitted = categoryStringToArr(s);
   for (const cat of splitted) {
     if (cat.trim() == "") {
-      return "Subcategory should not be empty.";
+      return VALIDATION_ERR_EMPTY_SUBCATEGORY;
     }
   }
   return "LGTM";

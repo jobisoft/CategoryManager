@@ -14,6 +14,12 @@
     "modal-category-input.contentHTML": {
         "message": "You can use <code>'&nbsp;/&nbsp;'</code> (Space, Forward Slash,Space) as a delimiter for creating subcategories.<br />e.g. <code>CategoryA&nbsp;/&nbsp;CategoryB&nbsp;/&nbsp;CategoryC</code>"
     },
+    "validation-error.empty-category": {
+        "message": "Category should not be empty."
+    },
+    "validation-error.empty-subcategory": {
+        "message": "Subcategory should not be empty."
+    },
     "modal-error.title": {
         "message": "Error"
     },
