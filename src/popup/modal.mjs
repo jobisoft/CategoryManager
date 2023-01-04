@@ -17,15 +17,15 @@ const categoryInputCancelBtn = document.getElementById("category-input-cancel");
 // I18N
 
 categoryInputConfirmBtn.innerText = await browser.i18n.getMessage(
-  "sendtocategory.ok.button"
+  "popup.input.button.ok"
 );
 categoryInputCancelBtn.innerText = await browser.i18n.getMessage(
-  "sendtocategory.cancel.button"
+  "popup.input.button.cancel"
 );
 document.getElementById("modal-category-input-title").innerText =
-  await browser.i18n.getMessage("modal-category-input.title");
+  await browser.i18n.getMessage("popup.input.title");
 document.getElementById("modal-category-input-content").children[0].innerHTML =
-  await browser.i18n.getMessage("modal-category-input.contentHTML");
+  await browser.i18n.getMessage("popup.input.contentHTML");
 
 async function showCategoryInputModalAsync(initialValue) {
   return new Promise((resolve) => {
@@ -93,11 +93,11 @@ export function initModal() {
 
 const errorContent = document.getElementById("error-content");
 document.querySelector("#modal-error-title > span").innerText =
-  await browser.i18n.getMessage("modal-error.title");
+  await browser.i18n.getMessage("popup.error.title");
 document.getElementById("modal-error-content-footer").innerText =
-  await browser.i18n.getMessage("modal-error.content.footer");
+  await browser.i18n.getMessage("popup.error.content.footer");
 document.querySelector("#modal-error .modal__footer button").innerText =
-  await browser.i18n.getMessage("sendtocategory.ok.button");
+  await browser.i18n.getMessage("popup.input.button.ok");
 export function showErrorModal(errorMessage) {
   errorContent.innerText = errorMessage;
   MicroModal.show("modal-error");

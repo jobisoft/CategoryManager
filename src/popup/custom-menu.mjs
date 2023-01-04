@@ -18,8 +18,8 @@ async function updateCustomMenu(
   // Update the text
   const menuItemKey =
     currentDraggingOverCategoryElement.nodeName == "NAV"
-      ? "custom_menu.add_to_new_category"
-      : "custom_menu.add_to_category";
+      ? "menu.contact.drag.add_to_new_category"
+      : "menu.contact.drag.add_to_this_category";
   customMenu.children[0].innerText = await browser.i18n.getMessage(menuItemKey);
 }
 
@@ -28,10 +28,10 @@ const ALLOWED_ACTIONS_DEFAULT = new Set(["menu-add", "menu-add-sub"]);
 const ALLOWED_ACTIONS_FROM_NOWHERE = new Set(["menu-add", "menu-add-sub"]);
 
 document.getElementById("menu-add").innerText = await browser.i18n.getMessage(
-  "custom_menu.add_to_category"
+  "menu.contact.drag.add_to_this_category"
 );
 document.getElementById("menu-add-sub").innerText =
-  await browser.i18n.getMessage("custom_menu.add_to_subcategory");
+  await browser.i18n.getMessage("menu.contact.drag.add_to_subcategory");
 
 export async function showCustomMenu(
   x,

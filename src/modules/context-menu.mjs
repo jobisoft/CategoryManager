@@ -80,8 +80,8 @@ async function createCategoryEditingMenuRecursively(
   // Add submenu entries.
   if (checked) {
     let remove_string_key = isContactInAnySubcategory(category, contactId)
-      ? "remove_from_category_recursively"
-      : "remove_from_category";
+      ? "menu.contact.context.remove_from_category_recursively"
+      : "menu.contact.context.remove_from_category";
     createMenu({
       id: "@" + menuId.slice(1),
       title: await browser.i18n.getMessage(remove_string_key, category.name),
@@ -90,7 +90,7 @@ async function createCategoryEditingMenuRecursively(
   } else {
     createMenu({
       id: "%" + menuId.slice(1),
-      title: await browser.i18n.getMessage("add_to_category", category.name),
+      title: await browser.i18n.getMessage("menu.contact.context.add_to_category", category.name),
       parentId: menuId,
     });
   }
@@ -112,7 +112,7 @@ async function createCategoryEditingMenuRecursively(
   createSeparator(menuId);
   createMenu({
     id: "$" + menuId.slice(1),
-    title: await browser.i18n.getMessage("add_to_sub_category", category.name),
+    title: await browser.i18n.getMessage("menu.contact.context.add_to_new_sub_category", category.name),
     parentId: menuId,
   });
 }
@@ -153,7 +153,7 @@ export function createDispatcherForContactListContextMenu({
 }
 
 const MENU_HEADER_TEXT = await browser.i18n.getMessage(
-  "manage_categories_of_contact"
+  "menu.contact.context.manage_categories_of_contact"
 );
 
 export async function createMenuForContact(addressBook, contactId) {
@@ -188,6 +188,6 @@ export async function createMenuForContact(addressBook, contactId) {
 
   createMenu({
     id: "$",
-    title: await browser.i18n.getMessage("new_category_here"),
+    title: await browser.i18n.getMessage("menu.contact.context.add_to_new_top_level_category"),
   });
 }

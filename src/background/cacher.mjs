@@ -15,7 +15,7 @@ let abValues = await Promise.all(
 // Make "All Contacts" the first one
 const allContactsVirtualAddressBook = AddressBook.fromAllContacts(
   abValues,
-  await browser.i18n.getMessage("sendtocategory.category.all")
+  await browser.i18n.getMessage("tree.category.all")
 );
 abValues.unshift(allContactsVirtualAddressBook);
 let addressBooks = new Map(abValues.map((ab) => [ab.id, ab]));

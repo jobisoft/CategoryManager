@@ -2,7 +2,7 @@ import { isEmptyObject, filterObjectByKeyToNull } from "../utils.mjs";
 
 export const SUBCATEGORY_SEPARATOR = " / ";
 export const UNCATEGORIZED_CATEGORY_NAME = await browser.i18n.getMessage(
-  "viewWithoutCategories"
+  "tree.category.none"
 );
 
 export class Category {
