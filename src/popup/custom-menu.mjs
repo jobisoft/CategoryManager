@@ -8,23 +8,32 @@ import { addContactToCategory } from "./category-edit.mjs";
 
 const customMenu = document.getElementById("custom-menu");
 
-function updateCustomMenu(allowedActions, currentDraggingOverCategoryElement) {
+async function updateCustomMenu(
+  allowedActions,
+  currentDraggingOverCategoryElement
+) {
   for (const item of customMenu.children) {
     item.style.display = allowedActions.has(item.id) ? "block" : "none";
   }
   // Update the text
-  if (currentDraggingOverCategoryElement.nodeName == "NAV") {
-    customMenu.children[0].innerText = "Add to a new category";
-  } else {
-    customMenu.children[0].innerText = "Add to this category";
-  }
+  const menuItemKey =
+    currentDraggingOverCategoryElement.nodeName == "NAV"
+      ? "custom_menu.add_to_new_category"
+      : "custom_menu.add_to_category";
+  customMenu.children[0].innerText = await browser.i18n.getMessage(menuItemKey);
 }
 
 const ALLOWED_ACTIONS_ON_NEW_CATEGORY = new Set(["menu-add"]);
 const ALLOWED_ACTIONS_DEFAULT = new Set(["menu-add", "menu-add-sub"]);
 const ALLOWED_ACTIONS_FROM_NOWHERE = new Set(["menu-add", "menu-add-sub"]);
 
-export function showCustomMenu(
+document.getElementById("menu-add").innerText = await browser.i18n.getMessage(
+  "custom_menu.add_to_category"
+);
+document.getElementById("menu-add-sub").innerText =
+  await browser.i18n.getMessage("custom_menu.add_to_subcategory");
+
+export async function showCustomMenu(
   x,
   y,
   { currentDraggingOverCategoryElement, currentCategoryElement }
@@ -50,7 +59,7 @@ export function showCustomMenu(
       ALLOWED_ACTIONS_FROM_NOWHERE
     );
   }
-  updateCustomMenu(allowedActions, currentDraggingOverCategoryElement);
+  await updateCustomMenu(allowedActions, currentDraggingOverCategoryElement);
   customMenu.classList.add("show");
 }
 

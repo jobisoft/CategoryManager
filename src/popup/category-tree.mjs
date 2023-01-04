@@ -199,8 +199,8 @@ export function createCategoryTree({
     console.warn(`Dragging onto`, state.currentDraggingOverCategoryElement);
     e.preventDefault();
   }
-  function dragDrop(e) {
-    showCustomMenu(e.pageX, e.pageY, {
+  async function dragDrop(e) {
+    await showCustomMenu(e.pageX, e.pageY, {
       currentDraggingOverCategoryElement:
         state.currentDraggingOverCategoryElement,
       currentCategoryElement: state.currentCategoryElement,
