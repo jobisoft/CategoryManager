@@ -91,6 +91,18 @@
             }
         }
     },
+    "menu.category.add_to_to": {
+        "message": "Add to TO"
+    },
+    "menu.category.add_to_cc": {
+        "message": "Add to CC"
+    },
+    "menu.category.add_to_bcc": {
+        "message": "Add to BCC"
+    },
+    "menu.category.delete": {
+        "message": "Delete this category"
+    },
     "button_addMainCat": {
         "message": "Add top level category"
     },

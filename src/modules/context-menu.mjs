@@ -31,23 +31,32 @@ export function destroyAllMenus() {
   browser.menus.removeAll();
 }
 
+const MENU_ADD_TO_TO = await browser.i18n.getMessage("menu.category.add_to_to");
+const MENU_ADD_TO_CC = await browser.i18n.getMessage("menu.category.add_to_cc");
+const MENU_ADD_TO_BCC = await browser.i18n.getMessage(
+  "menu.category.add_to_bcc"
+);
+const MENU_DELETE_CATEGORY = await browser.i18n.getMessage(
+  "menu.category.delete"
+);
+
 export function createMenuForCategoryTree(categoryElement) {
   createMenu({
     id: "addToTO",
-    title: "Add to TO",
+    title: MENU_ADD_TO_TO,
   });
   createMenu({
     id: "addToCC",
-    title: "Add to CC",
+    title: MENU_ADD_TO_CC,
   });
   createMenu({
     id: "addToBCC",
-    title: "Add to BCC",
+    title: MENU_ADD_TO_BCC,
   });
   if (!("uncategorized" in categoryElement.dataset)) {
     // Add an option to delete this category
     createSeparator();
-    createMenu({ id: "deleteCategory", title: "Delete this category" });
+    createMenu({ id: "deleteCategory", title: MENU_DELETE_CATEGORY });
   }
 }
 
