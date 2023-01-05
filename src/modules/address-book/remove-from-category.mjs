@@ -3,10 +3,9 @@ import {
   categoryStringToArr,
   isContactInAnySubcategory,
   shouldContactBeUncategorized,
-  Category,
-  buildUncategorizedCategory,
   categoryObjToString,
-} from "./category.mjs";
+} from "./category-utils.mjs";
+import { Category, buildUncategorizedCategory } from "./category.mjs";
 import { isEmptyObject } from "../utils.mjs";
 
 function removeContactFromCategoryHelper(

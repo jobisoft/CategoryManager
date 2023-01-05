@@ -1,8 +1,8 @@
 import {
   Category,
   buildUncategorizedCategory,
-  categoryStringToArr,
 } from "./category.mjs";
+import { categoryStringToArr } from "./category-utils.mjs";
 import { sortMapByKey } from "../utils.mjs";
 
 export async function addContactToCategory(
