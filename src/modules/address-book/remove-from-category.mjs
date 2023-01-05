@@ -8,7 +8,6 @@ import {
   categoryObjToString,
 } from "./category.mjs";
 import { isEmptyObject } from "../utils.mjs";
-import { updateCategoriesForContact } from "../contact.mjs";
 
 function removeContactFromCategoryHelper(
   addressBook,
@@ -92,7 +91,6 @@ export async function removeContactFromCategory(
   addressBook,
   contactId,
   categoryStr,
-  writeToThunderbird = false,
   updateContact = false
 ) {
   console.info(
@@ -100,14 +98,10 @@ export async function removeContactFromCategory(
     addressBook,
     contactId,
     categoryStr,
-    writeToThunderbird,
     updateContact
   );
 
   const contact = addressBook.contacts[contactId];
-  if (writeToThunderbird) {
-    await updateCategoriesForContact(contact, [], [categoryStr]);
-  }
   if (updateContact) {
     // update contact data
     // remove category from contact.
@@ -117,12 +111,6 @@ export async function removeContactFromCategory(
       console.error("Category not found in contact", categoryStr, contact);
     }
   }
-  // Note that this function is different from `deleteContactRecursively`.
-  // Consider this case:
-  //     Contact AAA belongs to a/b/c and a/b/d. Now we delete a/b/d.
-  // `deleteContactRecursively` would remove this contact from a, b and d.
-  // But `removeContactFromCategory` should only remove this contact from d.
-  //
   // Implementation Note:
   // If there are no other subcategories containing this contact, we can remove it from this category.
   const categoryArr = categoryStringToArr(categoryStr);

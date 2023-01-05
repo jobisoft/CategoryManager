@@ -30,13 +30,13 @@ export async function updateContactInCache(
     const deletion = [...oldCategories].filter((x) => !newCategories.has(x));
     console.debug("Addition", addition);
     for (const cat of addition) {
-      await addContactToCategory(addressBook, id, cat, false, true);
-      await addContactToCategory(virtualAddressBook, id, cat, false, true);
+      await addContactToCategory(addressBook, id, cat, true);
+      await addContactToCategory(virtualAddressBook, id, cat, true);
     }
     console.debug("Deletion", deletion);
     for (const cat of deletion) {
-      await removeContactFromCategory(addressBook, id, cat, false, true);
-      await removeContactFromCategory(virtualAddressBook, id, cat, false, true);
+      await removeContactFromCategory(addressBook, id, cat, true);
+      await removeContactFromCategory(virtualAddressBook, id, cat, true);
     }
   }
   addressBook.contacts[id] = newContact;

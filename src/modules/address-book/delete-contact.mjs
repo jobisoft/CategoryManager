@@ -5,7 +5,7 @@ export function deleteContactInCache(addressBook, contactId) {
   const contact = addressBook.contacts[contactId];
   for (const cat of contact.categories) {
     console.log("Delete", contact.name, "from", cat);
-    removeContactFromCategory(addressBook, contact.id, cat, false, true);
+    removeContactFromCategory(addressBook, contact.id, cat, true);
   }
   delete addressBook.contacts[contactId];
 }

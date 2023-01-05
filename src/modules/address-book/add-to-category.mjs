@@ -3,20 +3,15 @@ import {
   buildUncategorizedCategory,
   categoryStringToArr,
 } from "./category.mjs";
-import { updateCategoriesForContact } from "../contact.mjs";
 
 export async function addContactToCategory(
   addressBook,
   contactId,
   categoryStr,
-  writeToThunderbird = false,
   updateContact = false
 ) {
   const categoryArr = categoryStringToArr(categoryStr);
   const contact = addressBook.contacts[contactId];
-  if (writeToThunderbird) {
-    await updateCategoriesForContact(contact, [categoryStr], []);
-  }
   if (updateContact) {
     // update contact data
     // check if the category is already in the contact

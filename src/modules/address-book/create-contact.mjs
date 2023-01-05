@@ -15,6 +15,6 @@ export async function createContactInCache(addressBook, contactNode) {
     return;
   }
   for (const categoryStr of contact.categories) {
-    await addContactToCategory(addressBook, id, categoryStr, false, true);
+    await addContactToCategory(addressBook, id, categoryStr, true);
   }
 }
