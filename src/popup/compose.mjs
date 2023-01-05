@@ -10,7 +10,7 @@ export async function addContactsToComposeDetails(fieldName, state, contacts) {
     const { address, name } = emailAddresses.parseOneAddress(addr);
     map.set(address, name);
   });
-  Object.keys(contacts).forEach((contactId) => {
+  contacts.forEach((contactId) => {
     // Add this contact if it doesn't exist in the map
     const { name, email } = state.currentAddressBook.contacts[contactId];
     if (email != null && !map.has(email)) map.set(email, name);
@@ -31,7 +31,7 @@ export async function openComposeWindowWithContacts(
 ) {
   // Do a filterMap(using a flatMap) to remove contacts that do not have an email address
   // and map the filtered contacts to rfc 5322 email address format.
-  const emailList = Object.keys(contacts).flatMap((c) => {
+  const emailList = contacts.flatMap((c) => {
     const contact = id2contact(state.currentAddressBook, c);
     return contact.email == null ? [] : [toRFC5322EmailAddress(contact)];
   });

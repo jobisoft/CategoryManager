@@ -6,5 +6,5 @@ export function lookupContactsByCategoryElement(element) {
   const categoryKey = element.dataset.category;
   const isUncategorized = element.dataset.uncategorized != null;
   return lookupCategory(state.currentAddressBook, categoryKey, isUncategorized)
-    .contacts;
+    .contactKeys;
 }

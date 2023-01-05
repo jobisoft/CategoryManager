@@ -36,7 +36,7 @@ export function createAddressBookList({
       }),
       contactList.update({
         addressBook: state.currentAddressBook,
-        contacts: state.currentAddressBook.contacts,
+        contacts: state.currentAddressBook.contactKeys,
       }),
     ]);
   }

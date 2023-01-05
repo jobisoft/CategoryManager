@@ -5,7 +5,7 @@ import {
   shouldContactBeUncategorized,
   categoryObjToString,
 } from "./category-utils.mjs";
-import { Category, buildUncategorizedCategory } from "./category.mjs";
+import { Category, buildCategory } from "./category.mjs";
 import { isEmptyObject } from "../utils.mjs";
 
 function removeContactFromCategoryHelper(
@@ -73,7 +73,7 @@ function removeContactFromCategoryHelper(
     categoryObj.uncategorized ??= Category.createUncategorizedCategory(
       categoryObj.path
     );
-    buildUncategorizedCategory(categoryObj, false);
+    buildCategory(categoryObj, false);
   }
   if (
     categoryObj.uncategorized != null &&
