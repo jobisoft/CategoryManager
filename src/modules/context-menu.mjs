@@ -32,9 +32,10 @@ export function destroyAllMenus() {
 }
 
 let { type } = await browser.windows.getCurrent();
-const MENU_TITLE_LOCALE_KEY = type == "messageCompose"
-  ? "menu.category.add_members_to_current_message"
-  : "menu.category.add_members_to_new_message";
+const MENU_TITLE_LOCALE_KEY =
+  type == "messageCompose"
+    ? "menu.category.add_members_to_current_message"
+    : "menu.category.add_members_to_new_message";
 const MENU_ADD_TITLE = await browser.i18n.getMessage(MENU_TITLE_LOCALE_KEY);
 const MENU_ADD_TO_TO = await browser.i18n.getMessage("menu.category.add_to_to");
 const MENU_ADD_TO_CC = await browser.i18n.getMessage("menu.category.add_to_cc");
@@ -49,8 +50,8 @@ export function createMenuForCategoryTree(categoryElement) {
   createMenu({
     id: "actionTitle",
     enabled: false,
-    title: MENU_ADD_TITLE
-  })
+    title: MENU_ADD_TITLE,
+  });
   createMenu({
     id: "addToTO",
     title: MENU_ADD_TO_TO,
@@ -78,7 +79,6 @@ async function createCategoryEditingMenuRecursively(
 ) {
   const menuId = prefix + category.name;
   const checked = isContactInCategory(category, contactId);
-  const subCategories = Object.keys(category.categories);
 
   createCheckBoxMenu({
     id: menuId,
@@ -100,18 +100,19 @@ async function createCategoryEditingMenuRecursively(
   } else {
     createMenu({
       id: "%" + menuId.slice(1),
-      title: await browser.i18n.getMessage("menu.contact.context.add_to_category", category.name),
+      title: await browser.i18n.getMessage(
+        "menu.contact.context.add_to_category",
+        category.name
+      ),
       parentId: menuId,
     });
   }
 
-  if (subCategories.length) {
+  if (category.categories.size > 0) {
     createSeparator(menuId);
-    subCategories.sort();
-    for (const catName of subCategories) {
-      const subCategory = category.categories[catName];
+    for (const subcategory of category.categories.values()) {
       await createCategoryEditingMenuRecursively(
-        subCategory,
+        subcategory,
         contactId,
         menuId + SUBCATEGORY_SEPARATOR,
         menuId
@@ -122,7 +123,10 @@ async function createCategoryEditingMenuRecursively(
   createSeparator(menuId);
   createMenu({
     id: "$" + menuId.slice(1),
-    title: await browser.i18n.getMessage("menu.contact.context.add_to_new_sub_category", category.name),
+    title: await browser.i18n.getMessage(
+      "menu.contact.context.add_to_new_sub_category",
+      category.name
+    ),
     parentId: menuId,
   });
 }
@@ -182,13 +186,9 @@ export async function createMenuForContact(addressBook, contactId) {
     enabled: false,
   });
 
-  let categories = Object.keys(addressBook.categories);
-  if (categories.length) {
+  if (addressBook.categories.size > 0) {
     createSeparator();
-    categories.sort();
-
-    for (const catName of categories) {
-      const category = addressBook.categories[catName];
+    for (const category of addressBook.categories.values()) {
       // Add # prefix to avoid id conflicts
       await createCategoryEditingMenuRecursively(category, contactId, "#");
     }
@@ -198,6 +198,8 @@ export async function createMenuForContact(addressBook, contactId) {
 
   createMenu({
     id: "$",
-    title: await browser.i18n.getMessage("menu.contact.context.add_to_new_top_level_category"),
+    title: await browser.i18n.getMessage(
+      "menu.contact.context.add_to_new_top_level_category"
+    ),
   });
 }

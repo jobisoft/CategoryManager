@@ -13,6 +13,7 @@ import {
   openComposeWindowWithContacts,
 } from "./compose.mjs";
 import { showCustomMenu } from "./custom-menu.mjs";
+import { mapIter } from "../modules/iter.mjs";
 
 function isActiveCategory(category, activeCategory) {
   return (
@@ -39,12 +40,13 @@ function writeTreeLeaf(category, activeCategory) {
 }
 
 export function writeTreeNode(category, activeCategory) {
-  let children = Object.keys(category.categories).map((key) => {
-    const subCategory = category.categories[key];
-    return isLeafCategory(subCategory)
-      ? writeTreeLeaf(subCategory, activeCategory)
-      : writeTreeNode(subCategory, activeCategory);
-  });
+  let children = [
+    ...mapIter(category.categories.values(), (subCategory) => {
+      return isLeafCategory(subCategory)
+        ? writeTreeLeaf(subCategory, activeCategory)
+        : writeTreeNode(subCategory, activeCategory);
+    }),
+  ];
   const uncategorizedCategory = category.uncategorized;
   if (uncategorizedCategory != null) {
     children.push(
@@ -86,9 +88,11 @@ export function createCategoryTree({
     template({ addressBook, activeCategory }) {
       let res = `<div class="tree-nav__item new-category"><p class="tree-nav__item-title new-category-title">[ New Category ]</p></div>\n`;
       if (addressBook == null) return res;
-      let roots = Object.keys(addressBook.categories).map((key) =>
-        writeTreeNode(addressBook.categories[key], activeCategory)
-      );
+      let roots = [
+        ...mapIter(addressBook.categories.values(), (rootCategory) =>
+          writeTreeNode(rootCategory, activeCategory)
+        ),
+      ];
       const uncategorizedCategory = addressBook.uncategorized;
       if (uncategorizedCategory != null) {
         roots.push(writeTreeLeaf(uncategorizedCategory, activeCategory));

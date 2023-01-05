@@ -63,7 +63,7 @@ async function showCategoryInputModalAsync(initialValue) {
 
 export async function getCategoryStringFromInput(parentCategory = null) {
   const result = await showCategoryInputModalAsync(
-    parentCategory != null ? parentCategory + SUBCATEGORY_SEPARATOR : null
+    parentCategory ? parentCategory + SUBCATEGORY_SEPARATOR : null
   );
   console.log(categoryInput);
   console.log(result);

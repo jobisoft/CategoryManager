@@ -86,10 +86,9 @@ export function initContextMenu(state, updateUI) {
         const addressBookId = state.elementForContextMenu.dataset.addressbook;
         const addressBook = state.addressBooks.get(addressBookId);
         if (createSubCategory) {
-          const subcategory = await getCategoryStringFromInput();
+          const subcategory = await getCategoryStringFromInput(categoryStr);
           if (subcategory == null) return;
-          if (categoryStr === "") categoryStr = subcategory;
-          else categoryStr += ` / ${subcategory}`;
+          categoryStr = subcategory;
         }
         await addContactToCategory({
           addressBook,

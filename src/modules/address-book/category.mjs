@@ -16,7 +16,7 @@ export class Category {
     name,
     path,
     contacts = {},
-    subCategories = {},
+    subCategories = new Map(),
     isUncategorized = false
   ) {
     this.name = name;
@@ -40,7 +40,7 @@ export class Category {
       UNCATEGORIZED_CATEGORY_NAME,
       newPath,
       contacts,
-      {},
+      new Map(),
       true
     );
   }
@@ -66,7 +66,7 @@ export function categoryStringToArr(cat) {
 }
 
 export function isLeafCategory(cat) {
-  return isEmptyObject(cat.categories);
+  return cat.categories.size === 0;
 }
 
 export function isSubcategoryOf(childStr, parentStr) {
@@ -82,17 +82,16 @@ export function categoryPathToString(categoryPath, isUncategorized) {
 }
 
 export function buildUncategorizedCategory(category, recursive = true) {
-  // only call this method once
   if (isLeafCategory(category) && category.path != null) {
     // recursion base case
     return;
   }
   let contacts = {};
-  for (let cat in category.categories) {
+  for (const catObj of category.categories.values()) {
     // 1. build uncategorized for sub category
-    if (recursive) buildUncategorizedCategory(category.categories[cat]);
+    if (recursive) buildUncategorizedCategory(catObj);
     // 2. add contacts from subcategory to `contacts`
-    Object.assign(contacts, category.categories[cat].contacts);
+    Object.assign(contacts, catObj.contacts);
   }
   // Get the contacts that doesn't appear in any categories
   const filtered = filterObjectByKeyToNull(
@@ -143,8 +142,7 @@ export function isContactInCategory(categoryObj, contactId) {
 
 export function isContactInAnySubcategory(categoryObj, contactId) {
   let result = false;
-  for (const categoryName in categoryObj.categories) {
-    const subcategory = categoryObj.categories[categoryName];
+  for (const subcategory of categoryObj.categories.values()) {
     if (isContactInCategory(subcategory, contactId)) {
       result = true;
       break;
@@ -155,8 +153,7 @@ export function isContactInAnySubcategory(categoryObj, contactId) {
 
 export function shouldContactBeUncategorized(categoryObj, contactId) {
   let uncategorized = true;
-  for (const catName in categoryObj.categories) {
-    const subcategory = categoryObj.categories[catName];
+  for (const subcategory of categoryObj.categories.values()) {
     if (isContactInCategory(subcategory, contactId)) {
       uncategorized = false;
       break;
@@ -165,9 +162,9 @@ export function shouldContactBeUncategorized(categoryObj, contactId) {
   return uncategorized;
 }
 
-export function reduceCategories(categories) {
-  return categories.reduce((acc, cur) => {
-    if (!categories.find((e) => e.trim().startsWith(cur + " /"))) {
+export function reduceCategories(categoriesArray) {
+  return categoriesArray.reduce((acc, cur) => {
+    if (!categoriesArray.find((e) => e.trim().startsWith(cur + " /"))) {
       acc.push(cur);
     }
     return acc;

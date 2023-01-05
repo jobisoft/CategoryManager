@@ -56,12 +56,14 @@ export async function addContactToCategory(
   let cur = addressBook;
   let categoryNeedingUpdate;
   categoryArr.forEach((cat) => {
-    if (cur.categories[cat] == null && state == "1") {
-      state = "2";
-      categoryNeedingUpdate = cur;
+    if (!cur.categories.has(cat) && state == "1") {
+      if (state == "1") {
+        state = "2";
+        categoryNeedingUpdate = cur;
+      }
+      cur.categories.set(cat, Category.createSubcategory(cur, cat));
     }
-    cur.categories[cat] ??= Category.createSubcategory(cur, cat);
-    cur = cur.categories[cat];
+    cur = cur.categories.get(cat);
     cur.contacts[contactId] = null;
   });
   // Now cur points to the last category in the path.

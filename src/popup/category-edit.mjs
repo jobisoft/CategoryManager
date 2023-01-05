@@ -112,12 +112,12 @@ export async function deleteCategory({
         );
       }
     }
-  }
-  return deleteCategoryHelper(
-    addressBook,
-    categoryPath,
-    isUncategorized,
-    true,
-    true
-  );
+  } else
+    return deleteCategoryHelper(
+      addressBook,
+      categoryPath,
+      isUncategorized,
+      true,
+      true
+    );
 }

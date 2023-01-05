@@ -1,7 +1,4 @@
-import {
-  categoryStringToArr,
-  reduceCategories,
-} from "./address-book/index.mjs";
+import { reduceCategories } from "./address-book/index.mjs";
 import { setEqual } from "./set.mjs";
 // global object: ICAL from external ical.js
 
@@ -79,9 +76,11 @@ export async function updateCategoriesForContact(contact, addition, deletion) {
   return null;
 }
 
-export function parseContact(
-  { id, parentId, properties: { vCard, DisplayName } }
-) {
+export function parseContact({
+  id,
+  parentId,
+  properties: { vCard, DisplayName },
+}) {
   const component = new ICAL.Component(ICAL.parse(vCard));
   const categories = component
     .getAllProperties("categories")

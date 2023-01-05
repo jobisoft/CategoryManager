@@ -31,7 +31,7 @@ function removeContactFromCategoryHelper(
   // Delete contact from this node only if
   // it does not belong to this category and any sub category.
   const nextCategoryName = remainingCategoryArr[0];
-  const nextCategoryObj = categoryObj.categories[nextCategoryName];
+  const nextCategoryObj = categoryObj.categories.get(nextCategoryName);
   removeContactFromCategoryHelper(
     addressBook,
     nextCategoryObj,
@@ -62,7 +62,7 @@ function removeContactFromCategoryHelper(
     shouldDeleteCategory
   );
   if (shouldDeleteCategory) {
-    delete categoryObj.categories[nextCategoryName];
+    categoryObj.categories.delete(nextCategoryName);
     console.log("Deleted category", nextCategoryName, "from", categoryObj);
   }
   // After deleting this contact in the subcategory,

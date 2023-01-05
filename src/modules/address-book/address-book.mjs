@@ -7,7 +7,7 @@ import {
 import { parseContact } from "../contact.mjs";
 
 export class AddressBook {
-  categories = {};
+  categories = new Map();
   uncategorized;
   contacts;
   name;
@@ -65,14 +65,16 @@ export class AddressBook {
   #addContactToCategoryWhenBuildingTree(contact, categoryStr) {
     const category = categoryStringToArr(categoryStr);
     let rootName = category[0];
-    this.categories[rootName] ??= new Category(rootName, rootName);
-    let cur = this.categories[rootName];
+    if (!this.categories.has(rootName))
+      this.categories.set(rootName, new Category(rootName, rootName));
+    let cur = this.categories.get(rootName);
     cur.contacts[contact.id] = null;
     let path = rootName;
     category.slice(1).forEach((cat) => {
       path += SUBCATEGORY_SEPARATOR + cat;
-      cur.categories[cat] ??= new Category(cat, path);
-      cur = cur.categories[cat];
+      if (!cur.categories.has(cat))
+        cur.categories.set(cat, new Category(cat, path));
+      cur = cur.categories.get(cat);
       cur.contacts[contact.id] = null;
     });
   }
@@ -96,8 +98,8 @@ export function lookupCategory(
   }
   let cur = addressBook;
   for (const cat of category) {
-    if (cur.categories[cat] == null) return null;
-    cur = cur.categories[cat];
+    if (!cur.categories.has(cat)) return null;
+    cur = cur.categories.get(cat);
   }
   const categoryResult = isUncategorized ? cur.uncategorized : cur;
   return categoryResult;
