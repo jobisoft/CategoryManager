@@ -52,7 +52,7 @@ export async function addContactToCategory(
   let cur = addressBook;
   let categoryNeedingUpdate;
   categoryArr.forEach((cat) => {
-    if (!cur.categories.has(cat) && state == "1") {
+    if (!cur.categories.has(cat)) {
       if (state == "1") {
         state = "2";
         categoryNeedingUpdate = cur;
