@@ -3,6 +3,7 @@ import {
   buildUncategorizedCategory,
   categoryStringToArr,
 } from "./category.mjs";
+import { sortMapByKey } from "../utils.mjs";
 
 export async function addContactToCategory(
   addressBook,
@@ -57,6 +58,7 @@ export async function addContactToCategory(
         categoryNeedingUpdate = cur;
       }
       cur.categories.set(cat, Category.createSubcategory(cur, cat));
+      cur.categories = sortMapByKey(cur.categories);
     }
     cur = cur.categories.get(cat);
     cur.contacts[contactId] = null;

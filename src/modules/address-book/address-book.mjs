@@ -5,6 +5,7 @@ import {
   SUBCATEGORY_SEPARATOR,
 } from "./category.mjs";
 import { parseContact } from "../contact.mjs";
+import { sortMapByKey } from "../utils.mjs";
 
 export class AddressBook {
   categories = new Map();
@@ -65,15 +66,19 @@ export class AddressBook {
   #addContactToCategoryWhenBuildingTree(contact, categoryStr) {
     const category = categoryStringToArr(categoryStr);
     let rootName = category[0];
-    if (!this.categories.has(rootName))
+    if (!this.categories.has(rootName)) {
       this.categories.set(rootName, new Category(rootName, rootName));
+      this.categories = sortMapByKey(this.categories);
+    }
     let cur = this.categories.get(rootName);
     cur.contacts[contact.id] = null;
     let path = rootName;
     category.slice(1).forEach((cat) => {
       path += SUBCATEGORY_SEPARATOR + cat;
-      if (!cur.categories.has(cat))
+      if (!cur.categories.has(cat)) {
         cur.categories.set(cat, new Category(cat, path));
+        cur.categories = sortMapByKey(cur.categories);
+      }
       cur = cur.categories.get(cat);
       cur.contacts[contact.id] = null;
     });

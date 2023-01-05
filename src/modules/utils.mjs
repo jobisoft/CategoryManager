@@ -7,3 +7,7 @@ export function filterObjectByKeyToNull(obj, predicate) {
     .filter((key) => predicate(key))
     .reduce((res, key) => ((res[key] = null), res), {});
 }
+
+export function sortMapByKey(map) {
+  return new Map([...map.entries()].sort((a, b) => a[0].localeCompare(b[0])));
+}
