@@ -91,40 +91,43 @@ export function initCustomMenu(state, categoryTree, updateUI) {
       state.currentContactDataFromDragAndDrop.split("\n");
     const addressBook = state.addressBooks.get(addressBookId);
     state.allowEdit = false;
-    switch (e.target.id) {
-      case "menu-add":
-        // Get user input if dragging onto [ New Category ]
-        categoryStr =
-          state.currentDraggingOverCategoryElement.dataset.category ??
-          (await getCategoryStringFromInput());
-        if (categoryStr == null) break;
-        await addContactToCategory({
-          addressBook,
-          contactId,
-          categoryStr,
-          virtualAddressBook: state.allContactsVirtualAddressBook,
-        });
-        break;
-      case "menu-add-sub":
-        categoryStr = await getCategoryStringFromInput(
-          state.currentDraggingOverCategoryElement.dataset.category
-        );
-        if (categoryStr == null) break;
-        await addContactToCategory({
-          addressBook,
-          contactId,
-          categoryStr,
-          virtualAddressBook: state.allContactsVirtualAddressBook,
-        });
-        break;
-      default:
-        console.error("Unknown action! from", e.target);
-        break;
+    try {
+      switch (e.target.id) {
+        case "menu-add":
+          // Get user input if dragging onto [ New Category ]
+          categoryStr =
+            state.currentDraggingOverCategoryElement.dataset.category ??
+            (await getCategoryStringFromInput());
+          if (categoryStr == null) break;
+          await addContactToCategory({
+            addressBook,
+            contactId,
+            categoryStr,
+            virtualAddressBook: state.allContactsVirtualAddressBook,
+          });
+          break;
+        case "menu-add-sub":
+          categoryStr = await getCategoryStringFromInput(
+            state.currentDraggingOverCategoryElement.dataset.category
+          );
+          if (categoryStr == null) break;
+          await addContactToCategory({
+            addressBook,
+            contactId,
+            categoryStr,
+            virtualAddressBook: state.allContactsVirtualAddressBook,
+          });
+          break;
+        default:
+          console.error("Unknown action! from", e.target);
+          break;
+      }
+      state.currentContactDataFromDragAndDrop = null;
+      categoryTree.hideNewCategory();
+      categoryTree.hideDragOverHighlight();
+      await updateUI();
+    } finally {
+      state.allowEdit = true;
     }
-    state.currentContactDataFromDragAndDrop = null;
-    categoryTree.hideNewCategory();
-    categoryTree.hideDragOverHighlight();
-    await updateUI();
-    state.allowEdit = true;
   });
 }
