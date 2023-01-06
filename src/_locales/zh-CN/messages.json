@@ -50,6 +50,9 @@
   "menu.category.delete": {
     "message": "删除此类别"
   },
+  "menu.category.rename": {
+      "message": "Rename or move this category"
+  },
   "menu.contact.context.add_to_category": {
     "message": "添加到 '$CATEGORY$'",
     "placeholders": {

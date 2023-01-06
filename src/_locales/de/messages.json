@@ -50,6 +50,9 @@
     "menu.category.delete": {
         "message": "Diese Kategorie löschen"
     },
+    "menu.category.rename": {
+        "message": "Diese Kategorie umbenennen oder verschieben"
+    },
     "menu.contact.context.add_to_category": {
         "message": "Zu '$CATEGORY$' hinzufügen",
         "placeholders": {

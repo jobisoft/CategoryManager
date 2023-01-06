@@ -18,6 +18,7 @@ const MENU_ADD_TO_BCC = await browser.i18n.getMessage(
 const MENU_DELETE_CATEGORY = await browser.i18n.getMessage(
   "menu.category.delete"
 );
+const MENU_RENAME_CATEGORY = await browser.i18n.getMessage("menu.category.rename");
 
 function createMenu(properties) {
   return browser.menus.create({
@@ -67,6 +68,7 @@ export function createMenuForCategoryTree(categoryElement) {
   if (!("uncategorized" in categoryElement.dataset)) {
     // Add an option to delete this category
     createSeparator();
+    createMenu({ id: "renameCategory", title: MENU_RENAME_CATEGORY });
     createMenu({ id: "deleteCategory", title: MENU_DELETE_CATEGORY });
   }
 }

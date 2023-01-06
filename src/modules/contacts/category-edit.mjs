@@ -37,7 +37,7 @@ export async function addCategoryToContactVCard({
   );
 }
 
-export async function removeCategoryFromAllContactVcards({
+export async function removeCategory({
   categoryStr,
   addressBook,
   addressBooks, // TODO : This seems to be a constant global, do we have to pass it around?
@@ -50,7 +50,6 @@ export async function removeCategoryFromAllContactVcards({
       if (ab == virtualAddressBook) {
         continue;
       }
-      console.log(ab.name);
       // Loop over all contacts of that category.
       const categoryObj = lookupCategory(
         ab,
@@ -60,7 +59,6 @@ export async function removeCategoryFromAllContactVcards({
         continue;
       }
       for (const contactId in categoryObj.contacts) {
-        console.log(ab.name, contactId);
         await removeCategoryFromContactVCard({
           contactId,
           addressBook: ab,
@@ -68,4 +66,42 @@ export async function removeCategoryFromAllContactVcards({
         })
       }
     }
+}
+
+export async function moveCategory({
+  addressBook,
+  addressBooks, // TODO : This seems to be a constant global, do we have to pass it around?
+  oldCategoryStr,
+  newCategoryStr,
+}) {
+  const virtualAddressBook = addressBooks.get("all-contacts");
+  let pendingAddressBooks = addressBook === virtualAddressBook
+    ? addressBooks.values()
+    : [addressBook];
+
+  for (const ab of pendingAddressBooks) {
+    if (ab == virtualAddressBook) {
+      continue;
+    }
+    // Loop over all contacts of that category.
+    const categoryObj = lookupCategory(
+      ab,
+      oldCategoryStr
+    );
+    if (!categoryObj) {
+      continue;
+    }
+    for (const contactId in categoryObj.contacts) {
+      await removeCategoryFromContactVCard({
+        contactId,
+        addressBook: ab,
+        categoryStr: oldCategoryStr,
+      });
+      await addCategoryToContactVCard({
+        contactId,
+        addressBook: ab,
+        categoryStr: newCategoryStr,
+      });
+    }
+  }
 }

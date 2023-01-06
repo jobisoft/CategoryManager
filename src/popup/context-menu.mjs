@@ -13,10 +13,14 @@ import {
   createMenuForContact,
   destroyAllMenus,
 } from "../modules/context-menu.mjs";
-import { getCategoryStringFromInput } from "./modal.mjs";
+import {
+  getCategoryStringFromInput,
+  showCategoryInputModalAsync,
+} from "./modal.mjs";
 import {
   addCategoryToContactVCard,
-  removeCategoryFromAllContactVcards,
+  moveCategory,
+  removeCategory,
   removeCategoryFromContactVCard,
 } from "../modules/contacts/category-edit.mjs";
 
@@ -56,10 +60,21 @@ export function initContextMenu(state) {
     addToCC: makeCategoryMenuHandler("cc", state),
     addToBCC: makeCategoryMenuHandler("bcc", state),
     async deleteCategory(categoryElement) {
-      await removeCategoryFromAllContactVcards({
+      await removeCategory({
         categoryStr: categoryElement.dataset.category,
         addressBook: state.currentAddressBook,
         addressBooks: state.addressBooks,
+      });
+    },
+    async renameCategory(categoryElement) {
+      const oldCategoryStr = categoryElement.dataset.category;
+      const newCategoryStr = await showCategoryInputModalAsync(oldCategoryStr);
+      if (newCategoryStr == null) return;
+      await moveCategory({
+        addressBook: state.currentAddressBook,
+        addressBooks: state.addressBooks,
+        oldCategoryStr,
+        newCategoryStr,
       });
     },
   };
