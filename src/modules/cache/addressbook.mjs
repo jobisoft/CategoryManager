@@ -4,20 +4,13 @@ import {
   categoryStringToArr,
   SUBCATEGORY_SEPARATOR,
 } from "./category.mjs";
-import { parseContact } from "../contact.mjs";
+import { parseContact } from "../contacts/contact.mjs";
 import { sortMapByKey } from "../utils.mjs";
 
 export class AddressBook {
-  categories = new Map();
-  uncategorized;
-  contacts;
-  name;
-  id;
-  path = null; // For compatibility with class Category,
-  // especially when building uncategorized category
-
   constructor(name, contacts, id) {
     this.name = name;
+    this.categories = new Map();
     this.contacts = contacts;
     this.id = id ?? name;
   }
@@ -60,7 +53,6 @@ export class AddressBook {
         this.#addContactToCategoryWhenBuildingTree(contact, category);
       }
     }
-    buildUncategorizedCategory(this);
   }
 
   #addContactToCategoryWhenBuildingTree(contact, categoryStr) {
@@ -71,7 +63,7 @@ export class AddressBook {
       this.categories = sortMapByKey(this.categories);
     }
     let cur = this.categories.get(rootName);
-    cur.contacts[contact.id] = null;
+    cur.contacts[contact.id] = this.contacts[contact.id];
     let path = rootName;
     category.slice(1).forEach((cat) => {
       path += SUBCATEGORY_SEPARATOR + cat;
@@ -80,25 +72,22 @@ export class AddressBook {
         cur.categories = sortMapByKey(cur.categories);
       }
       cur = cur.categories.get(cat);
-      cur.contacts[contact.id] = null;
+      cur.contacts[contact.id] = this.contacts[contact.id];
     });
-  }
-
-  lookup(categoryKey, isUncategorized = false) {
-    return lookupCategory(this, categoryKey, isUncategorized);
   }
 }
 
 export function lookupCategory(
   addressBook,
   categoryKey,
-  isUncategorized = false
+  getUncategorized = false
 ) {
   // look up a category using a key like `A / B`
   console.log("Looking up", categoryKey);
   const category = categoryStringToArr(categoryKey);
-  if (isUncategorized) {
+  if (getUncategorized) {
     // remove the last sub category
+    // TODO : Correct ?
     category.pop();
   }
   let cur = addressBook;
@@ -106,8 +95,9 @@ export function lookupCategory(
     if (!cur.categories.has(cat)) return null;
     cur = cur.categories.get(cat);
   }
-  const categoryResult = isUncategorized ? cur.uncategorized : cur;
-  return categoryResult;
+  return getUncategorized 
+    ? buildUncategorizedCategory(cur)
+    : cur;
 }
 
 export function id2contact(addressBook, contactId) {

@@ -5,14 +5,15 @@ import {
 } from "../modules/ui.mjs";
 import {
   categoryPathToString,
+  buildUncategorizedCategory,
   isLeafCategory,
-} from "../modules/address-book/index.mjs";
+} from "../modules/cache/index.mjs";
 import { lookupContactsByCategoryElement } from "./utils.mjs";
 import {
   addContactsToComposeDetails,
   openComposeWindowWithContacts,
 } from "./compose.mjs";
-import { showCustomMenu } from "./custom-menu.mjs";
+import { showCustomMenu } from "./drag-menu.mjs";
 import { mapIter } from "../modules/iter.mjs";
 
 function isActiveCategory(category, activeCategory) {
@@ -47,7 +48,8 @@ export function writeTreeNode(category, activeCategory) {
         : writeTreeNode(subCategory, activeCategory);
     }),
   ];
-  const uncategorizedCategory = category.uncategorized;
+  
+  const uncategorizedCategory = buildUncategorizedCategory(category);
   if (uncategorizedCategory != null) {
     children.push(
       // `uncategorized` is always the last one and needs special handling
@@ -93,7 +95,7 @@ export function createCategoryTree({
           writeTreeNode(rootCategory, activeCategory)
         ),
       ];
-      const uncategorizedCategory = addressBook.uncategorized;
+      const uncategorizedCategory = buildUncategorizedCategory(addressBook);
       if (uncategorizedCategory != null) {
         roots.push(writeTreeLeaf(uncategorizedCategory, activeCategory));
       }

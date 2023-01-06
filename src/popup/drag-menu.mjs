@@ -4,7 +4,7 @@
 
 import { setIntersection } from "../modules/set.mjs";
 import { getCategoryStringFromInput } from "./modal.mjs";
-import { addContactToCategory } from "./category-edit.mjs";
+import { addCategoryToContactVCard } from "../modules/contacts/category-edit.mjs";
 
 const customMenu = document.getElementById("custom-menu");
 
@@ -67,7 +67,7 @@ export function hideCustomMenu() {
   customMenu.classList.remove("show");
 }
 
-export function initCustomMenu(state, categoryTree, updateUI) {
+export function initCustomMenu(state, categoryTree) {
   document.addEventListener("mousedown", (e) => {
     let element = e.target;
     while (element !== customMenu && element != null) {
@@ -99,11 +99,10 @@ export function initCustomMenu(state, categoryTree, updateUI) {
             state.currentDraggingOverCategoryElement.dataset.category ??
             (await getCategoryStringFromInput());
           if (categoryStr == null) break;
-          await addContactToCategory({
+          await addCategoryToContactVCard({
             addressBook,
             contactId,
-            categoryStr,
-            virtualAddressBook: state.allContactsVirtualAddressBook,
+            categoryStr
           });
           break;
         case "menu-add-sub":
@@ -111,11 +110,10 @@ export function initCustomMenu(state, categoryTree, updateUI) {
             state.currentDraggingOverCategoryElement.dataset.category
           );
           if (categoryStr == null) break;
-          await addContactToCategory({
+          await addCategoryToContactVCard({
             addressBook,
             contactId,
-            categoryStr,
-            virtualAddressBook: state.allContactsVirtualAddressBook,
+            categoryStr
           });
           break;
         default:
@@ -125,8 +123,8 @@ export function initCustomMenu(state, categoryTree, updateUI) {
       state.currentContactDataFromDragAndDrop = null;
       categoryTree.hideNewCategory();
       categoryTree.hideDragOverHighlight();
-      await updateUI();
     } finally {
+      // TODO: state should be updated after the UI has been updated ?
       state.allowEdit = true;
     }
   });

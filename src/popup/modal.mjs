@@ -5,7 +5,7 @@
 import {
   SUBCATEGORY_SEPARATOR,
   validateCategoryString,
-} from "../modules/address-book/index.mjs";
+} from "../modules/cache/index.mjs";
 
 const categoryInput = document.getElementById("category-input");
 const categoryInputError = document.getElementById("category-input-error");

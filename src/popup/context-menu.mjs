@@ -15,10 +15,10 @@ import {
 } from "../modules/context-menu.mjs";
 import { getCategoryStringFromInput } from "./modal.mjs";
 import {
-  addContactToCategory,
-  deleteCategory,
-  removeContactFromCategory,
-} from "./category-edit.mjs";
+  addCategoryToContactVCard,
+  removeCategoryFromAllContactVcards,
+  removeCategoryFromContactVCard,
+} from "../modules/contacts/category-edit.mjs";
 
 function makeCategoryMenuHandler(fieldName, state) {
   return async (categoryElement) => {
@@ -50,22 +50,17 @@ async function overrideMenuForContactList(state) {
   );
 }
 
-export function initContextMenu(state, updateUI) {
+export function initContextMenu(state) {
   const contextMenuHandlers = {
     addToTO: makeCategoryMenuHandler("to", state),
     addToCC: makeCategoryMenuHandler("cc", state),
     addToBCC: makeCategoryMenuHandler("bcc", state),
     async deleteCategory(categoryElement) {
-      try {
-        await deleteCategory({
-          categoryPath: categoryElement.dataset.category,
-          isUncategorized: "uncategorized" in categoryElement.dataset,
-          addressBook: state.currentAddressBook,
-          addressBooks: state.addressBooks,
-        });
-      } finally {
-        await updateUI();
-      }
+      await removeCategoryFromAllContactVcards({
+        categoryStr: categoryElement.dataset.category,
+        addressBook: state.currentAddressBook,
+        addressBooks: state.addressBooks,
+      });
     },
   };
   const dispatchMenuEventsForContactList =
@@ -74,12 +69,11 @@ export function initContextMenu(state, updateUI) {
         const contactId = state.elementForContextMenu.dataset.id;
         const addressBookId = state.elementForContextMenu.dataset.addressbook;
         const addressBook = state.addressBooks.get(addressBookId);
-        await removeContactFromCategory({
+        await removeCategoryFromContactVCard({
           addressBook,
           contactId,
           categoryStr,
         });
-        return updateUI();
       },
       async onAddition(categoryStr, createSubCategory) {
         const contactId = state.elementForContextMenu.dataset.id;
@@ -90,12 +84,11 @@ export function initContextMenu(state, updateUI) {
           if (subcategory == null) return;
           categoryStr = subcategory;
         }
-        await addContactToCategory({
+        await addCategoryToContactVCard({
           addressBook,
           contactId,
           categoryStr,
         });
-        return updateUI();
       },
     });
 

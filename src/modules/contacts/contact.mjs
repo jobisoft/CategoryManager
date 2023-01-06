@@ -1,5 +1,13 @@
-import { reduceCategories } from "./address-book/index.mjs";
-import { setEqual } from "./set.mjs";
+/**
+ * This module includes methods to access Thunderbird contacts and read, parse and
+ * update their vcard strings.
+ */
+
+import {
+  removeImplicitCategories,
+  isSubcategoryOf,
+} from "../cache/index.mjs";
+import { setEqual } from "../set.mjs";
 // global object: ICAL from external ical.js
 
 const ERR_OPERATION_CANCEL = await browser.i18n.getMessage(
@@ -32,6 +40,13 @@ export function getError(str, id) {
   return error;
 }
 
+/**
+ * Modify the category string of a contacts vcard.
+ * 
+ * @param {*} contact - contact to work on
+ * @param {array} addition - categories to add
+ * @param {array} deletion - categories to remove (including all subcategories)
+ */
 export async function updateCategoriesForContact(contact, addition, deletion) {
   const {
     properties: { vCard },
@@ -50,9 +65,14 @@ export async function updateCategoriesForContact(contact, addition, deletion) {
     );
     throw getError(ERR_OPCANCEL_UPDATE_FAILURE, 2);
   }
-  const newCategories = reduceCategories(
-    [...oldCategories, ...addition].filter((x) => !deletion.includes(x))
+
+  let newCategories = [...oldCategories].filter(
+    x => !deletion.find(d => x == d || isSubcategoryOf(x, d))
   );
+  newCategories = removeImplicitCategories(
+    [...newCategories, ...addition.filter(a => a != null)]
+  );
+
   if (
     newCategories.length === oldCategories.size &&
     newCategories.every((x) => oldCategories.has(x))

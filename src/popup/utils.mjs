@@ -1,5 +1,5 @@
 import state from "./state.mjs";
-import { lookupCategory } from "../modules/address-book/address-book.mjs";
+import { lookupCategory } from "../modules/cache/addressbook.mjs";
 
 export function lookupContactsByCategoryElement(element) {
   // find contacts by an category html element

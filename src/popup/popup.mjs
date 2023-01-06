@@ -2,11 +2,11 @@ import { createContactList } from "./contact-list.mjs";
 import { createCategoryTree } from "./category-tree.mjs";
 import { createAddressBookList } from "./address-book-list.mjs";
 import { lookupContactsByCategoryElement } from "./utils.mjs";
-import { initCustomMenu } from "./custom-menu.mjs";
+import { initCustomMenu } from "./drag-menu.mjs";
 import { initContextMenu } from "./context-menu.mjs";
 import { initModal } from "./modal.mjs";
 import state from "./state.mjs";
-import { registerCacheUpdateCallback } from "../modules/address-book/cache.mjs";
+import { registerCacheUpdateCallback } from "../modules/cache/listeners.mjs";
 // global object: emailAddresses, ICAL, MicroModal from popup.html
 
 // i18n
@@ -74,8 +74,8 @@ async function updateUI() {
 
 registerCacheUpdateCallback(state.addressBooks, updateUI);
 
-initCustomMenu(state, categoryTree, updateUI);
-initContextMenu(state, updateUI);
+initCustomMenu(state, categoryTree);
+initContextMenu(state);
 
 addressBookList.render();
 categoryTree.render();
