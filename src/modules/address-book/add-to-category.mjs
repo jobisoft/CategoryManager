@@ -1,4 +1,8 @@
-import { Category, buildCategory } from "./category.mjs";
+import {
+  Category,
+  buildCategory,
+  removeContactFromUncategorized,
+} from "./category.mjs";
 import { categoryStringToArr } from "./category-utils.mjs";
 import { sortMapByKey, localeAwareContactComparator } from "../utils.mjs";
 import { SortedContacts } from "../sorted-contacts.mjs";
@@ -37,6 +41,7 @@ export async function addContactToCategory(
   //        We also need to build uncategorized category
   // state: a string that represents current state
   //        1, 2, done(which means we already found the old leaf node)
+
   console.info(
     "Adding",
     addressBook.contacts[contactId],
@@ -71,11 +76,18 @@ export async function addContactToCategory(
   // Now cur points to the last category in the path.
   console.log(state);
   if (state === "2") {
-    // TODO: We can still do some optimization here.
     buildCategory(addressBook, categoryNeedingUpdate, false, true);
-    debugger;
   } else if (state === "1") {
     buildCategory(addressBook, cur, false, true);
-    debugger;
+  }
+  // Two cases for Top level uncategorized:
+  // 1. If this contact belongs to a category, we do not need to deal with top level uncategorized.
+  // 2. If this contact does not belong to any category, and now it belongs to a category,
+  //    we need to remove it from top level uncategorized.
+  // Note that in other cases, for example, if contact Alice belongs to CatA, and now we add it to
+  // catA / catB, we do not need to explicitly remove it from catA / Uncategorized.
+  if (contact.categories.size === 1) {
+    // This contact belongs to a category, so it should not be in the top level uncategorized.
+    removeContactFromUncategorized(addressBook, addressBook, contactId);
   }
 }

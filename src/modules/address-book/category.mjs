@@ -16,7 +16,7 @@ export class Category {
   name;
   path;
   contacts;
-  contactKeys;
+  contactKeys = [];
   isUncategorized;
   uncategorized;
   constructor(
@@ -139,6 +139,29 @@ export function insertContactIntoUncategorized(
   } else {
     categoryObj.uncategorized.contacts[contactId] = null;
     SortedContacts.insert(
+      categoryObj.uncategorized.contactKeys,
+      contactId,
+      localeAwareContactComparator(addressBook)
+    );
+  }
+}
+
+export function removeContactFromUncategorized(
+  addressBook,
+  categoryObj,
+  contactId
+) {
+  if (categoryObj.uncategorized == null) {
+    console.error("Uncategorized category of", categoryObj, " is null");
+    return;
+  }
+  delete categoryObj.uncategorized.contacts[contactId];
+  if (isEmptyObject(categoryObj.uncategorized.contacts)) {
+    // If there are no contacts in uncategorized, remove it
+    // and we don't need to deal with contactKeys in this case
+    categoryObj.uncategorized = null;
+  } else {
+    SortedContacts.remove(
       categoryObj.uncategorized.contactKeys,
       contactId,
       localeAwareContactComparator(addressBook)
