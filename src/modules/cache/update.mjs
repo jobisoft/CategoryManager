@@ -15,7 +15,6 @@ import {
   removeImplicitCategories,
   removeSubCategories,
 } from "./index.mjs";
-import { sortMapByKey } from "../utils.mjs";
 
 export async function createContactInCache(addressBook, contactNode) {
   const id = contactNode.id;
@@ -107,6 +106,12 @@ export function sortContactsMap(contacts) {
     .map(e => [e.id, e])
   );
 }
+/**
+ * Sort the categories map by its keys, which are the categories name. 
+ */
+export function sortCategoriesMap(map) {
+  return new Map([...map.entries()].sort((a, b) => a[0].localeCompare(b[0])));
+}
 
 /**
  * Adds a category and any implicit parent category along the way to the cache.
@@ -150,7 +155,7 @@ async function addCategoryToCachedContact(
       categoryObject.categories.set(
         categoryPart, Category.createSubcategory(categoryObject, categoryPart)
       );
-      categoryObject.categories = sortMapByKey(categoryObject.categories);
+      categoryObject.categories = sortCategoriesMap(categoryObject.categories);
     }
     categoryObject = categoryObject.categories.get(categoryPart);
     categoryObject.contacts.set(contactId, addressBook.contacts.get(contactId));

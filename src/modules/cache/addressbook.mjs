@@ -2,11 +2,11 @@ import {
   buildUncategorizedCategory,
   Category,
   categoryStringToArr,
+  sortCategoriesMap,
   sortContactsMap,
   SUBCATEGORY_SEPARATOR,
 } from "./index.mjs";
 import { parseContact } from "../contacts/contact.mjs";
-import { sortMapByKey } from "../utils.mjs";
 
 export class AddressBook {
   constructor(name, contacts, id) {
@@ -58,7 +58,7 @@ export class AddressBook {
     let rootName = category[0];
     if (!this.categories.has(rootName)) {
       this.categories.set(rootName, new Category(rootName, rootName));
-      this.categories = sortMapByKey(this.categories);
+      this.categories = sortCategoriesMap(this.categories);
     }
     let cur = this.categories.get(rootName);
     cur.contacts.set(contact.id, this.contacts.get(contact.id));
@@ -67,7 +67,7 @@ export class AddressBook {
       path += SUBCATEGORY_SEPARATOR + cat;
       if (!cur.categories.has(cat)) {
         cur.categories.set(cat, new Category(cat, path));
-        cur.categories = sortMapByKey(cur.categories);
+        cur.categories = sortCategoriesMap(cur.categories);
       }
       cur = cur.categories.get(cat);
       cur.contacts.set(contact.id, this.contacts.get(contact.id));
@@ -97,9 +97,4 @@ export function lookupCategory(
   return getUncategorized
     ? buildUncategorizedCategory(cur)
     : cur;
-}
-
-// Unused
-export function id2contact(addressBook, contactId) {
-  return addressBook.contacts.get(contactId);
 }
