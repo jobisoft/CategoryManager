@@ -94,7 +94,7 @@ export async function deleteContactInCache(addressBook, contactId) {
 }
 
 /**
- * Sort the contacts Map(), unknown names and/or emails to the top.
+ * Sort the contacts Map(), unknown names and/or unknown emails to the top.
  */
 export function sortContactsMap(contacts) {
   return new Map([...contacts.values()]
@@ -106,6 +106,7 @@ export function sortContactsMap(contacts) {
     .map(e => [e.id, e])
   );
 }
+
 /**
  * Sort the categories map by its keys, which are the categories name. 
  */
