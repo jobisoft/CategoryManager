@@ -45,6 +45,7 @@ const MENU_ADD_TO_BCC = await browser.i18n.getMessage(
 const MENU_DELETE_CATEGORY = await browser.i18n.getMessage(
   "menu.category.delete"
 );
+const MENU_MOVE_CATEGORY = await browser.i18n.getMessage("menu.category.move");
 
 export function createMenuForCategoryTree(categoryElement) {
   createMenu({
@@ -68,6 +69,7 @@ export function createMenuForCategoryTree(categoryElement) {
     // Add an option to delete this category
     createSeparator();
     createMenu({ id: "deleteCategory", title: MENU_DELETE_CATEGORY });
+    createMenu({ id: "moveCategory", title: MENU_MOVE_CATEGORY });
   }
 }
 

@@ -121,3 +121,42 @@ export async function deleteCategory({
       true
     );
 }
+
+async function moveCategoryHelper(addressBook, oldCategoryStr, newCategoryStr) {
+  const oldCategoryObj = lookupCategory(addressBook, oldCategoryStr, false);
+  if (oldCategoryObj == null) {
+    throw new Error("Category not found: " + oldCategoryStr);
+  }
+  for (const contactId in oldCategoryObj.contacts) {
+    const contact = addressBook.contacts[contactId];
+    for (const category of contact.categories) {
+      if (category == oldCategoryStr) {
+        await updateCategoriesForContact(contact, [newCategoryStr], [category]);
+      } else if (isSubcategoryOf(category, oldCategoryStr)) {
+        await updateCategoriesForContact(
+          contact,
+          [newCategoryStr + category.slice(oldCategoryStr.length)],
+          [category]
+        );
+      }
+    }
+  }
+}
+
+export async function moveCategory({
+  addressBook,
+  addressBooks,
+  oldCategoryStr,
+  newCategoryStr,
+}) {
+  const virtualAddressBook = addressBooks.get("all-contacts");
+  if (addressBook === virtualAddressBook) {
+    // move a category in "All contacts"
+    // Move it for every addressBook.
+    for (const ab of addressBooks.values()) {
+      if (ab !== virtualAddressBook) {
+        await moveCategoryHelper(ab, oldCategoryStr, newCategoryStr);
+      }
+    }
+  } else return moveCategoryHelper(addressBook, oldCategoryStr, newCategoryStr);
+}
