@@ -1,4 +1,3 @@
-import { mapIter } from "../modules/iter.mjs";
 import { toRFC5322EmailAddress } from "../modules/contacts/contact.mjs";
 
 export async function addContactsToComposeDetails(fieldName, state, contacts) {
@@ -20,7 +19,7 @@ export async function addContactsToComposeDetails(fieldName, state, contacts) {
   });
 
   // Set compose details.
-  const emailList = [...mapIter(map.entries(), toRFC5322EmailAddress)];
+  const emailList = [...map.entries()].map(toRFC5322EmailAddress);
   return browser.compose.setComposeDetails(state.tab.id, {
     ...details,
     [fieldName]: emailList,
@@ -43,7 +42,7 @@ export async function openComposeWindowWithContacts(
   });
 
   // Open compose window.
-  const emailList = [...mapIter(map.entries(), toRFC5322EmailAddress)];
+  const emailList = [...map.entries()].map(toRFC5322EmailAddress);
   return browser.compose.beginNew(null, {
     [fieldName]: emailList,
     subject: `[${categoryPath}]`,

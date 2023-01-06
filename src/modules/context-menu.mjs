@@ -18,6 +18,9 @@ const MENU_ADD_TO_BCC = await browser.i18n.getMessage(
 const MENU_DELETE_CATEGORY = await browser.i18n.getMessage(
   "menu.category.delete"
 );
+const MENU_HEADER_TEXT = await browser.i18n.getMessage(
+  "menu.contact.context.manage_categories_of_contact"
+);
 const MENU_RENAME_CATEGORY = await browser.i18n.getMessage("menu.category.rename");
 
 function createMenu(properties) {
@@ -167,10 +170,6 @@ export function createDispatcherForContactListContextMenu({
     }
   };
 }
-
-const MENU_HEADER_TEXT = await browser.i18n.getMessage(
-  "menu.contact.context.manage_categories_of_contact"
-);
 
 export async function createMenuForContact(addressBook, contactId) {
   // Symbols:
