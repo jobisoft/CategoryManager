@@ -53,7 +53,8 @@ async function overrideMenuForContactList(state) {
   );
 }
 
-export function initContextMenu(state, updateUI) {
+export function initContextMenu(updateUI) {
+  const state = window.state;
   const contextMenuHandlers = {
     addToTO: makeCategoryMenuHandler("to", state),
     addToCC: makeCategoryMenuHandler("cc", state),
