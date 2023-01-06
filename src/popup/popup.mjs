@@ -5,18 +5,9 @@ import { lookupContactsByCategoryElement } from "./utils.mjs";
 import { initCustomMenu } from "./custom-menu.mjs";
 import { initContextMenu } from "./context-menu.mjs";
 import { initModal } from "./modal.mjs";
-import State from "./state.mjs";
+import state from "./state.mjs";
 import { registerCacheUpdateCallback } from "../modules/address-book/cache.mjs";
-import { initErrorHandler } from "./error-handler.mjs";
 // global object: emailAddresses, ICAL, MicroModal from popup.html
-
-initErrorHandler();
-
-// Put the state object onto the window (it is our own popup window, so no risk of
-// namespace collisions).
-const state = new State();
-window.state = state;
-await state.init();
 
 // i18n
 document.getElementById("info-text").innerText = await browser.i18n.getMessage(
