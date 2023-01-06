@@ -124,7 +124,8 @@ export function initCustomMenu(state, categoryTree) {
       categoryTree.hideNewCategory();
       categoryTree.hideDragOverHighlight();
     } finally {
-      // TODO: state should be updated after the UI has been updated ?
+      // TODO: The state should be updated after the UI has been updated ? 
+      //       What is allowEdit doing?
       state.allowEdit = true;
     }
   });

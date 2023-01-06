@@ -20,8 +20,8 @@ export async function removeCategoryFromContactVCard({
 }) {
   return updateCategoriesForContact(
     addressBook.contacts.get(contactId),
-    [getParentCategoryStr(categoryStr)], // toBeAdded,
-    [categoryStr], // toBeDeleted - TODO : still needed?
+    [getParentCategoryStr(categoryStr)], // toBeAdded
+    [categoryStr], // toBeDeleted
   );
 }
 
@@ -32,7 +32,7 @@ export async function addCategoryToContactVCard({
 }) {
   return updateCategoriesForContact(
     addressBook.contacts.get(contactId),
-    [categoryStr], // toBeAdded,
+    [categoryStr], // toBeAdded
     [] // toBeDeleted
   );
 }

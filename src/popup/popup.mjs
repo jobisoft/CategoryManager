@@ -42,6 +42,13 @@ const addressBookList = createAddressBookList({
 });
 
 async function updateUI() {
+  // TODO : Maybe use deferred task to collapse multiple UI redraw requests into
+  //        a single one. Currently, with large changeset, the user can sometimes
+  //        see the individual steps. For example when renaming a category, the
+  //        new one might be added first (and shown) before the old one is removed.
+  //        The deferred task would reschedule the UI redraw by 250ms and if there
+  //        is a new redraw request coming in before those 250ms have elapsed, the
+  //        timer is reset to 250ms again.
   console.log("Active category:", state.currentCategoryElement);
   await categoryTree.update({
     addressBook: state.currentAddressBook,

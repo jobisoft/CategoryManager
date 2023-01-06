@@ -24,6 +24,7 @@ export async function createContactInCache(addressBook, contactNode) {
   for (const categoryStr of contact.categories) {
     await addCategoryToCachedContact(addressBook, id, categoryStr);
   }
+  addressBook.contacts = sortContactsMap(addressBook.contacts);
 }
 
 export async function modifyContactInCache(
@@ -75,6 +76,7 @@ export async function modifyContactInCache(
     }
   }
   addressBook.contacts.set(id, newContact);
+  addressBook.contacts = sortContactsMap(addressBook.contacts);
 }
 
 export async function deleteContactInCache(addressBook, contactId) {
@@ -90,6 +92,20 @@ export async function deleteContactInCache(addressBook, contactId) {
   }
   // Remove contact from address book cache.
   addressBook.contacts.delete(contactId);
+}
+
+/**
+ * Sort the contacts Map(), unknown names and/or emails to the top.
+ */
+export function sortContactsMap(contacts) {
+  return new Map([...contacts.values()]
+    .sort((a,b) => {
+      let _a = a.name ? `3_${a.name}` : a.email ? `2_${a.email}` : `1_${a.id}`
+      let _b = b.name ? `3_${b.name}` : b.email ? `2_${b.email}` : `1_${a.id}`
+      return _a.localeCompare(_b);
+    })
+    .map(e => [e.id, e])
+  );
 }
 
 /**
@@ -138,18 +154,9 @@ async function addCategoryToCachedContact(
     }
     categoryObject = categoryObject.categories.get(categoryPart);
     categoryObject.contacts.set(contactId, addressBook.contacts.get(contactId));
-    sortContactsMap(categoryObject.contacts);
+    categoryObject.contacts = sortContactsMap(categoryObject.contacts);
   }
   console.info("Categories data updated: ", contact.categories);
-}
-
-function sortContactsMap(contacts) {
-  contacts = new Map(
-    contacts
-    .values()
-    .sort((a,b) => a.name > b.name)
-    .map(e => [e.id, e])
-  );
 }
 
 /**

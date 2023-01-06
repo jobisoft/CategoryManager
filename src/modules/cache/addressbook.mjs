@@ -2,8 +2,9 @@ import {
   buildUncategorizedCategory,
   Category,
   categoryStringToArr,
+  sortContactsMap,
   SUBCATEGORY_SEPARATOR,
-} from "./category.mjs";
+} from "./index.mjs";
 import { parseContact } from "../contacts/contact.mjs";
 import { sortMapByKey } from "../utils.mjs";
 
@@ -11,7 +12,7 @@ export class AddressBook {
   constructor(name, contacts, id) {
     this.name = name;
     this.categories = new Map();
-    this.contacts = contacts;
+    this.contacts = sortContactsMap(contacts);
     this.id = id ?? name;
   }
 
