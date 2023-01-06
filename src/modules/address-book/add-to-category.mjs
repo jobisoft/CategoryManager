@@ -1,6 +1,6 @@
 import {
   Category,
-  buildCategory,
+  buildUncategorizedCategory,
 } from "./category.mjs";
 import { categoryStringToArr } from "./category-utils.mjs";
 import { sortMapByKey } from "../utils.mjs";
@@ -65,8 +65,8 @@ export async function addContactToCategory(
   });
   // Now cur points to the last category in the path.
   if (state === "2") {
-    buildCategory(categoryNeedingUpdate);
+    buildUncategorizedCategory(categoryNeedingUpdate);
   } else if (state === "1") {
-    buildCategory(cur);
+    buildUncategorizedCategory(cur);
   }
 }

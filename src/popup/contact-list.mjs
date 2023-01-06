@@ -9,11 +9,10 @@ export function createContactList(data, state) {
     element: "#contacts",
     data,
     template(data) {
-      debugger;
       return `<ul>
             ${
               data?.addressBook != null
-                ? data.contacts
+                ? Object.keys(data.contacts)
                     .map((id) => {
                       const { name, email, addressBookId } =
                         data.addressBook.contacts[id];

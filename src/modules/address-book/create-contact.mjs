@@ -1,6 +1,6 @@
 import { parseContact } from "../contact.mjs";
 import { addContactToCategory } from "./add-to-category.mjs";
-import { buildCategory, Category } from "./category.mjs";
+import { buildUncategorizedCategory, Category } from "./category.mjs";
 
 export async function createContactInCache(addressBook, contactNode) {
   const id = contactNode.id;
@@ -10,7 +10,7 @@ export async function createContactInCache(addressBook, contactNode) {
     // No category info. Just add it to uncategorized and return.
     if (addressBook.uncategorized == null) {
       addressBook.uncategorized = Category.createUncategorizedCategory();
-      buildCategory(addressBook, false);
+      buildUncategorizedCategory(addressBook, false);
     } else addressBook.uncategorized[id] = null;
     return;
   }

@@ -23,7 +23,7 @@ const categoryTitle = document.getElementById("category-title");
 const contactList = createContactList(
   {
     addressBook: state.currentAddressBook,
-    contacts: state.currentAddressBook?.contactKeys ?? [],
+    contacts: state.currentAddressBook?.contacts ?? {},
   },
   state
 );
@@ -64,7 +64,7 @@ async function updateUI() {
   } else {
     state.currentCategoryElement = null;
     categoryTitle.innerText = state.currentAddressBook?.name ?? "";
-    contacts = state.currentAddressBook?.contactKeys ?? [];
+    contacts = state.currentAddressBook?.contacts ?? {};
   }
   await contactList.update({
     addressBook: state.currentAddressBook,

@@ -1,8 +1,4 @@
-import {
-  isEmptyObject,
-  filterObjectByKeyToNull,
-  mergeSortedArrayAndRemoveDuplicates,
-} from "../utils.mjs";
+import { isEmptyObject, filterObjectByKeyToNull } from "../utils.mjs";
 import {
   SUBCATEGORY_SEPARATOR,
   isLeafCategory,
@@ -31,7 +27,7 @@ export class Category {
     this.isUncategorized = isUncategorized;
   }
   buildUncategorized() {
-    buildCategory(this);
+    buildUncategorizedCategory(this);
   }
   isLeaf() {
     return isLeafCategory(this);
@@ -58,32 +54,18 @@ export class Category {
   }
 }
 
-export function buildCategory(
-  addressBook,
-  category,
-  recursive = true,
-  buildContactKeys = false
-) {
+export function buildUncategorizedCategory(category, recursive = true) {
   if (isLeafCategory(category) && category.path != null) {
     // recursion base case
-    if (buildContactKeys) {
-      category.contactKeys = Object.keys(category.contacts).sort((a, b) =>
-        addressBook.contacts[a].name.localeCompare(addressBook.contacts[b].name)
-      );
-    }
     return;
   }
   let contacts = {};
-  let contactKeysFromSubcats = [];
   for (const catObj of category.categories.values()) {
     // 1. build uncategorized for sub category
-    if (recursive)
-      buildCategory(addressBook, catObj, recursive, buildContactKeys);
+    if (recursive) buildUncategorizedCategory(catObj);
     // 2. add contacts from subcategory to `contacts`
     Object.assign(contacts, catObj.contacts);
-    contactKeysFromSubcats.push(catObj.contactKeys);
   }
-
   // Get the contacts that doesn't appear in any categories
   const filtered = filterObjectByKeyToNull(
     category.contacts,
@@ -101,24 +83,7 @@ export function buildCategory(
       {},
       true
     );
-    if (buildContactKeys)
-      category.uncategorized.contactKeys = Object.keys(filtered).sort((a, b) =>
-        addressBook.contacts[a].name.localeCompare(addressBook.contacts[b].name)
-      );
   } else {
     category.uncategorized = null;
-  }
-  if (buildContactKeys) {
-    // Merge all the sorted array together.
-    // It should be faster than a re-sort but we haven't done any benchmark.
-    category.contactKeys = contactKeysFromSubcats.reduce(
-      (acc, cur) =>
-        mergeSortedArrayAndRemoveDuplicates(acc, cur, (a, b) =>
-          addressBook.contacts[a].name.localeCompare(
-            addressBook.contacts[b].name
-          )
-        ),
-      category.uncategorized?.contactKeys ?? []
-    );
   }
 }

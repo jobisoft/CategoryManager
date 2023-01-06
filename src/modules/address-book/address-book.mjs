@@ -1,4 +1,4 @@
-import { buildCategory, Category } from "./category.mjs";
+import { buildUncategorizedCategory, Category } from "./category.mjs";
 import {
   categoryStringToArr,
   SUBCATEGORY_SEPARATOR,
@@ -60,7 +60,7 @@ export class AddressBook {
         this.#addContactToCategoryWhenBuildingTree(contact, category);
       }
     }
-    buildCategory(this, this, true, true);
+    buildUncategorizedCategory(this);
   }
 
   #addContactToCategoryWhenBuildingTree(contact, categoryStr) {
