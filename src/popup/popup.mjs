@@ -60,7 +60,10 @@ async function updateUI() {
   if (activeElement != null) {
     state.currentCategoryElement = activeElement;
     categoryTitle.innerText = activeElement.dataset.category;
-    contacts = lookupContactsByCategoryElement(state.currentCategoryElement);
+    contacts = lookupContactsByCategoryElement(
+      state.currentCategoryElement,
+      state.currentAddressBook
+    );
   } else {
     state.currentCategoryElement = null;
     categoryTitle.innerText = state.currentAddressBook?.name ?? "";

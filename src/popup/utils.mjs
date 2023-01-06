@@ -1,10 +1,9 @@
-import state from "./state.mjs";
 import { lookupCategory } from "../modules/cache/addressbook.mjs";
 
-export function lookupContactsByCategoryElement(element) {
+export function lookupContactsByCategoryElement(element, currentAddressBook) {
   // find contacts by an category html element
   const categoryKey = element.dataset.category;
   const isUncategorized = element.dataset.uncategorized != null;
-  return lookupCategory(state.currentAddressBook, categoryKey, isUncategorized)
+  return lookupCategory(currentAddressBook, categoryKey, isUncategorized)
     .contacts;
 }
