@@ -1,9 +1,7 @@
-import {
-  Category,
-  buildCategory,
-} from "./category.mjs";
+import { Category, buildCategory } from "./category.mjs";
 import { categoryStringToArr } from "./category-utils.mjs";
-import { sortMapByKey } from "../utils.mjs";
+import { sortMapByKey, localeAwareContactComparator } from "../utils.mjs";
+import { SortedContacts } from "../sorted-contacts.mjs";
 
 export async function addContactToCategory(
   addressBook,
@@ -61,12 +59,23 @@ export async function addContactToCategory(
       cur.categories = sortMapByKey(cur.categories);
     }
     cur = cur.categories.get(cat);
-    cur.contacts[contactId] = null;
+    if (!(contactId in cur.contacts)) {
+      cur.contacts[contactId] = null;
+      SortedContacts.insert(
+        cur.contactKeys,
+        contactId,
+        localeAwareContactComparator(addressBook)
+      );
+    }
   });
   // Now cur points to the last category in the path.
+  console.log(state);
   if (state === "2") {
-    buildCategory(categoryNeedingUpdate);
+    // TODO: We can still do some optimization here.
+    buildCategory(addressBook, categoryNeedingUpdate, false, true);
+    debugger;
   } else if (state === "1") {
-    buildCategory(cur);
+    buildCategory(addressBook, cur, false, true);
+    debugger;
   }
 }

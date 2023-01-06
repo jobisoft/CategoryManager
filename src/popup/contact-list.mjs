@@ -9,7 +9,6 @@ export function createContactList(data, state) {
     element: "#contacts",
     data,
     template(data) {
-      debugger;
       return `<ul>
             ${
               data?.addressBook != null

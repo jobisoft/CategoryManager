@@ -1,17 +1,21 @@
 import { parseContact } from "../contact.mjs";
+import { SortedContacts } from "../sorted-contacts.mjs";
 import { addContactToCategory } from "./add-to-category.mjs";
-import { buildCategory, Category } from "./category.mjs";
+import { insertContactIntoUncategorized } from "./category.mjs";
+import { localeAwareContactComparator } from "../utils.mjs";
 
 export async function createContactInCache(addressBook, contactNode) {
   const id = contactNode.id;
   const contact = parseContact(contactNode);
   addressBook.contacts[id] = contact;
+  SortedContacts.insert(
+    addressBook.contactKeys,
+    id,
+    localeAwareContactComparator(addressBook)
+  );
   if (contact.categories.size == 0) {
     // No category info. Just add it to uncategorized and return.
-    if (addressBook.uncategorized == null) {
-      addressBook.uncategorized = Category.createUncategorizedCategory();
-      buildCategory(addressBook, false);
-    } else addressBook.uncategorized[id] = null;
+    insertContactIntoUncategorized(addressBook, addressBook, id);
     return;
   }
   for (const categoryStr of contact.categories) {

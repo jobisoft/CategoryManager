@@ -1,4 +1,6 @@
+import { SortedContacts } from "../sorted-contacts.mjs";
 import { removeContactFromCategory } from "./remove-from-category.mjs";
+import { localeAwareContactComparator } from "../utils.mjs";
 
 export function deleteContactInCache(addressBook, contactId) {
   // Remove all categories and delete it from addressBook.
@@ -8,4 +10,9 @@ export function deleteContactInCache(addressBook, contactId) {
     removeContactFromCategory(addressBook, contact.id, cat, true);
   }
   delete addressBook.contacts[contactId];
+  SortedContacts.remove(
+    addressBook.contactKeys,
+    contactId,
+    localeAwareContactComparator(addressBook)
+  );
 }
