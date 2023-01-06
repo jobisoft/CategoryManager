@@ -41,8 +41,3 @@ export function mergeSortedArrayAndRemoveDuplicates(arr1, arr2, cmp) {
   }
   return res;
 }
-
-export function localeAwareContactComparator(addressBook) {
-  return (a, b) =>
-    addressBook.contacts[a].name.localeCompare(addressBook.contacts[b].name);
-}

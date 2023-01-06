@@ -2,14 +2,12 @@ import {
   isEmptyObject,
   filterObjectByKeyToNull,
   mergeSortedArrayAndRemoveDuplicates,
-  localeAwareContactComparator,
 } from "../utils.mjs";
 import {
   SUBCATEGORY_SEPARATOR,
   isLeafCategory,
   UNCATEGORIZED_CATEGORY_NAME,
 } from "./category-utils.mjs";
-import { SortedContacts } from "../sorted-contacts.mjs";
 
 export class Category {
   categories;
@@ -31,6 +29,9 @@ export class Category {
     this.categories = subCategories;
     this.contacts = contacts;
     this.isUncategorized = isUncategorized;
+  }
+  buildUncategorized() {
+    buildCategory(this);
   }
   isLeaf() {
     return isLeafCategory(this);
@@ -66,8 +67,8 @@ export function buildCategory(
   if (isLeafCategory(category) && category.path != null) {
     // recursion base case
     if (buildContactKeys) {
-      category.contactKeys = Object.keys(category.contacts).sort(
-        localeAwareContactComparator(addressBook)
+      category.contactKeys = Object.keys(category.contacts).sort((a, b) =>
+        addressBook.contacts[a].name.localeCompare(addressBook.contacts[b].name)
       );
     }
     return;
@@ -82,6 +83,7 @@ export function buildCategory(
     Object.assign(contacts, catObj.contacts);
     contactKeysFromSubcats.push(catObj.contactKeys);
   }
+
   // Get the contacts that doesn't appear in any categories
   const filtered = filterObjectByKeyToNull(
     category.contacts,
@@ -100,8 +102,8 @@ export function buildCategory(
       true
     );
     if (buildContactKeys)
-      category.uncategorized.contactKeys = Object.keys(filtered).sort(
-        localeAwareContactComparator(addressBook)
+      category.uncategorized.contactKeys = Object.keys(filtered).sort((a, b) =>
+        addressBook.contacts[a].name.localeCompare(addressBook.contacts[b].name)
       );
   } else {
     category.uncategorized = null;
@@ -111,37 +113,12 @@ export function buildCategory(
     // It should be faster than a re-sort but we haven't done any benchmark.
     category.contactKeys = contactKeysFromSubcats.reduce(
       (acc, cur) =>
-        mergeSortedArrayAndRemoveDuplicates(
-          acc,
-          cur,
-          localeAwareContactComparator(addressBook)
+        mergeSortedArrayAndRemoveDuplicates(acc, cur, (a, b) =>
+          addressBook.contacts[a].name.localeCompare(
+            addressBook.contacts[b].name
+          )
         ),
       category.uncategorized?.contactKeys ?? []
-    );
-  }
-}
-
-export function insertContactIntoUncategorized(
-  addressBook,
-  categoryObj,
-  contactId
-) {
-  if (
-    categoryObj.uncategorized != null &&
-    contactId in categoryObj.uncategorized
-  )
-    // Already in uncategorized
-    return;
-  if (categoryObj.uncategorized == null) {
-    categoryObj.uncategorized = Category.createUncategorizedCategory();
-    categoryObj.uncategorized.contacts[contactId] = null;
-    buildCategory(addressBook, categoryObj, false, true);
-  } else {
-    categoryObj.uncategorized.contacts[contactId] = null;
-    SortedContacts.insert(
-      categoryObj.uncategorized.contactKeys,
-      contactId,
-      localeAwareContactComparator(addressBook)
     );
   }
 }

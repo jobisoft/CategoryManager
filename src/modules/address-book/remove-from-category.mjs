@@ -6,8 +6,7 @@ import {
   categoryObjToString,
 } from "./category-utils.mjs";
 import { Category, buildCategory } from "./category.mjs";
-import { localeAwareContactComparator, isEmptyObject } from "../utils.mjs";
-import { SortedContacts } from "../sorted-contacts.mjs";
+import { isEmptyObject } from "../utils.mjs";
 
 function removeContactFromCategoryHelper(
   addressBook,
@@ -21,18 +20,8 @@ function removeContactFromCategoryHelper(
     // Recursion base case
     console.log("Delete", contactId, "from", categoryObj);
     delete categoryObj.contacts[contactId];
-    SortedContacts.remove(
-      categoryObj.contactKeys,
-      contactId,
-      localeAwareContactComparator(addressBook)
-    );
     if (!isLeafCategory(categoryObj)) {
       delete categoryObj.uncategorized.contacts[contactId];
-      SortedContacts.remove(
-        categoryObj.uncategorized.contactKeys,
-        contactId,
-        localeAwareContactComparator(addressBook)
-      );
     }
     return;
   }
@@ -61,14 +50,7 @@ function removeContactFromCategoryHelper(
     ":",
     shouldDeleteContact
   );
-  if (shouldDeleteContact) {
-    delete categoryObj.contacts[contactId];
-    SortedContacts.remove(
-      categoryObj.contactKeys,
-      contactId,
-      localeAwareContactComparator(addressBook)
-    );
-  }
+  if (shouldDeleteContact) delete categoryObj.contacts[contactId];
   console.warn(
     "Should I delete category",
     nextCategoryObj,
@@ -91,7 +73,7 @@ function removeContactFromCategoryHelper(
     categoryObj.uncategorized ??= Category.createUncategorizedCategory(
       categoryObj.path
     );
-    buildCategory(addressBook, categoryObj, false, true);
+    buildCategory(categoryObj, false);
   }
   if (
     categoryObj.uncategorized != null &&
