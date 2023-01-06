@@ -147,7 +147,10 @@ export function createCategoryTree({
     state.currentCategoryElement.classList.add("active");
     const newData = {
       addressBook: state.currentAddressBook,
-      contacts: lookupContactsByCategoryElement(state.currentCategoryElement),
+      contacts: lookupContactsByCategoryElement(
+        state.currentCategoryElement,
+        state.currentAddressBook
+      ),
     };
     categoryTitle.innerText = categoryKey;
     return contactList.update(newData);
@@ -156,7 +159,10 @@ export function createCategoryTree({
     const categoryElement = event.target;
     const categoryPath = categoryElement.dataset.category;
     if (categoryPath == null) return;
-    const contacts = lookupContactsByCategoryElement(categoryElement);
+    const contacts = lookupContactsByCategoryElement(
+      categoryElement,
+      state.currentAddressBook
+    );
     if (state.isComposeAction) {
       await addContactsToComposeDetails("bcc", state, contacts);
     } else {
