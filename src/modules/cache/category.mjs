@@ -1,5 +1,3 @@
-import { isEmptyObject } from "../utils.mjs";
-
 export const SUBCATEGORY_SEPARATOR = " / ";
 export const UNCATEGORIZED_CATEGORY_NAME = await browser.i18n.getMessage(
   "tree.category.none"
@@ -17,7 +15,7 @@ export class Category {
   constructor(
     name,
     path,
-    contacts = {},
+    contacts = new Map(),
     subCategories = new Map(),
     isUncategorized = false
   ) {
@@ -32,7 +30,7 @@ export class Category {
     return isLeafCategory(this);
   }
   
-  static createSubcategory(parentCategoryObj, name, contacts = {}) {
+  static createSubcategory(parentCategoryObj, name, contacts) {
     const newPath =
       parentCategoryObj.path == null
         ? name
@@ -51,28 +49,26 @@ export function buildUncategorizedCategory (cat) {
     if (cat.isUncategorized) {
       return null;
     }
-    console.log(cat);
-
     let basePath = "";
-    let contacts = {};
+    let contacts = new Map();
     if (cat.path) {
       // This is a real category.
       basePath = cat.path + SUBCATEGORY_SEPARATOR;
-      for (let contact of Object.values(cat.contacts)) {
+      cat.contacts.forEach(contact => {
         if (![...contact.categories].some(category => category.startsWith(basePath))) {
-          contacts[contact.id] = contact;
+          contacts.set(contact.id, contact);
         }
-      }
+      });
     } else {
       // This is an address book.
-      for (let contact of Object.values(cat.contacts)) {
+      cat.contacts.forEach(contact => {
         if (contact.categories.size == 0) {
-          contacts[contact.id] = contact;
+          contacts.set(contact.id, contact);
         }
-      }
+      });
     }
 
-    if (isEmptyObject(contacts)) {
+    if (contacts.size == 0) {
       return null;
     }
 
@@ -131,7 +127,7 @@ export function validateCategoryString(s) {
 }
 
 export function isContactInCategory(categoryObj, contactId) {
-  return contactId in categoryObj.contacts;
+  return categoryObj.contacts.has(contactId);
 }
 
 export function isContactInAnySubcategory(categoryObj, contactId) {

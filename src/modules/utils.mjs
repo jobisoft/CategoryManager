@@ -1,7 +1,9 @@
+// Unused
 export function isEmptyObject(obj) {
   return Object.keys(obj).length === 0;
 }
 
+// Unused
 export function filterObjectByKeyToNull(obj, predicate) {
   return Object.keys(obj)
     .filter((key) => predicate(key))

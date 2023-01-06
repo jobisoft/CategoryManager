@@ -19,7 +19,7 @@ export async function removeCategoryFromContactVCard({
   categoryStr,
 }) {
   return updateCategoriesForContact(
-    addressBook.contacts[contactId],
+    addressBook.contacts.get(contactId),
     [getParentCategoryStr(categoryStr)], // toBeAdded,
     [categoryStr], // toBeDeleted - TODO : still needed?
   );
@@ -31,7 +31,7 @@ export async function addCategoryToContactVCard({
   categoryStr,
 }) {
   return updateCategoriesForContact(
-    addressBook.contacts[contactId],
+    addressBook.contacts.get(contactId),
     [categoryStr], // toBeAdded,
     [] // toBeDeleted
   );
@@ -58,7 +58,7 @@ export async function removeCategory({
       if (!categoryObj) {
         continue;
       }
-      for (const contactId in categoryObj.contacts) {
+      for (let [contactId] of categoryObj.contacts) {
         await removeCategoryFromContactVCard({
           contactId,
           addressBook: ab,
@@ -91,7 +91,7 @@ export async function moveCategory({
     if (!categoryObj) {
       continue;
     }
-    for (const contactId in categoryObj.contacts) {
+    for (let [contactId] of categoryObj.contacts) {
       await removeCategoryFromContactVCard({
         contactId,
         addressBook: ab,

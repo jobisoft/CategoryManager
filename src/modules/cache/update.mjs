@@ -15,15 +15,12 @@ import {
   removeImplicitCategories,
   removeSubCategories,
 } from "./index.mjs";
-import { 
-  sortMapByKey,
-  isEmptyObject,
-} from "../utils.mjs";
+import { sortMapByKey } from "../utils.mjs";
 
 export async function createContactInCache(addressBook, contactNode) {
   const id = contactNode.id;
   const contact = parseContact(contactNode);
-  addressBook.contacts[id] = contact;
+  addressBook.contacts.set(id, contact);
   for (const categoryStr of contact.categories) {
     await addCategoryToCachedContact(addressBook, id, categoryStr);
   }
@@ -41,7 +38,7 @@ export async function modifyContactInCache(
   // Let's just parse the vCard again so that nothing is left behind!
   const id = contactNode.id;
   const newContact = parseContact(contactNode);
-  const oldContact = addressBook.contacts[id];
+  const oldContact = addressBook.contacts.get(id);
   // Expand the categories here, to properly detect additions and deletions of
   // categories and subcategories.
   const newCategories = expandImplicitCategories(newContact.categories);
@@ -77,14 +74,13 @@ export async function modifyContactInCache(
       await removeCategoryFromCachedContact(virtualAddressBook, id, cat);
     }
   }
-  addressBook.contacts[id] = newContact;
+  addressBook.contacts.set(id, newContact);
 }
 
 export async function deleteContactInCache(addressBook, contactId) {
   // Remove contact from  category cache.
-  const contact = addressBook.contacts[contactId];
+  const contact = addressBook.contacts.get(contactId);
   for (const cat of contact.categories) {
-    console.log("Delete", contact.name, "from", cat);
     // This is usually used to remove a category from a contact, which will update
     // the contact cache. It removes the category from contact.categories and
     // removes the contact from the category cache. The first part is not really
@@ -93,7 +89,7 @@ export async function deleteContactInCache(addressBook, contactId) {
     await removeCategoryFromCachedContact(addressBook, contact.id, cat);
   }
   // Remove contact from address book cache.
-  delete addressBook.contacts[contactId];
+  addressBook.contacts.delete(contactId);
 }
 
 /**
@@ -119,7 +115,7 @@ async function addCategoryToCachedContact(
   
   // Walk through the full category name, level by level, and update contact and
   // category cache for each level.
-  const contact = addressBook.contacts[contactId];
+  const contact = addressBook.contacts.get(contactId);
   const pendingCategoryLevels = categoryStringToArr(categoryStr);
   let categoryLevels = [];
   let categoryObject = addressBook;
@@ -141,9 +137,19 @@ async function addCategoryToCachedContact(
       categoryObject.categories = sortMapByKey(categoryObject.categories);
     }
     categoryObject = categoryObject.categories.get(categoryPart);
-    categoryObject.contacts[contactId] = addressBook.contacts[contactId];
+    categoryObject.contacts.set(contactId, addressBook.contacts.get(contactId));
+    sortContactsMap(categoryObject.contacts);
   }
   console.info("Categories data updated: ", contact.categories);
+}
+
+function sortContactsMap(contacts) {
+  contacts = new Map(
+    contacts
+    .values()
+    .sort((a,b) => a.name > b.name)
+    .map(e => [e.id, e])
+  );
 }
 
 /**
@@ -169,7 +175,7 @@ async function removeCategoryFromCachedContact(
 
   // Update contact cache: Remove category and all subcategories from
   // contact.categories
-  const contact = addressBook.contacts[contactId];
+  const contact = addressBook.contacts.get(contactId);
   contact.categories.forEach(category => {
     if (category == categoryStr || isSubcategoryOf(category, categoryStr)) {
       contact.categories.delete(category);
@@ -179,32 +185,27 @@ async function removeCategoryFromCachedContact(
   // Update category cache: Remove this contact from categoryObj.contacts and
   // all subcategories.
   let parentCategoryStr = getParentCategoryStr(categoryStr);
-  console.log({parentCategoryStr});
   let parentCategoryObj = parentCategoryStr
     ? lookupCategory(addressBook, parentCategoryStr)
     : addressBook;
-    console.log({parentCategoryObj});
 
   if (!parentCategoryObj) {
     return;
   }
 
   function recursiveRemove(parentCategoryObj, category, contactId) {
-    console.log("remove", category, contactId);
-
     if (!parentCategoryObj.categories.has(category)) {
       return;
     }
     
     let categoryObject = parentCategoryObj.categories.get(category);
-    delete categoryObject.contacts[contactId];
-    if (isEmptyObject(categoryObject.contacts)) {
+    categoryObject.contacts.delete(contactId);
+    if (categoryObject.contacts.size == 0) {
       // If this was the last contact in that category, remove the entire category.
       parentCategoryObj.categories.delete(category);
     } else {
       // Loop over all subcategories.
       categoryObject.categories.forEach((value, subCategory) => {
-        console.log("recursive remove", subCategory, contactId);
         recursiveRemove(categoryObject, subCategory, contactId);
       });
     }

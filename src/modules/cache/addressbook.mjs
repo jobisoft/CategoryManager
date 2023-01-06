@@ -15,6 +15,8 @@ export class AddressBook {
     this.id = id ?? name;
   }
 
+  // I have no idea if this still works after the contacts member has been
+  // converted to a Map().
   static fromFakeData(addressBook) {
     let ab = new AddressBook(addressBook.name, addressBook.contacts);
     ab.#build();
@@ -23,23 +25,19 @@ export class AddressBook {
 
   static async fromTBAddressBook({ name, id }) {
     const rawContacts = await browser.contacts.list(id);
-    const contacts = Object.fromEntries(
-      rawContacts.map((contact) => {
-        const parsed = parseContact(contact);
-        return [parsed.id, parsed];
-      })
-    );
+    const contacts = new Map(rawContacts.map(contact => {
+      const parsed = parseContact(contact);
+      return [parsed.id, parsed];
+    }));
     let ab = new AddressBook(name, contacts, id);
     ab.#build();
     return ab;
   }
 
   static fromAllContacts(addressBooks, name) {
-    let contacts = {};
+    let contacts = new Map();
     for (const ab of addressBooks) {
-      for (const contactId in ab.contacts) {
-        contacts[contactId] = structuredClone(ab.contacts[contactId]);
-      }
+      ab.contacts.forEach((contact, id) => contacts.set(id, contact));
     }
     let ret = new AddressBook(name, contacts, "all-contacts");
     ret.#build();
@@ -47,12 +45,11 @@ export class AddressBook {
   }
 
   #build() {
-    for (const id in this.contacts) {
-      const contact = this.contacts[id];
+    this.contacts.forEach((contact, id) => {
       for (const category of contact.categories) {
         this.#addContactToCategoryWhenBuildingTree(contact, category);
       }
-    }
+    })
   }
 
   #addContactToCategoryWhenBuildingTree(contact, categoryStr) {
@@ -63,7 +60,7 @@ export class AddressBook {
       this.categories = sortMapByKey(this.categories);
     }
     let cur = this.categories.get(rootName);
-    cur.contacts[contact.id] = this.contacts[contact.id];
+    cur.contacts.set(contact.id, this.contacts.get(contact.id));
     let path = rootName;
     category.slice(1).forEach((cat) => {
       path += SUBCATEGORY_SEPARATOR + cat;
@@ -72,7 +69,7 @@ export class AddressBook {
         cur.categories = sortMapByKey(cur.categories);
       }
       cur = cur.categories.get(cat);
-      cur.contacts[contact.id] = this.contacts[contact.id];
+      cur.contacts.set(contact.id, this.contacts.get(contact.id));
     });
   }
 }
@@ -95,11 +92,11 @@ export function lookupCategory(
     if (!cur.categories.has(cat)) return null;
     cur = cur.categories.get(cat);
   }
-  return getUncategorized 
+  return getUncategorized
     ? buildUncategorizedCategory(cur)
     : cur;
 }
 
 export function id2contact(addressBook, contactId) {
-  return addressBook.contacts[contactId];
+  return addressBook.contacts.get(contactId);
 }
