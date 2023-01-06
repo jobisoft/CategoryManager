@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
   "name": "Category Manager",
-  "version": "6.0",
-  "author": "John Bieling",
+  "version": "6.1",
+  "author": "John Bieling, Levi Zim",
   "homepage_url": "https://github.com/jobisoft/CategoryManager/",
   "default_locale": "en-US",
   "description": "__MSG_manifest_description__",
