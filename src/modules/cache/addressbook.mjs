@@ -16,7 +16,7 @@ export class AddressBook {
     this.id = id ?? name;
   }
 
-  // I have no idea if this still works after the contacts member has been
+  // TODO : I have no idea if this still works after the contacts member has been
   // converted to a Map().
   static fromFakeData(addressBook) {
     let ab = new AddressBook(addressBook.name, addressBook.contacts);
@@ -84,8 +84,9 @@ export function lookupCategory(
   console.log("Looking up", categoryKey);
   const category = categoryStringToArr(categoryKey);
   if (getUncategorized) {
-    // remove the last sub category
-    // TODO : Correct ?
+    // Remove the last sub category, which is "Uncategorized". It is called, by
+    // lookupContactsByCategoryElement() when clicked on an the Uncategorized
+    // category.
     category.pop();
   }
   let cur = addressBook;
