@@ -1,4 +1,4 @@
-import { escapeHtmlAttr, Component } from "../modules/ui.mjs";
+import { escapeHtmlAttr, Component } from "../modules/ui/ui.mjs";
 
 function writeAddressBookElement(addressBook, index) {
   let name = escapeHtmlAttr(addressBook.name);

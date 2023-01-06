@@ -2,7 +2,7 @@
 // Native Context Menu
 // -------------------
 
-import { createDispatcherForContactListContextMenu } from "../modules/context-menu.mjs";
+import { createDispatcherForContactListContextMenu } from "../modules/ui/context-menu-utils.mjs";
 import {
   addContactsToComposeDetails,
   openComposeWindowWithContacts,
@@ -12,7 +12,7 @@ import {
   createMenuForCategoryTree,
   createMenuForContact,
   destroyAllMenus,
-} from "../modules/context-menu.mjs";
+} from "../modules/ui/context-menu-utils.mjs";
 import {
   getCategoryStringFromInput,
   showCategoryInputModalAsync,

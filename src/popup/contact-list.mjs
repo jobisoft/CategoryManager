@@ -2,7 +2,7 @@ import {
   Component,
   escapeHtmlContent,
   escapeHtmlAttr,
-} from "../modules/ui.mjs";
+} from "../modules/ui/ui.mjs";
 
 export function createContactList(data) {
   let component = new Component({

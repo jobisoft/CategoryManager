@@ -2,7 +2,7 @@ import {
   SUBCATEGORY_SEPARATOR,
   isContactInCategory,
   isContactInAnySubcategory,
-} from "./cache/index.mjs";
+} from "../cache/index.mjs";
 
 let { type } = await browser.windows.getCurrent();
 const MENU_TITLE_LOCALE_KEY =

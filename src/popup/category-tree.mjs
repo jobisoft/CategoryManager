@@ -2,7 +2,7 @@ import {
   escapeHtmlAttr,
   escapeHtmlContent,
   Component,
-} from "../modules/ui.mjs";
+} from "../modules/ui/ui.mjs";
 import {
   categoryPathToString,
   buildUncategorizedCategory,
