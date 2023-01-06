@@ -37,7 +37,7 @@ export async function addCategoryToContactVCard({
   );
 }
 /**
- * Remove an entire category from the cache and from all cached contacts.
+ * Remove an entire category by updating all affected contacts.
  */
 export async function removeCategory({
   categoryStr,
@@ -71,8 +71,7 @@ export async function removeCategory({
 }
 
 /**
- * Rename/Move an entire category, which requires the contact cache of all
- * affected contacts to be updated.
+ * Rename/Move an entire category by updating all affected contacts.
  */
 export async function moveCategory({
   addressBook,
