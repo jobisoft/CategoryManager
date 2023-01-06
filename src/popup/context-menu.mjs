@@ -20,8 +20,7 @@ import {
   removeContactFromCategory,
 } from "./category-edit.mjs";
 
-function makeCategoryMenuHandler(fieldName) {
-  const state = window.state;
+function makeCategoryMenuHandler(fieldName, state) {
   return async (categoryElement) => {
     const contacts = lookupContactsByCategoryElement(
       categoryElement,
@@ -46,8 +45,7 @@ function overrideMenuForCategoryTree(categoryElement) {
   createMenuForCategoryTree(categoryElement);
 }
 
-async function overrideMenuForContactList() {
-  const state = window.state;
+async function overrideMenuForContactList(state) {
   destroyAllMenus();
   await createMenuForContact(
     state.currentAddressBook,
@@ -58,9 +56,9 @@ async function overrideMenuForContactList() {
 export function initContextMenu(updateUI) {
   const state = window.state;
   const contextMenuHandlers = {
-    addToTO: makeCategoryMenuHandler("to"),
-    addToCC: makeCategoryMenuHandler("cc"),
-    addToBCC: makeCategoryMenuHandler("bcc"),
+    addToTO: makeCategoryMenuHandler("to", state),
+    addToCC: makeCategoryMenuHandler("cc", state),
+    addToBCC: makeCategoryMenuHandler("bcc", state),
     async deleteCategory(categoryElement) {
       try {
         await deleteCategory({
@@ -117,10 +115,10 @@ export function initContextMenu(updateUI) {
     if (state.elementForContextMenu.parentNode.dataset.id != null) {
       // Right click on contact info
       state.elementForContextMenu = state.elementForContextMenu.parentNode;
-      await overrideMenuForContactList();
+      await overrideMenuForContactList(state);
       return;
     } else if (state.elementForContextMenu.dataset.id != null) {
-      await overrideMenuForContactList();
+      await overrideMenuForContactList(state);
       return;
     }
     overrideMenuForCategoryTree(state.elementForContextMenu);
