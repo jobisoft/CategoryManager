@@ -29,19 +29,24 @@ initModal();
 
 const categoryTitle = document.getElementById("category-title");
 
-const contactList = createContactList({
-  addressBook: state.currentAddressBook,
-  contacts: state.currentAddressBook?.contactKeys ?? [],
-});
+const contactList = createContactList(
+  {
+    addressBook: state.currentAddressBook,
+    contacts: state.currentAddressBook?.contactKeys ?? [],
+  },
+  state
+);
 
 const categoryTree = createCategoryTree({
   addressBook: state.currentAddressBook,
   activeCategory: null,
+  state,
   components: { categoryTitle, contactList },
 });
 
 const addressBookList = createAddressBookList({
   data: [...state.addressBooks.values()],
+  state,
   components: { categoryTitle, categoryTree, contactList },
 });
 
@@ -81,8 +86,8 @@ async function updateUI() {
 
 registerCacheUpdateCallback(state.addressBooks, updateUI);
 
-initCustomMenu(categoryTree, updateUI);
-initContextMenu(updateUI);
+initCustomMenu(state, categoryTree, updateUI);
+initContextMenu(state, updateUI);
 
 addressBookList.render();
 categoryTree.render();
