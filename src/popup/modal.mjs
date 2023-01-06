@@ -27,7 +27,7 @@ document.getElementById("modal-category-input-title").innerText =
 document.getElementById("modal-category-input-content").children[0].innerHTML =
   await browser.i18n.getMessage("popup.input.contentHTML");
 
-export async function showCategoryInputModalAsync(initialValue) {
+async function showCategoryInputModalAsync(initialValue) {
   return new Promise((resolve) => {
     categoryInput.value = initialValue;
     MicroModal.show("modal-category-input");

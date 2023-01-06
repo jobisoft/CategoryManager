@@ -13,15 +13,11 @@ import {
   createMenuForContact,
   destroyAllMenus,
 } from "../modules/context-menu.mjs";
-import {
-  getCategoryStringFromInput,
-  showCategoryInputModalAsync,
-} from "./modal.mjs";
+import { getCategoryStringFromInput } from "./modal.mjs";
 import {
   addContactToCategory,
   deleteCategory,
   removeContactFromCategory,
-  moveCategory,
 } from "./category-edit.mjs";
 
 function makeCategoryMenuHandler(fieldName) {
@@ -75,21 +71,6 @@ export function initContextMenu(updateUI) {
         });
       } finally {
         await updateUI();
-      }
-    },
-    async moveCategory(categoryElement) {
-      const oldCategoryStr = categoryElement.dataset.category;
-      const newCategoryStr = await showCategoryInputModalAsync(oldCategoryStr);
-      if (newCategoryStr == null) return;
-      try {
-        await moveCategory({
-          addressBook: state.currentAddressBook,
-          addressBooks: state.addressBooks,
-          oldCategoryStr,
-          newCategoryStr,
-        });
-      } finally {
-        updateUI();
       }
     },
   };
