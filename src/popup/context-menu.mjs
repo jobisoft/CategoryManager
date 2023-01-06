@@ -22,10 +22,7 @@ import {
 
 function makeCategoryMenuHandler(fieldName, state) {
   return async (categoryElement) => {
-    const contacts = lookupContactsByCategoryElement(
-      categoryElement,
-      state.currentAddressBook
-    );
+    const contacts = lookupContactsByCategoryElement(categoryElement);
     if (state.isComposeAction) {
       await addContactsToComposeDetails(fieldName, state, contacts);
     } else {
