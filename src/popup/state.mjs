@@ -1,53 +1,60 @@
-import { initErrorHandler } from "./error-handler.mjs";
+class State {
+  #tab;
+  addressBooks;
+  #allowEdit = false;
+  allContactsVirtualAddressBook;
+  currentAddressBook;
+  currentContactDataFromDragAndDrop;
+  currentCategoryElement;
+  elementForContextMenu;
+  currentDraggingOverCategoryElement;
+  async init() {
+    const [tab] = await browser.tabs.query({
+      currentWindow: true,
+      active: true,
+    });
+    this.#tab = tab;
 
-initErrorHandler();
+    // TODO : Before loading the cache, ping the background if it has written the
+    //        cache already. The listener for the former port based communication
+    //        used here was created only after it was written, so if this script run
+    //        first, it would just fail to connect and die. Instead - if we want to
+    //        catch this case - we should set a flag in the background and simply
+    //        poll it here with runtime.sendMessage() and wait until it comes back
+    //        as true.
+    const { addressBooks } = await browser.storage.local.get("addressBooks");
+    this.addressBooks = addressBooks;
+    console.log(addressBooks);
+    this.allContactsVirtualAddressBook = this.addressBooks.get("all-contacts");
+    this.currentAddressBook = this.allContactsVirtualAddressBook;
+    if (this.currentAddressBook == null)
+      document.getElementById("info-text").style.display = "initial";
+    this.allowEdit = true;
+  }
 
-const [tab] = await browser.tabs.query({ currentWindow: true, active: true });
-const isComposeAction = tab.type == "messageCompose";
-const spinnerElement = document.getElementById("spinner");
-
-let state = {
-  addressBooks: undefined,
-  elementForContextMenu: undefined,
-  tab,
-  isComposeAction,
-  currentCategoryElement: undefined,
-  currentDraggingOverCategoryElement: undefined,
-  currentContactDataFromDragAndDrop: undefined,
-  allContactsVirtualAddressBook: undefined,
-  currentAddressBook: undefined,
-  __allowEdit: false,
-  get allowEdit() {
-    return this.__allowEdit;
-  },
-  set allowEdit(value) {
-    this.__allowEdit = value;
-    if (this.__allowEdit) {
-      spinnerElement.classList.remove("show");
-    } else {
-      spinnerElement.classList.add("show");
+  get tab() {
+    if (!this.#tab) {
+      throw new Error("init() was not called");
     }
-  },
-};
-
-async function load() {
-  // TODO : Before loading the cache, ping the background if it has written the
-  //        cache already. The listener for the former port based communication
-  //        used here was created only after it was written, so if this script run
-  //        first, it would just fail to connect and die. Instead - if we want to
-  //        catch this case - we should set a flag in the background and simply
-  //        poll it here with runtime.sendMessage() and wait until it comes back
-  //        as true.
-  const { addressBooks } = await browser.storage.local.get("addressBooks");
-  state.addressBooks = addressBooks;
-  console.log(addressBooks);
-  state.allContactsVirtualAddressBook = state.addressBooks.get("all-contacts");
-  state.currentAddressBook = state.allContactsVirtualAddressBook;
-  if (state.currentAddressBook == null)
-    document.getElementById("info-text").style.display = "initial";
-  state.allowEdit = true;
+    return this.#tab;
+  }
+  get isComposeAction() {
+    return this.tab.type == "messageCompose";
+  }
+  get spinnerElement() {
+    return document.getElementById("spinner");
+  }
+  get allowEdit() {
+    return this.#allowEdit;
+  }
+  set allowEdit(value) {
+    this.#allowEdit = value;
+    if (this.#allowEdit) {
+      this.spinnerElement.classList.remove("show");
+    } else {
+      this.spinnerElement.classList.add("show");
+    }
+  }
 }
 
-await load();
-
-export default state;
+export default State;
