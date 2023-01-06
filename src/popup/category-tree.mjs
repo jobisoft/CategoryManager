@@ -127,7 +127,6 @@ export function createCategoryTree({
     },
   });
   async function click(event) {
-    console.log("Click", event);
     if (event.detail > 1) {
       // Disable click event on double click
       event.preventDefault();
@@ -166,12 +165,14 @@ export function createCategoryTree({
     }
     window.close();
   }
+  
+  // See https://stackoverflow.com/questions/7110353/html5-dragleave-fired-when-hovering-a-child-element
+  let dragEnterLeaveCounter = 0;
   function dragEnter(e) {
-    console.log("Drag Enter");
+    ++dragEnterLeaveCounter;
     this.showNewCategory();
     e.preventDefault();
   }
-
   function dragOver(e) {
     this.hideDragOverHighlight();
     if (e.target.nodeName === "I" || e.target.nodeName === "#text") {
@@ -213,12 +214,8 @@ export function createCategoryTree({
     item.getAsString((x) => (state.currentContactDataFromDragAndDrop = x));
   }
   function dragLeave(e) {
-    if (
-      e.target == this.element &&
-      !("uncategorized" in e.relatedTarget.dataset)
-    ) {
-      // We are leaving the tree, but not entering an uncategorized category.
-      console.warn("Leaving tree!", e);
+    --dragEnterLeaveCounter;
+    if (dragEnterLeaveCounter === 0) {
       this.hideNewCategory();
     }
     const parentDetails = this.getParentDetailsElement(e.target);
