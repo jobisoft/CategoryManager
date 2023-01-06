@@ -67,7 +67,8 @@ export function hideCustomMenu() {
   customMenu.classList.remove("show");
 }
 
-export function initCustomMenu(state, categoryTree) {
+export function initCustomMenu(categoryTree) {
+  const state = window.state;
   document.addEventListener("mousedown", (e) => {
     let element = e.target;
     while (element !== customMenu && element != null) {

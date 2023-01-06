@@ -80,10 +80,10 @@ export function writeTreeNode(category, activeCategory) {
 export function createCategoryTree({
   addressBook,
   activeCategory,
-  state,
   components: { categoryTitle, contactList },
   ...rest
 }) {
+  const state = window.state;
   let component = new Component({
     element: "#tree",
     data: { addressBook, activeCategory },

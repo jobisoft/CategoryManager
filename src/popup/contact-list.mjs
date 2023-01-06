@@ -4,7 +4,7 @@ import {
   escapeHtmlAttr,
 } from "../modules/ui.mjs";
 
-export function createContactList(data, state) {
+export function createContactList(data) {
   let component = new Component({
     element: "#contacts",
     data,
@@ -40,7 +40,7 @@ export function createContactList(data, state) {
     },
   });
   component.element.addEventListener("dragstart", (e) => {
-    if (!state.allowEdit) {
+    if (!window.state.allowEdit) {
       e.preventDefault();
       return;
     }

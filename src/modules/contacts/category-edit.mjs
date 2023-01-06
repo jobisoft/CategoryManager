@@ -40,7 +40,7 @@ export async function addCategoryToContactVCard({
 export async function removeCategory({
   categoryStr,
   addressBook,
-  addressBooks, // TODO : This seems to be a constant global, do we have to pass it around?
+  addressBooks,
 }) {
   const virtualAddressBook = addressBooks.get("all-contacts");
   let pendingAddressBooks = addressBook === virtualAddressBook
@@ -70,7 +70,7 @@ export async function removeCategory({
 
 export async function moveCategory({
   addressBook,
-  addressBooks, // TODO : This seems to be a constant global, do we have to pass it around?
+  addressBooks,
   oldCategoryStr,
   newCategoryStr,
 }) {

@@ -8,9 +8,9 @@ function writeAddressBookElement(addressBook, index) {
 
 export function createAddressBookList({
   data,
-  state,
   components: { categoryTitle, contactList, categoryTree },
 }) {
+  const state = window.state;
   let component = new Component({
     element: "#address-books",
     data,
