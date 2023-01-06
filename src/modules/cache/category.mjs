@@ -25,11 +25,7 @@ export class Category {
     this.contacts = contacts;
     this.isUncategorized = isUncategorized;
   }
-  
-  isLeaf() {
-    return isLeafCategory(this);
-  }
-  
+    
   static createSubcategory(parentCategoryObj, name, contacts) {
     const newPath =
       parentCategoryObj.path == null

@@ -1,6 +1,5 @@
 import { mapIter } from "../modules/iter.mjs";
 import { toRFC5322EmailAddress } from "../modules/contacts/contact.mjs";
-import { id2contact } from "../modules/cache/index.mjs";
 
 export async function addContactsToComposeDetails(fieldName, state, contacts) {
   const details = await browser.compose.getComposeDetails(state.tab.id);

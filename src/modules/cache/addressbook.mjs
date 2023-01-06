@@ -80,12 +80,12 @@ export function lookupCategory(
   categoryKey,
   getUncategorized = false
 ) {
-  // look up a category using a key like `A / B`
+  // Look up a category using a key like `A / B`.
   console.log("Looking up", categoryKey);
   const category = categoryStringToArr(categoryKey);
   if (getUncategorized) {
     // Remove the last sub category, which is "Uncategorized". It is called, by
-    // lookupContactsByCategoryElement() when clicked on an the Uncategorized
+    // lookupContactsByCategoryElement() when clicked on the Uncategorized
     // category.
     category.pop();
   }
@@ -99,6 +99,7 @@ export function lookupCategory(
     : cur;
 }
 
+// Unused
 export function id2contact(addressBook, contactId) {
   return addressBook.contacts.get(contactId);
 }
