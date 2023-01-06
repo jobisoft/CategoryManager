@@ -1,16 +1,16 @@
-import { buildUncategorizedCategory, Category } from "./category.mjs";
 import {
+  buildUncategorizedCategory,
+  Category,
   categoryStringToArr,
   SUBCATEGORY_SEPARATOR,
-} from "./category-utils.mjs";
+} from "./category.mjs";
 import { parseContact } from "../contact.mjs";
 import { sortMapByKey } from "../utils.mjs";
 
 export class AddressBook {
   categories = new Map();
   uncategorized;
-  contacts; // For O(1) Lookup/Delete/Add
-  contactKeys; // Keep it sorted. O(log n) Lookup and O(n) Add/Delete
+  contacts;
   name;
   id;
   path = null; // For compatibility with class Category,
