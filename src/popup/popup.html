@@ -30,7 +30,7 @@
       rel="stylesheet"
       type="text/css"
       media="screen"
-      href="custom-menu.css"
+      href="drag-menu.css"
     />
     <script src="../external/email-addresses/lib/email-addresses.min.js"></script>
     <script src="../external/ical.js"></script>
@@ -41,14 +41,19 @@
     <p id="info-text">No address book is available</p>
     <div id="container">
       <ul id="address-books"></ul>
-      <nav id="explorer" class="tree-nav"></nav>
+      <div id="info">
+        <div id="spinner">
+          <div id="spinner-icon"></div>
+          <p id="spinner-text">Updating...</p>
+        </div>
+      </div>
       <nav id="tree"></nav>
       <h2 id="category-title"></h2>
       <div id="contacts"></div>
     </div>
     <ul id="custom-menu" class="custom-menu">
-      <li id="menu-add">Add to this category</li>
-      <li id="menu-add-sub">Add to a new subcategory</li>
+      <li id="menu-add"></li>
+      <li id="menu-add-sub"></li>
     </ul>
 
     <div
@@ -115,8 +120,10 @@
           <main class="modal__content" id="modal-error-content">
             <p id="error-content"></p>
             <p style="font-weight: bold">
-              If you think this is a bug of Category Manager, Please file an
-              issue at
+              <span id="modal-error-content-footer">
+                If you think this is a bug of Category Manager, Please file an
+                issue at</span
+              >
               <a href="https://github.com/jobisoft/CategoryManager/issues"
                 >https://github.com/jobisoft/CategoryManager/issues</a
               >

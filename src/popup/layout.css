@@ -4,44 +4,69 @@
   display: grid;
   /* TODO: determine the max width of tree view in JS. use 15rem for now */
   grid-template-columns: auto 15rem 14rem;
-  grid-template-rows: 2rem auto;
+  grid-template-rows: 2rem auto auto;
   gap: 0.5rem 2rem;
+  grid-template-areas:
+    "header header header"
+    "address-books category-tree contacts"
+    "info category-tree contacts";
   /* No idea why `calc(100vh - 2rem)` doesn't work */
   height: calc(600px - 2rem);
   color: var(--catman-foreground);
 }
 
 #address-books {
-  grid-column: 1;
-  grid-row: 2;
+  grid-area: address-books;
   overflow: auto;
   margin: 0;
 }
 
 #tree {
-  grid-column: 2;
-  grid-row: 2;
+  grid-area: category-tree;
   user-select: none;
   overflow: auto;
 }
 
 #contacts {
-  grid-column: 3;
-  grid-row: 2;
-  grid-row-end: 3;
+  grid-area: contacts;
   position: relative;
   overflow: auto;
 }
 
 #category-title {
-  grid-column: 2;
-  grid-row: 1;
-  grid-column-end: 4;
+  grid-area: header;
   margin: 0;
   font-size: 1rem;
   text-align: right;
   line-height: 2rem;
   background: var(--catman-background);
+}
+
+#info {
+  grid-area: info;
+  display: flex;
+  flex-direction: row;
+}
+
+#spinner {
+  align-self: flex-end;
+  display: none;
+  align-items: center;
+}
+
+#spinner.show {
+  display: flex;
+}
+
+#spinner-icon {
+  background-image: url("../images/Pulse-96px.gif");
+  background-size: contain;
+  height: 48px;
+  width: 48px;
+}
+
+#spinner-text {
+  font-size: 1.3rem;
 }
 
 /* Text when no address book is available */

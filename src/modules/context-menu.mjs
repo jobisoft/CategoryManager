@@ -1,4 +1,24 @@
-import { SUBCATEGORY_SEPARATOR } from "./address-book/index.mjs";
+import {
+  SUBCATEGORY_SEPARATOR,
+  isContactInCategory,
+  isContactInAnySubcategory,
+} from "./cache/index.mjs";
+
+let { type } = await browser.windows.getCurrent();
+const MENU_TITLE_LOCALE_KEY =
+  type == "messageCompose"
+    ? "menu.category.add_members_to_current_message"
+    : "menu.category.add_members_to_new_message";
+const MENU_ADD_TITLE = await browser.i18n.getMessage(MENU_TITLE_LOCALE_KEY);
+const MENU_ADD_TO_TO = await browser.i18n.getMessage("menu.category.add_to_to");
+const MENU_ADD_TO_CC = await browser.i18n.getMessage("menu.category.add_to_cc");
+const MENU_ADD_TO_BCC = await browser.i18n.getMessage(
+  "menu.category.add_to_bcc"
+);
+const MENU_DELETE_CATEGORY = await browser.i18n.getMessage(
+  "menu.category.delete"
+);
+const MENU_RENAME_CATEGORY = await browser.i18n.getMessage("menu.category.rename");
 
 function createMenu(properties) {
   return browser.menus.create({
@@ -17,9 +37,8 @@ function createCheckBoxMenu({
 }) {
   return createMenu({
     id,
-    title,
-    checked,
-    type: "checkbox",
+    title: `${checked ? "☑ " : "☐ "} ${title}`,
+    type: "normal",
     parentId,
   });
 }
@@ -30,64 +49,91 @@ export function destroyAllMenus() {
 
 export function createMenuForCategoryTree(categoryElement) {
   createMenu({
+    id: "actionTitle",
+    enabled: false,
+    title: MENU_ADD_TITLE,
+  });
+  createMenu({
     id: "addToTO",
-    title: "Add to TO",
+    title: MENU_ADD_TO_TO,
   });
   createMenu({
     id: "addToCC",
-    title: "Add to CC",
+    title: MENU_ADD_TO_CC,
   });
   createMenu({
     id: "addToBCC",
-    title: "Add to BCC",
+    title: MENU_ADD_TO_BCC,
   });
   if (!("uncategorized" in categoryElement.dataset)) {
     // Add an option to delete this category
     createSeparator();
-    createMenu({ id: "deleteCategory", title: "Delete this category" });
+    createMenu({ id: "renameCategory", title: MENU_RENAME_CATEGORY });
+    createMenu({ id: "deleteCategory", title: MENU_DELETE_CATEGORY });
   }
 }
 
-const NEW_CATEGORY_TEXT = "<New Category Here>";
-const THIS_CATEGORY_TEXT = "<This Category>";
-
-function createCategoryEditingMenuRecursively(
+async function createCategoryEditingMenuRecursively(
   category,
   contactId,
   prefix = "",
   parentId = undefined
 ) {
   const menuId = prefix + category.name;
-  // console.log(menuId, contactId);
+  const checked = isContactInCategory(category, contactId);
+
   createCheckBoxMenu({
     id: menuId,
     title: category.name,
-    checked: contactId in category.contacts,
+    checked,
     parentId,
   });
-  createCheckBoxMenu({
-    id: "%" + menuId.slice(1),
-    title: THIS_CATEGORY_TEXT,
-    parentId: menuId,
-  });
-  createCheckBoxMenu({
-    id: "$" + menuId.slice(1),
-    title: NEW_CATEGORY_TEXT,
-    parentId: menuId,
-  });
-  for (const catName in category.categories) {
-    const subcategory = category.categories[catName];
-    createCategoryEditingMenuRecursively(
-      subcategory,
-      contactId,
-      menuId + SUBCATEGORY_SEPARATOR,
-      menuId
-    );
+
+  // Add submenu entries.
+  if (checked) {
+    let remove_string_key = isContactInAnySubcategory(category, contactId)
+      ? "menu.contact.context.remove_from_category_recursively"
+      : "menu.contact.context.remove_from_category";
+    createMenu({
+      id: "@" + menuId.slice(1),
+      title: await browser.i18n.getMessage(remove_string_key, category.name),
+      parentId: menuId,
+    });
+  } else {
+    createMenu({
+      id: "%" + menuId.slice(1),
+      title: await browser.i18n.getMessage(
+        "menu.contact.context.add_to_category",
+        category.name
+      ),
+      parentId: menuId,
+    });
   }
+
+  if (category.categories.size > 0) {
+    createSeparator(menuId);
+    for (const subcategory of category.categories.values()) {
+      await createCategoryEditingMenuRecursively(
+        subcategory,
+        contactId,
+        menuId + SUBCATEGORY_SEPARATOR,
+        menuId
+      );
+    }
+  }
+
+  createSeparator(menuId);
+  createMenu({
+    id: "$" + menuId.slice(1),
+    title: await browser.i18n.getMessage(
+      "menu.contact.context.add_to_new_sub_category",
+      category.name
+    ),
+    parentId: menuId,
+  });
 }
 
 let separatorIdCounter = 0;
-
 function createSeparator(parentId = undefined) {
   return createMenu({
     id: `separator-${separatorIdCounter++}`,
@@ -95,8 +141,6 @@ function createSeparator(parentId = undefined) {
     parentId,
   });
 }
-
-const MENU_NUMBER_LIMIT = 15;
 
 export function createDispatcherForContactListContextMenu({
   onDeletion,
@@ -124,11 +168,13 @@ export function createDispatcherForContactListContextMenu({
   };
 }
 
-export function createMenuForContact(addressBook, contactId) {
+const MENU_HEADER_TEXT = await browser.i18n.getMessage(
+  "menu.contact.context.manage_categories_of_contact"
+);
+
+export async function createMenuForContact(addressBook, contactId) {
   // Symbols:
-  //   Menu for deletion
-  //    @: for managing existing categories
-  //   Menu for addition
+  //    @: remove from category
   //    #: normal category
   //    $: <new category>
   //    %: <this category>
@@ -136,38 +182,26 @@ export function createMenuForContact(addressBook, contactId) {
   // Menu:
   // - Manage belonging categories
   // - Add to ...
-  const contact = addressBook.contacts[contactId];
-  console.log(contact);
-  if (contact.categories.length > 0) {
-    createMenu({
-      id: "header",
-      title: "Manage existing categories:",
-      enabled: false,
-    });
-    for (const catArr of contact.categories) {
-      const catName = catArr.join(SUBCATEGORY_SEPARATOR);
-      createCheckBoxMenu({
-        id: "@" + catName,
-        title: catName,
-        checked: true,
-      });
-    }
-    createSeparator();
-  }
-  let parentId = undefined;
+  createMenu({
+    id: "header",
+    title: MENU_HEADER_TEXT,
+    enabled: false,
+  });
 
-  // I didn't found an O(1)/O(1) method to read the length of an object.
-  // Let's just use an O(n)/O(n) method and hope JavaScript will be replaced one day.
-  if (Object.keys(addressBook.categories).length > MENU_NUMBER_LIMIT) {
-    // Fold them inside a sub menu
-    parentId = createMenu({ id: "expander", title: "Add to" });
-  } else {
-    createMenu({ id: "expander", title: "Add to", enabled: false });
+  if (addressBook.categories.size > 0) {
+    createSeparator();
+    for (const category of addressBook.categories.values()) {
+      // Add # prefix to avoid id conflicts
+      await createCategoryEditingMenuRecursively(category, contactId, "#");
+    }
   }
-  createMenu({ id: "$", title: NEW_CATEGORY_TEXT, parentId });
-  for (const catName in addressBook.categories) {
-    const category = addressBook.categories[catName];
-    // Add # prefix to avoid id conflicts
-    createCategoryEditingMenuRecursively(category, contactId, "#", parentId);
-  }
+
+  createSeparator();
+
+  createMenu({
+    id: "$",
+    title: await browser.i18n.getMessage(
+      "menu.contact.context.add_to_new_top_level_category"
+    ),
+  });
 }

@@ -5,35 +5,41 @@
 import { createDispatcherForContactListContextMenu } from "../modules/context-menu.mjs";
 import {
   addContactsToComposeDetails,
-  toRFC5322EmailAddress,
-} from "../modules/contact.mjs";
+  openComposeWindowWithContacts,
+} from "./compose.mjs";
 import { lookupContactsByCategoryElement } from "./utils.mjs";
-import { id2contact } from "../modules/address-book/index.mjs";
 import {
   createMenuForCategoryTree,
   createMenuForContact,
   destroyAllMenus,
 } from "../modules/context-menu.mjs";
-import { getCategoryStringFromInput } from "./modal.mjs";
 import {
-  addContactToCategory,
-  deleteCategory,
-  removeContactFromCategory,
-} from "./category-edit.mjs";
+  getCategoryStringFromInput,
+  showCategoryInputModalAsync,
+} from "./modal.mjs";
+import {
+  addCategoryToContactVCard,
+  moveCategory,
+  removeCategory,
+  removeCategoryFromContactVCard,
+} from "../modules/contacts/category-edit.mjs";
 
-function makeCategoryMenuHandler(fieldName, state) {
+function makeCategoryMenuHandler(fieldName) {
+  const state = window.state;
   return async (categoryElement) => {
-    const contacts = lookupContactsByCategoryElement(categoryElement);
+    const contacts = lookupContactsByCategoryElement(
+      categoryElement,
+      state.currentAddressBook
+    );
     if (state.isComposeAction) {
-      await addContactsToComposeDetails(fieldName, state.tab, contacts);
+      await addContactsToComposeDetails(fieldName, state, contacts);
     } else {
-      // Do a filterMap(using a flatMap) to remove contacts that do not have an email address
-      // and map the filtered contacts to rfc 5322 email address format.
-      const emailList = Object.keys(contacts).flatMap((c) => {
-        const contact = id2contact(state.currentAddressBook, c);
-        return contact.email == null ? [] : [toRFC5322EmailAddress(contact)];
-      });
-      await browser.compose.beginNew(null, { [fieldName]: emailList });
+      await openComposeWindowWithContacts(
+        fieldName,
+        state,
+        contacts,
+        categoryElement.dataset.category
+      );
     }
     window.close();
   };
@@ -44,30 +50,38 @@ function overrideMenuForCategoryTree(categoryElement) {
   createMenuForCategoryTree(categoryElement);
 }
 
-function overrideMenuForContactList(state) {
+async function overrideMenuForContactList() {
+  const state = window.state;
   destroyAllMenus();
-  createMenuForContact(
+  await createMenuForContact(
     state.currentAddressBook,
     state.elementForContextMenu.dataset.id
   );
 }
 
-export function initContextMenu(state, updateUI) {
+export function initContextMenu() {
+  const state = window.state;
   const contextMenuHandlers = {
-    addToTO: makeCategoryMenuHandler("to", state),
-    addToCC: makeCategoryMenuHandler("cc", state),
-    addToBCC: makeCategoryMenuHandler("bcc", state),
+    addToTO: makeCategoryMenuHandler("to"),
+    addToCC: makeCategoryMenuHandler("cc"),
+    addToBCC: makeCategoryMenuHandler("bcc"),
     async deleteCategory(categoryElement) {
-      try {
-        await deleteCategory({
-          categoryPath: categoryElement.dataset.category,
-          isUncategorized: "uncategorized" in categoryElement.dataset,
-          addressBook: state.currentAddressBook,
-          addressBooks: state.addressBooks,
-        });
-      } finally {
-        updateUI();
-      }
+      await removeCategory({
+        categoryStr: categoryElement.dataset.category,
+        addressBook: state.currentAddressBook,
+        addressBooks: state.addressBooks,
+      });
+    },
+    async renameCategory(categoryElement) {
+      const oldCategoryStr = categoryElement.dataset.category;
+      const newCategoryStr = await showCategoryInputModalAsync(oldCategoryStr);
+      if (newCategoryStr == null) return;
+      await moveCategory({
+        addressBook: state.currentAddressBook,
+        addressBooks: state.addressBooks,
+        oldCategoryStr,
+        newCategoryStr,
+      });
     },
   };
   const dispatchMenuEventsForContactList =
@@ -76,35 +90,30 @@ export function initContextMenu(state, updateUI) {
         const contactId = state.elementForContextMenu.dataset.id;
         const addressBookId = state.elementForContextMenu.dataset.addressbook;
         const addressBook = state.addressBooks.get(addressBookId);
-        await removeContactFromCategory({
+        await removeCategoryFromContactVCard({
           addressBook,
           contactId,
           categoryStr,
-          virtualAddressBook: state.allContactsVirtualAddressBook,
         });
-        return updateUI();
       },
       async onAddition(categoryStr, createSubCategory) {
         const contactId = state.elementForContextMenu.dataset.id;
         const addressBookId = state.elementForContextMenu.dataset.addressbook;
         const addressBook = state.addressBooks.get(addressBookId);
         if (createSubCategory) {
-          const subcategory = await getCategoryStringFromInput();
+          const subcategory = await getCategoryStringFromInput(categoryStr);
           if (subcategory == null) return;
-          if (categoryStr === "") categoryStr = subcategory;
-          else categoryStr += ` / ${subcategory}`;
+          categoryStr = subcategory;
         }
-        await addContactToCategory({
+        await addCategoryToContactVCard({
           addressBook,
           contactId,
           categoryStr,
-          virtualAddressBook: state.allContactsVirtualAddressBook,
         });
-        return updateUI();
       },
     });
 
-  document.addEventListener("contextmenu", (e) => {
+  document.addEventListener("contextmenu", async (e) => {
     if (!state.allowEdit) {
       e.preventDefault();
       return;
@@ -116,10 +125,10 @@ export function initContextMenu(state, updateUI) {
     if (state.elementForContextMenu.parentNode.dataset.id != null) {
       // Right click on contact info
       state.elementForContextMenu = state.elementForContextMenu.parentNode;
-      overrideMenuForContactList(state);
+      await overrideMenuForContactList();
       return;
     } else if (state.elementForContextMenu.dataset.id != null) {
-      overrideMenuForContactList(state);
+      await overrideMenuForContactList();
       return;
     }
     overrideMenuForCategoryTree(state.elementForContextMenu);

@@ -36,6 +36,7 @@
   font-size: 1rem;
   line-height: 2rem;
   transition: color 0.2s;
+  cursor: context-menu;
 }
 
 .tree-nav__item-title[data-uncategorized] {

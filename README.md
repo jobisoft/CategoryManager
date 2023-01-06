@@ -14,3 +14,13 @@ This add-on scans all contact-cards of the currently selected addressbook, extra
 * [checkbox-all/some/none.png] by [Cole Bemis](https://www.iconfinder.com/icons/226561/check_square_icon)
 * [icon.png] based on 'Venn Diagram' by [WARPAINT Media Inc., CA](https://thenounproject.com/search/?q=three%20circles&i=31898#) from Noun Project ([info](https://github.com/jobisoft/CategoryManager/tree/master/sendtocategory/content/skin/catman))
 
+## Contributing
+
+Open an issue if you want to ...
+
+1. report a bug (Please check if there are existing issues for the bug first)
+2. give us feedbacks and suggestions
+
+If you knows HTML, JavaScript and CSS, you can directly contribute to this repo by creating a pull request. 
+
+Read [DEVELOP.md](./DEVELOP.md) to get started.

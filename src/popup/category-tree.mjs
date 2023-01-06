@@ -5,15 +5,16 @@ import {
 } from "../modules/ui.mjs";
 import {
   categoryPathToString,
+  buildUncategorizedCategory,
   isLeafCategory,
-} from "../modules/address-book/index.mjs";
+} from "../modules/cache/index.mjs";
 import { lookupContactsByCategoryElement } from "./utils.mjs";
-import { id2contact } from "../modules/address-book/index.mjs";
 import {
   addContactsToComposeDetails,
-  toRFC5322EmailAddress,
-} from "../modules/contact.mjs";
-import { showCustomMenu } from "./custom-menu.mjs";
+  openComposeWindowWithContacts,
+} from "./compose.mjs";
+import { showCustomMenu } from "./drag-menu.mjs";
+import { mapIter } from "../modules/iter.mjs";
 
 function isActiveCategory(category, activeCategory) {
   return (
@@ -40,13 +41,15 @@ function writeTreeLeaf(category, activeCategory) {
 }
 
 export function writeTreeNode(category, activeCategory) {
-  let children = Object.keys(category.categories).map((key) => {
-    const subCategory = category.categories[key];
-    return isLeafCategory(subCategory)
-      ? writeTreeLeaf(subCategory, activeCategory)
-      : writeTreeNode(subCategory, activeCategory);
-  });
-  const uncategorizedCategory = category.uncategorized;
+  let children = [
+    ...mapIter(category.categories.values(), (subCategory) => {
+      return isLeafCategory(subCategory)
+        ? writeTreeLeaf(subCategory, activeCategory)
+        : writeTreeNode(subCategory, activeCategory);
+    }),
+  ];
+  
+  const uncategorizedCategory = buildUncategorizedCategory(category);
   if (uncategorizedCategory != null) {
     children.push(
       // `uncategorized` is always the last one and needs special handling
@@ -77,24 +80,26 @@ export function writeTreeNode(category, activeCategory) {
 export function createCategoryTree({
   addressBook,
   activeCategory,
-  state,
   components: { categoryTitle, contactList },
   ...rest
 }) {
+  const state = window.state;
   let component = new Component({
     element: "#tree",
     data: { addressBook, activeCategory },
     template({ addressBook, activeCategory }) {
       let res = `<div class="tree-nav__item new-category"><p class="tree-nav__item-title new-category-title">[ New Category ]</p></div>\n`;
       if (addressBook == null) return res;
-      let roots = Object.keys(addressBook.categories).map((key) =>
-        writeTreeNode(addressBook.categories[key], activeCategory)
-      );
-      const uncategorizedCategory = addressBook.uncategorized;
+      let roots = [
+        ...mapIter(addressBook.categories.values(), (rootCategory) =>
+          writeTreeNode(rootCategory, activeCategory)
+        ),
+      ];
+      const uncategorizedCategory = buildUncategorizedCategory(addressBook);
       if (uncategorizedCategory != null) {
         roots.push(writeTreeLeaf(uncategorizedCategory, activeCategory));
       }
-      return res + roots.join("\n");
+      return roots.join("\n") + res;
     },
     ...rest,
     showNewCategory() {
@@ -122,7 +127,6 @@ export function createCategoryTree({
     },
   });
   async function click(event) {
-    console.log("Click", event);
     if (event.detail > 1) {
       // Disable click event on double click
       event.preventDefault();
@@ -144,34 +148,37 @@ export function createCategoryTree({
     state.currentCategoryElement.classList.add("active");
     const newData = {
       addressBook: state.currentAddressBook,
-      contacts: lookupContactsByCategoryElement(state.currentCategoryElement),
+      contacts: lookupContactsByCategoryElement(
+        state.currentCategoryElement,
+        state.currentAddressBook
+      ),
     };
     categoryTitle.innerText = categoryKey;
     return contactList.update(newData);
   }
   async function doubleClick(event) {
-    const categoryKey = event.target.dataset.category;
-    if (categoryKey == null) return;
-    const contacts = lookupContactsByCategoryElement(event.target);
+    const categoryElement = event.target;
+    const categoryPath = categoryElement.dataset.category;
+    if (categoryPath == null) return;
+    const contacts = lookupContactsByCategoryElement(
+      categoryElement,
+      state.currentAddressBook
+    );
     if (state.isComposeAction) {
-      await addContactsToComposeDetails("bcc", state.tab, contacts);
+      await addContactsToComposeDetails("bcc", state, contacts);
     } else {
-      // open a new messageCompose window
-      await browser.compose.beginNew(null, {
-        bcc: Object.keys(contacts).flatMap((c) => {
-          const contact = id2contact(state.currentAddressBook, c);
-          return contact.email == null ? [] : [toRFC5322EmailAddress(contact)];
-        }),
-      });
+      await openComposeWindowWithContacts("bcc", state, contacts, categoryPath);
     }
     window.close();
   }
+  
+  // See https://stackoverflow.com/questions/7110353/html5-dragleave-fired-when-hovering-a-child-element
+  let dragEnterLeaveCounter = 0;
   function dragEnter(e) {
-    console.log("Drag Enter");
+    ++dragEnterLeaveCounter;
     this.showNewCategory();
     e.preventDefault();
   }
-
   function dragOver(e) {
     this.hideDragOverHighlight();
     if (e.target.nodeName === "I" || e.target.nodeName === "#text") {
@@ -199,8 +206,8 @@ export function createCategoryTree({
     console.warn(`Dragging onto`, state.currentDraggingOverCategoryElement);
     e.preventDefault();
   }
-  function dragDrop(e) {
-    showCustomMenu(e.pageX, e.pageY, {
+  async function dragDrop(e) {
+    await showCustomMenu(e.pageX, e.pageY, {
       currentDraggingOverCategoryElement:
         state.currentDraggingOverCategoryElement,
       currentCategoryElement: state.currentCategoryElement,
@@ -213,12 +220,8 @@ export function createCategoryTree({
     item.getAsString((x) => (state.currentContactDataFromDragAndDrop = x));
   }
   function dragLeave(e) {
-    if (
-      e.target == this.element &&
-      !("uncategorized" in e.relatedTarget.dataset)
-    ) {
-      // We are leaving the tree, but not entering an uncategorized category.
-      console.warn("Leaving tree!", e);
+    --dragEnterLeaveCounter;
+    if (dragEnterLeaveCounter === 0) {
       this.hideNewCategory();
     }
     const parentDetails = this.getParentDetailsElement(e.target);

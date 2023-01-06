@@ -10,13 +10,13 @@ const path = require("path");
 const url = require("url");
 
 const providerPath = url.pathToFileURL(
-  path.join(__dirname, "../src/modules/fake-data-provider.mjs")
+  path.join(__dirname, "../data.json")
 ).href;
 
 async function main() {
-  const data = (await import(providerPath)).default;
-  const abOfInterest = data[2];
-  const vcards = abOfInterest.contacts.map(
+  const data = (await import(providerPath, { assert: { type: "json" } })).default;
+  const abOfInterest = data;
+  const vcards = abOfInterest.map(
     ({ name, email, categories }) => `BEGIN:VCARD
 VERSION:4.0
 EMAIL;PREF=1:${email}
