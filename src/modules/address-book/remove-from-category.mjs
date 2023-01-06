@@ -5,10 +5,7 @@ import {
   shouldContactBeUncategorized,
   categoryObjToString,
 } from "./category-utils.mjs";
-import {
-  removeContactFromUncategorized,
-  insertContactIntoUncategorized,
-} from "./category.mjs";
+import { Category, buildCategory } from "./category.mjs";
 import { localeAwareContactComparator, isEmptyObject } from "../utils.mjs";
 import { SortedContacts } from "../sorted-contacts.mjs";
 
@@ -30,7 +27,12 @@ function removeContactFromCategoryHelper(
       localeAwareContactComparator(addressBook)
     );
     if (!isLeafCategory(categoryObj)) {
-      removeContactFromUncategorized(addressBook, categoryObj, contactId);
+      delete categoryObj.uncategorized.contacts[contactId];
+      SortedContacts.remove(
+        categoryObj.uncategorized.contactKeys,
+        contactId,
+        localeAwareContactComparator(addressBook)
+      );
     }
     return;
   }
@@ -86,7 +88,10 @@ function removeContactFromCategoryHelper(
     !shouldDeleteContact &&
     shouldContactBeUncategorized(categoryObj, contactId)
   ) {
-    insertContactIntoUncategorized(addressBook, categoryObj, contactId);
+    categoryObj.uncategorized ??= Category.createUncategorizedCategory(
+      categoryObj.path
+    );
+    buildCategory(addressBook, categoryObj, false, true);
   }
   if (
     categoryObj.uncategorized != null &&
@@ -99,7 +104,6 @@ function removeContactFromCategoryHelper(
   }
 }
 
-/** This function handles the removal of a category entry in vCard */
 export async function removeContactFromCategory(
   addressBook,
   contactId,
