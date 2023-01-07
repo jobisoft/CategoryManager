@@ -32,9 +32,9 @@ export function registerCacheUpdateCallback(addressBooks, callback) {
     await updateCacheOnContactDeletion(addressBooks, addressBookId, contactId);
     await callback(addressBooks);
   });
-  browser.addressBooks.onCreated.addListener(async (node) => {
-    await updateCacheOnAddressBookCreation(addressBooks, node);
-    await callback(addressBooks);
+  browser.addressBooks.onCreated.addListener((node) => {
+    updateCacheOnAddressBookCreation(addressBooks, node);
+    callback(addressBooks);
   });
   browser.addressBooks.onUpdated.addListener(async (node) => {
     await updateCacheOnAddressBookUpdate(addressBooks, node);
@@ -74,13 +74,12 @@ async function updateCacheOnContactDeletion(
   await deleteContactInCache(addressBooks.get("all-contacts"), contactId);
 }
 
-async function updateCacheOnAddressBookCreation(addressBooks, node) {
-  // 1. Create the new address book
-  const newAddressBook = await AddressBook.fromTBAddressBook(node);
-  addressBooks.set(node.id, newAddressBook);
-  // 2. Update the "all-contacts" address book
-  let allContacts = addressBooks.get("all-contacts");
-  await createContactsInCache(allContacts, newAddressBook.contacts);
+function updateCacheOnAddressBookCreation(addressBooks, { name, id }) {
+  // Create the new address book
+  // We don't deal with the contacts here, because the "onCreated" event for
+  // contacts will fire for each contact in the address book.
+  const newAddressBook = new AddressBook(name, new Map(), id);
+  addressBooks.set(id, newAddressBook);
 }
 
 async function updateCacheOnAddressBookUpdate(addressBooks, { id, name }) {
