@@ -91,7 +91,17 @@ export async function modifyContactInCache(
       await removeCategoryFromCachedContact(virtualAddressBook, id, cat);
     }
   }
-  addressBook.contacts.set(id, newContact);
+  
+  // The contact object is used by reference in the all subcategories, do not
+  // replace it - which disconnects all references - but update it and keep the
+  // same object as a container.
+  // addressBook.contacts.set(id, newContact);
+  Object.keys(oldContact).forEach(function(key) {
+    delete oldContact[key];
+  });
+  Object.keys(newContact).forEach(function(key) {
+    oldContact[key] = newContact[key];
+  });
   addressBook.contacts = sortContactsMap(addressBook.contacts);
 }
 
