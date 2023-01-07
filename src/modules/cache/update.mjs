@@ -92,14 +92,14 @@ export async function modifyContactInCache(
     }
   }
   
-  // The contact object is used by reference in the all subcategories, do not
-  // replace it - which disconnects all references - but update it and keep the
-  // same object as a container.
-  // addressBook.contacts.set(id, newContact);
-  Object.keys(oldContact).forEach(function(key) {
+  // The individual contact object is stored by reference in all subcategories.
+  // Do not replace it - which disconnects all references - but update it and
+  // keep the same object as a container.
+  addressBook.contacts.set(id, newContact);
+  Object.keys(oldContact).forEach(key => {
     delete oldContact[key];
   });
-  Object.keys(newContact).forEach(function(key) {
+  Object.keys(newContact).forEach(key => {
     oldContact[key] = newContact[key];
   });
   addressBook.contacts = sortContactsMap(addressBook.contacts);
