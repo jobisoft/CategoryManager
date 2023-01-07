@@ -101,6 +101,10 @@ export function isSubcategoryOf(categoryStr, parentStr) {
   return categoryStr.startsWith(parentStr + SUBCATEGORY_SEPARATOR);
 }
 
+/**
+ * Convert a category path(a string like "A / B / Uncategorized")
+ * to a category string("A / B").
+ */
 export function categoryPathToString(categoryPath, isUncategorized) {
   if (!isUncategorized) return categoryPath;
   const idx = categoryPath.lastIndexOf(SUBCATEGORY_SEPARATOR);
@@ -187,6 +191,11 @@ export function expandImplicitCategories(categoriesArray) {
   return [...new Set(expandedCategories)];
 }
 
+/**
+ * Get the parent category string of a category string.
+ * If the category string is already a top level category, 
+ * this function returns null.
+ */
 export function getParentCategoryStr(categoryStr) {
   const idx = categoryStr.lastIndexOf(SUBCATEGORY_SEPARATOR);
   return idx !== -1
