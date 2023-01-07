@@ -24,11 +24,10 @@ import {
  */
 export async function createContactsInCache(addressBook, contactNodes) {
   for (let [contactId, contactNode] of contactNodes) {
-    const id = contactNode.id;
     const contact = parseContact(contactNode);
-    addressBook.contacts.set(id, contact);
+    addressBook.contacts.set(contactId, contact);
     for (const categoryStr of contact.categories) {
-      await addCategoryToCachedContact(addressBook, id, categoryStr);
+      await addCategoryToCachedContact(addressBook, contactId, categoryStr);
     }
   }
   addressBook.contacts = sortContactsMap(addressBook.contacts);
