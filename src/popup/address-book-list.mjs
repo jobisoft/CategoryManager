@@ -1,21 +1,25 @@
 import { escapeHtmlAttr, Component } from "../modules/ui/ui.mjs";
 
-function writeAddressBookElement(addressBook, index) {
+function writeAddressBookElement(addressBook, activeAddressBookId) {
   let name = escapeHtmlAttr(addressBook.name);
-  let className = index === 0 ? 'class="selected"' : "";
+  let className =
+    activeAddressBookId === addressBook.id ? 'class="selected"' : "";
   return `<li data-address-book="${addressBook.id}" ${className}>${name}</li>`;
 }
 
 export function createAddressBookList({
-  data,
+  addressBooks,
+  activeAddressBookId,
   components: { categoryTitle, contactList, categoryTree },
 }) {
   const state = window.state;
   let component = new Component({
     element: "#address-books",
-    data,
-    template(data) {
-      let elements = data.map(writeAddressBookElement).join("\n");
+    data: { addressBooks, activeAddressBookId },
+    template({ addressBooks, activeAddressBookId }) {
+      let elements = addressBooks
+        .map((x) => writeAddressBookElement(x, activeAddressBookId))
+        .join("\n");
       return elements;
     },
   });

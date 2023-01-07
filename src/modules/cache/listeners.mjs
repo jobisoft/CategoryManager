@@ -74,13 +74,28 @@ async function updateCacheOnContactDeletion(
 }
 
 async function updateCacheOnAddressBookCreation(addressBooks, node) {
-  addressBooks.set(node.id, await AddressBook.fromTBAddressBook(node));
+  // 1. Create the new address book
+  const newAddressBook = await AddressBook.fromTBAddressBook(node);
+  addressBooks.set(node.id, newAddressBook);
+  // 2. Update the "all-contacts" address book
+  let allContacts = addressBooks.get("all-contacts");
+  for (const contact of newAddressBook.contacts.values()) {
+    await createContactInCache(allContacts, contact);
+  }
 }
 
 async function updateCacheOnAddressBookUpdate(addressBooks, { id, name }) {
+  // This event is only fired if the name of the address book has been changed.
   addressBooks.get(id).name = name;
 }
 
-async function updateCacheOnAddressBookDeletion(addressBooks, node) {
-  addressBooks.delete(node.id);
+async function updateCacheOnAddressBookDeletion(addressBooks, addressBookId) {
+  // 1. Update the "all-contacts" address book
+  const deletedAddressBook = addressBooks.get(addressBookId);
+  let allContacts = addressBooks.get("all-contacts");
+  for (const contactId of deletedAddressBook.contacts.keys()) {
+    await deleteContactInCache(allContacts, contactId);
+  }
+  // 2. Delete the address book
+  addressBooks.delete(addressBookId);
 }

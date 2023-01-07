@@ -44,7 +44,8 @@ const categoryTree = createCategoryTree({
 });
 
 const addressBookList = createAddressBookList({
-  data: [...state.addressBooks.values()],
+  addressBooks: [...state.addressBooks.values()],
+  activeAddressBookId: "all-contacts",
   components: { categoryTitle, categoryTree, contactList },
 });
 
@@ -56,6 +57,15 @@ async function updateUI() {
   //        The deferred task would reschedule the UI redraw by 250ms and if there
   //        is a new redraw request coming in before those 250ms have elapsed, the
   //        timer is reset to 250ms again.
+  if (!state.addressBooks.has(state.currentAddressBook.id)) {
+    // The current address book was removed, so we need to switch to the "all contacts" address book
+    state.currentAddressBook = state.allContactsVirtualAddressBook;
+    state.currentCategoryElement = null;
+  }
+  await addressBookList.update({
+    addressBooks: [...state.addressBooks.values()],
+    activeAddressBookId: state.currentAddressBook.id,
+  });
   console.log("Active category:", state.currentCategoryElement);
   await categoryTree.update({
     addressBook: state.currentAddressBook,
