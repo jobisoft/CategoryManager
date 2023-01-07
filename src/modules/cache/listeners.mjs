@@ -33,6 +33,9 @@ export function registerCacheUpdateCallback(addressBooks, callback) {
     await callback(addressBooks);
   });
   browser.addressBooks.onCreated.addListener((node) => {
+    // This listener must be synchronous, because the "onCreated" listener for
+    // contacts will fire after this one, and we need to have the address book
+    // in the cache already.
     updateCacheOnAddressBookCreation(addressBooks, node);
     callback(addressBooks);
   });
