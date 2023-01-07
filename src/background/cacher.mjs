@@ -7,8 +7,15 @@ async function storeCache(addressBooks) {
   await browser.storage.local.set({ addressBooks });
 }
 
-// Populating Cache
 console.info("Populating cache...");
+
+// Disable action buttons while cache is being populated.
+browser.browserAction.disable();
+browser.browserAction.setBadgeText({ text: "🔄" });
+browser.browserAction.setBadgeBackgroundColor({ color: [0, 0, 0, 0] });
+browser.composeAction.disable();
+browser.composeAction.setBadgeText({ text: "🔄" });
+browser.composeAction.setBadgeBackgroundColor({ color: [0, 0, 0, 0] });
 
 let abInfos = await browser.addressBooks.list();
 
@@ -34,3 +41,9 @@ console.info("Done populating cache!");
 
 // Register listener to update cache on backend changes.
 registerCacheUpdateCallback(addressBooks, storeCache)
+
+// Re-enable our action buttons after cache has been populated.
+browser.browserAction.enable();
+browser.browserAction.setBadgeText({ text: null });
+browser.composeAction.enable();
+browser.composeAction.setBadgeText({ text: null });
