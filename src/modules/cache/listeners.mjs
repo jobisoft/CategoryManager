@@ -47,7 +47,6 @@ export function registerCacheUpdateCallback(addressBooks, callback) {
 }
 
 async function updateCacheOnContactCreation(addressBooks, node) {
-  console.log("updateCacheOnContactCreation");
   let addressBookId = node.parentId;
   await createContactInCache(addressBooks.get(addressBookId), node);
   await createContactInCache(addressBooks.get("all-contacts"), node);
@@ -58,7 +57,6 @@ async function updateCacheOnContactUpdate(
   node,
   changedProperties
 ) {
-  console.log("updateCacheOnContactUpdate");
   await modifyContactInCache(
     addressBooks.get(node.parentId),
     addressBooks.get("all-contacts"),
@@ -72,13 +70,11 @@ async function updateCacheOnContactDeletion(
   addressBookId,
   contactId
 ) {
-  console.log("updateCacheOnContactDeletion");
   await deleteContactInCache(addressBooks.get(addressBookId), contactId);
   await deleteContactInCache(addressBooks.get("all-contacts"), contactId);
 }
 
 async function updateCacheOnAddressBookCreation(addressBooks, node) {
-  console.log("updateCacheOnAddressBookCreation");
   // 1. Create the new address book
   const newAddressBook = await AddressBook.fromTBAddressBook(node);
   addressBooks.set(node.id, newAddressBook);
@@ -88,13 +84,11 @@ async function updateCacheOnAddressBookCreation(addressBooks, node) {
 }
 
 async function updateCacheOnAddressBookUpdate(addressBooks, { id, name }) {
-  console.log("updateCacheOnAddressBookUpdate");
   // This event is only fired if the name of the address book has been changed.
   addressBooks.get(id).name = name;
 }
 
 async function updateCacheOnAddressBookDeletion(addressBooks, addressBookId) {
-  console.log("updateCacheOnAddressBookDeletion");
   // 1. Update the "all-contacts" address book
   const deletedAddressBook = addressBooks.get(addressBookId);
   let allContacts = addressBooks.get("all-contacts");
