@@ -24,7 +24,6 @@ import {
  */
 export async function createContactsInCache(addressBook, contactNodes) {
   for (let [contactId, contactNode] of contactNodes) {
-    console.log("createContactsInCache", [contactId, contactNode]);
     const id = contactNode.id;
     const contact = parseContact(contactNode);
     addressBook.contacts.set(id, contact);
