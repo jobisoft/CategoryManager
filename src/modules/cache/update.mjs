@@ -95,7 +95,6 @@ export async function modifyContactInCache(
   // The individual contact object is stored by reference in all subcategories.
   // Do not replace it - which disconnects all references - but update it and
   // keep the same object as a container.
-  addressBook.contacts.set(id, newContact);
   Object.keys(oldContact).forEach(key => {
     delete oldContact[key];
   });
