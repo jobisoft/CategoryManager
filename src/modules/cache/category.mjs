@@ -93,20 +93,12 @@ export function categoryStringToArr(cat) {
   return cat.split(SUBCATEGORY_SEPARATOR);
 }
 
-export function isLeafCategory(cat) {
-  return cat.categories.size === 0;
+export function hasSubcategories(cat) {
+  return cat.categories.size > 0;
 }
 
 export function isSubcategoryOf(categoryStr, parentStr) {
   return categoryStr.startsWith(parentStr + SUBCATEGORY_SEPARATOR);
-}
-
-export function categoryPathToString(categoryPath, isUncategorized) {
-  if (!isUncategorized) return categoryPath;
-  const idx = categoryPath.lastIndexOf(SUBCATEGORY_SEPARATOR);
-  return idx !== -1
-    ? categoryPath.substring(0, categoryPath.lastIndexOf(SUBCATEGORY_SEPARATOR))
-    : categoryPath; // Top Level Uncategorized category
 }
 
 export function validateCategoryString(s) {
@@ -187,9 +179,15 @@ export function expandImplicitCategories(categoriesArray) {
   return [...new Set(expandedCategories)];
 }
 
+/**
+ * Get the parent category string of a category string.
+ * If the category string is already a top level category, 
+ * this function returns null.
+ */
 export function getParentCategoryStr(categoryStr) {
   const idx = categoryStr.lastIndexOf(SUBCATEGORY_SEPARATOR);
   return idx !== -1
     ? categoryStr.substring(0, categoryStr.lastIndexOf(SUBCATEGORY_SEPARATOR))
     : null; // Return null if no parent category
 }
+

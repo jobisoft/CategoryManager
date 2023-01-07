@@ -4,9 +4,9 @@ import {
   Component,
 } from "../modules/ui/ui.mjs";
 import {
-  categoryPathToString,
+  getParentCategoryStr,
   buildUncategorizedCategory,
-  isLeafCategory,
+  hasSubcategories,
 } from "../modules/cache/index.mjs";
 import { lookupContactsByCategoryElement } from "./utils.mjs";
 import {
@@ -41,11 +41,10 @@ function writeTreeLeaf(category, activeCategory) {
 
 export function writeTreeNode(category, activeCategory) {
   let children = [...category.categories.values()].map(subCategory => {
-    return isLeafCategory(subCategory)
-      ? writeTreeLeaf(subCategory, activeCategory)
-      : writeTreeNode(subCategory, activeCategory);
+    return hasSubcategories(subCategory)
+      ? writeTreeNode(subCategory, activeCategory)
+      : writeTreeLeaf(subCategory, activeCategory)
   });
-  
   const uncategorizedCategory = buildUncategorizedCategory(category);
   if (uncategorizedCategory != null) {
     children.push(
@@ -53,14 +52,14 @@ export function writeTreeNode(category, activeCategory) {
       writeTreeLeaf(uncategorizedCategory, activeCategory)
     );
   }
-  if (isLeafCategory(category)) return writeTreeLeaf(category, activeCategory);
+  if (!hasSubcategories(category)) return writeTreeLeaf(category, activeCategory);
+  
   const activeClass = isActiveCategory(category, activeCategory)
     ? "active"
     : "";
-  const activeCategoryBasePath = categoryPathToString(
-    activeCategory?.path,
-    activeCategory?.isUncategorized
-  );
+  const activeCategoryBasePath = activeCategory?.isUncategorized
+    ? getParentCategoryStr(activeCategory.path)
+    : activeCategory?.path
   const openAttr = activeCategoryBasePath?.startsWith(category.path)
     ? "open"
     : "";
@@ -180,7 +179,8 @@ export function createCategoryTree({
       // Dragging over the expander or text.
       state.currentDraggingOverCategoryElement = e.target.parentElement;
     } else if (e.target.nodeName === "DIV") {
-      // Dragging over the container of a leaf category
+      // Dragging over the container of a leaf category (a category without
+      // further subcategories)
       state.currentDraggingOverCategoryElement = e.target.children[0];
     } else if (e.target.nodeName === "DETAILS") {
       console.warn("Dragging over details!");

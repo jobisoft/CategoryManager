@@ -44,18 +44,33 @@ const categoryTree = createCategoryTree({
 });
 
 const addressBookList = createAddressBookList({
-  data: [...state.addressBooks.values()],
+  addressBooks: [...state.addressBooks.values()],
+  activeAddressBookId: "all-contacts",
   components: { categoryTitle, categoryTree, contactList },
 });
 
+
+/**
+ * Wrapper for updateUI() to collapse multiple UI update requests.
+ */
+let updateTimerId = undefined;
+function requestUpdateUI() {
+  if (typeof updateTimerId === 'number') {
+    clearTimeout(updateTimerId);
+  }
+  updateTimerId = setTimeout(updateUI, 250);
+}
+
 async function updateUI() {
-  // TODO : Maybe use deferred task to collapse multiple UI redraw requests into
-  //        a single one. Currently, with large changeset, the user can sometimes
-  //        see the individual steps. For example when renaming a category, the
-  //        new one might be added first (and shown) before the old one is removed.
-  //        The deferred task would reschedule the UI redraw by 250ms and if there
-  //        is a new redraw request coming in before those 250ms have elapsed, the
-  //        timer is reset to 250ms again.
+  if (!state.addressBooks.has(state.currentAddressBook.id)) {
+    // The current address book was removed, so we need to switch to the "all contacts" address book
+    state.currentAddressBook = state.allContactsVirtualAddressBook;
+    state.currentCategoryElement = null;
+  }
+  await addressBookList.update({
+    addressBooks: [...state.addressBooks.values()],
+    activeAddressBookId: state.currentAddressBook.id,
+  });
   console.log("Active category:", state.currentCategoryElement);
   await categoryTree.update({
     addressBook: state.currentAddressBook,
@@ -89,7 +104,7 @@ async function updateUI() {
   });
 }
 
-registerCacheUpdateCallback(state.addressBooks, updateUI);
+registerCacheUpdateCallback(state.addressBooks, requestUpdateUI);
 
 initCustomMenu(categoryTree);
 initContextMenu();

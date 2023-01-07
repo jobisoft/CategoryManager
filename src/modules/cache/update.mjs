@@ -7,7 +7,7 @@ import { parseContact } from "../contacts/contact.mjs";
 import {
   Category,
   categoryStringToArr,
-  categoryArrToString ,
+  categoryArrToString,
   expandImplicitCategories,
   getParentCategoryStr,
   isSubcategoryOf,
@@ -16,14 +16,31 @@ import {
   removeSubCategories,
 } from "./index.mjs";
 
-export async function createContactInCache(addressBook, contactNode) {
-  const id = contactNode.id;
-  const contact = parseContact(contactNode);
-  addressBook.contacts.set(id, contact);
-  for (const categoryStr of contact.categories) {
-    await addCategoryToCachedContact(addressBook, id, categoryStr);
+/**
+ * Add multiple contacts to the cache and sort them after all have been added.
+ * 
+ * @param {*} addressBook 
+ * @param {*} contactNodes - a Map() or a Map()-like array of key-value-arrays 
+ */
+export async function createContactsInCache(addressBook, contactNodes) {
+  for (let [contactId, contactNode] of contactNodes) {
+    const contact = parseContact(contactNode);
+    addressBook.contacts.set(contactId, contact);
+    for (const categoryStr of contact.categories) {
+      await addCategoryToCachedContact(addressBook, contactId, categoryStr);
+    }
   }
   addressBook.contacts = sortContactsMap(addressBook.contacts);
+}
+
+/**
+ * A convenient wrapper for createContactsInCache.
+ * 
+ * @param {*} addressBook 
+ * @param {*} contactNode
+ */
+export async function createContactInCache(addressBook, contactNode) {
+  return createContactsInCache(addressBook, [[contactNode.id, contactNode]])
 }
 
 export async function modifyContactInCache(
@@ -98,7 +115,7 @@ export async function deleteContactInCache(addressBook, contactId) {
  */
 export function sortContactsMap(contacts) {
   return new Map([...contacts.values()]
-    .sort((a,b) => {
+    .sort((a, b) => {
       let _a = a.name ? `3_${a.name}` : a.email ? `2_${a.email}` : `1_${a.id}`
       let _b = b.name ? `3_${b.name}` : b.email ? `2_${b.email}` : `1_${a.id}`
       return _a.localeCompare(_b);
@@ -134,14 +151,14 @@ async function addCategoryToCachedContact(
     contactId,
     categoryStr,
   );
-  
+
   // Walk through the full category name, level by level, and update contact and
   // category cache for each level.
   const contact = addressBook.contacts.get(contactId);
   const pendingCategoryLevels = categoryStringToArr(categoryStr);
   let categoryLevels = [];
   let categoryObject = addressBook;
-  while (pendingCategoryLevels.length > 0)  {
+  while (pendingCategoryLevels.length > 0) {
     let categoryPart = pendingCategoryLevels.shift();
     categoryLevels.push(categoryPart);
     let categoryName = categoryArrToString(categoryLevels);
@@ -210,7 +227,7 @@ async function removeCategoryFromCachedContact(
     if (!parentCategoryObj.categories.has(category)) {
       return;
     }
-    
+
     let categoryObject = parentCategoryObj.categories.get(category);
     categoryObject.contacts.delete(contactId);
     if (categoryObject.contacts.size == 0) {

@@ -16,14 +16,6 @@ export class AddressBook {
     this.id = id ?? name;
   }
 
-  // TODO : I have no idea if this still works after the contacts member has been
-  // converted to a Map().
-  static fromFakeData(addressBook) {
-    let ab = new AddressBook(addressBook.name, addressBook.contacts);
-    ab.#build();
-    return ab;
-  }
-
   static async fromTBAddressBook({ name, id }) {
     const rawContacts = await browser.contacts.list(id);
     const contacts = new Map(rawContacts.map(contact => {
