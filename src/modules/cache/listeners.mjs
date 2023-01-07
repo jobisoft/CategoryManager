@@ -10,6 +10,7 @@
 import { AddressBook } from "./addressbook.mjs";
 import {
   createContactInCache,
+  createContactsInCache,
   modifyContactInCache,
   deleteContactInCache,
 } from "./update.mjs";
@@ -79,9 +80,7 @@ async function updateCacheOnAddressBookCreation(addressBooks, node) {
   addressBooks.set(node.id, newAddressBook);
   // 2. Update the "all-contacts" address book
   let allContacts = addressBooks.get("all-contacts");
-  for (const contact of newAddressBook.contacts.values()) {
-    await createContactInCache(allContacts, contact);
-  }
+  await createContactsInCache(allContacts, newAddressBook.contacts);
 }
 
 async function updateCacheOnAddressBookUpdate(addressBooks, { id, name }) {

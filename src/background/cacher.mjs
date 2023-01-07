@@ -11,16 +11,19 @@ async function storeCache(addressBooks) {
 console.info("Populating cache...");
 
 let abInfos = await browser.addressBooks.list();
+
+// Add each single address book.
 let abValues = await Promise.all(
   abInfos.map((ab) => AddressBook.fromTBAddressBook(ab))
 );
 
-// Make "All Contacts" the first one.
+// Add the virtual "All Contacts" address book and make it the first one.
 const allContactsVirtualAddressBook = AddressBook.fromAllContacts(
   abValues,
   await browser.i18n.getMessage("tree.category.all")
 );
 abValues.unshift(allContactsVirtualAddressBook);
+
 let addressBooks = new Map(abValues.map((ab) => [ab.id, ab]));
 
 // Store the newly created cache to extension's local storage. Note: This
