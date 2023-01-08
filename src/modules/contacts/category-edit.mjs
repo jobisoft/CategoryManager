@@ -44,12 +44,11 @@ export async function removeCategory({
   addressBook,
   addressBooks,
 }) {
-  const virtualAddressBook = addressBooks.get("all-contacts");
-  let pendingAddressBooks = addressBook === virtualAddressBook
+  let pendingAddressBooks = addressBook.id == "all-contacts"
     ? addressBooks.values()
     : [addressBook];
     for (const ab of pendingAddressBooks) {
-      if (ab == virtualAddressBook) {
+      if (ab.id == "all-contacts") {
         continue;
       }
       // Loop over all contacts of that category.
@@ -79,13 +78,12 @@ export async function moveCategory({
   oldCategoryStr,
   newCategoryStr,
 }) {
-  const virtualAddressBook = addressBooks.get("all-contacts");
-  let pendingAddressBooks = addressBook === virtualAddressBook
+  let pendingAddressBooks = addressBook.id == "all-contacts"
     ? addressBooks.values()
     : [addressBook];
 
   for (const ab of pendingAddressBooks) {
-    if (ab == virtualAddressBook) {
+    if (ab.id == "all-contacts") {
       continue;
     }
     // Loop over all contacts of that category.
