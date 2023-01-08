@@ -30,7 +30,7 @@ export class AddressBook {
   static fromAllContacts(addressBooks, name) {
     let contacts = new Map();
     for (const ab of addressBooks) {
-      ab.contacts.forEach((contact, id) => contacts.set(id, structuredClone(contact)));
+      ab.contacts.forEach((contact, id) => contacts.set(id, contact));
     }
     let ret = new AddressBook(name, contacts, "all-contacts");
     ret.#build();
