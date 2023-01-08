@@ -8,9 +8,9 @@
  */
 
 import { AddressBook } from "./addressbook.mjs";
+import { parseContact } from "../contacts/contact.mjs";
 import {
   createContactInCache,
-  createContactsInCache,
   modifyContactInCache,
   deleteContactInCache,
 } from "./update.mjs";
@@ -25,7 +25,7 @@ export function registerCacheUpdateCallback(addressBooks, callback) {
     await callback(addressBooks);
   });
   browser.contacts.onUpdated.addListener(async (node, changedProperties) => {
-    await updateCacheOnContactUpdate(addressBooks, node, changedProperties);
+    await updateCacheOnContactUpdate(addressBooks, node);
     await callback(addressBooks);
   });
   browser.contacts.onDeleted.addListener(async (addressBookId, contactId) => {
@@ -51,20 +51,24 @@ export function registerCacheUpdateCallback(addressBooks, callback) {
 
 async function updateCacheOnContactCreation(addressBooks, node) {
   let addressBookId = node.parentId;
-  await createContactInCache(addressBooks.get(addressBookId), node);
-  await createContactInCache(addressBooks.get("all-contacts"), node);
+  const contact = parseContact(node);
+  await createContactInCache(addressBooks.get(addressBookId), contact);
+  await createContactInCache(addressBooks.get("all-contacts"), contact);
 }
 
 async function updateCacheOnContactUpdate(
   addressBooks,
-  node,
-  changedProperties
+  node
 ) {
+  // We only care about email, name and categories, changedProperties only tells
+  // us whether Name or Primary/SecondaryEmail changes. It won't tell us if
+  // categories got updated.
+  // Let's just parse the vCard again so that nothing is left behind!
+  const newContact = parseContact(node);
   await modifyContactInCache(
     addressBooks.get(node.parentId),
     addressBooks.get("all-contacts"),
-    node,
-    changedProperties
+    newContact
   );
 }
 

@@ -3,7 +3,6 @@
  * by contact listeners to automatically keep the cache up-to-date.
  */
 
-import { parseContact } from "../contacts/contact.mjs";
 import {
   Category,
   categoryStringToArr,
@@ -16,45 +15,20 @@ import {
   removeSubCategories,
 } from "./index.mjs";
 
-/**
- * Add multiple contacts to the cache and sort them after all have been added.
- * 
- * @param {*} addressBook 
- * @param {*} contactNodes - a Map() or a Map()-like array of key-value-arrays 
- */
-export async function createContactsInCache(addressBook, contactNodes) {
-  for (let [contactId, contactNode] of contactNodes) {
-    const contact = parseContact(contactNode);
-    addressBook.contacts.set(contactId, contact);
-    for (const categoryStr of contact.categories) {
-      await addCategoryToCachedContact(addressBook, contactId, categoryStr);
-    }
+export async function createContactInCache(addressBook, contact) {
+  addressBook.contacts.set(contact.id, contact);
+  for (const categoryStr of contact.categories) {
+    await addCategoryToCachedContact(addressBook, contact.id, categoryStr);
   }
   addressBook.contacts = sortContactsMap(addressBook.contacts);
-}
-
-/**
- * A convenient wrapper for createContactsInCache.
- * 
- * @param {*} addressBook 
- * @param {*} contactNode
- */
-export async function createContactInCache(addressBook, contactNode) {
-  return createContactsInCache(addressBook, [[contactNode.id, contactNode]])
 }
 
 export async function modifyContactInCache(
   addressBook,
   virtualAddressBook,
-  contactNode,
-  changedProperties
+  newContact
 ) {
-  // We only care about email, name and categories
-  // changedProperties only tells us whether Primary/SecondaryEmail changes.
-  // it won't tell us if categories or other email address got updated.
-  // Let's just parse the vCard again so that nothing is left behind!
-  const id = contactNode.id;
-  const newContact = parseContact(contactNode);
+  const id = newContact.id;
   const oldContact = addressBook.contacts.get(id);
   // Expand the categories here, to properly detect additions and deletions of
   // categories and subcategories.
@@ -67,8 +41,6 @@ export async function modifyContactInCache(
     newCategories.some((value) => !oldCategories.includes(value))
   ) {
     // Categories changed.
-    console.debug("changed contact:", newContact, changedProperties);
-
     // The function addCategoryToCachedContact automatically handles implicit
     // categories, no need to add them individually.
     const addition = removeImplicitCategories(
