@@ -74,6 +74,7 @@ export async function modifyContactInCache(
     oldContact[key] = newContact[key];
   });
   addressBook.contacts = sortContactsMap(addressBook.contacts);
+  virtualAddressBook.contacts = sortContactsMap(virtualAddressBook.contacts);
 }
 
 export async function deleteContactInCache(addressBook, contactId) {
