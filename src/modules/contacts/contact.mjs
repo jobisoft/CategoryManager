@@ -99,7 +99,7 @@ export async function updateCategoriesForContact(contact, addition, deletion) {
 export function parseContact({
   id,
   parentId,
-  properties: { vCard, DisplayName },
+  properties: { vCard, DisplayName, PrimaryEmail },
 }) {
   const component = new ICAL.Component(ICAL.parse(vCard));
   const categories = component
@@ -108,7 +108,7 @@ export function parseContact({
   return {
     id,
     addressBookId: parentId,
-    email: component.getFirstPropertyValue("email"),
+    email: PrimaryEmail,
     name: DisplayName,
     categories: new Set(categories),
   };
