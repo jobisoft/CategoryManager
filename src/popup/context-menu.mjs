@@ -55,7 +55,8 @@ async function overrideMenuForContactList() {
   destroyAllMenus();
   await createMenuForContact(
     state.currentAddressBook,
-    state.elementForContextMenu.dataset.id
+    state.elementForContextMenu.dataset.id,
+    state.currentCategoryElement,
   );
 }
 

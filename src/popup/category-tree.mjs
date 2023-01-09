@@ -26,7 +26,7 @@ function isActiveCategory(category, activeCategory) {
 
 function writeTreeLeaf(category, activeCategory) {
   let uncategorizedAttr = category.isUncategorized
-    ? 'data-uncategorized=""'
+    ? 'data-uncategorized="true"'
     : "";
   const activeClass = isActiveCategory(category, activeCategory)
     ? "active"
@@ -54,7 +54,7 @@ export function writeTreeNode(category, activeCategory) {
     );
   }
   if (!hasSubcategories(category)) return writeTreeLeaf(category, activeCategory);
-  
+
   const activeClass = isActiveCategory(category, activeCategory)
     ? "active"
     : "";
@@ -166,7 +166,7 @@ export function createCategoryTree({
     }
     window.close();
   }
-  
+
   // See https://stackoverflow.com/questions/7110353/html5-dragleave-fired-when-hovering-a-child-element
   let dragEnterLeaveCounter = 0;
   function dragEnter(e) {
@@ -195,7 +195,7 @@ export function createCategoryTree({
     state.currentDraggingOverCategoryElement.classList.add("drag-over");
     // Do not allow dragging onto uncategorized because it's not a real category.
     e.dataTransfer.dropEffect =
-      "uncategorized" in state.currentDraggingOverCategoryElement.dataset
+      !!state.currentDraggingOverCategoryElement.dataset.uncategorized
         ? "none"
         : "copy";
 

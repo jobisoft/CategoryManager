@@ -83,10 +83,9 @@ async function updateUI() {
     activeCategory:
       state.currentCategoryElement != null
         ? {
-            path: state.currentCategoryElement.dataset.category,
-            isUncategorized:
-              "uncategorized" in state.currentCategoryElement.dataset,
-          }
+          path: state.currentCategoryElement.dataset.category,
+          isUncategorized: !!state.currentCategoryElement.dataset.uncategorized,
+        }
         : null,
   });
   let activeElement = document.getElementsByClassName("active")[0];
