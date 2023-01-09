@@ -1,3 +1,4 @@
+import { printToConsole } from "../modules/utils.mjs"
 import { createContactList } from "./contact-list.mjs";
 import { createCategoryTree } from "./category-tree.mjs";
 import { createAddressBookList } from "./address-book-list.mjs";
@@ -8,6 +9,7 @@ import { initModal } from "./modal.mjs";
 import State from "./state.mjs";
 import { registerCacheUpdateCallback } from "../modules/cache/listeners.mjs";
 import { initErrorHandler } from "./error-handler.mjs";
+
 // global object: emailAddresses, ICAL, MicroModal from popup.html
 
 initErrorHandler();
@@ -17,6 +19,10 @@ initErrorHandler();
 const state = new State();
 window.state = state;
 await state.init();
+
+// This needs to be awaited only once, all following calls in this window are
+// synchronous.
+await printToConsole.log(state.addressBooks);
 
 // i18n
 document.getElementById("info-text").innerText = await browser.i18n.getMessage(
@@ -71,7 +77,7 @@ async function updateUI() {
     addressBooks: [...state.addressBooks.values()],
     activeAddressBookId: state.currentAddressBook.id,
   });
-  console.log("Active category:", state.currentCategoryElement);
+  printToConsole.log("Active category:", state.currentCategoryElement);
   await categoryTree.update({
     addressBook: state.currentAddressBook,
     activeCategory:
@@ -84,7 +90,7 @@ async function updateUI() {
         : null,
   });
   let activeElement = document.getElementsByClassName("active")[0];
-  console.log("Active Element after UI update:", activeElement);
+  printToConsole.log("Active Element after UI update:", activeElement);
   let contacts;
   if (activeElement != null) {
     state.currentCategoryElement = activeElement;

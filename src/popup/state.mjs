@@ -16,7 +16,6 @@ class State {
     this.#tab = tab;
     const { addressBooks } = await browser.storage.local.get("addressBooks");
     this.addressBooks = addressBooks;
-    console.log(addressBooks);
     this.allContactsVirtualAddressBook = this.addressBooks.get("all-contacts");
     this.currentAddressBook = this.allContactsVirtualAddressBook;
     if (this.currentAddressBook == null)

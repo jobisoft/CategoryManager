@@ -6,6 +6,7 @@ import {
   SUBCATEGORY_SEPARATOR,
   validateCategoryString,
 } from "../modules/cache/index.mjs";
+import { printToConsole } from "../modules/utils.mjs";
 
 const categoryInput = document.getElementById("category-input");
 const categoryInputError = document.getElementById("category-input-error");
@@ -65,8 +66,8 @@ export async function getCategoryStringFromInput(parentCategory = null) {
   const result = await showCategoryInputModalAsync(
     parentCategory ? parentCategory + SUBCATEGORY_SEPARATOR : null
   );
-  console.log(categoryInput);
-  console.log(result);
+  printToConsole.log(categoryInput);
+  printToConsole.log(result);
   return result;
 }
 

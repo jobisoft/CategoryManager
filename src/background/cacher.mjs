@@ -2,12 +2,15 @@ import {
   AddressBook,
   registerCacheUpdateCallback,
 } from "../modules/cache/index.mjs";
+import { printToConsole } from "../modules/utils.mjs";
 
 async function storeCache(addressBooks) {
   await browser.storage.local.set({ addressBooks });
 }
 
-console.info("Populating cache...");
+// This needs to be awaited only once, all following calls in this window are
+// synchronous.
+await printToConsole.info("Populating cache...");
 
 // Disable action buttons while cache is being populated.
 browser.browserAction.disable();
@@ -37,7 +40,8 @@ let addressBooks = new Map(abValues.map((ab) => [ab.id, ab]));
 // removes all additional prototypes of our AddressBook and Category classes.
 await storeCache(addressBooks);
 
-console.info("Done populating cache!");
+printToConsole.log(addressBooks);
+printToConsole.info("Done populating cache!");
 
 // Register listener to update cache on backend changes.
 registerCacheUpdateCallback(addressBooks, storeCache)

@@ -7,6 +7,7 @@ import {
   SUBCATEGORY_SEPARATOR,
 } from "./index.mjs";
 import { parseContact } from "../contacts/contact.mjs";
+import { printToConsole } from "../utils.mjs";
 
 export class AddressBook {
   constructor(name, contacts, id) {
@@ -73,7 +74,7 @@ export function lookupCategory(
   getUncategorized = false
 ) {
   // Look up a category using a key like `A / B`.
-  console.log("Looking up", categoryKey);
+  printToConsole.log("Looking up", categoryKey);
   const category = categoryStringToArr(categoryKey);
   if (getUncategorized) {
     // Remove the last sub category, which is "Uncategorized". It is called, by

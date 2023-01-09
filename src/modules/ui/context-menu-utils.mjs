@@ -3,6 +3,7 @@ import {
   isContactInCategory,
   isContactInAnySubcategory,
 } from "../cache/index.mjs";
+import { printToConsole } from "../utils.mjs";
 
 let { type } = await browser.windows.getCurrent();
 const MENU_TITLE_LOCALE_KEY =
@@ -162,10 +163,10 @@ export function createDispatcherForContactListContextMenu({
         await onAddition(categoryStr, false);
         break;
       case "#":
-        console.error("This menu item should not be clickable!");
+        printToConsole.error("This menu item should not be clickable!");
         break;
       default:
-        console.error("Unknown menu id:", menuId);
+        printToConsole.error("Unknown menu id:", menuId);
         break;
     }
   };

@@ -3,6 +3,7 @@
 // -------------------
 
 import { createDispatcherForContactListContextMenu } from "../modules/ui/context-menu-utils.mjs";
+import { printToConsole } from "../modules/utils.mjs";
 import {
   addContactsToComposeDetails,
   openComposeWindowWithContacts,
@@ -120,7 +121,7 @@ export function initContextMenu() {
     }
     browser.menus.overrideContext({ context: "tab", tabId: state.tab.id });
     state.elementForContextMenu = e.target;
-    console.log(state.elementForContextMenu);
+    printToConsole.log(state.elementForContextMenu);
     // Check if the right click originates from contact list
     if (state.elementForContextMenu.parentNode.dataset.id != null) {
       // Right click on contact info

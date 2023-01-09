@@ -7,7 +7,7 @@ import {
   removeImplicitCategories,
   isSubcategoryOf,
 } from "../cache/index.mjs";
-import { setEqual } from "../set.mjs";
+import { setEqual, printToConsole } from "../utils.mjs";
 // global object: ICAL from external ical.js
 
 const ERR_OPERATION_CANCEL = await browser.i18n.getMessage(
@@ -57,9 +57,9 @@ export async function updateCategoriesForContact(contact, addition, deletion) {
   );
   const oldCategoriesFromInput = contact.categories;
   if (!setEqual(oldCategories, oldCategoriesFromInput)) {
-    console.error("Categories have been changed outside category manager!");
-    console.log("Old Categories", structuredClone(oldCategories));
-    console.log(
+    printToConsole.error("Categories have been changed outside category manager!");
+    printToConsole.log("Old Categories", structuredClone(oldCategories));
+    printToConsole.log(
       "Old Categories From Input",
       structuredClone(oldCategoriesFromInput)
     );
@@ -78,7 +78,7 @@ export async function updateCategoriesForContact(contact, addition, deletion) {
     newCategories.every((x) => oldCategories.has(x))
   ) {
     // No change, return
-    console.warn("No change made to the vCard!");
+    printToConsole.warn("No change made to the vCard!");
     return;
   }
   component.removeAllProperties("categories");
@@ -86,11 +86,11 @@ export async function updateCategoriesForContact(contact, addition, deletion) {
     component.addPropertyWithValue("categories", cat);
   }
   const newVCard = component.toString();
-  console.log("new vCard:", newVCard);
+  printToConsole.log("new vCard:", newVCard);
   try {
     await browser.contacts.update(contact.id, { vCard: newVCard });
   } catch (e) {
-    console.error("Error when updating contact: ", e);
+    printToConsole.error("Error when updating contact: ", e);
     throw getError(ERR_OPCANCEL_UPDATE_FAILURE, 1);
   }
   return null;

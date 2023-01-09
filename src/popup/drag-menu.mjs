@@ -2,7 +2,7 @@
 // Custom Context Menu for drag and drop on category tree
 // -------------------------------------------------------
 
-import { setIntersection } from "../modules/set.mjs";
+import { printToConsole, setIntersection } from "../modules/utils.mjs";
 import { getCategoryStringFromInput } from "./modal.mjs";
 import { addCategoryToContactVCard } from "../modules/contacts/category-edit.mjs";
 
@@ -83,7 +83,7 @@ export function initCustomMenu(categoryTree) {
   });
   customMenu.addEventListener("click", async (e) => {
     if (state.currentContactDataFromDragAndDrop == null) {
-      console.error("No contact info from drag & drop!");
+      printToConsole.error("No contact info from drag & drop!");
       return;
     }
     let categoryStr;
@@ -118,7 +118,7 @@ export function initCustomMenu(categoryTree) {
           });
           break;
         default:
-          console.error("Unknown action! from", e.target);
+          printToConsole.error("Unknown action! from", e.target);
           break;
       }
       state.currentContactDataFromDragAndDrop = null;

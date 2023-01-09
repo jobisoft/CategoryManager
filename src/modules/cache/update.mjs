@@ -14,6 +14,7 @@ import {
   removeImplicitCategories,
   removeSubCategories,
 } from "./index.mjs";
+import { printToConsole } from "../utils.mjs";
 
 export async function createContactInCache(
   addressBook,
@@ -44,8 +45,8 @@ export async function modifyContactInCache(
   // categories and subcategories.
   const newCategories = expandImplicitCategories(newContact.categories);
   const oldCategories = expandImplicitCategories(oldContact.categories);
-  console.debug("Old categories: ", JSON.stringify([...oldCategories]));
-  console.debug("New categories: ", JSON.stringify([...newCategories]));
+  printToConsole.debug("Old categories: ", JSON.stringify([...oldCategories]));
+  printToConsole.debug("New categories: ", JSON.stringify([...newCategories]));
   if (
     newCategories.length != oldCategories.length ||
     newCategories.some((value) => !oldCategories.includes(value))
@@ -62,12 +63,12 @@ export async function modifyContactInCache(
       oldCategories.filter(o => !newCategories.includes(o))
     );
 
-    console.debug("Addition", addition);
+    printToConsole.debug("Addition", addition);
     for (const cat of addition) {
       await addCategoryToCachedContact(addressBook, id, cat);
       await addCategoryToCachedContact(virtualAddressBook, id, cat);
     }
-    console.debug("Deletion", deletion);
+    printToConsole.debug("Deletion", deletion);
     for (const cat of deletion) {
       await removeCategoryFromCachedContact(addressBook, id, cat);
       await removeCategoryFromCachedContact(virtualAddressBook, id, cat);
@@ -155,7 +156,7 @@ async function addCategoryToCachedContact(
   contactId,
   categoryStr,
 ) {
-  console.info(
+  printToConsole.info(
     "addCategoryToCachedContact",
     addressBook,
     contactId,
@@ -189,7 +190,7 @@ async function addCategoryToCachedContact(
     categoryObject.contacts.set(contactId, addressBook.contacts.get(contactId));
     categoryObject.contacts = sortContactsMap(categoryObject.contacts);
   }
-  console.info("Categories data updated: ", contact.categories);
+  printToConsole.info("Categories data updated: ", contact.categories);
 }
 
 /**
@@ -206,7 +207,7 @@ async function removeCategoryFromCachedContact(
   contactId,
   categoryStr,
 ) {
-  console.info(
+  printToConsole.info(
     "removeCategoryFromCachedContact",
     addressBook,
     contactId,
@@ -252,5 +253,5 @@ async function removeCategoryFromCachedContact(
   }
 
   recursiveRemove(parentCategoryObj, categoryStringToArr(categoryStr).pop(), contactId);
-  console.info("Categories data updated: ", contact.categories);
+  printToConsole.info("Categories data updated: ", contact.categories);
 }
