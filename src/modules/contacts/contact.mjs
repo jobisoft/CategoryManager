@@ -5,6 +5,7 @@
 
 import {
   removeImplicitCategories,
+  expandImplicitCategories,
   isSubcategoryOf,
 } from "../cache/index.mjs";
 import { setEqual, printToConsole } from "../utils.mjs";
@@ -102,9 +103,10 @@ export function parseContact({
   properties: { vCard, DisplayName },
 }) {
   const component = new ICAL.Component(ICAL.parse(vCard));
-  const categories = component
+  const categories = expandImplicitCategories(component
     .getAllProperties("categories")
-    .flatMap((x) => x.getValues());
+    .flatMap((x) => x.getValues())
+  );
   return {
     id,
     addressBookId: parentId,
