@@ -23,12 +23,12 @@ export async function createContactInCache(
 ) {
   addressBook.contacts.set(contact.id, contact);
   virtualAddressBook.contacts.set(contact.id, contact);
-  // The function addCategoryToCachedContact automatically handles implicit
+  // The function updateContactCategoryCache automatically handles implicit
   // categories, no need to add them individually. We also may not loop over
   // contact.categories directly, since we modify it in that function.
   for (const categoryStr of removeImplicitCategories([...contact.categories])) {
-    await addCategoryToCachedContact(addressBook, contact.id, categoryStr);
-    await addCategoryToCachedContact(virtualAddressBook, contact.id, categoryStr);
+    await updateContactCategoryCache(addressBook, contact.id, categoryStr);
+    await updateContactCategoryCache(virtualAddressBook, contact.id, categoryStr);
   }
   addressBook.contacts = sortContactsMap(addressBook.contacts);
   virtualAddressBook.contacts = sortContactsMap(virtualAddressBook.contacts);
@@ -47,43 +47,40 @@ export async function modifyContactInCache(
   const oldCategories = expandImplicitCategories(oldContact.categories);
   printToConsole.debug("Old categories: ", JSON.stringify([...oldCategories]));
   printToConsole.debug("New categories: ", JSON.stringify([...newCategories]));
-  if (
-    newCategories.length != oldCategories.length ||
-    newCategories.some((value) => !oldCategories.includes(value))
-  ) {
-    // Categories changed.
-    // The function addCategoryToCachedContact automatically handles implicit
-    // categories, no need to add them individually.
-    const addition = removeImplicitCategories(
-      newCategories.filter(n => !oldCategories.includes(n))
-    );
-    // The function removeCategoryFromCachedContact will remove the category and
-    // all its sub categories, no need to remove them individually.
-    const deletion = removeSubCategories(
-      oldCategories.filter(o => !newCategories.includes(o))
-    );
 
-    printToConsole.debug("Addition", addition);
-    for (const cat of addition) {
-      await addCategoryToCachedContact(addressBook, id, cat);
-      await addCategoryToCachedContact(virtualAddressBook, id, cat);
-    }
-    printToConsole.debug("Deletion", deletion);
-    for (const cat of deletion) {
-      await removeCategoryFromCachedContact(addressBook, id, cat);
-      await removeCategoryFromCachedContact(virtualAddressBook, id, cat);
-    }
-  }
-  
-  // The individual contact object is stored by reference in all subcategories.
-  // Do not replace it - which disconnects all references - but update it and
-  // keep the same object as a container.
+  // Update the contact (displayName, email, categories). The individual contact
+  // object is stored by reference in all subcategories. Do not replace it, but
+  // update it and keep the same object as a container (otherwise all references
+  // will be disconnected).
   Object.keys(oldContact).forEach(key => {
     delete oldContact[key];
   });
   Object.keys(newContact).forEach(key => {
     oldContact[key] = newContact[key];
   });
+
+  // Remove no longer existing categories from the cache.
+  // The function removeCategoryFromCachedContact will remove the category and
+  // all its sub categories, no need to remove them individually.
+  const deletion = removeSubCategories(
+    oldCategories.filter(o => !newCategories.includes(o))
+  );
+  printToConsole.debug("Deletion", deletion);
+  for (const cat of deletion) {
+    await removeCategoryFromCachedContact(addressBook, id, cat);
+    await removeCategoryFromCachedContact(virtualAddressBook, id, cat);
+  }
+
+  // Update the category cache (we need to do this even if no category changed,
+  // since the contact may have been changed and needs to be re-sorted.
+  // The function updateContactCategoryCache automatically handles implicit
+  // categories, so we can strip them here.
+  const currentCategories = removeImplicitCategories(newCategories);
+  printToConsole.debug("Current", currentCategories);
+  for (const cat of currentCategories) {
+    await updateContactCategoryCache(addressBook, id, cat);
+    await updateContactCategoryCache(virtualAddressBook, id, cat);
+  }
   addressBook.contacts = sortContactsMap(addressBook.contacts);
   virtualAddressBook.contacts = sortContactsMap(virtualAddressBook.contacts);
 }
@@ -143,21 +140,20 @@ export function sortCategoriesMap(map) {
 }
 
 /**
- * Adds a category and any implicit parent category along the way to the cache.
- * It is sufficient to call this function only for the deepest category level.
- * e.g. adding "A / B / C" automatically adds "A" and " A / B"
+ * Updates the category cache of the given contact. The provided categoryStr will
+ * be expanded and all implicit parent categories will be handled automatically.
  * 
  * @param {*} addressBook 
  * @param {*} contactId 
  * @param {*} categoryStr
  */
-async function addCategoryToCachedContact(
+async function updateContactCategoryCache(
   addressBook,
   contactId,
   categoryStr,
 ) {
   printToConsole.info(
-    "addCategoryToCachedContact",
+    "updateContactCategoryCache",
     addressBook,
     contactId,
     categoryStr,
@@ -194,8 +190,7 @@ async function addCategoryToCachedContact(
 }
 
 /**
- * Removes a category and all subcategories from the cache. It is sufficient to
- * call this function only for the highest category level.
+ * Removes a category and all its subcategories from the cache.
  * 
  * @param {*} addressBook 
  * @param {*} contactId 
