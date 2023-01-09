@@ -41,12 +41,12 @@ export function getError(str, id) {
 }
 
 /**
- * Modify the category string of a contacts vcard.
+ * Modify the category string of a vCard.
  * 
  * @param {*} contact - contact to work on
  * @param {array} categories - new categories
  */
-export async function updateCategoriesForContact(contact, categories) {
+export async function updateCategoriesForVCard(contact, categories) {
   const {
     properties: { vCard },
   } = await browser.contacts.get(contact.id);

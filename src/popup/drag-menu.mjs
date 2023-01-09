@@ -4,7 +4,7 @@
 
 import { printToConsole, setIntersection } from "../modules/utils.mjs";
 import { getCategoryStringFromInput } from "./modal.mjs";
-import { addCategoryToContactVCard } from "../modules/contacts/category-edit.mjs";
+import { addCategoryToVCard } from "../modules/contacts/category-edit.mjs";
 
 const customMenu = document.getElementById("custom-menu");
 
@@ -100,7 +100,7 @@ export function initCustomMenu(categoryTree) {
             state.currentDraggingOverCategoryElement.dataset.category ??
             (await getCategoryStringFromInput());
           if (categoryStr == null) break;
-          await addCategoryToContactVCard({
+          await addCategoryToVCard({
             addressBook,
             contactId,
             categoryStr
@@ -111,7 +111,7 @@ export function initCustomMenu(categoryTree) {
             state.currentDraggingOverCategoryElement.dataset.category
           );
           if (categoryStr == null) break;
-          await addCategoryToContactVCard({
+          await addCategoryToVCard({
             addressBook,
             contactId,
             categoryStr

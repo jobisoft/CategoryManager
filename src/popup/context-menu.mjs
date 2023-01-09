@@ -19,10 +19,9 @@ import {
   showCategoryInputModalAsync,
 } from "./modal.mjs";
 import {
-  addCategoryToContactVCard,
-  moveCategory,
-  removeCategory,
-  removeCategoryFromContactVCard,
+  addCategoryToVCard,
+  replaceCategoryInVCards,
+  removeCategoryFromVCard,
 } from "../modules/contacts/category-edit.mjs";
 
 function makeCategoryMenuHandler(fieldName) {
@@ -67,17 +66,18 @@ export function initContextMenu() {
     addToCC: makeCategoryMenuHandler("cc"),
     addToBCC: makeCategoryMenuHandler("bcc"),
     async deleteCategory(categoryElement) {
-      await removeCategory({
-        categoryStr: categoryElement.dataset.category,
+      await replaceCategoryInVCards({
         addressBook: state.currentAddressBook,
         addressBooks: state.addressBooks,
+        oldCategoryStr: categoryElement.dataset.category,
+        newCategoryStr: "",
       });
     },
     async renameCategory(categoryElement) {
       const oldCategoryStr = categoryElement.dataset.category;
       const newCategoryStr = await showCategoryInputModalAsync(oldCategoryStr);
       if (newCategoryStr == null) return;
-      await moveCategory({
+      await replaceCategoryInVCards({
         addressBook: state.currentAddressBook,
         addressBooks: state.addressBooks,
         oldCategoryStr,
@@ -91,7 +91,7 @@ export function initContextMenu() {
         const contactId = state.elementForContextMenu.dataset.id;
         const addressBookId = state.elementForContextMenu.dataset.addressbook;
         const addressBook = state.addressBooks.get(addressBookId);
-        await removeCategoryFromContactVCard({
+        await removeCategoryFromVCard({
           addressBook,
           contactId,
           categoryStr,
@@ -106,7 +106,7 @@ export function initContextMenu() {
           if (subcategory == null) return;
           categoryStr = subcategory;
         }
-        await addCategoryToContactVCard({
+        await addCategoryToVCard({
           addressBook,
           contactId,
           categoryStr,
