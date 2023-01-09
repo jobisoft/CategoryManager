@@ -7,6 +7,10 @@ export function setIntersection(a, b) {
   return new Set([...a].filter((x) => b.has(x)));
 }
 
+export function arrayEqual(a, b) {
+  return a.length === b.length && a.every(val => b.includes(val));
+}
+
 async function initLog() {
   let { logToConsole } = await browser.storage.local.get( { logToConsole: null });
   // Set a default so it can be toggled via the add-on inspector storage tab.

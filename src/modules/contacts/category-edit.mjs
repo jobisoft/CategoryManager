@@ -6,23 +6,24 @@
 import { updateCategoriesForContact } from "./contact.mjs";
 import {
   lookupCategory,
-  getParentCategoryStr,
+  isSubcategoryOf,
+  expandImplicitCategories,
 } from "../cache/index.mjs";
 
 /** 
- * Remove the contact from this category and any subcategory recursively, but
- * keep it in the parent category.
+ * Remove the contact from this category and all its subcategories.
  */
 export async function removeCategoryFromContactVCard({
   contactId,
   addressBook,
   categoryStr,
 }) {
-  return updateCategoriesForContact(
-    addressBook.contacts.get(contactId),
-    [getParentCategoryStr(categoryStr)], // toBeAdded
-    [categoryStr], // toBeDeleted
+  let contact = addressBook.contacts.get(contactId);
+  // Categories in cache always include all implicit categories.
+  let newCategories = [...contact.categories].filter(
+    cat => cat != categoryStr && !isSubcategoryOf(cat, categoryStr)
   );
+  return updateCategoriesForContact(contact, newCategories);
 }
 
 export async function addCategoryToContactVCard({
@@ -30,11 +31,14 @@ export async function addCategoryToContactVCard({
   addressBook,
   categoryStr,
 }) {
-  return updateCategoriesForContact(
-    addressBook.contacts.get(contactId),
-    [categoryStr], // toBeAdded
-    [] // toBeDeleted
-  );
+  let contact = addressBook.contacts.get(contactId);
+  let newCategories = [...contact.categories];
+  for (let cat of expandImplicitCategories([categoryStr])) {
+    if (!newCategories.includes(cat)) {
+      newCategories.push(cat);
+    }
+  }
+  return updateCategoriesForContact(contact, newCategories);
 }
 /**
  * Remove an entire category by updating all affected contacts.
@@ -94,17 +98,16 @@ export async function moveCategory({
     if (!categoryObj) {
       continue;
     }
-    for (let [contactId] of categoryObj.contacts) {
-      await removeCategoryFromContactVCard({
-        contactId,
-        addressBook: ab,
-        categoryStr: oldCategoryStr,
-      });
-      await addCategoryToContactVCard({
-        contactId,
-        addressBook: ab,
-        categoryStr: newCategoryStr,
-      });
+    for (let [contactId, contact] of categoryObj.contacts) {
+      let newCategories = [...contact.categories].filter(
+        cat => cat != oldCategoryStr && !isSubcategoryOf(cat, oldCategoryStr)
+      );
+      for (let cat of expandImplicitCategories([newCategoryStr])) {
+        if (!newCategories.includes(cat)) {
+          newCategories.push(cat);
+        }
+      }
+      await updateCategoriesForContact(contact, newCategories);
     }
   }
 }
