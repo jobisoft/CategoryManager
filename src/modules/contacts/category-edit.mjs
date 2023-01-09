@@ -3,89 +3,54 @@
  * contacts in the Thunderbird backend.
  */
 
-import { updateCategoriesForContact } from "./contact.mjs";
+import { updateCategoriesForVCard } from "./contact.mjs";
 import {
   lookupCategory,
-  getParentCategoryStr,
+  mergeCategory,
+  stripCategory,
 } from "../cache/index.mjs";
 
 /** 
- * Remove the contact from this category and any subcategory recursively, but
- * keep it in the parent category.
+ * Remove a vCard from this category and all its subcategories.
  */
-export async function removeCategoryFromContactVCard({
+export async function removeCategoryFromVCard({
   contactId,
   addressBook,
   categoryStr,
 }) {
-  return updateCategoriesForContact(
-    addressBook.contacts.get(contactId),
-    [getParentCategoryStr(categoryStr)], // toBeAdded
-    [categoryStr], // toBeDeleted
-  );
+  let contact = addressBook.contacts.get(contactId);
+  let newCategories = stripCategory([...contact.categories], categoryStr);
+  return updateCategoriesForVCard(contact, newCategories);
 }
 
-export async function addCategoryToContactVCard({
+/** 
+ * Add a vCard to this category and all its parent categories.
+ */
+export async function addCategoryToVCard({
   contactId,
   addressBook,
   categoryStr,
 }) {
-  return updateCategoriesForContact(
-    addressBook.contacts.get(contactId),
-    [categoryStr], // toBeAdded
-    [] // toBeDeleted
-  );
-}
-/**
- * Remove an entire category by updating all affected contacts.
- */
-export async function removeCategory({
-  categoryStr,
-  addressBook,
-  addressBooks,
-}) {
-  const virtualAddressBook = addressBooks.get("all-contacts");
-  let pendingAddressBooks = addressBook === virtualAddressBook
-    ? addressBooks.values()
-    : [addressBook];
-    for (const ab of pendingAddressBooks) {
-      if (ab == virtualAddressBook) {
-        continue;
-      }
-      // Loop over all contacts of that category.
-      const categoryObj = lookupCategory(
-        ab,
-        categoryStr
-      );
-      if (!categoryObj) {
-        continue;
-      }
-      for (let [contactId] of categoryObj.contacts) {
-        await removeCategoryFromContactVCard({
-          contactId,
-          addressBook: ab,
-          categoryStr,
-        })
-      }
-    }
+  let contact = addressBook.contacts.get(contactId);
+  let newCategories = mergeCategory([...contact.categories], categoryStr);
+  return updateCategoriesForVCard(contact, newCategories);
 }
 
 /**
- * Rename/Move an entire category by updating all affected contacts.
+ * Replace a category name in all affected vCards (move/rename/remove).
  */
-export async function moveCategory({
+export async function replaceCategoryInVCards({
   addressBook,
   addressBooks,
   oldCategoryStr,
   newCategoryStr,
 }) {
-  const virtualAddressBook = addressBooks.get("all-contacts");
-  let pendingAddressBooks = addressBook === virtualAddressBook
+  let pendingAddressBooks = addressBook.id == "all-contacts"
     ? addressBooks.values()
     : [addressBook];
 
   for (const ab of pendingAddressBooks) {
-    if (ab == virtualAddressBook) {
+    if (ab.id == "all-contacts") {
       continue;
     }
     // Loop over all contacts of that category.
@@ -96,17 +61,10 @@ export async function moveCategory({
     if (!categoryObj) {
       continue;
     }
-    for (let [contactId] of categoryObj.contacts) {
-      await removeCategoryFromContactVCard({
-        contactId,
-        addressBook: ab,
-        categoryStr: oldCategoryStr,
-      });
-      await addCategoryToContactVCard({
-        contactId,
-        addressBook: ab,
-        categoryStr: newCategoryStr,
-      });
+    for (let [contactId, contact] of categoryObj.contacts) {
+      let newCategories = stripCategory([...contact.categories], oldCategoryStr);
+      mergeCategory(newCategories, newCategoryStr);
+      await updateCategoriesForVCard(contact, newCategories);
     }
   }
 }

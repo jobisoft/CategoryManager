@@ -5,9 +5,9 @@
 
 import {
   removeImplicitCategories,
-  isSubcategoryOf,
+  expandImplicitCategories,
 } from "../cache/index.mjs";
-import { setEqual } from "../set.mjs";
+import { arrayEqual, printToConsole } from "../utils.mjs";
 // global object: ICAL from external ical.js
 
 const ERR_OPERATION_CANCEL = await browser.i18n.getMessage(
@@ -41,56 +41,50 @@ export function getError(str, id) {
 }
 
 /**
- * Modify the category string of a contacts vcard.
+ * Modify the category string of a vCard.
  * 
  * @param {*} contact - contact to work on
- * @param {array} addition - categories to add
- * @param {array} deletion - categories to remove (including all subcategories)
+ * @param {array} categories - new categories
  */
-export async function updateCategoriesForContact(contact, addition, deletion) {
+export async function updateCategoriesForVCard(contact, categories) {
   const {
     properties: { vCard },
   } = await browser.contacts.get(contact.id);
   const component = new ICAL.Component(ICAL.parse(vCard));
-  const oldCategories = new Set(
+
+  const newCategories = removeImplicitCategories(categories)
+  const cachedCategories = removeImplicitCategories([...contact.categories]);
+  const backendCategories = removeImplicitCategories(
     component.getAllProperties("categories").flatMap((x) => x.getValues())
   );
-  const oldCategoriesFromInput = contact.categories;
-  if (!setEqual(oldCategories, oldCategoriesFromInput)) {
-    console.error("Categories have been changed outside category manager!");
-    console.log("Old Categories", structuredClone(oldCategories));
-    console.log(
-      "Old Categories From Input",
-      structuredClone(oldCategoriesFromInput)
-    );
+
+  if (!arrayEqual(backendCategories, cachedCategories)) {
+    printToConsole.error("Categories have been changed outside category manager!");
+    printToConsole.log("Currently stored categories", structuredClone(backendCategories));
+    printToConsole.log("Currently cached categories", structuredClone(cachedCategories));
     throw getError(ERR_OPCANCEL_UPDATE_FAILURE, 2);
   }
 
-  let newCategories = [...oldCategories].filter(
-    x => !deletion.find(d => x == d || isSubcategoryOf(x, d))
-  );
-  newCategories = removeImplicitCategories(
-    [...newCategories, ...addition.filter(a => a != null)]
-  );
-
-  if (
-    newCategories.length === oldCategories.size &&
-    newCategories.every((x) => oldCategories.has(x))
-  ) {
+  if (arrayEqual(backendCategories, newCategories)) {
     // No change, return
-    console.warn("No change made to the vCard!");
+    printToConsole.warn("No change made to the vCard!");
     return;
   }
+
+  // Store new categories.
   component.removeAllProperties("categories");
-  for (const cat of newCategories) {
-    component.addPropertyWithValue("categories", cat);
+  if (newCategories.length > 0) {
+    var categoriesProperty = new ICAL.Property("categories");
+    categoriesProperty.setValues(newCategories);
+    component.addProperty(categoriesProperty);
   }
+
   const newVCard = component.toString();
-  console.log("new vCard:", newVCard);
+  printToConsole.log("new vCard:", newVCard);
   try {
     await browser.contacts.update(contact.id, { vCard: newVCard });
   } catch (e) {
-    console.error("Error when updating contact: ", e);
+    printToConsole.error("Error when updating contact: ", e);
     throw getError(ERR_OPCANCEL_UPDATE_FAILURE, 1);
   }
   return null;
@@ -102,9 +96,10 @@ export function parseContact({
   properties: { vCard, DisplayName, PrimaryEmail },
 }) {
   const component = new ICAL.Component(ICAL.parse(vCard));
-  const categories = component
+  const categories = expandImplicitCategories(component
     .getAllProperties("categories")
-    .flatMap((x) => x.getValues());
+    .flatMap((x) => x.getValues())
+  );
   return {
     id,
     addressBookId: parentId,

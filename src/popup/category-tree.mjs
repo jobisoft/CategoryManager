@@ -8,6 +8,7 @@ import {
   buildUncategorizedCategory,
   hasSubcategories,
 } from "../modules/cache/index.mjs";
+import { printToConsole } from "../modules/utils.mjs";
 import { lookupContactsByCategoryElement } from "./utils.mjs";
 import {
   addContactsToComposeDetails,
@@ -25,7 +26,7 @@ function isActiveCategory(category, activeCategory) {
 
 function writeTreeLeaf(category, activeCategory) {
   let uncategorizedAttr = category.isUncategorized
-    ? 'data-uncategorized=""'
+    ? 'data-uncategorized="true"'
     : "";
   const activeClass = isActiveCategory(category, activeCategory)
     ? "active"
@@ -53,7 +54,7 @@ export function writeTreeNode(category, activeCategory) {
     );
   }
   if (!hasSubcategories(category)) return writeTreeLeaf(category, activeCategory);
-  
+
   const activeClass = isActiveCategory(category, activeCategory)
     ? "active"
     : "";
@@ -165,7 +166,7 @@ export function createCategoryTree({
     }
     window.close();
   }
-  
+
   // See https://stackoverflow.com/questions/7110353/html5-dragleave-fired-when-hovering-a-child-element
   let dragEnterLeaveCounter = 0;
   function dragEnter(e) {
@@ -183,7 +184,7 @@ export function createCategoryTree({
       // further subcategories)
       state.currentDraggingOverCategoryElement = e.target.children[0];
     } else if (e.target.nodeName === "DETAILS") {
-      console.warn("Dragging over details!");
+      printToConsole.warn("Dragging over details!");
       return;
     } else {
       state.currentDraggingOverCategoryElement = e.target;
@@ -194,11 +195,11 @@ export function createCategoryTree({
     state.currentDraggingOverCategoryElement.classList.add("drag-over");
     // Do not allow dragging onto uncategorized because it's not a real category.
     e.dataTransfer.dropEffect =
-      "uncategorized" in state.currentDraggingOverCategoryElement.dataset
+      !!state.currentDraggingOverCategoryElement.dataset.uncategorized
         ? "none"
         : "copy";
 
-    console.warn(`Dragging onto`, state.currentDraggingOverCategoryElement);
+    printToConsole.warn(`Dragging onto`, state.currentDraggingOverCategoryElement);
     e.preventDefault();
   }
   async function dragDrop(e) {
@@ -209,7 +210,7 @@ export function createCategoryTree({
     });
     const item = e.dataTransfer.items[0];
     if (item.type !== "category-manager/contact") {
-      console.error("Invalid item for drag and drop: ", item);
+      printToConsole.error("Invalid item for drag and drop: ", item);
       return;
     }
     item.getAsString((x) => (state.currentContactDataFromDragAndDrop = x));

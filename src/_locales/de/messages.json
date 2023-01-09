@@ -54,7 +54,7 @@
         "message": "Diese Kategorie umbenennen oder verschieben"
     },
     "menu.contact.context.add_to_category": {
-        "message": "Zu '$CATEGORY$' hinzufügen",
+        "message": "Kontakt zu '$CATEGORY$' hinzufügen",
         "placeholders": {
             "category": {
                 "content": "$1"
@@ -76,7 +76,7 @@
         "message": "Kategorien dieses Kontakts verwalten"
     },
     "menu.contact.context.remove_from_category": {
-        "message": "Aus '$CATEGORY$' entfernen",
+        "message": "Kontakt aus '$CATEGORY$' entfernen",
         "placeholders": {
             "category": {
                 "content": "$1"
@@ -84,7 +84,7 @@
         }
     },
     "menu.contact.context.remove_from_category_recursively": {
-        "message": "Aus '$CATEGORY$' und allen Unterkategorien entfernen",
+        "message": "Kontakt aus '$CATEGORY$' und allen Unterkategorien entfernen",
         "placeholders": {
             "category": {
                 "content": "$1"

@@ -1,8 +1,11 @@
+import { lookupCategory } from "../cache/addressbook.mjs";
 import {
-  SUBCATEGORY_SEPARATOR,
+  categoryStringToArr,
   isContactInCategory,
   isContactInAnySubcategory,
+  SUBCATEGORY_SEPARATOR,
 } from "../cache/index.mjs";
+import { printToConsole } from "../utils.mjs";
 
 let { type } = await browser.windows.getCurrent();
 const MENU_TITLE_LOCALE_KEY =
@@ -68,7 +71,7 @@ export function createMenuForCategoryTree(categoryElement) {
     id: "addToBCC",
     title: MENU_ADD_TO_BCC,
   });
-  if (!("uncategorized" in categoryElement.dataset)) {
+  if (!categoryElement.dataset.uncategorized) {
     // Add an option to delete this category
     createSeparator();
     createMenu({ id: "renameCategory", title: MENU_RENAME_CATEGORY });
@@ -152,6 +155,7 @@ export function createDispatcherForContactListContextMenu({
   return async function (menuId) {
     const categoryStr = menuId.slice(1);
     switch (menuId.charAt(0)) {
+      case "!":
       case "@":
         await onDeletion(categoryStr);
         break;
@@ -162,16 +166,16 @@ export function createDispatcherForContactListContextMenu({
         await onAddition(categoryStr, false);
         break;
       case "#":
-        console.error("This menu item should not be clickable!");
+        printToConsole.error("This menu item should not be clickable!");
         break;
       default:
-        console.error("Unknown menu id:", menuId);
+        printToConsole.error("Unknown menu id:", menuId);
         break;
     }
   };
 }
 
-export async function createMenuForContact(addressBook, contactId) {
+export async function createMenuForContact(addressBook, contactId, categoryElm) {
   // Symbols:
   //    @: remove from category
   //    #: normal category
@@ -186,6 +190,19 @@ export async function createMenuForContact(addressBook, contactId) {
     title: MENU_HEADER_TEXT,
     enabled: false,
   });
+
+
+  if (categoryElm && categoryElm.dataset.category && !categoryElm.dataset.uncategorized) {
+    let categoryStr = categoryElm.dataset.category;
+    let categoryObj = lookupCategory(addressBook, categoryStr);
+    let remove_string_key = isContactInAnySubcategory(categoryObj, contactId)
+      ? "menu.contact.context.remove_from_category_recursively"
+      : "menu.contact.context.remove_from_category";
+    createMenu({
+      id: "!" + categoryStr,
+      title: await browser.i18n.getMessage(remove_string_key, categoryStringToArr(categoryStr).pop()),
+    });
+  }
 
   if (addressBook.categories.size > 0) {
     createSeparator();

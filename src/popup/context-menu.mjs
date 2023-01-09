@@ -3,6 +3,7 @@
 // -------------------
 
 import { createDispatcherForContactListContextMenu } from "../modules/ui/context-menu-utils.mjs";
+import { printToConsole } from "../modules/utils.mjs";
 import {
   addContactsToComposeDetails,
   openComposeWindowWithContacts,
@@ -18,10 +19,9 @@ import {
   showCategoryInputModalAsync,
 } from "./modal.mjs";
 import {
-  addCategoryToContactVCard,
-  moveCategory,
-  removeCategory,
-  removeCategoryFromContactVCard,
+  addCategoryToVCard,
+  replaceCategoryInVCards,
+  removeCategoryFromVCard,
 } from "../modules/contacts/category-edit.mjs";
 
 function makeCategoryMenuHandler(fieldName) {
@@ -55,7 +55,8 @@ async function overrideMenuForContactList() {
   destroyAllMenus();
   await createMenuForContact(
     state.currentAddressBook,
-    state.elementForContextMenu.dataset.id
+    state.elementForContextMenu.dataset.id,
+    state.currentCategoryElement,
   );
 }
 
@@ -66,17 +67,18 @@ export function initContextMenu() {
     addToCC: makeCategoryMenuHandler("cc"),
     addToBCC: makeCategoryMenuHandler("bcc"),
     async deleteCategory(categoryElement) {
-      await removeCategory({
-        categoryStr: categoryElement.dataset.category,
+      await replaceCategoryInVCards({
         addressBook: state.currentAddressBook,
         addressBooks: state.addressBooks,
+        oldCategoryStr: categoryElement.dataset.category,
+        newCategoryStr: "",
       });
     },
     async renameCategory(categoryElement) {
       const oldCategoryStr = categoryElement.dataset.category;
       const newCategoryStr = await showCategoryInputModalAsync(oldCategoryStr);
       if (newCategoryStr == null) return;
-      await moveCategory({
+      await replaceCategoryInVCards({
         addressBook: state.currentAddressBook,
         addressBooks: state.addressBooks,
         oldCategoryStr,
@@ -90,7 +92,7 @@ export function initContextMenu() {
         const contactId = state.elementForContextMenu.dataset.id;
         const addressBookId = state.elementForContextMenu.dataset.addressbook;
         const addressBook = state.addressBooks.get(addressBookId);
-        await removeCategoryFromContactVCard({
+        await removeCategoryFromVCard({
           addressBook,
           contactId,
           categoryStr,
@@ -105,7 +107,7 @@ export function initContextMenu() {
           if (subcategory == null) return;
           categoryStr = subcategory;
         }
-        await addCategoryToContactVCard({
+        await addCategoryToVCard({
           addressBook,
           contactId,
           categoryStr,
@@ -120,7 +122,7 @@ export function initContextMenu() {
     }
     browser.menus.overrideContext({ context: "tab", tabId: state.tab.id });
     state.elementForContextMenu = e.target;
-    console.log(state.elementForContextMenu);
+    printToConsole.log(state.elementForContextMenu);
     // Check if the right click originates from contact list
     if (state.elementForContextMenu.parentNode.dataset.id != null) {
       // Right click on contact info

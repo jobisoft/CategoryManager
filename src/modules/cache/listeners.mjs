@@ -8,9 +8,9 @@
  */
 
 import { AddressBook } from "./addressbook.mjs";
+import { parseContact } from "../contacts/contact.mjs";
 import {
   createContactInCache,
-  createContactsInCache,
   modifyContactInCache,
   deleteContactInCache,
 } from "./update.mjs";
@@ -25,7 +25,7 @@ export function registerCacheUpdateCallback(addressBooks, callback) {
     await callback(addressBooks);
   });
   browser.contacts.onUpdated.addListener(async (node, changedProperties) => {
-    await updateCacheOnContactUpdate(addressBooks, node, changedProperties);
+    await updateCacheOnContactUpdate(addressBooks, node);
     await callback(addressBooks);
   });
   browser.contacts.onDeleted.addListener(async (addressBookId, contactId) => {
@@ -51,20 +51,23 @@ export function registerCacheUpdateCallback(addressBooks, callback) {
 
 async function updateCacheOnContactCreation(addressBooks, node) {
   let addressBookId = node.parentId;
-  await createContactInCache(addressBooks.get(addressBookId), node);
-  await createContactInCache(addressBooks.get("all-contacts"), node);
+  const contact = parseContact(node);
+  await createContactInCache(
+    addressBooks.get(addressBookId),
+    addressBooks.get("all-contacts"),
+    contact
+  );
 }
 
 async function updateCacheOnContactUpdate(
   addressBooks,
-  node,
-  changedProperties
+  node
 ) {
+  const newContact = parseContact(node);
   await modifyContactInCache(
     addressBooks.get(node.parentId),
     addressBooks.get("all-contacts"),
-    node,
-    changedProperties
+    newContact
   );
 }
 
@@ -73,8 +76,11 @@ async function updateCacheOnContactDeletion(
   addressBookId,
   contactId
 ) {
-  await deleteContactInCache(addressBooks.get(addressBookId), contactId);
-  await deleteContactInCache(addressBooks.get("all-contacts"), contactId);
+  await deleteContactInCache(
+    addressBooks.get(addressBookId),
+    addressBooks.get("all-contacts"),
+    contactId
+  );
 }
 
 function updateCacheOnAddressBookCreation(addressBooks, { name, id }) {
@@ -92,10 +98,14 @@ async function updateCacheOnAddressBookUpdate(addressBooks, { id, name }) {
 
 async function updateCacheOnAddressBookDeletion(addressBooks, addressBookId) {
   // 1. Update the "all-contacts" address book
-  const deletedAddressBook = addressBooks.get(addressBookId);
-  let allContacts = addressBooks.get("all-contacts");
-  for (const contactId of deletedAddressBook.contacts.keys()) {
-    await deleteContactInCache(allContacts, contactId);
+  const addressBook = addressBooks.get(addressBookId);
+  const virtualAddressBook = addressBooks.get("all-contacts");
+  for (const contactId of addressBook.contacts.keys()) {
+    await deleteContactInCache(
+      null,  // We are going to delete the entire cache, so no need to delete the contacts.
+      virtualAddressBook, 
+      contactId
+    );
   }
   // 2. Delete the address book
   addressBooks.delete(addressBookId);

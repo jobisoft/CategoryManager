@@ -25,7 +25,7 @@ export class Category {
     this.contacts = contacts;
     this.isUncategorized = isUncategorized;
   }
-    
+
   static createSubcategory(parentCategoryObj, name, contacts) {
     const newPath =
       parentCategoryObj.path == null
@@ -41,40 +41,40 @@ export class Category {
 // We do not store the uncategorized elements in the cache, since it is a simple
 // filter operation and it requires much more complex logic to update cached
 // uncategorized elements.
-export function buildUncategorizedCategory (cat) {
-    if (cat.isUncategorized) {
-      return null;
-    }
-    let basePath = "";
-    let contacts = new Map();
-    if (cat.path) {
-      // This is a real category.
-      basePath = cat.path + SUBCATEGORY_SEPARATOR;
-      cat.contacts.forEach(contact => {
-        if (![...contact.categories].some(category => category.startsWith(basePath))) {
-          contacts.set(contact.id, contact);
-        }
-      });
-    } else {
-      // This is an address book.
-      cat.contacts.forEach(contact => {
-        if (contact.categories.size == 0) {
-          contacts.set(contact.id, contact);
-        }
-      });
-    }
+export function buildUncategorizedCategory(cat) {
+  if (cat.isUncategorized) {
+    return null;
+  }
+  let basePath = "";
+  let contacts = new Map();
+  if (cat.path) {
+    // This is a real category.
+    basePath = cat.path + SUBCATEGORY_SEPARATOR;
+    cat.contacts.forEach(contact => {
+      if (![...contact.categories].some(category => category.startsWith(basePath))) {
+        contacts.set(contact.id, contact);
+      }
+    });
+  } else {
+    // This is an address book.
+    cat.contacts.forEach(contact => {
+      if (contact.categories.size == 0) {
+        contacts.set(contact.id, contact);
+      }
+    });
+  }
 
-    if (contacts.size == 0) {
-      return null;
-    }
+  if (contacts.size == 0) {
+    return null;
+  }
 
-    return new Category(
-      UNCATEGORIZED_CATEGORY_NAME,
-      basePath + UNCATEGORIZED_CATEGORY_NAME,
-      contacts,
-      new Map(),
-      true
-    );
+  return new Category(
+    UNCATEGORIZED_CATEGORY_NAME,
+    basePath + UNCATEGORIZED_CATEGORY_NAME,
+    contacts,
+    new Map(),
+    true
+  );
 }
 
 /**
@@ -134,7 +134,7 @@ export function isContactInAnySubcategory(categoryObj, contactId) {
  * 
  */
 export function removeImplicitCategories(categoriesArray) {
-  let reducedCategories = categoriesArray.reduce((acc, cur) => {
+  let reducedCategories = categoriesArray.filter(e => !!e).reduce((acc, cur) => {
     if (!categoriesArray.find((e) => e.trim().startsWith(cur + SUBCATEGORY_SEPARATOR))) {
       acc.push(cur);
     }
@@ -149,8 +149,8 @@ export function removeImplicitCategories(categoriesArray) {
  * e.g. ["A / B", "C", "A / B / X"] -> ["A / B", "C"]
  */
 export function removeSubCategories(categoriesArray) {
-  const byLength = (a,b) => a.length - b.length;
- 
+  const byLength = (a, b) => a.length - b.length;
+
   let reducedCategories = [];
   for (let categoryStr of [...categoriesArray].sort(byLength)) {
     let cat = categoryStr.trim();
@@ -166,17 +166,17 @@ export function removeSubCategories(categoriesArray) {
  */
 export function expandImplicitCategories(categoriesArray) {
   let expandedCategories = [];
-  for (let categoryStr of categoriesArray) {
+  for (let categoryStr of categoriesArray.filter(e => !!e)) {
     const pendingCategoryLevels = categoryStringToArr(categoryStr);
     let categoryLevels = [];
-    while (pendingCategoryLevels.length > 0)  {
+    while (pendingCategoryLevels.length > 0) {
       let categoryPart = pendingCategoryLevels.shift();
       categoryLevels.push(categoryPart);
       expandedCategories.push(categoryArrToString(categoryLevels));
     }
   }
-  // Remove duplicates.
-  return [...new Set(expandedCategories)];
+  // Remove duplicates and empty categories.
+  return [...new Set(expandedCategories)]
 }
 
 /**
@@ -191,3 +191,26 @@ export function getParentCategoryStr(categoryStr) {
     : null; // Return null if no parent category
 }
 
+/**
+ * Merge a category and all implicit parent categories into a given categories array.
+ * Returns the updated categories array (but changes are done in-place).
+ */
+export function mergeCategory(categories, categoryStr) {
+  for (let cat of expandImplicitCategories([categoryStr])) {
+    if (!categories.includes(cat)) {
+      categories.push(cat);
+    }
+  }
+  return categories;
+}
+
+/**
+ * Strip a category and all its subcategories from a given categories array.
+ * Returns the updated categories array.
+ */
+export function stripCategory(categories, categoryStr) {
+  // Categories in cache always include all implicit categories.
+  return categories.filter(
+    cat => cat != categoryStr && !isSubcategoryOf(cat, categoryStr)
+  );
+}
