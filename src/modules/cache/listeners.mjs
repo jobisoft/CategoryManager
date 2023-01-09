@@ -102,7 +102,7 @@ async function updateCacheOnAddressBookDeletion(addressBooks, addressBookId) {
   const virtualAddressBook = addressBooks.get("all-contacts");
   for (const contactId of addressBook.contacts.keys()) {
     await deleteContactInCache(
-      null,  // We are going to delete the entire cache, so ne need to delete the contacts.
+      null,  // We are going to delete the entire cache, so no need to delete the contacts.
       virtualAddressBook, 
       contactId
     );

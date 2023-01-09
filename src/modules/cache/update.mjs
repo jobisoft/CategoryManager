@@ -7,7 +7,6 @@ import {
   Category,
   categoryStringToArr,
   categoryArrToString,
-  expandImplicitCategories,
   getParentCategoryStr,
   isSubcategoryOf,
   lookupCategory,
@@ -41,17 +40,17 @@ export async function modifyContactInCache(
 ) {
   const id = newContact.id;
   const oldContact = virtualAddressBook.contacts.get(id);
-  // Expand the categories here, to properly detect additions and deletions of
-  // categories and subcategories.
-  const newCategories = expandImplicitCategories(newContact.categories);
-  const oldCategories = expandImplicitCategories(oldContact.categories);
-  printToConsole.debug("Old categories: ", JSON.stringify([...oldCategories]));
-  printToConsole.debug("New categories: ", JSON.stringify([...newCategories]));
 
-  // Update the contact (displayName, email, categories). The individual contact
-  // object is stored by reference in all subcategories. Do not replace it, but
-  // update it and keep the same object as a container (otherwise all references
-  // will be disconnected).
+  // Cached categories include implicit categories.
+  const newCategories = [...newContact.categories];
+  const oldCategories = [...oldContact.categories];
+  printToConsole.debug("Old categories: ", JSON.stringify(oldCategories));
+  printToConsole.debug("New categories: ", JSON.stringify(newCategories));
+
+  // Update the contact (displayName, email, categories). Since the individual
+  // contact object is stored by reference in all subcategories, we update the
+  // object and keep all its references, instead of replacing it (which would
+  // remove the reference).
   Object.keys(oldContact).forEach(key => {
     delete oldContact[key];
   });
