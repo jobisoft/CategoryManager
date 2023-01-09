@@ -52,18 +52,17 @@ export function registerCacheUpdateCallback(addressBooks, callback) {
 async function updateCacheOnContactCreation(addressBooks, node) {
   let addressBookId = node.parentId;
   const contact = parseContact(node);
-  await createContactInCache(addressBooks.get(addressBookId), contact);
-  await createContactInCache(addressBooks.get("all-contacts"), contact);
+  await createContactInCache(
+    addressBooks.get(addressBookId),
+    addressBooks.get("all-contacts"),
+    contact
+  );
 }
 
 async function updateCacheOnContactUpdate(
   addressBooks,
   node
 ) {
-  // We only care about email, name and categories, changedProperties only tells
-  // us whether Name or Primary/SecondaryEmail changes. It won't tell us if
-  // categories got updated.
-  // Let's just parse the vCard again so that nothing is left behind!
   const newContact = parseContact(node);
   await modifyContactInCache(
     addressBooks.get(node.parentId),
@@ -77,8 +76,11 @@ async function updateCacheOnContactDeletion(
   addressBookId,
   contactId
 ) {
-  await deleteContactInCache(addressBooks.get(addressBookId), contactId);
-  await deleteContactInCache(addressBooks.get("all-contacts"), contactId);
+  await deleteContactInCache(
+    addressBooks.get(addressBookId),
+    addressBooks.get("all-contacts"),
+    contactId
+  );
 }
 
 function updateCacheOnAddressBookCreation(addressBooks, { name, id }) {
@@ -96,10 +98,14 @@ async function updateCacheOnAddressBookUpdate(addressBooks, { id, name }) {
 
 async function updateCacheOnAddressBookDeletion(addressBooks, addressBookId) {
   // 1. Update the "all-contacts" address book
-  const deletedAddressBook = addressBooks.get(addressBookId);
-  let allContacts = addressBooks.get("all-contacts");
-  for (const contactId of deletedAddressBook.contacts.keys()) {
-    await deleteContactInCache(allContacts, contactId);
+  const addressBook = addressBooks.get(addressBookId);
+  const virtualAddressBook = addressBooks.get("all-contacts");
+  for (const contactId of addressBook.contacts.keys()) {
+    await deleteContactInCache(
+      null,  // We are going to delete the entire cache, so ne need to delete the contacts.
+      virtualAddressBook, 
+      contactId
+    );
   }
   // 2. Delete the address book
   addressBooks.delete(addressBookId);

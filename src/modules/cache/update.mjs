@@ -15,12 +15,22 @@ import {
   removeSubCategories,
 } from "./index.mjs";
 
-export async function createContactInCache(addressBook, contact) {
+export async function createContactInCache(
+  addressBook,
+  virtualAddressBook,
+  contact
+) {
   addressBook.contacts.set(contact.id, contact);
-  for (const categoryStr of contact.categories) {
+  virtualAddressBook.contacts.set(contact.id, contact);
+  // The function addCategoryToCachedContact automatically handles implicit
+  // categories, no need to add them individually. We also may not loop over
+  // contact.categories directly, since we modify it in that function.
+  for (const categoryStr of removeImplicitCategories([...contact.categories])) {
     await addCategoryToCachedContact(addressBook, contact.id, categoryStr);
+    await addCategoryToCachedContact(virtualAddressBook, contact.id, categoryStr);
   }
   addressBook.contacts = sortContactsMap(addressBook.contacts);
+  virtualAddressBook.contacts = sortContactsMap(virtualAddressBook.contacts);
 }
 
 export async function modifyContactInCache(
@@ -29,7 +39,7 @@ export async function modifyContactInCache(
   newContact
 ) {
   const id = newContact.id;
-  const oldContact = addressBook.contacts.get(id);
+  const oldContact = virtualAddressBook.contacts.get(id);
   // Expand the categories here, to properly detect additions and deletions of
   // categories and subcategories.
   const newCategories = expandImplicitCategories(newContact.categories);
@@ -77,19 +87,37 @@ export async function modifyContactInCache(
   virtualAddressBook.contacts = sortContactsMap(virtualAddressBook.contacts);
 }
 
-export async function deleteContactInCache(addressBook, contactId) {
+export async function deleteContactInCache(
+  addressBook, 
+  virtualAddressBook,
+  contactId
+) {
+  const contact = virtualAddressBook.contacts.get(contactId);
   // Remove contact from  category cache.
-  const contact = addressBook.contacts.get(contactId);
-  for (const cat of contact.categories) {
+  // The function removeCategoryFromCachedContact will remove the category and
+  // all its sub categories. Strip away subcategories, since there is no need to
+  // remove them individually.
+  // Note: This removes all categories from contact.categories, since the virtual
+  // address book and the individual address book reference the same contacts
+  // object, both address books have to be handled in this loop.
+  // Note: The addressBook parameter is optional, when the entire book is being
+  // removed from cache - so we do not need to remove the individual contacts.
+  for (const cat of removeSubCategories([...contact.categories])) {
     // This is usually used to remove a category from a contact, which will update
     // the contact cache. It removes the category from contact.categories and
     // removes the contact from the category cache. The first part is not really
     // needed, as the entire contact will be removed, but the second part is
     // important, to purge the contact from the category cache.
-    await removeCategoryFromCachedContact(addressBook, contact.id, cat);
+    if (addressBook) {
+      await removeCategoryFromCachedContact(addressBook, contact.id, cat);
+    }
+    await removeCategoryFromCachedContact(virtualAddressBook, contact.id, cat);
   }
-  // Remove contact from address book cache.
-  addressBook.contacts.delete(contactId);
+  // Remove contact from address books cache.
+  if (addressBook) {
+    addressBook.contacts.delete(contactId);
+  }
+  virtualAddressBook.contacts.delete(contactId);
 }
 
 /**
