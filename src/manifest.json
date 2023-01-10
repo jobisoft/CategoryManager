@@ -9,7 +9,7 @@
   "applications": {
     "gecko": {
       "id": "sendtocategory@jobisoft.de",
-      "strict_min_version": "102.6"
+      "strict_min_version": "102.6.0"
     }
   },
   "icons": {
