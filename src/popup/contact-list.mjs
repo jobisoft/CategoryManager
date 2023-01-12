@@ -3,6 +3,7 @@ import {
   escapeHtmlContent,
   escapeHtmlAttr,
 } from "../modules/ui/ui.mjs";
+import { showDetailModal } from "./modal.mjs";
 
 export function createContactList(data) {
   let component = new Component({
@@ -34,7 +35,7 @@ export function createContactList(data) {
               </p>
             </li>`
           );
-        })
+        });
       }
       return `<ul> ${html.join("\n")} </ul>`;
     },
@@ -49,6 +50,16 @@ export function createContactList(data) {
       "category-manager/contact",
       e.target.dataset.addressbook + "\n" + e.target.dataset.id
     );
+  });
+  component.element.addEventListener("click", (e) => {
+    let target = e.target;
+    if (target.dataset.id == null)
+      // Possibly click on children elements
+      target = target.parentElement;
+    if (target.dataset.id == null)
+      // Not a click on a contact
+      return;
+    showDetailModal(target.dataset.id);
   });
   return component;
 }

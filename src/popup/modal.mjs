@@ -7,6 +7,7 @@ import {
   validateCategoryString,
 } from "../modules/cache/index.mjs";
 import { printToConsole } from "../modules/utils.mjs";
+import { escapeHtmlContent, escapeHtmlAttr } from "../modules/ui/ui.mjs";
 
 const categoryInput = document.getElementById("category-input");
 const categoryInputError = document.getElementById("category-input-error");
@@ -99,7 +100,77 @@ document.getElementById("modal-error-content-footer").innerText =
   await browser.i18n.getMessage("popup.error.content.footer");
 document.querySelector("#modal-error .modal__footer button").innerText =
   await browser.i18n.getMessage("popup.input.button.ok");
+
 export function showErrorModal(errorMessage) {
   errorContent.innerText = errorMessage;
   MicroModal.show("modal-error");
+}
+
+const contactNameElement = document.querySelector(
+  "#modal-details .details__name"
+);
+const contactPhotoElement = document.querySelector(
+  "#modal-details .details__photo"
+);
+const contactEmailElement = document.querySelector(
+  "#modal-details .details__email"
+);
+
+export async function showDetailModal(contactId) {
+  const {
+    properties: { vCard, PrimaryEmail, DisplayName, Nickname, Notes },
+  } = await browser.contacts.get(contactId);
+  const component = new ICAL.Component(ICAL.parse(vCard));
+  const allEmails = component
+    .getAllProperties("email")
+    .flatMap((x) => x.getValues());
+  const photo = component.getFirstPropertyValue("photo");
+  const tz = component.getFirstPropertyValue("tz");
+  const urls = component.getAllProperties("url").flatMap((x) => x.getValues());
+  const addresses = component
+    .getAllProperties("adr")
+    .flatMap((x) => x.getValues());
+  const tel = component.getAllProperties("tel").flatMap((x) => x.getValues());
+  if (photo) {
+    contactPhotoElement.style.backgroundImage = `url(${photo})`;
+    contactPhotoElement.innerText = null;
+  } else {
+    contactPhotoElement.innerText = (DisplayName ?? "")[0];
+    contactPhotoElement.style.backgroundImage = null;
+  }
+  contactNameElement.innerText = DisplayName || PrimaryEmail;
+  contactEmailElement.innerText = PrimaryEmail;
+  let html = "";
+  Nickname && (html += `<div>${"Nickname"}</div><p>${Nickname}</p>`);
+  tz && (html += `<div>${"Timezone"}</div><p>${tz}</p>`);
+  allEmails.length > 0 &&
+    (html += `<div>${"Emails"}</div><p>${allEmails.reduce((acc, cur) => {
+      return (
+        acc +
+        `<a href="mailto:${escapeHtmlAttr(cur)}">${escapeHtmlContent(
+          cur
+        )}</a><br>`
+      );
+    }, "")}</p>`);
+  urls.length > 0 &&
+    (html += `<div>${"Websites"}</div><p>${urls.reduce(
+      (acc, cur) =>
+        acc +
+        `<a href="${escapeHtmlAttr(cur)}">${escapeHtmlContent(cur)}</a><br>`,
+      ""
+    )}</p>`);
+  addresses.length > 0 &&
+    (html += `<div>${"Addresses"}</div><p>${addresses}</p>`);
+  tel.length > 0 &&
+    (html += `<div>${"Phone Numbers"}</div><p>${tel.reduce(
+      (acc, cur) =>
+        acc +
+        `<a href="tel:${escapeHtmlAttr(cur)}">${escapeHtmlContent(
+          cur
+        )}</a><br>`,
+      ""
+    )}</p>`);
+  Notes && (html += `<div>${"Notes"}</div><p>${escapeHtmlContent(Notes)}</p>`);
+  document.querySelector("#modal-details .details__grid").innerHTML = html;
+  MicroModal.show("modal-details");
 }
