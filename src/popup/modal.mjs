@@ -118,7 +118,7 @@ const contactEmailElement = document.querySelector(
 
 export async function showDetailModal(contactId) {
   const {
-    properties: { vCard, PrimaryEmail, DisplayName, Nickname, Notes },
+    properties: { vCard, PrimaryEmail, DisplayName = "", Nickname, Notes },
   } = await browser.contacts.get(contactId);
   const component = new ICAL.Component(ICAL.parse(vCard));
   const allEmails = component
@@ -135,7 +135,7 @@ export async function showDetailModal(contactId) {
     contactPhotoElement.style.backgroundImage = `url(${photo})`;
     contactPhotoElement.innerText = null;
   } else {
-    contactPhotoElement.innerText = (DisplayName ?? "")[0];
+    contactPhotoElement.innerText = DisplayName.trim()[0] ?? "";
     contactPhotoElement.style.backgroundImage = null;
   }
   contactNameElement.innerText = DisplayName || PrimaryEmail;
@@ -159,8 +159,16 @@ export async function showDetailModal(contactId) {
         `<a href="${escapeHtmlAttr(cur)}">${escapeHtmlContent(cur)}</a><br>`,
       ""
     )}</p>`);
+  console.log(addresses);
   addresses.length > 0 &&
-    (html += `<div>${"Addresses"}</div><p>${addresses}</p>`);
+    (html += `<div>${"Addresses"}</div><div>${addresses
+      .map((address) =>
+        address.reduce(
+          (acc, cur) => (cur ? acc + `${escapeHtmlContent(cur)}<br>` : acc),
+          ""
+        )
+      )
+      .join("<hr>")}</div>`);
   tel.length > 0 &&
     (html += `<div>${"Phone Numbers"}</div><p>${tel.reduce(
       (acc, cur) =>
