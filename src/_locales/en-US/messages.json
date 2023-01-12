@@ -118,6 +118,27 @@
     "popup.input.title": {
         "message": "Please enter a (sub)category"
     },
+    "popup.detail.nickname": {
+        "message": "Nickname"
+    },
+    "popup.detail.timezone": {
+        "message": "Timezone"
+    },
+    "popup.detail.emails": {
+        "message": "Emails"
+    },
+    "popup.detail.websites": {
+        "message": "Websites"
+    },
+    "popup.detail.addresses": {
+        "message": "Addresses"
+    },
+    "popup.detail.phone-numbers": {
+        "message": "Phone Numbers"
+    },
+    "popup.detail.notes": {
+        "message": "Notes"
+    },
     "tree.category.all": {
         "message": "All contacts"
     },
