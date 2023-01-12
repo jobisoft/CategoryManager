@@ -148,8 +148,8 @@ export async function showDetailModal(contactId) {
     contactPhotoElement.innerText = DisplayName.trim()[0] ?? "";
     contactPhotoElement.style.backgroundImage = null;
   }
-  contactNameElement.innerText = DisplayName || PrimaryEmail;
-  contactEmailElement.innerText = PrimaryEmail;
+  contactNameElement.innerText = DisplayName ?? "";
+  contactEmailElement.innerText = PrimaryEmail ?? "";
   let html = "";
   Nickname && (html += `<div>${LABEL_NICKNAME}</div><p>${Nickname}</p>`);
   tz && (html += `<div>${LABEL_TIMEZONE}</div><p>${tz}</p>`);
