@@ -116,6 +116,16 @@ const contactEmailElement = document.querySelector(
   "#modal-details .details__email"
 );
 
+const LABEL_NICKNAME = await browser.i18n.getMessage("popup.detail.nickname");
+const LABEL_TIMEZONE = await browser.i18n.getMessage("popup.detail.timezone");
+const LABEL_EMAILS = await browser.i18n.getMessage("popup.detail.emails");
+const LABEL_WEBSITES = await browser.i18n.getMessage("popup.detail.websites");
+const LABEL_ADDRESSES = await browser.i18n.getMessage("popup.detail.addresses");
+const LABEL_PHONE_NUMBERS = await browser.i18n.getMessage(
+  "popup.detail.phone-numbers"
+);
+const LABEL_NOTES = await browser.i18n.getMessage("popup.detail.notes");
+
 export async function showDetailModal(contactId) {
   const {
     properties: { vCard, PrimaryEmail, DisplayName = "", Nickname, Notes },
@@ -141,10 +151,10 @@ export async function showDetailModal(contactId) {
   contactNameElement.innerText = DisplayName || PrimaryEmail;
   contactEmailElement.innerText = PrimaryEmail;
   let html = "";
-  Nickname && (html += `<div>${"Nickname"}</div><p>${Nickname}</p>`);
-  tz && (html += `<div>${"Timezone"}</div><p>${tz}</p>`);
+  Nickname && (html += `<div>${LABEL_NICKNAME}</div><p>${Nickname}</p>`);
+  tz && (html += `<div>${LABEL_TIMEZONE}</div><p>${tz}</p>`);
   allEmails.length > 0 &&
-    (html += `<div>${"Emails"}</div><p>${allEmails.reduce((acc, cur) => {
+    (html += `<div>${LABEL_EMAILS}</div><p>${allEmails.reduce((acc, cur) => {
       return (
         acc +
         `<a href="mailto:${escapeHtmlAttr(cur)}">${escapeHtmlContent(
@@ -153,15 +163,14 @@ export async function showDetailModal(contactId) {
       );
     }, "")}</p>`);
   urls.length > 0 &&
-    (html += `<div>${"Websites"}</div><p>${urls.reduce(
+    (html += `<div>${LABEL_WEBSITES}</div><p>${urls.reduce(
       (acc, cur) =>
         acc +
         `<a href="${escapeHtmlAttr(cur)}">${escapeHtmlContent(cur)}</a><br>`,
       ""
     )}</p>`);
-  console.log(addresses);
   addresses.length > 0 &&
-    (html += `<div>${"Addresses"}</div><div>${addresses
+    (html += `<div>${LABEL_ADDRESSES}</div><div>${addresses
       .map((address) =>
         address.reduce(
           (acc, cur) => (cur ? acc + `${escapeHtmlContent(cur)}<br>` : acc),
@@ -170,7 +179,7 @@ export async function showDetailModal(contactId) {
       )
       .join("<hr>")}</div>`);
   tel.length > 0 &&
-    (html += `<div>${"Phone Numbers"}</div><p>${tel.reduce(
+    (html += `<div>${LABEL_PHONE_NUMBERS}</div><p>${tel.reduce(
       (acc, cur) =>
         acc +
         `<a href="tel:${escapeHtmlAttr(cur)}">${escapeHtmlContent(
@@ -178,7 +187,8 @@ export async function showDetailModal(contactId) {
         )}</a><br>`,
       ""
     )}</p>`);
-  Notes && (html += `<div>${"Notes"}</div><p>${escapeHtmlContent(Notes)}</p>`);
+  Notes &&
+    (html += `<div>${LABEL_NOTES}</div><p>${escapeHtmlContent(Notes)}</p>`);
   document.querySelector("#modal-details .details__grid").innerHTML = html;
   MicroModal.show("modal-details");
 }

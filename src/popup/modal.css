@@ -228,7 +228,7 @@
   column-gap: 1rem;
   align-items: center;
   overflow: scroll;
-  max-height: 18rem;
+  max-height: 24rem;
 }
 
 .details__grid > div:nth-child(2n + 1) {
@@ -246,4 +246,8 @@
 #modal-details .modal__container {
   max-height: 80vh;
   max-width: 80vw;
+}
+
+#modal-details-content {
+  margin-bottom: 0;
 }
