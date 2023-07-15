@@ -1,7 +1,7 @@
 ## Category Manager
 Category manager for Thunderbird contacts, also allows to send an email to all members of a category (category based contact groups).
 
-This add-on scans all contact-cards of the currently selected addressbook, extracts all categories and displays a list inside the Thunderbird addressbook. It allows to rename and to remove a category (changes the category string in all member contact cards).
+This add-on scans all contact-cards of the currently selected addressbook, extracts all categories and displays them in a popup availaable behind the "Categories" button in Thunderbirds main toolbar. It allows to rename and to remove a category (changes the category string in all member contact cards).
 
 **Add-ons for Thunderbird page: [CategoryManager](https://addons.thunderbird.net/en-US/thunderbird/addon/categorymanager/)**
 
