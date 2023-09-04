@@ -27,16 +27,16 @@
     "message": "正在更新..."
   },
   "manifest_action_title": {
-    "message": "Categories"
+    "message": "类别管理器"
   },
   "manifest_description": {
     "message": "联系人类别管理器。你可以一次向整个类别的联系人发送邮件（基于类别的联系人群组）。"
   },
   "menu.category.add_members_to_current_message": {
-    "message": "Add category members to ..."
+    "message": "添加类别成员到 ..."
   },
   "menu.category.add_members_to_new_message": {
-    "message": "Compose new message with category members in ..."
+    "message": "编辑新消息并将此类别成员添加到 ..."
   },
   "menu.category.add_to_bcc": {
     "message": "Bcc"
@@ -51,7 +51,7 @@
     "message": "删除此类别"
   },
   "menu.category.rename": {
-      "message": "Rename or move this category"
+    "message": "重命名或移动此类别"
   },
   "menu.contact.context.add_to_category": {
     "message": "添加到 '$CATEGORY$'",
@@ -117,6 +117,27 @@
   },
   "popup.input.title": {
     "message": "请输入(子)类别"
+  },
+  "popup.detail.nickname": {
+    "message": "昵称"
+  },
+  "popup.detail.timezone": {
+    "message": "时区"
+  },
+  "popup.detail.emails": {
+    "message": "电子邮箱"
+  },
+  "popup.detail.websites": {
+    "message": "网站"
+  },
+  "popup.detail.addresses": {
+    "message": "地址"
+  },
+  "popup.detail.phone-numbers": {
+    "message": "电话号码"
+  },
+  "popup.detail.notes": {
+    "message": "备注"
   },
   "tree.category.none": {
     "message": "未分类"

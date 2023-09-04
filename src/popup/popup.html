@@ -141,5 +141,35 @@
         </div>
       </div>
     </div>
+    <div class="modal micromodal-slide" id="modal-details" aria-hidden="true">
+      <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+        <div
+          class="modal__container"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-details-title"
+        >
+          <header class="modal__header">
+            <div class="details__header-container">
+              <div class="details__photo"></div>
+              <div class="details__header">
+                <div class="details__name"></div>
+                <div class="details__email"></div>
+              </div>
+            </div>
+            <button
+              class="modal__btn modal__btn-primary"
+              aria-label="Close"
+              data-micromodal-close
+            >
+              Close
+            </button>
+          </header>
+          <main class="modal__content" id="modal-details-content">
+            <div class="details__grid"></div>
+          </main>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
