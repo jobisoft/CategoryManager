@@ -1,0 +1,133 @@
+{
+    "errors.contact-update-failure": {
+        "message": "Aktualizace kontaktu selhala!"
+    },
+    "errors.hint.common-reasons": {
+        "message": "Časté příčiny této chyby jsou:"
+    },
+    "errors.hint.most-likely": {
+        "message": "(Nejpravděpodobněji)"
+    },
+    "errors.operation-cancel": {
+        "message": "Operace zrušena."
+    },
+    "errors.partial-deletion": {
+        "message": "Nastala chyba při odstraňování této kategorie. Některé kontakty  stále patří do této kategorie."
+    },
+    "errors.reason.address-book-readonly": {
+        "message": "Kniha kontaktů je jen pro čtení."
+    },
+    "errors.reason.contact-changed": {
+        "message": "Kontakt byl změněn mimo Správce kategorií."
+    },
+    "info.no-address-book": {
+        "message": "Není k dispozici žádná kniha kontaktů"
+    },
+    "info.spinner-text": {
+        "message": "Aktualizování..."
+    },
+    "manifest_action_title": {
+        "message": "Kategorie"
+    },
+    "manifest_description": {
+        "message": "Správce kategorií pro kontakty. Také umí poslat e-mail všem členům kategorie (kategorie založené na skupinách kontaktů)."
+    },
+    "menu.category.add_members_to_current_message": {
+        "message": "Přidat členy kategorie do ..."
+    },
+    "menu.category.add_members_to_new_message": {
+        "message": "Vytvořit novou zprávu se členy kategorie v ..."
+    },
+    "menu.category.add_to_bcc": {
+        "message": "Skryté kopie"
+    },
+    "menu.category.add_to_cc": {
+        "message": "Kopie"
+    },
+    "menu.category.add_to_to": {
+        "message": "Komu"
+    },
+    "menu.category.delete": {
+        "message": "Odstranit tuto kategorii"
+    },
+    "menu.category.rename": {
+        "message": "Přejmenovat nebo přesunout kategorii"
+    },
+    "menu.contact.context.add_to_category": {
+        "message": "Přidat kontakt do kategorie '$CATEGORY$'",
+        "placeholders": {
+            "category": {
+                "content": "$1"
+            }
+        }
+    },
+    "menu.contact.context.add_to_new_sub_category": {
+        "message": "Přidat kontakt do nové podkategorie v kategorii '$CATEGORY$'",
+        "placeholders": {
+            "category": {
+                "content": "$1"
+            }
+        }
+    },
+    "menu.contact.context.add_to_new_top_level_category": {
+        "message": "Přidat kontakt do nové hlavní kategorie"
+    },
+    "menu.contact.context.manage_categories_of_contact": {
+        "message": "Spravovat kategorie tohoto kontaktu"
+    },
+    "menu.contact.context.remove_from_category": {
+        "message": "Odebrat kontakt z kategorie '$CATEGORY$'",
+        "placeholders": {
+            "category": {
+                "content": "$1"
+            }
+        }
+    },
+    "menu.contact.context.remove_from_category_recursively": {
+        "message": "Odebrat kontakt z kategorie '$CATEGORY$' a všech jejích podkategorií",
+        "placeholders": {
+            "category": {
+                "content": "$1"
+            }
+        }
+    },
+    "menu.contact.drag.add_to_new_category": {
+        "message": "Vytvořit zde novou kategorii a přidat kontakt"
+    },
+    "menu.contact.drag.add_to_subcategory": {
+        "message": "Vytvořit zde novou podkategorii a přidat kontakt"
+    },
+    "menu.contact.drag.add_to_this_category": {
+        "message": "Přidat kontakt do této kategorie"
+    },
+    "popup.error.content.footer": {
+        "message": "Pokud si myslíte, že se jedná od chybu Správce kategorií, prosíme nahlašte ji"
+    },
+    "popup.error.title": {
+        "message": "Chyba"
+    },
+    "popup.input.button.cancel": {
+        "message": "Zrušit"
+    },
+    "popup.input.button.ok": {
+        "message": "Dobře"
+    },
+    "popup.input.contentHTML": {
+        "message": "Můžete použít <code>'&nbsp;/&nbsp;'</code> (mezeru, lomítko,mezeru) jako rozdělovač pro vytváření podkategorií.<br />například <code>KategorieA&nbsp;/&nbsp;Kategorie&nbsp;/&nbsp;KategorieC</code>"
+    },
+    "popup.input.title": {
+        "message": "Prosíme zadejte (pod)kategorii"
+    },
+    "tree.category.all": {
+        "message": "Všechny kontakty"
+    },
+    "tree.category.none": {
+        "message": "Nezařazené"
+    },
+    "validation-error.empty-category": {
+        "message": "Kategorie by neměla být prázdná."
+    },
+    "validation-error.empty-subcategory": {
+        "message": "Podkategorie by neměla být prázdná."
+    }
+}
