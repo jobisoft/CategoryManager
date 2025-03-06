@@ -1,60 +1,60 @@
 {
     "errors.contact-update-failure": {
-        "message": "Failed to update contact!"
+        "message": "Bijwerken van contact is mislukt!"
     },
     "errors.hint.common-reasons": {
-        "message": "Common reasons for this error are:"
+        "message": "Veelvoorkomende redenen voor deze fout zijn:"
     },
     "errors.hint.most-likely": {
-        "message": "(Most Likely)"
+        "message": "(Hoogstwaarschijnlijk)"
     },
     "errors.operation-cancel": {
-        "message": "Operation Canceled."
+        "message": "Bewerking is geannuleerd."
     },
     "errors.partial-deletion": {
-        "message": "An error occurred while deleting this category. Some contacts are still in this category."
+        "message": "Er is een fout opgetreden bij het verwijderen van deze categorie. Sommige contacten bevinden zich nog in deze categorie."
     },
     "errors.reason.address-book-readonly": {
-        "message": "The address book is readonly."
+        "message": "Het adresboek is alleen-lezen."
     },
     "errors.reason.contact-changed": {
-        "message": "The contact has been changed outside Category Manager."
+        "message": "Het contact is buiten Category Manager om gewijzigd."
     },
     "info.no-address-book": {
-        "message": "No address book is available"
+        "message": "Er is geen adresboek aanwezig."
     },
     "info.spinner-text": {
-        "message": "Updating..."
+        "message": "Bezig met bijwerken..."
     },
     "manifest_action_title": {
-        "message": "Categories"
+        "message": "Categorieën"
     },
     "manifest_description": {
-        "message": "Category manager voor contacten. Ook mogelijk een email te sturen naar alle leden van een categorie (ook bekend als op categorie gebaseerde contact groepen)."
+        "message": "Category Manager voor contacten. Ook mogelijk een e-mail te sturen naar alle contacten van een categorie (ook bekend als categoriegebaseerde contactgroepen)."
     },
     "menu.category.add_members_to_current_message": {
-        "message": "Add category members to ..."
+        "message": "Contacten van categorie toevoegen aan..."
     },
     "menu.category.add_members_to_new_message": {
-        "message": "Compose new message with category members in ..."
+        "message": "Nieuw bericht aanmaken met contacten van categorie..."
     },
     "menu.category.add_to_bcc": {
-        "message": "Bcc"
+        "message": "BCC"
     },
     "menu.category.add_to_cc": {
-        "message": "Cc"
+        "message": "CC"
     },
     "menu.category.add_to_to": {
         "message": "To"
     },
     "menu.category.delete": {
-        "message": "Delete this category"
+        "message": "Deze categorie verwijderen"
     },
     "menu.category.rename": {
-        "message": "Rename or move this category"
+        "message": "Deze categorie herbenoemen of verplaatsen"
     },
     "menu.contact.context.add_to_category": {
-        "message": "Add contact to '$CATEGORY$'",
+        "message": "Contact toevoegen aan '$CATEGORY$'",
         "placeholders": {
             "category": {
                 "content": "$1"
@@ -62,7 +62,7 @@
         }
     },
     "menu.contact.context.add_to_new_sub_category": {
-        "message": "Add to new sub-category in '$CATEGORY$'",
+        "message": "Nieuwe subcategorie toevoegen aan '$CATEGORY$'",
         "placeholders": {
             "category": {
                 "content": "$1"
@@ -70,13 +70,13 @@
         }
     },
     "menu.contact.context.add_to_new_top_level_category": {
-        "message": "Add to new category"
+        "message": "Toevoegen aan nieuwe categorie"
     },
     "menu.contact.context.manage_categories_of_contact": {
-        "message": "Manage categories of this contact"
+        "message": "Categorieën van dit contact beheren"
     },
     "menu.contact.context.remove_from_category": {
-        "message": "Remove contact from '$CATEGORY$'",
+        "message": "Contact verwijderen van '$CATEGORY$'",
         "placeholders": {
             "category": {
                 "content": "$1"
@@ -84,7 +84,7 @@
         }
     },
     "menu.contact.context.remove_from_category_recursively": {
-        "message": "Remove contact from '$CATEGORY$' and all its sub-categories",
+        "message": "Contact verwijderen van '$CATEGORY$' al haar subcategorieën",
         "placeholders": {
             "category": {
                 "content": "$1"
@@ -92,42 +92,42 @@
         }
     },
     "menu.contact.drag.add_to_new_category": {
-        "message": "Add to a new category"
+        "message": "Toevoegen aan een nieuwe categorie"
     },
     "menu.contact.drag.add_to_subcategory": {
-        "message": "Add to a new subcategory"
+        "message": "Toevoegen aan een nieuwe subcategorie"
     },
     "menu.contact.drag.add_to_this_category": {
-        "message": "Add to this category"
+        "message": "Toevoegen aan deze categorie"
     },
     "popup.error.content.footer": {
-        "message": "If you think this is a bug of Category Manager, Please file an issue at"
+        "message": "Als je denkt dat dit een bug is van Category Manager, maak een issue aan op"
     },
     "popup.error.title": {
-        "message": "Error"
+        "message": "Fout"
     },
     "popup.input.button.cancel": {
-        "message": "Annuleer"
+        "message": "Annuleren"
     },
     "popup.input.button.ok": {
-        "message": "Ok"
+        "message": "Oké"
     },
     "popup.input.contentHTML": {
-        "message": "You can use <code>'&nbsp;/&nbsp;'</code> (Space, Forward Slash,Space) as a delimiter for creating subcategories.<br />e.g. <code>CategoryA&nbsp;/&nbsp;CategoryB&nbsp;/&nbsp;CategoryC</code>"
+        "message": "Door <code>'&nbsp;/&nbsp;'</code> (spatie, slash, spatie) als een scheidingsteken te gebruiken worden subcategorieën aangemaakt.<br />bijvoorbeeld <code>CategorieA&nbsp;/&nbsp;CategorieB&nbsp;/&nbsp;CategorieC</code>"
     },
     "popup.input.title": {
-        "message": "Please enter a (sub)category"
+        "message": "Invoeren van een (sub)categorie"
     },
     "tree.category.all": {
         "message": "Alle contacten"
     },
     "tree.category.none": {
-        "message": "Niet Gecategoriseerd"
+        "message": "Ongecategoriseerd"
     },
     "validation-error.empty-category": {
-        "message": "Category should not be empty."
+        "message": "Categorie zou niet leeg mogen zijn."
     },
     "validation-error.empty-subcategory": {
-        "message": "Subcategory should not be empty."
+        "message": "Subcategorie zou niet leeg mogen zijn."
     }
 }
